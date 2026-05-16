@@ -1,0 +1,12 @@
+using ElementalHearts.Common.Hearts;
+using Terraria.ID;
+
+namespace ElementalHearts.Content.Items.Hearts.CrossMod.Calamity;
+
+public sealed class TenebrisHeart : CalamityHeartItem
+{
+	public override HeartTier Tier => HeartTier.Legendary;
+
+	public override void AddRecipes() =>
+		RegisterModRecipe("Tenebris", 50, TileID.LunarCraftingStation);
+}

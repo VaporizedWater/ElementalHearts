@@ -1,0 +1,12 @@
+using ElementalHearts.Common.Hearts;
+using Terraria.ID;
+
+namespace ElementalHearts.Content.Items.Hearts.CrossMod.Calamity;
+
+public sealed class CelestialRemainsHeart : CalamityHeartItem
+{
+	public override HeartTier Tier => HeartTier.Legendary;
+
+	public override void AddRecipes() =>
+		RegisterModRecipe("CelestialRemains", 50, TileID.LunarCraftingStation);
+}
