@@ -1,0 +1,51 @@
+Elemental Hearts adds 213 consumable, single-use hearts crafted from every Terraria material. Each one permanently raises your maximum life. Find your blocks, find your bench, get more HP. (Or fight a boss and harvest their organs.)
+
+After 6 years of slumber, Lite has risen from the dead to resurrect his begotten son. Today, we can experience Elemental Hearts as it was originally intended.
+
++ Includes 57 Calamity hearts, 28 Thorium hearts, and 5 Consolaria hearts.
+
+---
+
+Please listen to the Interstellar Theme while reading a brief history of Elemental Hearts:
+
+
+
+The first version of Elemental Hearts shipped in 2019. From a single spark of inspiration, it grew into something extraordinary. Nearly 550 items, a custom boss, a biome carved from imagination itself, and a tangled web of cross-mod compatibility that no one had dared attempt before. It was ambitious. It was beautiful. And by the time tModLoader 1.4 arrived, it had become impossible to maintain.
+
+The code had grown into a labyrinth of its own making. Duplicated logic. Recipes scattered like leaves in the wind. Fragile cross-mod hooks held together by little more than hope. Bugs lurked in every corner, waiting - bugs that could not be fixed without the whole structure collapsing in on itself. And beneath the technical decay, something far more human was unraveling: a quiet war between the creator and one of his artists, a feud that would echo louder than any boss fight ever coded.
+s
+In 2020, Fox - who shall forever remain in high regard - made the painful decision to withdraw his consent for his sprites to remain in the mod. This, along with the many storms gathering at the time, ignited a firestorm across the Discord. In the chaos that followed, a moderator took matters into his own hands and deleted the server entirely. Years of conversation, lore, and friendship - gone in a single moment. One Discord member, refusing to let the world forget, spent an entire month rewriting the Elemental Hearts lore from the ground up. He poured thirty pages of mythology into existence, chronicling how the Hearts first entered the world of Terraria. And then, the moment his work was finished, he vanished from the internet without a trace.
+
+In 2021, Elemental Hearts was officially deprecated.
+
+And yet... The story did not end there.
+
+From the ashes rose a revived version, lovingly maintained by Goob (everyone, please give thanks to Goob). His compatibility mod saved Elemental Hearts from oblivion, allowing children around the world to experience it in its former glory.
+
+Then came 2026.
+
+Lite spent every last dollar of his rent money to build a PC. He used it to make game jams, run his business, basic things.
+
+But on May 8th, a user named Madog24 experienced an issue while trying to enter their escape from this brtual world. The mod was conflicting with Calamity, and their precious world was locked behind an error message. They brought this up to Lite in the Elemental Hearts Discord. The rest of this story is not unlike something you would find in an epic sci-fi novel.
+
+Lite, sitting before the machine that had cost him his roof, in the quiet hum of a system newly born, he remembered. He remembered what it meant to be a developer. He remembered the lives he had touched. He remembered the countless children he had rescued from eternal boredom through the raw power-fantasy of crafting Elemental Hearts. And he knew, with a certainty as bright as a collapsing star, that the time had come to do what he was put on this earth to do. With his daughter begging for him to go on a walk with her. To spend time with his wife on Mothers Day, he had to make a choice: Sacrifice himself for his family, or sacrifice himself for the whole of the Terraria Community...
+
+He made the decision that any sane Terrarian would make:
+
+He created Elemental Hearts Classic.
+
+
+
+Classic is the answer to "what should this have been all along?"
+
+  - One job. Hearts that increase max HP. No boss, no biome, no weapons, no UI.
+
+  - Stable across worlds and characters. The per-world consumption ledger is keyed by world GUID, so the same heart name can grant HP independently across different worlds.
+
+  - Multiplayer-correct. Hearts are bound to the world. When one player consumes a Stone Heart, every player in that world receives the bonus, now and on every future visit.
+
+  - Plays nicely with everything else. The mod doesn't override vanilla item or NPC behavior, doesn't hook anything global, and doesn't depend on any third-party library. Other mods can sit on top of it without conflict, and the data-driven base class makes cross-mod heart packs trivial to add in the future.
+
+  - Seven tiers, instantly readable. Common (white), Uncommon (green), Rare (blue), Epic (purple), Legendary (orange), Exotic (cyan), and Mythic (gold).
+
+I built it to last this time.
