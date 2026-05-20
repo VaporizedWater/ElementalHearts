@@ -4,6 +4,7 @@ using Terraria.ModLoader.Config;
 
 namespace ElementalHearts.Common.Configs;
 
+/// <summary>Client-side tuning for the heart-consumption effect.</summary>
 [BackgroundColor(40, 40, 40, 220)]
 public sealed class ElementalHeartsVisualConfig : ModConfig
 {

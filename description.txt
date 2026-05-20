@@ -2,7 +2,7 @@ Elemental Hearts adds 213 consumable, single-use hearts crafted from every Terra
 
 After 6 years of slumber, Lite has risen from the dead to resurrect his begotten son. Today, we can experience Elemental Hearts as it was originally intended.
 
-+ Includes 57 Calamity hearts, 28 Thorium hearts, and 5 Consolaria hearts.
++ Includes 57 Calamity hearts, 28 Thorium hearts, and 5 Consolaria hearts. Cross-mod capabilities can be toggled through config settings if needed.
 
 ---
 
@@ -47,5 +47,7 @@ Classic is the answer to "what should this have been all along?"
   - Plays nicely with everything else. The mod doesn't override vanilla item or NPC behavior, doesn't hook anything global, and doesn't depend on any third-party library. Other mods can sit on top of it without conflict, and the data-driven base class makes cross-mod heart packs trivial to add in the future.
 
   - Seven tiers, instantly readable. Common (white), Uncommon (green), Rare (blue), Epic (purple), Legendary (orange), Exotic (cyan), and Mythic (gold).
+
+  - Extremely intuitive config system: To make it easier to incorporate Elemental Hearts into your Mod Pack, you can adjust pretty much everything in this mod from recipe difficulty, visuals, and stat-increases, etc.
 
 I built it to last this time.

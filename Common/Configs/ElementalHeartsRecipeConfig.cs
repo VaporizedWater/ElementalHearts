@@ -4,6 +4,7 @@ using Terraria.ModLoader.Config;
 
 namespace ElementalHearts.Common.Configs;
 
+/// <summary>Scales the crafting cost of every heart recipe.</summary>
 [BackgroundColor(40, 40, 40, 220)]
 public sealed class ElementalHeartsRecipeConfig : ModConfig
 {

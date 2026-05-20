@@ -2,6 +2,6 @@ using ElementalHearts.Content.Items.Hearts;
 
 namespace ElementalHearts.Content.Items.Hearts.CrossMod.Thorium;
 
-public sealed class IceboundStriderHeart : BossHeartItem
+public sealed class IceboundStriderHeart : ThoriumBossHeartItem
 {
 }

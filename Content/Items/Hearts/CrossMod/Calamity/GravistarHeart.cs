@@ -2,6 +2,6 @@ using ElementalHearts.Content.Items.Hearts;
 
 namespace ElementalHearts.Content.Items.Hearts.CrossMod.Calamity;
 
-public sealed class GravistarHeart : BossHeartItem
+public sealed class GravistarHeart : CalamityBossHeartItem
 {
 }

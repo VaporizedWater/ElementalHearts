@@ -3,6 +3,7 @@ using System.IO;
 using System.Linq;
 using ElementalHearts.Common.Network;
 using ElementalHearts.Common.Players;
+using ElementalHearts.Content.Items.Hearts;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
@@ -11,126 +12,204 @@ using Terraria.ModLoader.IO;
 namespace ElementalHearts.Common.Systems;
 
 /// <summary>
-/// Authoritative store of which hearts have been consumed in this world,
-/// keyed by <see cref="Items.Hearts.ElementalHeartItem.ConsumptionId"/>.
-/// In multiplayer the server is authoritative and broadcasts each new consumption.
+/// Authoritative store of which hearts have been consumed in this world, keyed by
+/// <see cref="ElementalHeartItem.ConsumptionId"/>. Only the set of consumed ids is
+/// kept — the HP each heart grants is read live from its definition (see
+/// <see cref="Hearts.HeartRegistry"/>), so changing the HP config retroactively
+/// updates every character's bonus. In multiplayer the server is authoritative.
 /// </summary>
 public sealed class HeartConsumptionWorld : ModSystem
 {
-	private static readonly Dictionary<string, int> _consumed = new();
+	private static readonly HashSet<string> _consumed = new();
 
-	public static IReadOnlyDictionary<string, int> Consumed => _consumed;
+	public static IReadOnlyCollection<string> Consumed => _consumed;
 
-	public static bool IsConsumed(string heartId) => _consumed.ContainsKey(heartId);
+	public static bool IsConsumed(string heartId) => _consumed.Contains(heartId);
 
 	/// <summary>
-	/// Attempts to consume a heart in World mode. Routes through the server in multiplayer.
-	/// Returns false if already consumed (caller should reject the item use).
+	/// Attempts to consume <paramref name="heart"/> in the current world.
+	/// Returns false if it has already been consumed.
 	/// </summary>
-	public static bool TryConsume(string heartId, int hpGain)
+	public static bool TryConsume(ElementalHeartItem heart)
 	{
-		if (_consumed.ContainsKey(heartId))
+		string id = heart.ConsumptionId;
+		if (_consumed.Contains(id))
 			return false;
 
-		if (Main.netMode == NetmodeID.SinglePlayer)
+		switch (Main.netMode)
 		{
-			Record(heartId, hpGain);
-			return true;
-		}
+			case NetmodeID.SinglePlayer:
+				Record(id);
+				return true;
 
-		if (Main.netMode == NetmodeID.MultiplayerClient)
-		{
-			SendConsumePacket(heartId, hpGain, toClient: -1, ignoreClient: -1);
-			// Optimistic: server is authoritative and will broadcast the canonical result.
-			return true;
-		}
+			case NetmodeID.MultiplayerClient:
+				// Optimistic local apply so the consuming player's stats update
+				// immediately. The server rebroadcasts to *other* clients; it never
+				// echoes back to the sender, so we must record here too.
+				Record(id);
+				SendConsumeRequest(heart.Type, Main.myPlayer);
+				return true;
 
-		// Server consumed it directly (e.g. host-as-server use).
-		Record(heartId, hpGain);
-		BroadcastConsume(heartId, hpGain, ignoreClient: -1);
-		return true;
+			default:
+				// Server consuming directly (e.g. a host-side admin path).
+				Record(id);
+				BroadcastConsume(heart.Type, consumerWhoAmI: -1, ignoreClient: -1);
+				return true;
+		}
 	}
 
-	internal static void Record(string heartId, int hpGain)
+	internal static void Record(string heartId)
 	{
-		_consumed[heartId] = hpGain;
+		_consumed.Add(heartId);
+
 		if (Main.netMode != NetmodeID.Server)
 			Main.LocalPlayer?.GetModPlayer<HeartConsumptionPlayer>().ReconcileWorldHp();
 	}
 
 	internal static void ReceiveConsumption(BinaryReader reader, int whoAmI)
 	{
-		string heartId = reader.ReadString();
-		int hpGain = reader.ReadInt32();
+		int itemType = reader.ReadInt32();
+		int consumerWhoAmI = reader.ReadInt32();
+
+		// The packet only carries the item type; the heart is resolved to its canonical
+		// definition on every receiver, so a client can't spoof which heart was used.
+		if (!TryResolveHeart(itemType, out ElementalHeartItem heart))
+			return;
 
 		if (Main.netMode == NetmodeID.Server)
 		{
-			// A client is requesting consumption; validate then rebroadcast.
-			if (_consumed.ContainsKey(heartId))
+			if (_consumed.Contains(heart.ConsumptionId))
 				return;
 
-			Record(heartId, hpGain);
-			BroadcastConsume(heartId, hpGain, ignoreClient: whoAmI);
+			Record(heart.ConsumptionId);
+			BroadcastConsume(itemType, consumerWhoAmI, ignoreClient: whoAmI);
+			return;
 		}
-		else
-		{
-			// Client receiving an authoritative announcement from the server.
-			Record(heartId, hpGain);
-		}
+
+		// Client receiving the server's announcement.
+		if (_consumed.Contains(heart.ConsumptionId))
+			return;
+
+		Record(heart.ConsumptionId);
+		PlayRemoteConsumeEffect(heart, consumerWhoAmI);
 	}
 
-	private static void SendConsumePacket(string heartId, int hpGain, int toClient, int ignoreClient)
-	{
-		ModPacket packet = ModContent.GetInstance<ElementalHearts>().GetPacket();
-		packet.Write((byte)MessageType.HeartConsumed);
-		packet.Write(heartId);
-		packet.Write(hpGain);
-		packet.Send(toClient, ignoreClient);
-	}
-
-	private static void BroadcastConsume(string heartId, int hpGain, int ignoreClient)
-	{
-		SendConsumePacket(heartId, hpGain, toClient: -1, ignoreClient: ignoreClient);
-	}
-
-	public override void ClearWorld()
-	{
-		_consumed.Clear();
-	}
-
+	/// <summary>
+	/// Wipes the world's consumed-heart registry and revokes the max-HP every character
+	/// gained from those hearts. In multiplayer the clear is routed through the server
+	/// so every client ends up consistent.
+	/// </summary>
 	public static void ClearAllHearts()
+	{
+		if (Main.netMode == NetmodeID.MultiplayerClient)
+		{
+			// Ask the server to do the authoritative clear; it broadcasts back to everyone.
+			SendClearRequest();
+			return;
+		}
+
+		PerformClear();
+		if (Main.netMode == NetmodeID.Server)
+			BroadcastClear();
+	}
+
+	private static void PerformClear()
 	{
 		_consumed.Clear();
 		if (Main.netMode != NetmodeID.Server)
+			Main.LocalPlayer?.GetModPlayer<HeartConsumptionPlayer>().ClearWorldHp();
+	}
+
+	internal static void ReceiveClear(int whoAmI)
+	{
+		if (Main.netMode == NetmodeID.Server)
 		{
-			Main.LocalPlayer?.GetModPlayer<HeartConsumptionPlayer>().ReconcileWorldHp();
+			// A client requested the clear — apply it and tell everyone.
+			PerformClear();
+			BroadcastClear();
+		}
+		else
+		{
+			// The server announced the clear.
+			PerformClear();
 		}
 	}
 
+	private static void SendClearRequest()
+	{
+		ModPacket packet = ModContent.GetInstance<ElementalHearts>().GetPacket();
+		packet.Write((byte)MessageType.HeartsCleared);
+		packet.Send();
+	}
+
+	private static void BroadcastClear()
+	{
+		ModPacket packet = ModContent.GetInstance<ElementalHearts>().GetPacket();
+		packet.Write((byte)MessageType.HeartsCleared);
+		packet.Send(toClient: -1, ignoreClient: -1);
+	}
+
+	private static void SendConsumeRequest(int itemType, int consumerWhoAmI)
+	{
+		ModPacket packet = ModContent.GetInstance<ElementalHearts>().GetPacket();
+		packet.Write((byte)MessageType.HeartConsumed);
+		packet.Write(itemType);
+		packet.Write(consumerWhoAmI);
+		packet.Send();
+	}
+
+	private static void BroadcastConsume(int itemType, int consumerWhoAmI, int ignoreClient)
+	{
+		ModPacket packet = ModContent.GetInstance<ElementalHearts>().GetPacket();
+		packet.Write((byte)MessageType.HeartConsumed);
+		packet.Write(itemType);
+		packet.Write(consumerWhoAmI);
+		packet.Send(toClient: -1, ignoreClient: ignoreClient);
+	}
+
+	private static bool TryResolveHeart(int itemType, out ElementalHeartItem heart)
+	{
+		heart = ModContent.GetModItem(itemType) as ElementalHeartItem;
+		return heart != null;
+	}
+
+	private static void PlayRemoteConsumeEffect(ElementalHeartItem heart, int consumerWhoAmI)
+	{
+		// We already played our own effect in UseItem; don't replay it.
+		if (consumerWhoAmI == Main.myPlayer)
+			return;
+
+		if (consumerWhoAmI < 0 || consumerWhoAmI >= Main.maxPlayers)
+			return;
+
+		Player consumer = Main.player[consumerWhoAmI];
+		if (!consumer.active)
+			return;
+
+		heart.PlayConsumeEffect(consumer.Center);
+	}
+
+	public override void ClearWorld() => _consumed.Clear();
+
 	public override void SaveWorldData(TagCompound tag)
 	{
-		tag["ids"] = _consumed.Keys.ToList();
-		tag["hp"] = _consumed.Values.ToList();
+		tag["ids"] = _consumed.ToList();
 	}
 
 	public override void LoadWorldData(TagCompound tag)
 	{
 		_consumed.Clear();
-		var ids = tag.GetList<string>("ids");
-		var hp = tag.GetList<int>("hp");
-		int count = System.Math.Min(ids.Count, hp.Count);
-		for (int i = 0; i < count; i++)
-			_consumed[ids[i]] = hp[i];
+		// Older saves also stored a parallel "hp" list; it is intentionally ignored
+		// now that HP is always derived live from the heart definition.
+		foreach (string id in tag.GetList<string>("ids"))
+			_consumed.Add(id);
 	}
 
 	public override void NetSend(BinaryWriter writer)
 	{
 		writer.Write(_consumed.Count);
-		foreach (var (id, hp) in _consumed)
-		{
+		foreach (string id in _consumed)
 			writer.Write(id);
-			writer.Write(hp);
-		}
 	}
 
 	public override void NetReceive(BinaryReader reader)
@@ -138,11 +217,7 @@ public sealed class HeartConsumptionWorld : ModSystem
 		_consumed.Clear();
 		int count = reader.ReadInt32();
 		for (int i = 0; i < count; i++)
-		{
-			string id = reader.ReadString();
-			int hp = reader.ReadInt32();
-			_consumed[id] = hp;
-		}
+			_consumed.Add(reader.ReadString());
 
 		Main.LocalPlayer?.GetModPlayer<HeartConsumptionPlayer>().ReconcileWorldHp();
 	}

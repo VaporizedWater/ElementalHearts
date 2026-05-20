@@ -2,6 +2,6 @@ using ElementalHearts.Content.Items.Hearts;
 
 namespace ElementalHearts.Content.Items.Hearts.CrossMod.Calamity;
 
-public sealed class TwistingHeart : BossHeartItem
+public sealed class TwistingHeart : CalamityBossHeartItem
 {
 }

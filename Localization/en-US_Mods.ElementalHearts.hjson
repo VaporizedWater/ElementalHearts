@@ -14,116 +14,75 @@ Common: {
 }
 
 Configs: {
-	ElementalHeartsConfig: {
-		DisplayName: Heart HP Values
-
-		Common: {
-			Label: Common Heart HP
-			Tooltip: HP granted by every Common-tier heart. Default 2.
-		}
-
-		Uncommon: {
-			Label: Uncommon Heart HP
-			Tooltip: HP granted by every Uncommon-tier heart. Default 4.
-		}
-
-		Rare: {
-			Label: Rare Heart HP
-			Tooltip: HP granted by every Rare-tier heart. Default 6.
-		}
-
-		Epic: {
-			Label: Epic Heart HP
-			Tooltip: HP granted by every Epic-tier heart. Default 8.
-		}
-
-		Legendary: {
-			Label: Legendary Heart HP
-			Tooltip: HP granted by every Legendary-tier heart. Default 10.
-		}
-
-		Exotic: {
-			Label: Exotic Heart HP
-			Tooltip: HP granted by every Exotic boss-themed heart. Default 10.
-		}
-
-		Mythic: {
-			Label: Mythic Heart HP
-			Tooltip: HP granted by the Zenith Heart. Default 50.
-		}
-
-		Headers: {
-			HeartHPGains: Heart H P Gains Header
-			RecipeSettings: Recipe Settings Header
-			BossSettings: Boss Settings Header
-		}
-
-		RecipeDifficulty: {
-			Label: Recipe Difficulty
-			Tooltip: ""
-		}
-
-		BossHeartsGuaranteedOnFirstKill: {
-			Label: Boss Hearts Guaranteed On First Kill
-			Tooltip: ""
-		}
-
-		BossHeartRNG: {
-			Label: Boss Heart R N G
-			Tooltip: ""
-		}
-	}
-
 	ElementalHeartsBossConfig: {
 		DisplayName: Boss Drop Settings
 
 		BossHeartsGuaranteedOnFirstKill: {
-			Label: Boss Hearts Guaranteed On First Kill
-			Tooltip: If enabled, defeating a boss for the very first time will guarantee its specific heart drops.
+			Label: Guaranteed On First Kill
+			Tooltip: Defeating a boss for the first time always drops its heart, ignoring the drop chance below.
 		}
 
-		BossHeartRNG: {
+		BossHeartDropChance: {
 			Label: Boss Heart Drop Chance (%)
-			Tooltip: The percentage chance for a boss to drop its heart on subsequent kills. Default: 10%.
+			Tooltip: Percentage chance for a boss to drop its heart on each kill after the first.
+		}
+	}
+
+	ElementalHeartsCrossModConfig: {
+		DisplayName: Cross-Mod Settings
+
+		EnableCalamityHearts: {
+			Label: Enable Calamity Hearts
+			Tooltip: Load hearts themed around Calamity Mod content. Disabling removes them entirely. Requires a reload.
+		}
+
+		EnableThoriumHearts: {
+			Label: Enable Thorium Hearts
+			Tooltip: Load hearts themed around Thorium Mod content. Disabling removes them entirely. Requires a reload.
+		}
+
+		EnableConsolariaHearts: {
+			Label: Enable Consolaria Hearts
+			Tooltip: Load hearts themed around Consolaria content. Disabling removes them entirely. Requires a reload.
 		}
 	}
 
 	ElementalHeartsHPConfig: {
-		DisplayName: Heart HP Values
+		DisplayName: HP Settings
 
 		Common: {
 			Label: Common Heart HP
-			Tooltip: HP granted by every Common-tier heart. Default: 2.
+			Tooltip: Maximum life each Common-tier heart grants when consumed.
 		}
 
 		Uncommon: {
 			Label: Uncommon Heart HP
-			Tooltip: HP granted by every Uncommon-tier heart. Default: 4.
+			Tooltip: Maximum life each Uncommon-tier heart grants when consumed.
 		}
 
 		Rare: {
 			Label: Rare Heart HP
-			Tooltip: HP granted by every Rare-tier heart. Default: 6.
+			Tooltip: Maximum life each Rare-tier heart grants when consumed.
 		}
 
 		Epic: {
 			Label: Epic Heart HP
-			Tooltip: HP granted by every Epic-tier heart. Default: 8.
+			Tooltip: Maximum life each Epic-tier heart grants when consumed.
 		}
 
 		Legendary: {
 			Label: Legendary Heart HP
-			Tooltip: HP granted by every Legendary-tier heart. Default: 10.
+			Tooltip: Maximum life each Legendary-tier heart grants when consumed.
 		}
 
 		Exotic: {
 			Label: Exotic Heart HP
-			Tooltip: HP granted by every Exotic boss-themed heart. Default: 10.
+			Tooltip: Maximum life each Exotic-tier (boss) heart grants when consumed.
 		}
 
 		Mythic: {
 			Label: Mythic Heart HP
-			Tooltip: HP granted by the Zenith Heart. Default: 50.
+			Tooltip: Maximum life each Mythic-tier heart grants when consumed.
 		}
 	}
 
@@ -132,7 +91,7 @@ Configs: {
 
 		RecipeDifficulty: {
 			Label: Recipe Difficulty
-			Tooltip: Scales the required crafting materials for all hearts. 10 is default (1x multiplier). 5 is half-cost. 20 is double-cost.
+			Tooltip: Scales the materials every heart recipe needs. 10 is the default (1x cost); 5 is half, 20 is double. Requires a reload.
 		}
 	}
 
@@ -141,16 +100,16 @@ Configs: {
 
 		ConsumptionEffectStrength: {
 			Label: Consumption Effect Strength
-			Tooltip: Scales the intensity of the visual and physical effects when consuming a heart. 3 is default.
+			Tooltip: Scales the particles, screen shake, and lighting of the heart-consumption effect. 3 is the default.
 		}
 	}
 
 	ElementalHeartsWorldConfig: {
-		DisplayName: World Registry
+		DisplayName: World Settings
 
 		ClearHeartRegistry: {
-			Label: Clear Consumed Heart Registry
-			Tooltip: Toggle to reset the world! Clears all activated hearts so you can consume them again. Just press this once and it will clear.
+			Label: Clear Consumed Hearts
+			Tooltip: Enable to wipe this world's consumed-heart record and refund the max life it granted, so every heart can be consumed again. Resets itself once it runs.
 		}
 	}
 }
@@ -194,25 +153,9 @@ Items: {
 		ElementalPower: mechanical laser eyes
 	}
 
-	# ── Vanilla: boss-themed hearts needing possessive or fixed phrasing ────────
-	BetsyHeart: {
-		DisplayName: Betsy's Heart
-		Tooltip: ""
-		ElementalPower: angry dragons
-	}
-
-	HorsemanHeart: {
-		DisplayName: Headless Horseman's Heart
-		Tooltip: ""
-		ElementalPower: pumpkins on horseback
-	}
-
-	WallOfFleshHeart: {
-		DisplayName: Wall of Flesh Heart
-		Tooltip: ""
-		ElementalPower: running for your life in hell
-	}
-
+	# ── Vanilla: boss-themed hearts (entries below this point handle vanilla bosses;
+	# see the lower block for the rest, alphabetically sorted) ─────────────────
+	
 	SoulOfBlightHeart: {
 		DisplayName: Soul of Blight Heart
 		Tooltip: ""
@@ -399,148 +342,143 @@ Items: {
 		ElementalPower: ghostly goo from dead paladins
 	}
 
-	XenoHeart: {
+	# ── Vanilla: exotic boss-themed hearts (alphabetical) ──────────────────────
+	BetsyHeart: {
+		DisplayName: Betsy's Heart
 		Tooltip: ""
-		DisplayName: Xeno Heart
-		ElementalPower: foreign alien invaders
+		ElementalPower: angry dragons
 	}
 
-	VolatileHeart: {
+	BrainOfCthulhuHeart: {
+		DisplayName: Brain of Cthulhu's Heart
 		Tooltip: ""
-		DisplayName: Volatile Heart
-		ElementalPower: explosive underground meat
-	}
-
-	TruffleHeart: {
-		Tooltip: ""
-		DisplayName: Truffle Heart
-		ElementalPower: fungal crab nightmares
-	}
-
-	SoaringHeart: {
-		Tooltip: ""
-		DisplayName: Soaring Heart
-		ElementalPower: flying sky worms
-	}
-
-	SnotHeart: {
-		Tooltip: ""
-		DisplayName: Snot Heart
 		ElementalPower: disgusting green slime
 	}
 
-	SlaughterHeart: {
-		Tooltip: ""
-		DisplayName: Slaughter Heart
-		ElementalPower: robot santas
-	}
-
-	RoyalSlimeHeart: {
-		Tooltip: ""
-		DisplayName: Royal Slime Heart
-		ElementalPower: bouncy blue royalty
-	}
-
-	RazorpineHeart: {
-		Tooltip: ""
-		DisplayName: Razorpine Heart
-		ElementalPower: the comedic essence of Razorpine
-	}
-
-	QueenSlimeHeart: {
-		Tooltip: ""
-		DisplayName: Queen Slime Heart
-		ElementalPower: bouncy pink royalty
-	}
-
-	PlantHeart: {
-		Tooltip: ""
-		DisplayName: Plant Heart
-		ElementalPower: angry jungle flowers
-	}
-
-	MourningWoodHeart: {
-		Tooltip: ""
-		DisplayName: Mourning Wood Heart
-		ElementalPower: burning spooky trees
-	}
-
-	MenacingHeart: {
-		Tooltip: ""
-		DisplayName: Menacing Heart
-		ElementalPower: the comedic essence of Menacing
-	}
-
-	LihzahrdHeart: {
-		Tooltip: ""
-		DisplayName: Lihzahrd Heart
-		ElementalPower: golem's power cell
-	}
-
-	HiveHeart: {
-		Tooltip: ""
-		DisplayName: Hive Heart
-		ElementalPower: not the bees
-	}
-
-	FlyingDutchmanHeart: {
-		Tooltip: ""
-		DisplayName: Flying Dutchman Heart
-		ElementalPower: ghost pirates
-	}
-
-	EyeHeart: {
-		Tooltip: ""
-		DisplayName: Eye Heart
-		ElementalPower: staring contests
-	}
-
-	EmpressHeart: {
-		Tooltip: ""
-		DisplayName: Empress Heart
-		ElementalPower: bullet hell dodges
-	}
-
-	ElfHeart: {
-		Tooltip: ""
-		DisplayName: Elf Heart
-		ElementalPower: santa's angry helpers
-	}
-
-	DukeFishronHeart: {
-		Tooltip: ""
-		DisplayName: Duke Fishron Heart
-		ElementalPower: angry mutated pigs
-	}
-
 	DeerclopsHeart: {
+		DisplayName: Deerclops' Heart
 		Tooltip: ""
-		DisplayName: Deerclops Heart
 		ElementalPower: wintery cyclops deer
 	}
 
-	CelestialHeart: {
+	DestroyerHeart: {
+		DisplayName: The Destroyer's Heart
 		Tooltip: ""
-		DisplayName: Celestial Heart
-		ElementalPower: alien invasions
+		ElementalPower: mechanical worm segments
 	}
 
-	BoneHeart: {
+	DukeFishronHeart: {
+		DisplayName: Duke Fishron's Heart
 		Tooltip: ""
-		DisplayName: Bone Heart
+		ElementalPower: angry mutated pigs
+	}
+
+	ElfHeart: {
+		DisplayName: Elf Heart
+		Tooltip: ""
+		ElementalPower: santa's angry helpers
+	}
+
+	EmpressOfLightHeart: {
+		DisplayName: Empress of Light's Heart
+		Tooltip: ""
+		ElementalPower: bullet hell dodges
+	}
+
+	EyeOfCthulhuHeart: {
+		DisplayName: Eye of Cthulhu's Heart
+		Tooltip: ""
+		ElementalPower: staring contests
+	}
+
+	FlyingDutchmanHeart: {
+		DisplayName: Flying Dutchman's Heart
+		Tooltip: ""
+		ElementalPower: ghost pirates
+	}
+
+	GolemHeart: {
+		DisplayName: Golem's Heart
+		Tooltip: ""
+		ElementalPower: jungle temple power cells
+	}
+
+	KingSlimeHeart: {
+		DisplayName: King Slime's Heart
+		Tooltip: ""
+		ElementalPower: bouncy blue royalty
+	}
+
+	LunaticCultistHeart: {
+		DisplayName: Lunatic Cultist's Heart
+		Tooltip: ""
+		ElementalPower: ancient sun cults
+	}
+
+	MartianSaucerHeart: {
+		DisplayName: Martian Saucer's Heart
+		Tooltip: ""
+		ElementalPower: foreign alien invaders
+	}
+
+	MenacingHeart: {
+		DisplayName: Menacing Heart
+		Tooltip: ""
+		ElementalPower: the comedic essence of Menacing
+	}
+
+	MoonLordHeart: {
+		DisplayName: Moon Lord's Heart
+		Tooltip: ""
+		ElementalPower: lunar invasions
+	}
+
+	MourningWoodHeart: {
+		DisplayName: Mourning Wood's Heart
+		Tooltip: ""
+		ElementalPower: burning spooky trees
+	}
+
+	PlanteraHeart: {
+		DisplayName: Plantera's Heart
+		Tooltip: ""
+		ElementalPower: angry jungle flowers
+	}
+
+	PumpkingHeart: {
+		DisplayName: Pumpking's Heart
+		Tooltip: ""
+		ElementalPower: pumpkins on horseback
+	}
+
+	QueenBeeHeart: {
+		DisplayName: Queen Bee's Heart
+		Tooltip: ""
+		ElementalPower: not the bees
+	}
+
+	QueenSlimeHeart: {
+		DisplayName: Queen Slime's Heart
+		Tooltip: ""
+		ElementalPower: bouncy pink royalty
+	}
+
+	RazorpineHeart: {
+		DisplayName: Razorpine Heart
+		Tooltip: ""
+		ElementalPower: razor-edged pine needles
+	}
+
+	SkeletronHeart: {
+		DisplayName: Skeletron's Heart
+		Tooltip: ""
 		ElementalPower: spooky scary skeletons
 	}
 
-	BlizzardHeart: {
+	WallOfFleshHeart: {
+		DisplayName: Wall of Flesh's Heart
 		Tooltip: ""
-		DisplayName: Blizzard Heart
-		ElementalPower: the comedic essence of Blizzard
-	}
-
-	AncientHeart: {
-		Tooltip: ""
-		DisplayName: Ancient Heart
-		ElementalPower: the comedic essence of Ancient
+		ElementalPower: running for your life in hell
 	}
 
 	TitaniumHeart: {

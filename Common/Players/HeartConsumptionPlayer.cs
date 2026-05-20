@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
+using ElementalHearts.Common.Hearts;
 using ElementalHearts.Common.Systems;
 using Terraria;
 using Terraria.ModLoader;
@@ -21,33 +22,68 @@ public sealed class HeartConsumptionPlayer : ModPlayer
 	/// </summary>
 	public HashSet<string> WorldHpApplied { get; private set; } = new();
 
-	/// <summary>Cached sum of HP bonuses applicable in the current world. Recomputed on world enter / consume.</summary>
+	/// <summary>Cached sum of HP bonuses applicable in the current world.</summary>
 	private int _bonus;
 
 	private static string WorldPrefix => $"{Main.ActiveWorldFileData.UniqueId:N}|";
 	private static string WorldKey(string heartId) => WorldPrefix + heartId;
 
 	/// <summary>
-	/// Apply any hearts consumed in the current world that this character hasn't yet received HP from.
+	/// Apply any hearts consumed in the current world that this character hasn't yet
+	/// received HP from. Coalesces the heal into a single <see cref="Player.HealEffect"/>
+	/// call so late-joining players don't get a flurry of stacked popups.
 	/// </summary>
 	public void ReconcileWorldHp()
 	{
 		if (Player.whoAmI != Main.myPlayer)
 			return;
 
-		foreach (var (id, hp) in HeartConsumptionWorld.Consumed)
+		int gained = 0;
+		foreach (string id in HeartConsumptionWorld.Consumed)
 		{
 			if (WorldHpApplied.Add(WorldKey(id)))
 			{
+				int hp = HeartRegistry.GetHp(id);
 				_bonus += hp;
-				Player.statLife += hp;
-				Player.HealEffect(hp, broadcast: true);
+				gained += hp;
 			}
 		}
+
+		if (gained <= 0)
+			return;
+
+		Player.statLife += gained;
+		// broadcast: false — every client independently reconciles, so a broadcast
+		// from each one would N²-multiply the popup across players.
+		Player.HealEffect(gained, broadcast: false);
 	}
 
-	private void RecomputeBonus()
+	/// <summary>
+	/// Drops every HP grant this character received from the current world. Called when
+	/// the world's consumed-heart registry is wiped, so cleared hearts also surrender
+	/// the max-HP they gave. The game clamps <see cref="Player.statLife"/> down to the
+	/// new maximum on its next stat pass.
+	/// </summary>
+	public void ClearWorldHp()
 	{
+		if (Player.whoAmI != Main.myPlayer)
+			return;
+
+		string prefix = WorldPrefix;
+		WorldHpApplied.RemoveWhere(key => key.StartsWith(prefix));
+		_bonus = 0;
+	}
+
+	/// <summary>
+	/// Re-derives <see cref="_bonus"/> from scratch using the live HP of every
+	/// current-world heart this character has been granted. Called on world enter and
+	/// whenever the HP config changes, so heart bonuses always reflect current values.
+	/// </summary>
+	public void RecomputeBonus()
+	{
+		if (Player.whoAmI != Main.myPlayer)
+			return;
+
 		_bonus = 0;
 		string prefix = WorldPrefix;
 		foreach (string key in WorldHpApplied)
@@ -56,8 +92,8 @@ public sealed class HeartConsumptionPlayer : ModPlayer
 				continue;
 
 			string heartId = key[prefix.Length..];
-			if (HeartConsumptionWorld.Consumed.TryGetValue(heartId, out int hp))
-				_bonus += hp;
+			if (HeartConsumptionWorld.IsConsumed(heartId))
+				_bonus += HeartRegistry.GetHp(heartId);
 		}
 	}
 
@@ -88,6 +124,6 @@ public sealed class HeartConsumptionPlayer : ModPlayer
 			foreach (string id in tag.GetList<string>("worldApplied"))
 				WorldHpApplied.Add(id);
 		}
-		// Bonus is recomputed in OnEnterWorld once the active world is known.
+		// _bonus is recomputed in OnEnterWorld once the active world is known.
 	}
 }

@@ -23,7 +23,7 @@ public sealed class BossHeartDropGlobalNPC : GlobalNPC
 			}
 
 			// Based on RNG config (default 10%)
-			float dropChance = ElementalHeartsBossConfig.Instance.BossHeartRNG / 100f;
+			float dropChance = ElementalHeartsBossConfig.Instance.BossHeartDropChance / 100f;
 			if (Main.rand.NextFloat() < dropChance)
 			{
 				Item.NewItem(npc.GetSource_Loot(), npc.Hitbox, heartType);

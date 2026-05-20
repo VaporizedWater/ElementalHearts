@@ -29,35 +29,30 @@ public static class BossHeartDropRegistry
 
 	private static void RegisterVanilla()
 	{
-		Add<EyeHeart>(NPCID.EyeofCthulhu);
-		Add<RoyalSlimeHeart>(NPCID.KingSlime);
-		Add<VolatileHeart>(NPCID.EaterofWorldsHead);
-		Add<SnotHeart>(NPCID.BrainofCthulhu);
-		Add<HiveHeart>(NPCID.QueenBee);
-		Add<BoneHeart>(NPCID.SkeletronHead);
+		Add<EyeOfCthulhuHeart>(NPCID.EyeofCthulhu);
+		Add<KingSlimeHeart>(NPCID.KingSlime);
+		Add<BrainOfCthulhuHeart>(NPCID.BrainofCthulhu);
+		Add<QueenBeeHeart>(NPCID.QueenBee);
+		Add<SkeletronHeart>(NPCID.SkeletronHead);
 		Add<WallOfFleshHeart>(NPCID.WallofFlesh);
 		Add<QueenSlimeHeart>(NPCID.QueenSlimeBoss);
-		Add<SlaughterHeart>(NPCID.TheDestroyer);
-		Add<PlantHeart>(NPCID.Plantera);
-		Add<TruffleHeart>(NPCID.Plantera);
-		Add<LihzahrdHeart>(NPCID.Golem);
+		Add<DestroyerHeart>(NPCID.TheDestroyer);
+		Add<PlanteraHeart>(NPCID.Plantera);
+		Add<GolemHeart>(NPCID.Golem);
 		Add<DukeFishronHeart>(NPCID.DukeFishron);
-		Add<EmpressHeart>(NPCID.HallowBoss);
-		Add<AncientHeart>(NPCID.CultistBoss);
-		Add<CelestialHeart>(NPCID.MoonLordCore);
+		Add<EmpressOfLightHeart>(NPCID.HallowBoss);
+		Add<LunaticCultistHeart>(NPCID.CultistBoss);
+		Add<MoonLordHeart>(NPCID.MoonLordCore);
 		Add<MenacingHeart>(NPCID.MoonLordCore);
 		Add<DeerclopsHeart>(NPCID.Deerclops);
 		Add<MourningWoodHeart>(NPCID.MourningWood);
-		Add<HorsemanHeart>(NPCID.Pumpking);
+		Add<PumpkingHeart>(NPCID.Pumpking);
 		Add<RazorpineHeart>(NPCID.Everscream);
 		Add<ElfHeart>(NPCID.Everscream);
 		Add<ElfHeart>(NPCID.SantaNK1);
-		Add<BlizzardHeart>(NPCID.IceQueen);
-		Add<BlizzardHeart>(NPCID.IceGolem);
 		Add<FlyingDutchmanHeart>(NPCID.PirateShip);
 		Add<BetsyHeart>(NPCID.DD2Betsy);
-		Add<XenoHeart>(NPCID.MartianSaucer);
-		Add<SoaringHeart>(NPCID.WyvernHead);
+		Add<MartianSaucerHeart>(NPCID.MartianSaucer);
 	}
 
 	private static void RegisterCalamity()
@@ -122,7 +117,12 @@ public static class BossHeartDropRegistry
 		if (!ModLoader.TryGetMod(modName, out Mod mod))
 			return;
 
+		// 0 here means the heart was disabled via ElementalHeartsCrossModConfig
+		// and never registered as content — skip without registering a phantom drop.
 		int itemType = ModContent.ItemType<THeart>();
+		if (itemType <= 0)
+			return;
+
 		foreach (string npcName in npcNames)
 		{
 			if (mod.TryFind<ModNPC>(npcName, out ModNPC npc))
