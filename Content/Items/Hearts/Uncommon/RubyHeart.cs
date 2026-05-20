@@ -10,7 +10,7 @@ public sealed class RubyHeart : ElementalHeartItem
 	public override void AddRecipes()
 	{
 		CreateRecipe()
-			.AddIngredient(ItemID.Ruby, 30)
+			.AddIngredient(ItemID.Ruby, RecipeCost(40))
 			.AddTile(TileID.HeavyWorkBench)
 			.Register();
 	}

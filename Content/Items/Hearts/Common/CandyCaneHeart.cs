@@ -10,7 +10,7 @@ public sealed class CandyCaneHeart : ElementalHeartItem
 	public override void AddRecipes()
 	{
 		CreateRecipe()
-			.AddIngredient(ItemID.CandyCaneBlock, 50)
+			.AddIngredient(ItemID.CandyCaneBlock, RecipeCost(250))
 			.AddTile(TileID.WorkBenches)
 			.Register();
 	}

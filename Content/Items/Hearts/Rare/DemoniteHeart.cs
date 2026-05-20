@@ -10,7 +10,7 @@ public sealed class DemoniteHeart : ElementalHeartItem
 	public override void AddRecipes()
 	{
 		CreateRecipe()
-			.AddIngredient(ItemID.DemoniteBar, 20)
+			.AddIngredient(ItemID.DemoniteBar, RecipeCost(150))
 			.AddTile(TileID.DemonAltar)
 			.Register();
 	}

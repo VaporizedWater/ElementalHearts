@@ -1,3 +1,4 @@
+using ElementalHearts.Common.Configs;
 using ElementalHearts.Common.Systems;
 using Terraria;
 using Terraria.ModLoader;
@@ -14,15 +15,16 @@ public sealed class BossHeartDropGlobalNPC : GlobalNPC
 		var hearts = BossHeartDropRegistry.GetDrops(npc.type);
 		foreach (int heartType in hearts)
 		{
-			// First kill: always drop the heart
-			if (isFirstKill)
+			// First kill: potentially always drop the heart depending on config
+			if (isFirstKill && ElementalHeartsBossConfig.Instance.BossHeartsGuaranteedOnFirstKill)
 			{
 				Item.NewItem(npc.GetSource_Loot(), npc.Hitbox, heartType);
 				continue;
 			}
 
-			// Subsequent kills: 10% chance
-			if (Main.rand.NextFloat() < 0.1f)
+			// Based on RNG config (default 10%)
+			float dropChance = ElementalHeartsBossConfig.Instance.BossHeartRNG / 100f;
+			if (Main.rand.NextFloat() < dropChance)
 			{
 				Item.NewItem(npc.GetSource_Loot(), npc.Hitbox, heartType);
 			}

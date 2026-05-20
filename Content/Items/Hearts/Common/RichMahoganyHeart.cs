@@ -10,7 +10,7 @@ public sealed class RichMahoganyHeart : ElementalHeartItem
 	public override void AddRecipes()
 	{
 		CreateRecipe()
-			.AddIngredient(ItemID.RichMahogany, 50)
+			.AddIngredient(ItemID.RichMahogany, RecipeCost(750))
 			.AddTile(TileID.WorkBenches)
 			.Register();
 	}

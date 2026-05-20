@@ -10,7 +10,7 @@ public sealed class DynastyHeart : ElementalHeartItem
 	public override void AddRecipes()
 	{
 		CreateRecipe()
-			.AddIngredient(ItemID.DynastyWood, 50)
+			.AddIngredient(ItemID.DynastyWood, RecipeCost(1000))
 			.AddTile(TileID.WorkBenches)
 			.Register();
 	}

@@ -10,7 +10,7 @@ public sealed class SandHeart : ElementalHeartItem
 	public override void AddRecipes()
 	{
 		CreateRecipe()
-			.AddIngredient(ItemID.SandBlock, 50)
+			.AddIngredient(ItemID.SandBlock, RecipeCost(1000))
 			.AddTile(TileID.WorkBenches)
 			.Register();
 	}

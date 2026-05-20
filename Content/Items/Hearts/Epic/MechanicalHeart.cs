@@ -10,9 +10,9 @@ public sealed class MechanicalHeart : ElementalHeartItem
 	public override void AddRecipes()
 	{
 		CreateRecipe()
-			.AddIngredient(ItemID.SoulofFright, 5)
-			.AddIngredient(ItemID.SoulofMight, 5)
-			.AddIngredient(ItemID.SoulofSight, 5)
+			.AddIngredient(ItemID.SoulofFright, RecipeCost(40))
+			.AddIngredient(ItemID.SoulofMight, RecipeCost(40))
+			.AddIngredient(ItemID.SoulofSight, RecipeCost(40))
 			.AddTile(TileID.MythrilAnvil)
 			.Register();
 	}

@@ -10,7 +10,7 @@ public sealed class AmberHeart : ElementalHeartItem
 	public override void AddRecipes()
 	{
 		CreateRecipe()
-			.AddIngredient(ItemID.Amber, 20)
+			.AddIngredient(ItemID.Amber, RecipeCost(30))
 			.AddTile(TileID.HeavyWorkBench)
 			.Register();
 	}

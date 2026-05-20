@@ -10,7 +10,7 @@ public sealed class FleshHeart : ElementalHeartItem
 	public override void AddRecipes()
 	{
 		CreateRecipe()
-			.AddIngredient(ItemID.FleshBlock, 50)
+			.AddIngredient(ItemID.FleshBlock, RecipeCost(400))
 			.AddTile(TileID.WorkBenches)
 			.Register();
 	}

@@ -10,7 +10,7 @@ public sealed class HallowedHeart : ElementalHeartItem
 	public override void AddRecipes()
 	{
 		CreateRecipe()
-			.AddIngredient(ItemID.HallowedBar, 15)
+			.AddIngredient(ItemID.HallowedBar, RecipeCost(100))
 			.AddTile(TileID.MythrilAnvil)
 			.Register();
 	}

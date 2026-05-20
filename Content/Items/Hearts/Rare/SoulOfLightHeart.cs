@@ -10,7 +10,7 @@ public sealed class SoulOfLightHeart : ElementalHeartItem
 	public override void AddRecipes()
 	{
 		CreateRecipe()
-			.AddIngredient(ItemID.SoulofLight, 20)
+			.AddIngredient(ItemID.SoulofLight, RecipeCost(150))
 			.AddTile(TileID.MythrilAnvil)
 			.Register();
 	}

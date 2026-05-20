@@ -10,7 +10,7 @@ public sealed class CrystalHeart : ElementalHeartItem
 	public override void AddRecipes()
 	{
 		CreateRecipe()
-			.AddIngredient(ItemID.CrystalShard, 20)
+			.AddIngredient(ItemID.CrystalShard, RecipeCost(200))
 			.AddTile(TileID.MythrilAnvil)
 			.Register();
 	}

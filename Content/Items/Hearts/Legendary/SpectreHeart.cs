@@ -10,7 +10,7 @@ public sealed class SpectreHeart : ElementalHeartItem
 	public override void AddRecipes()
 	{
 		CreateRecipe()
-			.AddIngredient(ItemID.SpectreBar, 10)
+			.AddIngredient(ItemID.SpectreBar, RecipeCost(50))
 			.AddTile(TileID.AdamantiteForge)
 			.Register();
 	}

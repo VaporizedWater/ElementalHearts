@@ -10,7 +10,7 @@ public sealed class LeadHeart : ElementalHeartItem
 	public override void AddRecipes()
 	{
 		CreateRecipe()
-			.AddIngredient(ItemID.LeadBar, 30)
+			.AddIngredient(ItemID.LeadBar, RecipeCost(100))
 			.AddTile(TileID.Anvils)
 			.Register();
 	}

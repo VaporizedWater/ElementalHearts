@@ -10,7 +10,7 @@ public sealed class SnowHeart : ElementalHeartItem
 	public override void AddRecipes()
 	{
 		CreateRecipe()
-			.AddIngredient(ItemID.SnowBlock, 50)
+			.AddIngredient(ItemID.SnowBlock, RecipeCost(1000))
 			.AddTile(TileID.WorkBenches)
 			.Register();
 	}

@@ -10,7 +10,7 @@ public sealed class PalladiumHeart : ElementalHeartItem
 	public override void AddRecipes()
 	{
 		CreateRecipe()
-			.AddIngredient(ItemID.PalladiumBar, 20)
+			.AddIngredient(ItemID.PalladiumBar, RecipeCost(100))
 			.AddTile(TileID.MythrilAnvil)
 			.Register();
 	}

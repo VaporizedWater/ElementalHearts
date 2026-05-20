@@ -10,7 +10,7 @@ public sealed class HellstoneHeart : ElementalHeartItem
 	public override void AddRecipes()
 	{
 		CreateRecipe()
-			.AddIngredient(ItemID.HellstoneBar, 20)
+			.AddIngredient(ItemID.HellstoneBar, RecipeCost(100))
 			.AddTile(TileID.Hellforge)
 			.Register();
 	}

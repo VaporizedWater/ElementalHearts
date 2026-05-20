@@ -10,7 +10,7 @@ public sealed class SlimeHeart : ElementalHeartItem
 	public override void AddRecipes()
 	{
 		CreateRecipe()
-			.AddIngredient(ItemID.SlimeBlock, 50)
+			.AddIngredient(ItemID.SlimeBlock, RecipeCost(500))
 			.AddTile(TileID.Solidifier)
 			.Register();
 	}

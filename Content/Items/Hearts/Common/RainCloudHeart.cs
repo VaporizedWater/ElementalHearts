@@ -10,7 +10,7 @@ public sealed class RainCloudHeart : ElementalHeartItem
 	public override void AddRecipes()
 	{
 		CreateRecipe()
-			.AddIngredient(ItemID.RainCloud, 50)
+			.AddIngredient(ItemID.RainCloud, RecipeCost(100))
 			.AddTile(TileID.SkyMill)
 			.Register();
 	}

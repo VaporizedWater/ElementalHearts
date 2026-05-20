@@ -10,7 +10,7 @@ public sealed class CactusHeart : ElementalHeartItem
 	public override void AddRecipes()
 	{
 		CreateRecipe()
-			.AddIngredient(ItemID.Cactus, 50)
+			.AddIngredient(ItemID.Cactus, RecipeCost(500))
 			.AddTile(TileID.WorkBenches)
 			.Register();
 	}

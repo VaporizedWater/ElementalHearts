@@ -10,7 +10,7 @@ public sealed class CopperHeart : ElementalHeartItem
 	public override void AddRecipes()
 	{
 		CreateRecipe()
-			.AddIngredient(ItemID.CopperBar, 30)
+			.AddIngredient(ItemID.CopperBar, RecipeCost(100))
 			.AddTile(TileID.Anvils)
 			.Register();
 	}

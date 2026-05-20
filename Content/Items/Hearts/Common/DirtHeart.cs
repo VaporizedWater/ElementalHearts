@@ -10,7 +10,7 @@ public sealed class DirtHeart : ElementalHeartItem
 	public override void AddRecipes()
 	{
 		CreateRecipe()
-			.AddIngredient(ItemID.DirtBlock, 100)
+			.AddIngredient(ItemID.DirtBlock, RecipeCost(1000))
 			.AddTile(TileID.WorkBenches)
 			.Register();
 	}

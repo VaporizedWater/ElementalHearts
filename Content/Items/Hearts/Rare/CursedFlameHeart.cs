@@ -10,7 +10,7 @@ public sealed class CursedFlameHeart : ElementalHeartItem
 	public override void AddRecipes()
 	{
 		CreateRecipe()
-			.AddIngredient(ItemID.CursedFlame, 20)
+			.AddIngredient(ItemID.CursedFlame, RecipeCost(150))
 			.AddTile(TileID.DemonAltar)
 			.Register();
 	}

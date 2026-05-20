@@ -10,7 +10,7 @@ public sealed class EbonstoneHeart : ElementalHeartItem
 	public override void AddRecipes()
 	{
 		CreateRecipe()
-			.AddIngredient(ItemID.EbonstoneBlock, 50)
+			.AddIngredient(ItemID.EbonstoneBlock, RecipeCost(1000))
 			.AddTile(TileID.DemonAltar)
 			.Register();
 	}

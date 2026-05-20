@@ -10,7 +10,7 @@ public sealed class ShadewoodHeart : ElementalHeartItem
 	public override void AddRecipes()
 	{
 		CreateRecipe()
-			.AddIngredient(ItemID.Shadewood, 50)
+			.AddIngredient(ItemID.Shadewood, RecipeCost(750))
 			.AddTile(TileID.WorkBenches)
 			.Register();
 	}

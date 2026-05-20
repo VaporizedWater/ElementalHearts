@@ -10,7 +10,7 @@ public sealed class TopazHeart : ElementalHeartItem
 	public override void AddRecipes()
 	{
 		CreateRecipe()
-			.AddIngredient(ItemID.Topaz, 30)
+			.AddIngredient(ItemID.Topaz, RecipeCost(50))
 			.AddTile(TileID.HeavyWorkBench)
 			.Register();
 	}

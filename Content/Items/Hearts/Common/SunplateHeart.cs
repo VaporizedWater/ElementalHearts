@@ -10,7 +10,7 @@ public sealed class SunplateHeart : ElementalHeartItem
 	public override void AddRecipes()
 	{
 		CreateRecipe()
-			.AddIngredient(ItemID.SunplateBlock, 50)
+			.AddIngredient(ItemID.SunplateBlock, RecipeCost(200))
 			.AddTile(TileID.SkyMill)
 			.Register();
 	}

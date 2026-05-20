@@ -10,7 +10,7 @@ public sealed class TinHeart : ElementalHeartItem
 	public override void AddRecipes()
 	{
 		CreateRecipe()
-			.AddIngredient(ItemID.TinBar, 30)
+			.AddIngredient(ItemID.TinBar, RecipeCost(100))
 			.AddTile(TileID.Anvils)
 			.Register();
 	}

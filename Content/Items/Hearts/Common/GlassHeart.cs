@@ -10,7 +10,7 @@ public sealed class GlassHeart : ElementalHeartItem
 	public override void AddRecipes()
 	{
 		CreateRecipe()
-			.AddIngredient(ItemID.Glass, 50)
+			.AddIngredient(ItemID.Glass, RecipeCost(500))
 			.AddTile(TileID.GlassKiln)
 			.Register();
 	}

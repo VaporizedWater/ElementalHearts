@@ -10,7 +10,7 @@ public sealed class BrainHeart : ElementalHeartItem
 	public override void AddRecipes()
 	{
 		CreateRecipe()
-			.AddIngredient(ItemID.Vertebrae, 20)
+			.AddIngredient(ItemID.Vertebrae, RecipeCost(150))
 			.AddTile(TileID.DemonAltar)
 			.Register();
 	}

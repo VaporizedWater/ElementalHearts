@@ -10,7 +10,7 @@ public sealed class IchorHeart : ElementalHeartItem
 	public override void AddRecipes()
 	{
 		CreateRecipe()
-			.AddIngredient(ItemID.Ichor, 20)
+			.AddIngredient(ItemID.Ichor, RecipeCost(150))
 			.AddTile(TileID.DemonAltar)
 			.Register();
 	}

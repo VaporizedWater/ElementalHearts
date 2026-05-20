@@ -10,7 +10,7 @@ public sealed class EctoplasmHeart : ElementalHeartItem
 	public override void AddRecipes()
 	{
 		CreateRecipe()
-			.AddIngredient(ItemID.Ectoplasm, 10)
+			.AddIngredient(ItemID.Ectoplasm, RecipeCost(100))
 			.AddTile(TileID.Bookcases)
 			.Register();
 	}

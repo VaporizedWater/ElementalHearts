@@ -10,7 +10,7 @@ public sealed class ObsidianHeart : ElementalHeartItem
 	public override void AddRecipes()
 	{
 		CreateRecipe()
-			.AddIngredient(ItemID.Obsidian, 50)
+			.AddIngredient(ItemID.Obsidian, RecipeCost(250))
 			.AddTile(TileID.Hellforge)
 			.Register();
 	}

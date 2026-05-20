@@ -5,11 +5,10 @@ using Terraria.ModLoader.Config;
 namespace ElementalHearts.Common.Configs;
 
 [BackgroundColor(40, 40, 40, 220)]
-public sealed class ElementalHeartsConfig : ModConfig
+public sealed class ElementalHeartsHPConfig : ModConfig
 {
 	public override ConfigScope Mode => ConfigScope.ServerSide;
-
-	public static ElementalHeartsConfig Instance => ModContent.GetInstance<ElementalHeartsConfig>();
+	public static ElementalHeartsHPConfig Instance => ModContent.GetInstance<ElementalHeartsHPConfig>();
 
 	[DefaultValue(2)]  [Range(0, 1000)] [Slider] [Increment(1)] public int Common;
 	[DefaultValue(4)]  [Range(0, 1000)] [Slider] [Increment(1)] public int Uncommon;

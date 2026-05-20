@@ -10,7 +10,7 @@ public sealed class WoodHeart : ElementalHeartItem
 	public override void AddRecipes()
 	{
 		CreateRecipe()
-			.AddIngredient(ItemID.Wood, 50)
+			.AddIngredient(ItemID.Wood, RecipeCost(1000))
 			.AddTile(TileID.WorkBenches)
 			.Register();
 	}

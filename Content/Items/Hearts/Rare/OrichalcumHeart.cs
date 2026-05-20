@@ -10,7 +10,7 @@ public sealed class OrichalcumHeart : ElementalHeartItem
 	public override void AddRecipes()
 	{
 		CreateRecipe()
-			.AddIngredient(ItemID.OrichalcumBar, 20)
+			.AddIngredient(ItemID.OrichalcumBar, RecipeCost(100))
 			.AddTile(TileID.MythrilAnvil)
 			.Register();
 	}

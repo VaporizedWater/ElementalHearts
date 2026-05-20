@@ -10,7 +10,7 @@ public sealed class CoralstoneHeart : ElementalHeartItem
 	public override void AddRecipes()
 	{
 		CreateRecipe()
-			.AddIngredient(ItemID.CoralstoneBlock, 50)
+			.AddIngredient(ItemID.CoralstoneBlock, RecipeCost(100))
 			.AddTile(TileID.WorkBenches)
 			.Register();
 	}

@@ -10,7 +10,7 @@ public sealed class SoulOfFlightHeart : ElementalHeartItem
 	public override void AddRecipes()
 	{
 		CreateRecipe()
-			.AddIngredient(ItemID.SoulofFlight, 20)
+			.AddIngredient(ItemID.SoulofFlight, RecipeCost(80))
 			.AddTile(TileID.MythrilAnvil)
 			.Register();
 	}

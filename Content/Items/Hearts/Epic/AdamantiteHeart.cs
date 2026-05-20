@@ -10,7 +10,7 @@ public sealed class AdamantiteHeart : ElementalHeartItem
 	public override void AddRecipes()
 	{
 		CreateRecipe()
-			.AddIngredient(ItemID.AdamantiteBar, 15)
+			.AddIngredient(ItemID.AdamantiteBar, RecipeCost(100))
 			.AddTile(TileID.AdamantiteForge)
 			.Register();
 	}

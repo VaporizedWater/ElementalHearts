@@ -10,7 +10,7 @@ public sealed class DarkHeart : ElementalHeartItem
 	public override void AddRecipes()
 	{
 		CreateRecipe()
-			.AddIngredient(ItemID.DefenderMedal, 15)
+			.AddIngredient(ItemID.DefenderMedal, RecipeCost(200))
 			.AddTile(TileID.WorkBenches)
 			.Register();
 	}

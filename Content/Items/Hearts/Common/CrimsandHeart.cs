@@ -10,7 +10,7 @@ public sealed class CrimsandHeart : ElementalHeartItem
 	public override void AddRecipes()
 	{
 		CreateRecipe()
-			.AddIngredient(ItemID.CrimsandBlock, 50)
+			.AddIngredient(ItemID.CrimsandBlock, RecipeCost(800))
 			.AddTile(TileID.WorkBenches)
 			.Register();
 	}

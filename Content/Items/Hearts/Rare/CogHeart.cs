@@ -10,7 +10,7 @@ public sealed class CogHeart : ElementalHeartItem
 	public override void AddRecipes()
 	{
 		CreateRecipe()
-			.AddIngredient(ItemID.Cog, 50)
+			.AddIngredient(ItemID.Cog, RecipeCost(300))
 			.AddTile(TileID.SteampunkBoiler)
 			.Register();
 	}

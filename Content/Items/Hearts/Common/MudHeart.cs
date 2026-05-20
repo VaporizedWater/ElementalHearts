@@ -10,7 +10,7 @@ public sealed class MudHeart : ElementalHeartItem
 	public override void AddRecipes()
 	{
 		CreateRecipe()
-			.AddIngredient(ItemID.MudBlock, 50)
+			.AddIngredient(ItemID.MudBlock, RecipeCost(1000))
 			.AddTile(TileID.WorkBenches)
 			.Register();
 	}

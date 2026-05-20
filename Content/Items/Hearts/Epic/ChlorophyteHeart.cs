@@ -10,7 +10,7 @@ public sealed class ChlorophyteHeart : ElementalHeartItem
 	public override void AddRecipes()
 	{
 		CreateRecipe()
-			.AddIngredient(ItemID.ChlorophyteBar, 15)
+			.AddIngredient(ItemID.ChlorophyteBar, RecipeCost(80))
 			.AddTile(TileID.AdamantiteForge)
 			.Register();
 	}

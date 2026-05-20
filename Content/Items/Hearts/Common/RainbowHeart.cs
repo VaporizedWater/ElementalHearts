@@ -10,7 +10,7 @@ public sealed class RainbowHeart : ElementalHeartItem
 	public override void AddRecipes()
 	{
 		CreateRecipe()
-			.AddIngredient(ItemID.RainbowBrick, 50)
+			.AddIngredient(ItemID.RainbowBrick, RecipeCost(50))
 			.AddTile(TileID.WorkBenches)
 			.Register();
 	}

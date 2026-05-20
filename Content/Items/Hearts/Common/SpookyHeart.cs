@@ -10,7 +10,7 @@ public sealed class SpookyHeart : ElementalHeartItem
 	public override void AddRecipes()
 	{
 		CreateRecipe()
-			.AddIngredient(ItemID.SpookyWood, 50)
+			.AddIngredient(ItemID.SpookyWood, RecipeCost(1000))
 			.AddTile(TileID.Sawmill)
 			.Register();
 	}

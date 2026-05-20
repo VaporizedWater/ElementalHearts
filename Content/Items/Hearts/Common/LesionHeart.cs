@@ -10,7 +10,7 @@ public sealed class LesionHeart : ElementalHeartItem
 	public override void AddRecipes()
 	{
 		CreateRecipe()
-			.AddIngredient(ItemID.LesionBlock, 50)
+			.AddIngredient(ItemID.LesionBlock, RecipeCost(400))
 			.AddTile(TileID.WorkBenches)
 			.Register();
 	}

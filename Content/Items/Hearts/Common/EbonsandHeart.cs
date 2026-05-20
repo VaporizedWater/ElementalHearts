@@ -10,7 +10,7 @@ public sealed class EbonsandHeart : ElementalHeartItem
 	public override void AddRecipes()
 	{
 		CreateRecipe()
-			.AddIngredient(ItemID.EbonsandBlock, 50)
+			.AddIngredient(ItemID.EbonsandBlock, RecipeCost(800))
 			.AddTile(TileID.WorkBenches)
 			.Register();
 	}

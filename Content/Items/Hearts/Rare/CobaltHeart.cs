@@ -10,7 +10,7 @@ public sealed class CobaltHeart : ElementalHeartItem
 	public override void AddRecipes()
 	{
 		CreateRecipe()
-			.AddIngredient(ItemID.CobaltBar, 20)
+			.AddIngredient(ItemID.CobaltBar, RecipeCost(100))
 			.AddTile(TileID.MythrilAnvil)
 			.Register();
 	}

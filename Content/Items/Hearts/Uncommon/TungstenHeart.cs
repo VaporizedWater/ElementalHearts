@@ -10,7 +10,7 @@ public sealed class TungstenHeart : ElementalHeartItem
 	public override void AddRecipes()
 	{
 		CreateRecipe()
-			.AddIngredient(ItemID.TungstenBar, 30)
+			.AddIngredient(ItemID.TungstenBar, RecipeCost(100))
 			.AddTile(TileID.Anvils)
 			.Register();
 	}

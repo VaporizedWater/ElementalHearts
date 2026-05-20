@@ -98,6 +98,15 @@ public sealed class HeartConsumptionWorld : ModSystem
 		_consumed.Clear();
 	}
 
+	public static void ClearAllHearts()
+	{
+		_consumed.Clear();
+		if (Main.netMode != NetmodeID.Server)
+		{
+			Main.LocalPlayer?.GetModPlayer<HeartConsumptionPlayer>().ReconcileWorldHp();
+		}
+	}
+
 	public override void SaveWorldData(TagCompound tag)
 	{
 		tag["ids"] = _consumed.Keys.ToList();

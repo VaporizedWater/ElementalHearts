@@ -10,7 +10,7 @@ public sealed class CrimstoneHeart : ElementalHeartItem
 	public override void AddRecipes()
 	{
 		CreateRecipe()
-			.AddIngredient(ItemID.CrimstoneBlock, 50)
+			.AddIngredient(ItemID.CrimstoneBlock, RecipeCost(1000))
 			.AddTile(TileID.DemonAltar)
 			.Register();
 	}

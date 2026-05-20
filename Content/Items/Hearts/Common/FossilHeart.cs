@@ -10,7 +10,7 @@ public sealed class FossilHeart : ElementalHeartItem
 	public override void AddRecipes()
 	{
 		CreateRecipe()
-			.AddIngredient(ItemID.DesertFossil, 50)
+			.AddIngredient(ItemID.DesertFossil, RecipeCost(300))
 			.AddTile(TileID.Extractinator)
 			.Register();
 	}

@@ -10,7 +10,7 @@ public sealed class DiscordHeart : ElementalHeartItem
 	public override void AddRecipes()
 	{
 		CreateRecipe()
-			.AddIngredient(ItemID.PixieDust, 25)
+			.AddIngredient(ItemID.PixieDust, RecipeCost(300))
 			.AddTile(TileID.CrystalBall)
 			.Register();
 	}

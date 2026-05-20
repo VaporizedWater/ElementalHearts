@@ -10,7 +10,7 @@ public sealed class LuminiteHeart : ElementalHeartItem
 	public override void AddRecipes()
 	{
 		CreateRecipe()
-			.AddIngredient(ItemID.LunarBar, 10)
+			.AddIngredient(ItemID.LunarBar, RecipeCost(60))
 			.AddTile(TileID.LunarCraftingStation)
 			.Register();
 	}

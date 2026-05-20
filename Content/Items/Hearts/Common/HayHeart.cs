@@ -10,7 +10,7 @@ public sealed class HayHeart : ElementalHeartItem
 	public override void AddRecipes()
 	{
 		CreateRecipe()
-			.AddIngredient(ItemID.Hay, 100)
+			.AddIngredient(ItemID.Hay, RecipeCost(2000))
 			.AddTile(TileID.WorkBenches)
 			.Register();
 	}

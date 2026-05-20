@@ -10,7 +10,7 @@ public sealed class MeteoriteHeart : ElementalHeartItem
 	public override void AddRecipes()
 	{
 		CreateRecipe()
-			.AddIngredient(ItemID.MeteoriteBar, 20)
+			.AddIngredient(ItemID.MeteoriteBar, RecipeCost(100))
 			.AddTile(TileID.Anvils)
 			.Register();
 	}

@@ -10,7 +10,7 @@ public sealed class AmethystHeart : ElementalHeartItem
 	public override void AddRecipes()
 	{
 		CreateRecipe()
-			.AddIngredient(ItemID.Amethyst, 30)
+			.AddIngredient(ItemID.Amethyst, RecipeCost(60))
 			.AddTile(TileID.HeavyWorkBench)
 			.Register();
 	}

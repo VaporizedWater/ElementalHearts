@@ -10,7 +10,7 @@ public sealed class MushroomHeart : ElementalHeartItem
 	public override void AddRecipes()
 	{
 		CreateRecipe()
-			.AddIngredient(ItemID.GlowingMushroom, 50)
+			.AddIngredient(ItemID.GlowingMushroom, RecipeCost(750))
 			.AddTile(TileID.WorkBenches)
 			.Register();
 	}

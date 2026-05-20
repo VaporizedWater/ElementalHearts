@@ -10,7 +10,7 @@ public sealed class ShroomiteHeart : ElementalHeartItem
 	public override void AddRecipes()
 	{
 		CreateRecipe()
-			.AddIngredient(ItemID.ShroomiteBar, 10)
+			.AddIngredient(ItemID.ShroomiteBar, RecipeCost(50))
 			.AddTile(TileID.Autohammer)
 			.Register();
 	}

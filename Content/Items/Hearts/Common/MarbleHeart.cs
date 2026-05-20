@@ -10,7 +10,7 @@ public sealed class MarbleHeart : ElementalHeartItem
 	public override void AddRecipes()
 	{
 		CreateRecipe()
-			.AddIngredient(ItemID.Marble, 50)
+			.AddIngredient(ItemID.Marble, RecipeCost(400))
 			.AddTile(TileID.WorkBenches)
 			.Register();
 	}

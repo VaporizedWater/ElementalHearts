@@ -10,7 +10,7 @@ public sealed class PumpkinHeart : ElementalHeartItem
 	public override void AddRecipes()
 	{
 		CreateRecipe()
-			.AddIngredient(ItemID.Pumpkin, 50)
+			.AddIngredient(ItemID.Pumpkin, RecipeCost(500))
 			.AddTile(TileID.Sawmill)
 			.Register();
 	}

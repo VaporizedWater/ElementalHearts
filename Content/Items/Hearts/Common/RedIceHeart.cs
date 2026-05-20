@@ -10,7 +10,7 @@ public sealed class RedIceHeart : ElementalHeartItem
 	public override void AddRecipes()
 	{
 		CreateRecipe()
-			.AddIngredient(ItemID.RedIceBlock, 50)
+			.AddIngredient(ItemID.RedIceBlock, RecipeCost(800))
 			.AddTile(TileID.IceMachine)
 			.Register();
 	}

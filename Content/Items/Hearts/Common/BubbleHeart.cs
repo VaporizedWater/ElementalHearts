@@ -10,7 +10,7 @@ public sealed class BubbleHeart : ElementalHeartItem
 	public override void AddRecipes()
 	{
 		CreateRecipe()
-			.AddIngredient(ItemID.Bubble, 50)
+			.AddIngredient(ItemID.Bubble, RecipeCost(1000))
 			.AddTile(TileID.WorkBenches)
 			.Register();
 	}

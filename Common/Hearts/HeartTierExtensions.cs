@@ -8,7 +8,7 @@ public static class HeartTierExtensions
 {
 	public static int GetHpGain(this HeartTier tier)
 	{
-		var cfg = ElementalHeartsConfig.Instance;
+		var cfg = ElementalHeartsHPConfig.Instance;
 		return tier switch
 		{
 			HeartTier.Common    => cfg.Common,

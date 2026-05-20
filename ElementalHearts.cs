@@ -1,6 +1,7 @@
 using System.IO;
 using ElementalHearts.Common.Network;
 using ElementalHearts.Common.Systems;
+using Terraria;
 using Terraria.ModLoader;
 
 namespace ElementalHearts;

@@ -10,7 +10,7 @@ public sealed class HoneyHeart : ElementalHeartItem
 	public override void AddRecipes()
 	{
 		CreateRecipe()
-			.AddIngredient(ItemID.HoneyBlock, 50)
+			.AddIngredient(ItemID.HoneyBlock, RecipeCost(200))
 			.AddTile(TileID.HoneyDispenser)
 			.Register();
 	}

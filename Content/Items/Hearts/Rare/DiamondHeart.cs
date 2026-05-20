@@ -10,7 +10,7 @@ public sealed class DiamondHeart : ElementalHeartItem
 	public override void AddRecipes()
 	{
 		CreateRecipe()
-			.AddIngredient(ItemID.Diamond, 20)
+			.AddIngredient(ItemID.Diamond, RecipeCost(30))
 			.AddTile(TileID.HeavyWorkBench)
 			.Register();
 	}

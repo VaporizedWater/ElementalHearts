@@ -10,7 +10,7 @@ public sealed class EnchantedHeart : ElementalHeartItem
 	public override void AddRecipes()
 	{
 		CreateRecipe()
-			.AddIngredient(ItemID.FallenStar, 20)
+			.AddIngredient(ItemID.FallenStar, RecipeCost(100))
 			.AddTile(TileID.CrystalBall)
 			.Register();
 	}

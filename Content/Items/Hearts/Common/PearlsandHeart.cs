@@ -10,7 +10,7 @@ public sealed class PearlsandHeart : ElementalHeartItem
 	public override void AddRecipes()
 	{
 		CreateRecipe()
-			.AddIngredient(ItemID.PearlsandBlock, 50)
+			.AddIngredient(ItemID.PearlsandBlock, RecipeCost(1000))
 			.AddTile(TileID.WorkBenches)
 			.Register();
 	}

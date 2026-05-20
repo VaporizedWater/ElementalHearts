@@ -10,7 +10,7 @@ public sealed class WormHeart : ElementalHeartItem
 	public override void AddRecipes()
 	{
 		CreateRecipe()
-			.AddIngredient(ItemID.RottenChunk, 20)
+			.AddIngredient(ItemID.RottenChunk, RecipeCost(150))
 			.AddTile(TileID.DemonAltar)
 			.Register();
 	}
