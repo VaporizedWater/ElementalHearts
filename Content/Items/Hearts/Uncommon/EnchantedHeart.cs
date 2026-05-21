@@ -1,4 +1,6 @@
 using ElementalHearts.Common.Hearts;
+using ElementalHearts.Content.Items.LifeShards;
+using Terraria.ModLoader;
 using Terraria.ID;
 
 namespace ElementalHearts.Content.Items.Hearts.Uncommon;
@@ -11,6 +13,7 @@ public sealed class EnchantedHeart : ElementalHeartItem
 	{
 		CreateRecipe()
 			.AddIngredient(ItemID.FallenStar, RecipeCost(100))
+			.AddIngredient(ModContent.ItemType<UncommonLifeShard>(), 4)
 			.AddTile(TileID.CrystalBall)
 			.Register();
 	}

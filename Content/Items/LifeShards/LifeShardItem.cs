@@ -50,6 +50,7 @@ public abstract class LifeShardItem : ModItem
 		CreateRecipe()
 			.AddIngredient(lower.GetItemType(), Tier.GetUpgradeCost())
 			.AddCondition(LifeShardSystem.SystemEnabledCondition)
+			.AddCondition(LifeShardSystem.UIUpgradeOnlyCondition)
 			.Register();
 	}
 

@@ -1,4 +1,6 @@
 using ElementalHearts.Common.Hearts;
+using ElementalHearts.Content.Items.LifeShards;
+using Terraria.ModLoader;
 using Terraria.ID;
 
 namespace ElementalHearts.Content.Items.Hearts.Legendary;
@@ -11,6 +13,7 @@ public sealed class LuminiteHeart : ElementalHeartItem
 	{
 		CreateRecipe()
 			.AddIngredient(ItemID.LunarBar, RecipeCost(60))
+			.AddIngredient(ModContent.ItemType<LegendaryLifeShard>(), 1)
 			.AddTile(TileID.LunarCraftingStation)
 			.Register();
 	}

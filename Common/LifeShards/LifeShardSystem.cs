@@ -24,6 +24,17 @@ public sealed class LifeShardSystem : ModSystem
 			Language.GetText("Mods.ElementalHearts.Conditions.LifeShardSystemEnabled"),
 			() => LifeShardConfig.Instance.SystemEnabled);
 
+	private static Condition _uiUpgradeOnlyCondition;
+
+	/// <summary>
+	/// Condition that is never met, used to disable standard recipe crafting
+	/// while preserving Shimmer decrafting capabilities.
+	/// </summary>
+	public static Condition UIUpgradeOnlyCondition =>
+		_uiUpgradeOnlyCondition ??= new Condition(
+			Language.GetOrRegister("Mods.ElementalHearts.Conditions.UIUpgradeOnly", () => "Can only be upgraded via the Life Shard UI"),
+			() => false);
+
 	public override void PostSetupContent()
 		=> SetLifeCrystalExtractable(LifeShardConfig.Instance.SystemEnabled);
 

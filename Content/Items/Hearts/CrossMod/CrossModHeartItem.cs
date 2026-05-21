@@ -17,16 +17,20 @@ public abstract class CrossModHeartItem : ElementalHeartItem
 	/// Registers a recipe that takes a single ingredient from <see cref="SourceMod"/>.
 	/// Silently no-ops if the source mod isn't loaded or the ingredient can't be resolved.
 	/// </summary>
-	protected void RegisterModRecipe(string ingredientInternalName, int quantity, int tile)
+	protected void RegisterModRecipe(string ingredientInternalName, int quantity, int tile, int shardType = 0, int shardCost = 0)
 	{
 		if (!ModLoader.TryGetMod(SourceMod, out Mod sourceMod))
 			return;
 		if (!sourceMod.TryFind<ModItem>(ingredientInternalName, out ModItem ingredient))
 			return;
 
-		CreateRecipe()
-			.AddIngredient(ingredient.Type, quantity)
-			.AddTile(tile)
+		var recipe = CreateRecipe()
+			.AddIngredient(ingredient.Type, quantity);
+
+		if (shardType > 0 && shardCost > 0)
+			recipe.AddIngredient(shardType, shardCost);
+
+		recipe.AddTile(tile)
 			.Register();
 	}
 }

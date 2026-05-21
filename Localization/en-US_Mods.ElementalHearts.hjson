@@ -250,7 +250,10 @@ Configs: {
 	}
 }
 
-Conditions.LifeShardSystemEnabled: Life Shard system enabled
+Conditions: {
+	LifeShardSystemEnabled: Life Shard system enabled
+	UIUpgradeOnly: Can only be upgraded via the Life Shard UI
+}
 
 UI: {
 	LifeShardPanel: Shards

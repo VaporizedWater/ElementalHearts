@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using ElementalHearts.Common.Configs;
 using ElementalHearts.Common.LifeShards;
 using Terraria;
@@ -15,6 +16,18 @@ namespace ElementalHearts.Common.Items;
 /// </summary>
 public sealed class LifeCrystalExtractinatorGlobalItem : GlobalItem
 {
+	public override void ModifyTooltips(Item item, List<TooltipLine> tooltips)
+	{
+		if (item.type == ItemID.Extractinator || item.type == ItemID.ChlorophyteExtractinator)
+		{
+			tooltips.Add(new TooltipLine(Mod, "ExtractinatorLifeCrystal", "Crushing a Life Crystal in the Extractinator turns it into something equally as useful"));
+		}
+		else if (item.type == ItemID.LifeCrystal)
+		{
+			tooltips.Add(new TooltipLine(Mod, "LifeCrystalExtractinator", "Can be crushed in the Extractinator"));
+		}
+	}
+
 	public override void ExtractinatorUse(int extractType, int extractinatorBlockType, ref int resultType, ref int resultStack)
 	{
 		if (extractType != ItemID.LifeCrystal)

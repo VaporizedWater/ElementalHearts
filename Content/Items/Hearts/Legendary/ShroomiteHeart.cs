@@ -1,4 +1,6 @@
 using ElementalHearts.Common.Hearts;
+using ElementalHearts.Content.Items.LifeShards;
+using Terraria.ModLoader;
 using Terraria.ID;
 
 namespace ElementalHearts.Content.Items.Hearts.Legendary;
@@ -11,6 +13,7 @@ public sealed class ShroomiteHeart : ElementalHeartItem
 	{
 		CreateRecipe()
 			.AddIngredient(ItemID.ShroomiteBar, RecipeCost(50))
+			.AddIngredient(ModContent.ItemType<LegendaryLifeShard>(), 1)
 			.AddTile(TileID.Autohammer)
 			.Register();
 	}

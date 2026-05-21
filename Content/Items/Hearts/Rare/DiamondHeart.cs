@@ -1,4 +1,6 @@
 using ElementalHearts.Common.Hearts;
+using ElementalHearts.Content.Items.LifeShards;
+using Terraria.ModLoader;
 using Terraria.ID;
 
 namespace ElementalHearts.Content.Items.Hearts.Rare;
@@ -11,6 +13,7 @@ public sealed class DiamondHeart : ElementalHeartItem
 	{
 		CreateRecipe()
 			.AddIngredient(ItemID.Diamond, RecipeCost(30))
+			.AddIngredient(ModContent.ItemType<RareLifeShard>(), 1)
 			.AddTile(TileID.HeavyWorkBench)
 			.Register();
 	}
