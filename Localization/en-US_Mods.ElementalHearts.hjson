@@ -112,6 +112,149 @@ Configs: {
 			Tooltip: Enable to wipe this world's consumed-heart record and refund the max life it granted, so every heart can be consumed again. Resets itself once it runs.
 		}
 	}
+
+	LifeShardConfig: {
+		DisplayName: Life Shard Settings
+
+		Headers: {
+			General: General
+			DropChances: Damage-Based Drop Chances
+			DamageThresholds: Damage Thresholds
+			Extractinator: Extractinator Yields
+		}
+
+		SystemEnabled: {
+			Label: Enable Life Shard System
+			Tooltip: Master switch for the entire Life Shard system — both damage-based drops and all shard crafting. Turn this off to disable it completely.
+		}
+
+		CommonDropChance: {
+			Label: Common Shard Drop Chance (%)
+			Tooltip: Chance to drop a Common Life Shard the first time an enemy's cumulative damage reaches the Common threshold. Bosses roll at double this chance.
+		}
+
+		UncommonDropChance: {
+			Label: Uncommon Shard Drop Chance (%)
+			Tooltip: Chance to drop an Uncommon Life Shard the first time an enemy's cumulative damage reaches the Uncommon threshold. Bosses roll at double this chance.
+		}
+
+		RareDropChance: {
+			Label: Rare Shard Drop Chance (%)
+			Tooltip: Chance to drop a Rare Life Shard the first time an enemy's cumulative damage reaches the Rare threshold. Bosses roll at double this chance.
+		}
+
+		EpicDropChance: {
+			Label: Epic Shard Drop Chance (%)
+			Tooltip: Chance to drop an Epic Life Shard the first time an enemy's cumulative damage reaches the Epic threshold. Bosses roll at double this chance.
+		}
+
+		LegendaryDropChance: {
+			Label: Legendary Shard Drop Chance (%)
+			Tooltip: Chance to drop a Legendary Life Shard the first time an enemy's cumulative damage reaches the Legendary threshold. Bosses roll at double this chance.
+		}
+
+		CommonDamageThreshold: {
+			Label: Common Shard Damage Threshold
+			Tooltip: Total damage an enemy must accumulate before it rolls once for a Common Life Shard.
+		}
+
+		UncommonDamageThreshold: {
+			Label: Uncommon Shard Damage Threshold
+			Tooltip: Total damage an enemy must accumulate before it rolls once for an Uncommon Life Shard.
+		}
+
+		RareDamageThreshold: {
+			Label: Rare Shard Damage Threshold
+			Tooltip: Total damage an enemy must accumulate before it rolls once for a Rare Life Shard.
+		}
+
+		EpicDamageThreshold: {
+			Label: Epic Shard Damage Threshold
+			Tooltip: Total damage an enemy must accumulate before it rolls once for an Epic Life Shard.
+		}
+
+		LegendaryDamageThreshold: {
+			Label: Legendary Shard Damage Threshold
+			Tooltip: Total damage an enemy must accumulate before it rolls once for a Legendary Life Shard.
+		}
+
+		ExtractinatorCommonMin: {
+			Label: Extractinator Common Minimum
+			Tooltip: Fewest Common Life Shards a Life Crystal yields in the Extractinator.
+		}
+
+		ExtractinatorCommonMax: {
+			Label: Extractinator Common Maximum
+			Tooltip: Most Common Life Shards a Life Crystal yields in the Extractinator.
+		}
+
+		ExtractinatorUncommonChance: {
+			Label: Extractinator Uncommon Chance (%)
+			Tooltip: Chance for a Life Crystal in the Extractinator to also yield Uncommon Life Shards.
+		}
+
+		ExtractinatorUncommonMin: {
+			Label: Extractinator Uncommon Minimum
+			Tooltip: Fewest Uncommon Life Shards yielded when the Uncommon bonus roll succeeds.
+		}
+
+		ExtractinatorUncommonMax: {
+			Label: Extractinator Uncommon Maximum
+			Tooltip: Most Uncommon Life Shards yielded when the Uncommon bonus roll succeeds.
+		}
+
+		ExtractinatorRareChance: {
+			Label: Extractinator Rare Chance (%)
+			Tooltip: Chance for a Life Crystal in the Extractinator to also yield Rare Life Shards.
+		}
+
+		ExtractinatorRareMin: {
+			Label: Extractinator Rare Minimum
+			Tooltip: Fewest Rare Life Shards yielded when the Rare bonus roll succeeds.
+		}
+
+		ExtractinatorRareMax: {
+			Label: Extractinator Rare Maximum
+			Tooltip: Most Rare Life Shards yielded when the Rare bonus roll succeeds.
+		}
+
+		ExtractinatorEpicChance: {
+			Label: Extractinator Epic Chance (%)
+			Tooltip: Chance for a Life Crystal in the Extractinator to also yield Epic Life Shards.
+		}
+
+		ExtractinatorEpicMin: {
+			Label: Extractinator Epic Minimum
+			Tooltip: Fewest Epic Life Shards yielded when the Epic bonus roll succeeds.
+		}
+
+		ExtractinatorEpicMax: {
+			Label: Extractinator Epic Maximum
+			Tooltip: Most Epic Life Shards yielded when the Epic bonus roll succeeds.
+		}
+
+		ExtractinatorLegendaryChance: {
+			Label: Extractinator Legendary Chance (%)
+			Tooltip: Chance for a Life Crystal in the Extractinator to also yield Legendary Life Shards.
+		}
+
+		ExtractinatorLegendaryMin: {
+			Label: Extractinator Legendary Minimum
+			Tooltip: Fewest Legendary Life Shards yielded when the Legendary bonus roll succeeds.
+		}
+
+		ExtractinatorLegendaryMax: {
+			Label: Extractinator Legendary Maximum
+			Tooltip: Most Legendary Life Shards yielded when the Legendary bonus roll succeeds.
+		}
+	}
+}
+
+Conditions.LifeShardSystemEnabled: Life Shard system enabled
+
+UI: {
+	LifeShardPanel: Shards
+	Combine: Combine {0} Life Shards into the next tier
 }
 
 # Display-name overrides. Anything not listed auto-generates from the class name.
@@ -1337,5 +1480,31 @@ Items: {
 		DisplayName: Yew Wood Heart
 		Tooltip: ""
 		ElementalPower: the comedic essence of YewWood
+	}
+
+	# ── Life Shards (damage-based crafting materials) ──────────────────────────
+	CommonLifeShard: {
+		DisplayName: Life Shard
+		Tooltip: ""
+	}
+
+	UncommonLifeShard: {
+		DisplayName: Life Shard
+		Tooltip: ""
+	}
+
+	RareLifeShard: {
+		DisplayName: Life Shard
+		Tooltip: ""
+	}
+
+	EpicLifeShard: {
+		DisplayName: Life Shard
+		Tooltip: ""
+	}
+
+	LegendaryLifeShard: {
+		DisplayName: Life Shard
+		Tooltip: ""
 	}
 }
