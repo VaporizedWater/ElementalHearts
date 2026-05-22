@@ -73,7 +73,7 @@ public sealed class HeartConsumptionWorld : ModSystem
 
 		// The packet only carries the item type; the heart is resolved to its canonical
 		// definition on every receiver, so a client can't spoof which heart was used.
-		if (!TryResolveHeart(itemType, out ElementalHeartItem heart))
+		if (!TryResolveHeart(itemType, out ElementalHeartItem? heart) || heart == null)
 			return;
 
 		if (Main.netMode == NetmodeID.Server)
@@ -167,10 +167,10 @@ public sealed class HeartConsumptionWorld : ModSystem
 		packet.Send(toClient: -1, ignoreClient: ignoreClient);
 	}
 
-	private static bool TryResolveHeart(int itemType, out ElementalHeartItem heart)
+	private static bool TryResolveHeart(int itemType, out ElementalHeartItem? heart)
 	{
 		heart = ModContent.GetModItem(itemType) as ElementalHeartItem;
-		return heart != null;
+		return  heart != null;
 	}
 
 	private static void PlayRemoteConsumeEffect(ElementalHeartItem heart, int consumerWhoAmI)

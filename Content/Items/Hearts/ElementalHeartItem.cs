@@ -35,7 +35,7 @@ public abstract class ElementalHeartItem : ModItem
 	/// <see cref="IsLoadingEnabled"/>, so every cross-mod heart — boss or craftable —
 	/// must report its source mod.
 	/// </summary>
-	public virtual string SourceMod => null;
+	public virtual string? SourceMod => null;
 
 	/// <summary>
 	/// Vanilla hearts always load; a cross-mod heart loads only when its mod is enabled
