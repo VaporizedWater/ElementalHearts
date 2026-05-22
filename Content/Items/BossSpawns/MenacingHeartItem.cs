@@ -40,20 +40,10 @@ public abstract class MenacingHeartItem : ModItem
 	public override bool? UseItem(Player player)
 	{
 		if (player.whoAmI == Main.myPlayer)
-		{
 			SoundEngine.PlaySound(SoundID.Roar, player.position);
 
-			int type = NPCSpawnType;
-
-			if (Main.netMode != NetmodeID.MultiplayerClient)
-			{
-				NPC.SpawnOnPlayer(player.whoAmI, type);
-			}
-			else
-			{
-				NetMessage.SendData(MessageID.SpawnBossUseLicenseStartSpoofUpdate, number: player.whoAmI, number2: type);
-			}
-		}
+		if (Main.netMode != NetmodeID.MultiplayerClient)
+			NPC.SpawnOnPlayer(player.whoAmI, NPCSpawnType);
 
 		return true;
 	}
@@ -72,6 +62,7 @@ public abstract class MenacingHeartItem : ModItem
 		CreateRecipe()
 			.AddIngredient(Tier.GetItemType(), 10)
 			.AddTile(TileID.DemonAltar)
+			.AddCondition(new Condition("Mods.ElementalHearts.Conditions.CurrentAnimateTier", () => global::ElementalHearts.Common.Systems.AnimateProgressionSystem.UnlockedTier == (int)Tier))
 			.Register();
 	}
 }

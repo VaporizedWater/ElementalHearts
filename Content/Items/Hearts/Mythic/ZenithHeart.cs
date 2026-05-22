@@ -22,7 +22,7 @@ public sealed class ZenithHeart : ElementalHeartItem
 		}
 
 		recipe.AddTile(TileID.LunarCraftingStation);
-		recipe.AddCondition(ElementalHearts.Common.Systems.AnimateProgressionSystem.DownedLegendaryAnimate);
+		recipe.AddCondition(global::ElementalHearts.Common.Systems.AnimateProgressionSystem.DownedLegendaryAnimate);
 		recipe.Register();
 	}
 }

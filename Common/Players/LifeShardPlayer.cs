@@ -4,6 +4,7 @@ using ElementalHearts.Content.Items.LifeShards;
 using Terraria;
 using Terraria.ModLoader;
 using Terraria.ModLoader.IO;
+using ElementalHearts.Common.Systems;
 
 namespace ElementalHearts.Common.Players;
 
@@ -77,6 +78,9 @@ public sealed class LifeShardPlayer : ModPlayer
 		if (fromTier < 0 || toTier <= fromTier || toTier >= SlotCount)
 			return false;
 
+		if (toTier > Systems.AnimateProgressionSystem.UnlockedTier)
+			return false;
+
 		int cost = ((LifeShardTier)fromTier).GetUpgradeCost((LifeShardTier)toTier);
 		if (cost <= 0 || Shards[fromTier].stack < cost)
 			return false;
@@ -131,6 +135,16 @@ public sealed class LifeShardPlayer : ModPlayer
 			if (tag.ContainsKey(SlotKey(i)))
 				Shards[i] = tag.Get<Item>(SlotKey(i));
 		}
+	}
+
+	public override System.Collections.Generic.IEnumerable<Item> AddMaterialsForCrafting(out ItemConsumedCallback itemConsumedCallback)
+	{
+		itemConsumedCallback = (item, index) =>
+		{
+			if (item.stack <= 0)
+				item.TurnToAir();
+		};
+		return Shards;
 	}
 
 	private static string SlotKey(int index) => $"shardSlot{index}";

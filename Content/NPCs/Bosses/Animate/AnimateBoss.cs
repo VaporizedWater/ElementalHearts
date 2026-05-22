@@ -75,11 +75,6 @@ public abstract class AnimateBoss : ModNPC
 		AnimateProgressionSystem.UnlockTier(ProgressionTier + 1);
 	}
 
-	public override void BossLoot(ref string name, ref int potionType)
-	{
-		potionType = ItemID.HealingPotion;
-	}
-
 	public override void ModifyNPCLoot(NPCLoot npcLoot)
 	{
 		// Basic drops can be added later

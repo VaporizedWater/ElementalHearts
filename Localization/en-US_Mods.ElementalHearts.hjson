@@ -111,6 +111,11 @@ Configs: {
 			Label: Clear Consumed Hearts
 			Tooltip: Enable to wipe this world's consumed-heart record and refund the max life it granted, so every heart can be consumed again. Resets itself once it runs.
 		}
+
+		ClearElementalTier: {
+			Tooltip: ""
+			Label: Clear Elemental Tier
+		}
 	}
 
 	LifeShardConfig: {
@@ -253,6 +258,8 @@ Configs: {
 Conditions: {
 	LifeShardSystemEnabled: Life Shard system enabled
 	UIUpgradeOnly: Can only be upgraded via the Life Shard UI
+	DownedLegendaryAnimate: Mods.ElementalHearts.Conditions.DownedLegendaryAnimate
+	CurrentAnimateTier: Mods.ElementalHearts.Conditions.CurrentAnimateTier
 }
 
 UI: {
@@ -267,1299 +274,659 @@ UI: {
 
 # Display-name overrides. Anything not listed auto-generates from the class name.
 Items: {
-	# ── "Soul of X" hearts (lowercase "of") ─────────────────────────────────────
-	SoulOfLightHeart: {
-		DisplayName: Soul of Light Heart
-		Tooltip: ""
-		ElementalPower: underground rainbows
+	CommonMenacingHeart: {
+		DisplayName: Menacing Heart
+		Tooltip: Summons Animate
 	}
 
-	SoulOfNightHeart: {
-		DisplayName: Soul of Night Heart
-		Tooltip: ""
-		ElementalPower: underground nightmares
+	UncommonMenacingHeart: {
+		DisplayName: Menacing Heart
+		Tooltip: Summons Animate
 	}
 
-	SoulOfFlightHeart: {
-		DisplayName: Soul of Flight Heart
-		Tooltip: ""
-		ElementalPower: annoying sky noodles
+	RareMenacingHeart: {
+		DisplayName: Menacing Heart
+		Tooltip: Summons Animate
 	}
 
-	SoulOfFrightHeart: {
-		DisplayName: Soul of Fright Heart
-		Tooltip: ""
-		ElementalPower: mechanical skulls
+	EpicMenacingHeart: {
+		DisplayName: Menacing Heart
+		Tooltip: Summons Animate
 	}
 
-	SoulOfMightHeart: {
-		DisplayName: Soul of Might Heart
-		Tooltip: ""
-		ElementalPower: mechanical worm segments
+	LegendaryMenacingHeart: {
+		DisplayName: Menacing Heart
+		Tooltip: Summons Animate
 	}
 
-	SoulOfSightHeart: {
-		DisplayName: Soul of Sight Heart
+	UncommonAnimatingPotion: {
 		Tooltip: ""
-		ElementalPower: mechanical laser eyes
+		DisplayName: Uncommon Animating Potion
 	}
 
-	# ── Vanilla: boss-themed hearts (entries below this point handle vanilla bosses;
-	# see the lower block for the rest, alphabetically sorted) ─────────────────
-	
-	SoulOfBlightHeart: {
-		DisplayName: Soul of Blight Heart
+	RareAnimatingPotion: {
 		Tooltip: ""
-		ElementalPower: the comedic essence of SoulOfBlight
+		DisplayName: Rare Animating Potion
 	}
 
-	ChampionHeart: {
-		DisplayName: Champion's Heart
+	LegendaryAnimatingPotion: {
 		Tooltip: ""
-		ElementalPower: the comedic essence of Champion
+		DisplayName: Legendary Animating Potion
 	}
 
-	LichHeart: {
-		DisplayName: Lich's Heart
+	EpicAnimatingPotion: {
 		Tooltip: ""
-		ElementalPower: the comedic essence of Lich
+		DisplayName: Epic Animating Potion
 	}
 
-	VampireHeart: {
-		DisplayName: Vampire's Heart
+	CommonAnimatingPotion: {
 		Tooltip: ""
-		ElementalPower: the comedic essence of Vampire
+		DisplayName: Common Animating Potion
 	}
 
-	ZephyrHeart: {
-		DisplayName: Zephyr's Heart
+	UncommonLifeShard: {
 		Tooltip: ""
-		ElementalPower: the comedic essence of Zephyr
+		DisplayName: Uncommon Life Shard
+	}
+
+	RareLifeShard: {
+		Tooltip: ""
+		DisplayName: Rare Life Shard
+	}
+
+	LegendaryLifeShard: {
+		Tooltip: ""
+		DisplayName: Legendary Life Shard
+	}
+
+	EpicLifeShard: {
+		Tooltip: ""
+		DisplayName: Epic Life Shard
+	}
+
+	CommonLifeShard: {
+		Tooltip: ""
+		DisplayName: Common Life Shard
+	}
+
+	TungstenHeart: {
+		Tooltip: ""
+		DisplayName: Tungsten Heart
+	}
+
+	TopazHeart: {
+		Tooltip: ""
+		DisplayName: Topaz Heart
+	}
+
+	TinHeart: {
+		Tooltip: ""
+		DisplayName: Tin Heart
+	}
+
+	SilverHeart: {
+		Tooltip: ""
+		DisplayName: Silver Heart
+	}
+
+	SapphireHeart: {
+		Tooltip: ""
+		DisplayName: Sapphire Heart
+	}
+
+	RubyHeart: {
+		Tooltip: ""
+		DisplayName: Ruby Heart
+	}
+
+	PlatinumHeart: {
+		Tooltip: ""
+		DisplayName: Platinum Heart
+	}
+
+	LeadHeart: {
+		Tooltip: ""
+		DisplayName: Lead Heart
+	}
+
+	IronHeart: {
+		Tooltip: ""
+		DisplayName: Iron Heart
+	}
+
+	GoldHeart: {
+		Tooltip: ""
+		DisplayName: Gold Heart
 	}
 
 	EnchantedHeart: {
 		Tooltip: ""
 		DisplayName: Enchanted Heart
-		ElementalPower: the comedic essence of Enchanted
 	}
 
 	EmeraldHeart: {
 		Tooltip: ""
 		DisplayName: Emerald Heart
-		ElementalPower: green gems
 	}
 
 	CopperHeart: {
 		Tooltip: ""
 		DisplayName: Copper Heart
-		ElementalPower: pennies
 	}
 
 	AmethystHeart: {
 		Tooltip: ""
 		DisplayName: Amethyst Heart
-		ElementalPower: purple gems
 	}
 
 	WormHeart: {
 		Tooltip: ""
 		DisplayName: Worm Heart
-		ElementalPower: underground segmented nightmares
+	}
+
+	SoulOfNightHeart: {
+		Tooltip: ""
+		DisplayName: Soul Of Night Heart
+	}
+
+	SoulOfLightHeart: {
+		Tooltip: ""
+		DisplayName: Soul Of Light Heart
+	}
+
+	SoulOfFlightHeart: {
+		Tooltip: ""
+		DisplayName: Soul Of Flight Heart
 	}
 
 	PalladiumHeart: {
 		Tooltip: ""
 		DisplayName: Palladium Heart
-		ElementalPower: orange hardmode rocks
 	}
 
 	OrichalcumHeart: {
 		Tooltip: ""
 		DisplayName: Orichalcum Heart
-		ElementalPower: pink hardmode rocks
 	}
 
 	MythrilHeart: {
 		Tooltip: ""
 		DisplayName: Mythril Heart
-		ElementalPower: green hardmode rocks
 	}
 
 	MeteoriteHeart: {
 		Tooltip: ""
 		DisplayName: Meteorite Heart
-		ElementalPower: space rocks crashing into your world
 	}
 
 	IchorHeart: {
 		Tooltip: ""
 		DisplayName: Ichor Heart
-		ElementalPower: golden shower that we do not question
 	}
 
 	HellstoneHeart: {
 		Tooltip: ""
 		DisplayName: Hellstone Heart
-		ElementalPower: burning your feet on hot coals
 	}
 
 	DiscordHeart: {
 		Tooltip: ""
 		DisplayName: Discord Heart
-		ElementalPower: the comedic essence of Discord
 	}
 
 	DiamondHeart: {
 		Tooltip: ""
 		DisplayName: Diamond Heart
-		ElementalPower: expensive engagement rings
 	}
 
 	DemoniteHeart: {
 		Tooltip: ""
 		DisplayName: Demonite Heart
-		ElementalPower: spooky purple rocks
 	}
 
 	DarkHeart: {
 		Tooltip: ""
 		DisplayName: Dark Heart
-		ElementalPower: the comedic essence of Dark
 	}
 
 	CursedFlameHeart: {
 		Tooltip: ""
 		DisplayName: Cursed Flame Heart
-		ElementalPower: green fire that won't go out
 	}
 
 	CrimtaneHeart: {
 		Tooltip: ""
 		DisplayName: Crimtane Heart
-		ElementalPower: bloody red rocks
 	}
 
 	CogHeart: {
 		Tooltip: ""
 		DisplayName: Cog Heart
-		ElementalPower: overpriced Steampunker gears
 	}
 
 	CobaltHeart: {
 		Tooltip: ""
 		DisplayName: Cobalt Heart
-		ElementalPower: blue hardmode rocks
 	}
 
 	BrainHeart: {
 		Tooltip: ""
 		DisplayName: Brain Heart
-		ElementalPower: massive headaches
 	}
 
 	AmberHeart: {
 		Tooltip: ""
 		DisplayName: Amber Heart
-		ElementalPower: fossilized tree sap
 	}
 
 	ZenithHeart: {
 		Tooltip: ""
 		DisplayName: Zenith Heart
-		ElementalPower: literal protagonist plot armor
 	}
 
 	SpectreHeart: {
 		Tooltip: ""
 		DisplayName: Spectre Heart
-		ElementalPower: spooky ghost metal
 	}
 
 	ShroomiteHeart: {
 		Tooltip: ""
 		DisplayName: Shroomite Heart
-		ElementalPower: invisible mushroom ninjas
 	}
 
 	LuminiteHeart: {
 		Tooltip: ""
 		DisplayName: Luminite Heart
-		ElementalPower: moon lord's glowing tears
 	}
 
 	EctoplasmHeart: {
 		Tooltip: ""
 		DisplayName: Ectoplasm Heart
-		ElementalPower: ghostly goo from dead paladins
-	}
-
-	# ── Vanilla: exotic boss-themed hearts (alphabetical) ──────────────────────
-	BetsyHeart: {
-		DisplayName: Betsy's Heart
-		Tooltip: ""
-		ElementalPower: angry dragons
-	}
-
-	BrainOfCthulhuHeart: {
-		DisplayName: Brain of Cthulhu's Heart
-		Tooltip: ""
-		ElementalPower: disgusting green slime
-	}
-
-	DeerclopsHeart: {
-		DisplayName: Deerclops' Heart
-		Tooltip: ""
-		ElementalPower: wintery cyclops deer
-	}
-
-	DestroyerHeart: {
-		DisplayName: The Destroyer's Heart
-		Tooltip: ""
-		ElementalPower: mechanical worm segments
-	}
-
-	DukeFishronHeart: {
-		DisplayName: Duke Fishron's Heart
-		Tooltip: ""
-		ElementalPower: angry mutated pigs
-	}
-
-	ElfHeart: {
-		DisplayName: Elf Heart
-		Tooltip: ""
-		ElementalPower: santa's angry helpers
-	}
-
-	EmpressOfLightHeart: {
-		DisplayName: Empress of Light's Heart
-		Tooltip: ""
-		ElementalPower: bullet hell dodges
-	}
-
-	EyeOfCthulhuHeart: {
-		DisplayName: Eye of Cthulhu's Heart
-		Tooltip: ""
-		ElementalPower: staring contests
-	}
-
-	FlyingDutchmanHeart: {
-		DisplayName: Flying Dutchman's Heart
-		Tooltip: ""
-		ElementalPower: ghost pirates
-	}
-
-	GolemHeart: {
-		DisplayName: Golem's Heart
-		Tooltip: ""
-		ElementalPower: jungle temple power cells
-	}
-
-	KingSlimeHeart: {
-		DisplayName: King Slime's Heart
-		Tooltip: ""
-		ElementalPower: bouncy blue royalty
-	}
-
-	LunaticCultistHeart: {
-		DisplayName: Lunatic Cultist's Heart
-		Tooltip: ""
-		ElementalPower: ancient sun cults
-	}
-
-	MartianSaucerHeart: {
-		DisplayName: Martian Saucer's Heart
-		Tooltip: ""
-		ElementalPower: foreign alien invaders
-	}
-
-	MenacingHeart: {
-		DisplayName: Menacing Heart
-		Tooltip: ""
-		ElementalPower: the comedic essence of Menacing
-	}
-
-	MoonLordHeart: {
-		DisplayName: Moon Lord's Heart
-		Tooltip: ""
-		ElementalPower: lunar invasions
-	}
-
-	MourningWoodHeart: {
-		DisplayName: Mourning Wood's Heart
-		Tooltip: ""
-		ElementalPower: burning spooky trees
-	}
-
-	PlanteraHeart: {
-		DisplayName: Plantera's Heart
-		Tooltip: ""
-		ElementalPower: angry jungle flowers
-	}
-
-	PumpkingHeart: {
-		DisplayName: Pumpking's Heart
-		Tooltip: ""
-		ElementalPower: pumpkins on horseback
-	}
-
-	QueenBeeHeart: {
-		DisplayName: Queen Bee's Heart
-		Tooltip: ""
-		ElementalPower: not the bees
-	}
-
-	QueenSlimeHeart: {
-		DisplayName: Queen Slime's Heart
-		Tooltip: ""
-		ElementalPower: bouncy pink royalty
-	}
-
-	RazorpineHeart: {
-		DisplayName: Razorpine Heart
-		Tooltip: ""
-		ElementalPower: razor-edged pine needles
-	}
-
-	SkeletronHeart: {
-		DisplayName: Skeletron's Heart
-		Tooltip: ""
-		ElementalPower: spooky scary skeletons
 	}
 
 	WallOfFleshHeart: {
-		DisplayName: Wall of Flesh's Heart
 		Tooltip: ""
-		ElementalPower: running for your life in hell
+		DisplayName: Wall Of Flesh Heart
+	}
+
+	SkeletronHeart: {
+		Tooltip: ""
+		DisplayName: Skeletron Heart
+	}
+
+	RazorpineHeart: {
+		Tooltip: ""
+		DisplayName: Razorpine Heart
+	}
+
+	QueenSlimeHeart: {
+		Tooltip: ""
+		DisplayName: Queen Slime Heart
+	}
+
+	QueenBeeHeart: {
+		Tooltip: ""
+		DisplayName: Queen Bee Heart
+	}
+
+	PumpkingHeart: {
+		Tooltip: ""
+		DisplayName: Pumpking Heart
+	}
+
+	PlanteraHeart: {
+		Tooltip: ""
+		DisplayName: Plantera Heart
+	}
+
+	MourningWoodHeart: {
+		Tooltip: ""
+		DisplayName: Mourning Wood Heart
+	}
+
+	MoonLordHeart: {
+		Tooltip: ""
+		DisplayName: Moon Lord Heart
+	}
+
+	MenacingHeart: {
+		Tooltip: ""
+		DisplayName: Menacing Heart
+	}
+
+	MartianSaucerHeart: {
+		Tooltip: ""
+		DisplayName: Martian Saucer Heart
+	}
+
+	LunaticCultistHeart: {
+		Tooltip: ""
+		DisplayName: Lunatic Cultist Heart
+	}
+
+	KingSlimeHeart: {
+		Tooltip: ""
+		DisplayName: King Slime Heart
+	}
+
+	GolemHeart: {
+		Tooltip: ""
+		DisplayName: Golem Heart
+	}
+
+	FlyingDutchmanHeart: {
+		Tooltip: ""
+		DisplayName: Flying Dutchman Heart
+	}
+
+	EyeOfCthulhuHeart: {
+		Tooltip: ""
+		DisplayName: Eye Of Cthulhu Heart
+	}
+
+	EmpressOfLightHeart: {
+		Tooltip: ""
+		DisplayName: Empress Of Light Heart
+	}
+
+	ElfHeart: {
+		Tooltip: ""
+		DisplayName: Elf Heart
+	}
+
+	DukeFishronHeart: {
+		Tooltip: ""
+		DisplayName: Duke Fishron Heart
+	}
+
+	DestroyerHeart: {
+		Tooltip: ""
+		DisplayName: Destroyer Heart
+	}
+
+	DeerclopsHeart: {
+		Tooltip: ""
+		DisplayName: Deerclops Heart
+	}
+
+	BrainOfCthulhuHeart: {
+		Tooltip: ""
+		DisplayName: Brain Of Cthulhu Heart
+	}
+
+	BetsyHeart: {
+		Tooltip: ""
+		DisplayName: Betsy Heart
 	}
 
 	TitaniumHeart: {
 		Tooltip: ""
 		DisplayName: Titanium Heart
-		ElementalPower: grey hardmode rocks
+	}
+
+	SoulOfSightHeart: {
+		Tooltip: ""
+		DisplayName: Soul Of Sight Heart
+	}
+
+	SoulOfMightHeart: {
+		Tooltip: ""
+		DisplayName: Soul Of Might Heart
+	}
+
+	SoulOfFrightHeart: {
+		Tooltip: ""
+		DisplayName: Soul Of Fright Heart
 	}
 
 	MechanicalHeart: {
 		Tooltip: ""
 		DisplayName: Mechanical Heart
-		ElementalPower: the mechanical terror trilogy
 	}
 
 	HallowedHeart: {
 		Tooltip: ""
 		DisplayName: Hallowed Heart
-		ElementalPower: blinding holy light
 	}
 
 	CrystalHeart: {
 		Tooltip: ""
 		DisplayName: Crystal Heart
-		ElementalPower: the comedic essence of Crystal
 	}
 
 	ChlorophyteHeart: {
 		Tooltip: ""
 		DisplayName: Chlorophyte Heart
-		ElementalPower: aggressive jungle plants
 	}
 
 	AdamantiteHeart: {
 		Tooltip: ""
 		DisplayName: Adamantite Heart
-		ElementalPower: red hardmode rocks
 	}
 
 	WoodHeart: {
 		Tooltip: ""
 		DisplayName: Wood Heart
-		ElementalPower: splinters you get from punching trees
 	}
 
 	SunplateHeart: {
 		Tooltip: ""
 		DisplayName: Sunplate Heart
-		ElementalPower: floating island debris
 	}
 
 	StoneHeart: {
 		Tooltip: ""
 		DisplayName: Stone Heart
-		ElementalPower: generic grey rocks
 	}
 
 	SpookyHeart: {
 		Tooltip: ""
 		DisplayName: Spooky Heart
-		ElementalPower: Halloween decorations left up until January
 	}
 
 	SnowHeart: {
 		Tooltip: ""
 		DisplayName: Snow Heart
-		ElementalPower: frozen water that makes you cold
 	}
 
 	SnowCloudHeart: {
 		Tooltip: ""
 		DisplayName: Snow Cloud Heart
-		ElementalPower: blizzard warnings
 	}
 
 	SlimeHeart: {
 		Tooltip: ""
 		DisplayName: Slime Heart
-		ElementalPower: wobbly blue gelatin
 	}
 
 	ShadewoodHeart: {
 		Tooltip: ""
 		DisplayName: Shadewood Heart
-		ElementalPower: bloody red planks
 	}
 
 	SandHeart: {
 		Tooltip: ""
 		DisplayName: Sand Heart
-		ElementalPower: coarse, rough, irritating sand that gets everywhere
 	}
 
 	RichMahoganyHeart: {
 		Tooltip: ""
 		DisplayName: Rich Mahogany Heart
-		ElementalPower: expensive tropical tables
 	}
 
 	RedIceHeart: {
 		Tooltip: ""
 		DisplayName: Red Ice Heart
-		ElementalPower: bloody red ice
 	}
 
 	RainCloudHeart: {
 		Tooltip: ""
 		DisplayName: Rain Cloud Heart
-		ElementalPower: depressing weather
 	}
 
 	RainbowHeart: {
 		Tooltip: ""
 		DisplayName: Rainbow Heart
-		ElementalPower: skittles but dangerous
 	}
 
 	PurpleIceHeart: {
 		Tooltip: ""
 		DisplayName: Purple Ice Heart
-		ElementalPower: evil purple ice
 	}
 
 	PumpkinHeart: {
 		Tooltip: ""
 		DisplayName: Pumpkin Heart
-		ElementalPower: spiced lattes
 	}
 
 	PinkIceHeart: {
 		Tooltip: ""
 		DisplayName: Pink Ice Heart
-		ElementalPower: hallowed pink ice
 	}
 
 	PearlwoodHeart: {
 		Tooltip: ""
 		DisplayName: Pearlwood Heart
-		ElementalPower: fairy tale trees
 	}
 
 	PearlstoneHeart: {
 		Tooltip: ""
 		DisplayName: Pearlstone Heart
-		ElementalPower: hallowed pink rocks
 	}
 
 	PearlsandHeart: {
 		Tooltip: ""
 		DisplayName: Pearlsand Heart
-		ElementalPower: hallowed pink sand
 	}
 
 	PalmWoodHeart: {
 		Tooltip: ""
 		DisplayName: Palm Wood Heart
-		ElementalPower: beach vacations
 	}
 
 	ObsidianHeart: {
 		Tooltip: ""
 		DisplayName: Obsidian Heart
-		ElementalPower: lava meeting water
 	}
 
 	MushroomHeart: {
 		Tooltip: ""
 		DisplayName: Mushroom Heart
-		ElementalPower: glowing blue fungus
 	}
 
 	MudHeart: {
 		Tooltip: ""
 		DisplayName: Mud Heart
-		ElementalPower: dirty wet earth
 	}
 
 	MarbleHeart: {
 		Tooltip: ""
 		DisplayName: Marble Heart
-		ElementalPower: ancient greek statues
 	}
 
 	LesionHeart: {
 		Tooltip: ""
 		DisplayName: Lesion Heart
-		ElementalPower: decaying brain matter
 	}
 
 	IceHeart: {
 		Tooltip: ""
 		DisplayName: Ice Heart
-		ElementalPower: arctic snow caps
 	}
 
 	HoneyHeart: {
 		Tooltip: ""
 		DisplayName: Honey Heart
-		ElementalPower: sticky bee vomit
 	}
 
 	HayHeart: {
 		Tooltip: ""
 		DisplayName: Hay Heart
-		ElementalPower: allergies acting up
 	}
 
 	GraniteHeart: {
 		Tooltip: ""
 		DisplayName: Granite Heart
-		ElementalPower: kitchen countertops
 	}
 
 	GlassHeart: {
 		Tooltip: ""
 		DisplayName: Glass Heart
-		ElementalPower: shattering immediately upon impact
 	}
 
 	FossilHeart: {
 		Tooltip: ""
 		DisplayName: Fossil Heart
-		ElementalPower: the comedic essence of Fossil
 	}
 
 	FleshHeart: {
 		Tooltip: ""
 		DisplayName: Flesh Heart
-		ElementalPower: uncomfortably squishy walls
 	}
 
 	EbonwoodHeart: {
 		Tooltip: ""
 		DisplayName: Ebonwood Heart
-		ElementalPower: evil purple planks
 	}
 
 	EbonstoneHeart: {
 		Tooltip: ""
 		DisplayName: Ebonstone Heart
-		ElementalPower: evil purple rocks
 	}
 
 	EbonsandHeart: {
 		Tooltip: ""
 		DisplayName: Ebonsand Heart
-		ElementalPower: evil purple sand
 	}
 
 	DynastyHeart: {
 		Tooltip: ""
 		DisplayName: Dynasty Heart
-		ElementalPower: traveling merchant scams
 	}
 
 	DirtHeart: {
 		Tooltip: ""
 		DisplayName: Dirt Heart
-		ElementalPower: the rarest block in the entire game
 	}
 
 	CrimstoneHeart: {
 		Tooltip: ""
 		DisplayName: Crimstone Heart
-		ElementalPower: bloody red rocks
 	}
 
 	CrimsandHeart: {
 		Tooltip: ""
 		DisplayName: Crimsand Heart
-		ElementalPower: bloody red sand
 	}
 
 	CoralstoneHeart: {
 		Tooltip: ""
 		DisplayName: Coralstone Heart
-		ElementalPower: Aquarus, the King of Atlantis
 	}
 
 	CloudHeart: {
 		Tooltip: ""
 		DisplayName: Cloud Heart
-		ElementalPower: fluffy sky cotton
 	}
 
 	CandyCaneHeart: {
 		Tooltip: ""
 		DisplayName: Candy Cane Heart
-		ElementalPower: peppermint cavities
 	}
 
 	CactusHeart: {
 		Tooltip: ""
 		DisplayName: Cactus Heart
-		ElementalPower: prickly desert plants
 	}
 
 	BubbleHeart: {
 		Tooltip: ""
 		DisplayName: Bubble Heart
-		ElementalPower: soapy spheres of air
 	}
 
 	BorealWoodHeart: {
 		Tooltip: ""
 		DisplayName: Boreal Wood Heart
-		ElementalPower: IKEA furniture
-	}
-
-	GoldHeart: {
-		DisplayName: Gold Heart
-		Tooltip: ""
-		ElementalPower: pirate booty
-	}
-
-	IronHeart: {
-		DisplayName: Iron Heart
-		Tooltip: ""
-		ElementalPower: anvils falling from the sky
-	}
-
-	LeadHeart: {
-		DisplayName: Lead Heart
-		Tooltip: ""
-		ElementalPower: radiation poisoning
-	}
-
-	PlatinumHeart: {
-		DisplayName: Platinum Heart
-		Tooltip: ""
-		ElementalPower: credit cards
-	}
-
-	RubyHeart: {
-		DisplayName: Ruby Heart
-		Tooltip: ""
-		ElementalPower: red gems
-	}
-
-	SapphireHeart: {
-		DisplayName: Sapphire Heart
-		Tooltip: ""
-		ElementalPower: blue gems
-	}
-
-	SilverHeart: {
-		DisplayName: Silver Heart
-		Tooltip: ""
-		ElementalPower: second place medals
-	}
-
-	TinHeart: {
-		DisplayName: Tin Heart
-		Tooltip: ""
-		ElementalPower: canned beans
-	}
-
-	TopazHeart: {
-		DisplayName: Topaz Heart
-		Tooltip: ""
-		ElementalPower: yellow gems
-	}
-
-	TungstenHeart: {
-		DisplayName: Tungsten Heart
-		Tooltip: ""
-		ElementalPower: lightbulb filaments
-	}
-
-	AbyssGravelHeart: {
-		DisplayName: Abyss Gravel Heart
-		Tooltip: ""
-		ElementalPower: the comedic essence of AbyssGravel
-	}
-
-	AerialiteHeart: {
-		DisplayName: Aerialite Heart
-		Tooltip: ""
-		ElementalPower: the comedic essence of Aerialite
-	}
-
-	AfflictedHeart: {
-		DisplayName: Afflicted Heart
-		Tooltip: ""
-		ElementalPower: the comedic essence of Afflicted
-	}
-
-	AmbergrisHeart: {
-		DisplayName: Ambergris Heart
-		Tooltip: ""
-		ElementalPower: the comedic essence of Ambergris
-	}
-
-	AquaticHeart: {
-		DisplayName: Aquatic Heart
-		Tooltip: ""
-		ElementalPower: the comedic essence of Aquatic
-	}
-
-	ArmoredHeart: {
-		DisplayName: Armored Heart
-		Tooltip: ""
-		ElementalPower: the comedic essence of Armored
-	}
-
-	AstralBossHeart: {
-		DisplayName: Astral Boss Heart
-		Tooltip: ""
-		ElementalPower: the comedic essence of AstralBoss
-	}
-
-	AstralClayHeart: {
-		DisplayName: Astral Clay Heart
-		Tooltip: ""
-		ElementalPower: the comedic essence of AstralClay
-	}
-
-	AstralDirtHeart: {
-		DisplayName: Astral Dirt Heart
-		Tooltip: ""
-		ElementalPower: the comedic essence of AstralDirt
-	}
-
-	AstralHeart: {
-		DisplayName: Astral Heart
-		Tooltip: ""
-		ElementalPower: the comedic essence of Astral
-	}
-
-	AstralIceHeart: {
-		DisplayName: Astral Ice Heart
-		Tooltip: ""
-		ElementalPower: the comedic essence of AstralIce
-	}
-
-	AstralMonolithHeart: {
-		DisplayName: Astral Monolith Heart
-		Tooltip: ""
-		ElementalPower: the comedic essence of AstralMonolith
-	}
-
-	AstralSandHeart: {
-		DisplayName: Astral Sand Heart
-		Tooltip: ""
-		ElementalPower: the comedic essence of AstralSand
-	}
-
-	AstralSandstoneHeart: {
-		DisplayName: Astral Sandstone Heart
-		Tooltip: ""
-		ElementalPower: the comedic essence of AstralSandstone
-	}
-
-	AstralSnowHeart: {
-		DisplayName: Astral Snow Heart
-		Tooltip: ""
-		ElementalPower: the comedic essence of AstralSnow
-	}
-
-	AstralStoneHeart: {
-		DisplayName: Astral Stone Heart
-		Tooltip: ""
-		ElementalPower: the comedic essence of AstralStone
-	}
-
-	AuricHeart: {
-		DisplayName: Auric Heart
-		Tooltip: ""
-		ElementalPower: the comedic essence of Auric
-	}
-
-	BlazingHeart: {
-		DisplayName: Blazing Heart
-		Tooltip: ""
-		ElementalPower: the comedic essence of Blazing
-	}
-
-	BloodyWormHeart: {
-		DisplayName: Bloody Worm Heart
-		Tooltip: ""
-		ElementalPower: the comedic essence of BloodyWorm
-	}
-
-	BrimstoneSlagHeart: {
-		DisplayName: Brimstone Slag Heart
-		Tooltip: ""
-		ElementalPower: the comedic essence of BrimstoneSlag
-	}
-
-	CalamitousHeart: {
-		DisplayName: Calamitous Heart
-		Tooltip: ""
-		ElementalPower: the comedic essence of Calamitous
-	}
-
-	CelestialRemainsHeart: {
-		DisplayName: Celestial Remains Heart
-		Tooltip: ""
-		ElementalPower: the comedic essence of CelestialRemains
-	}
-
-	CinderplateHeart: {
-		DisplayName: Cinderplate Heart
-		Tooltip: ""
-		ElementalPower: the comedic essence of Cinderplate
-	}
-
-	CorpusHeart: {
-		DisplayName: Corpus Heart
-		Tooltip: ""
-		ElementalPower: the comedic essence of Corpus
-	}
-
-	CosmiliteHeart: {
-		DisplayName: Cosmilite Heart
-		Tooltip: ""
-		ElementalPower: the comedic essence of Cosmilite
-	}
-
-	CryogenHeart: {
-		DisplayName: Cryogen Heart
-		Tooltip: ""
-		ElementalPower: the comedic essence of Cryogen
-	}
-
-	CryonicHeart: {
-		DisplayName: Cryonic Heart
-		Tooltip: ""
-		ElementalPower: the comedic essence of Cryonic
-	}
-
-	CrystallizedToxicHeart: {
-		DisplayName: Crystallized Toxic Heart
-		Tooltip: ""
-		ElementalPower: the comedic essence of CrystallizedToxic
-	}
-
-	DarkPlasmicHeart: {
-		DisplayName: Dark Plasmic Heart
-		Tooltip: ""
-		ElementalPower: the comedic essence of DarkPlasmic
-	}
-
-	DraconicHeart: {
-		DisplayName: Draconic Heart
-		Tooltip: ""
-		ElementalPower: the comedic essence of Draconic
-	}
-
-	DynamoStemHeart: {
-		DisplayName: Dynamo Stem Heart
-		Tooltip: ""
-		ElementalPower: the comedic essence of DynamoStem
-	}
-
-	EutrophicSandHeart: {
-		DisplayName: Eutrophic Sand Heart
-		Tooltip: ""
-		ElementalPower: the comedic essence of EutrophicSand
-	}
-
-	ExodiumClusterHeart: {
-		DisplayName: Exodium Cluster Heart
-		Tooltip: ""
-		ElementalPower: the comedic essence of ExodiumCluster
-	}
-
-	FungalHeart: {
-		DisplayName: Fungal Heart
-		Tooltip: ""
-		ElementalPower: the comedic essence of Fungal
-	}
-
-	GehennaHeart: {
-		DisplayName: Gehenna Heart
-		Tooltip: ""
-		ElementalPower: the comedic essence of Gehenna
-	}
-
-	GravistarHeart: {
-		DisplayName: Gravistar Heart
-		Tooltip: ""
-		ElementalPower: the comedic essence of Gravistar
-	}
-
-	HardenedAstralSandHeart: {
-		DisplayName: Hardened Astral Sand Heart
-		Tooltip: ""
-		ElementalPower: the comedic essence of HardenedAstralSand
-	}
-
-	HardenedSulphurousSandstoneHeart: {
-		DisplayName: Hardened Sulphurous Sandstone Heart
-		Tooltip: ""
-		ElementalPower: the comedic essence of HardenedSulphurousSandstone
-	}
-
-	MutatedHeart: {
-		DisplayName: Mutated Heart
-		Tooltip: ""
-		ElementalPower: the comedic essence of Mutated
-	}
-
-	NavystoneHeart: {
-		DisplayName: Navystone Heart
-		Tooltip: ""
-		ElementalPower: the comedic essence of Navystone
-	}
-
-	NebulousHeart: {
-		DisplayName: Nebulous Heart
-		Tooltip: ""
-		ElementalPower: the comedic essence of Nebulous
-	}
-
-	NovaeSlugHeart: {
-		DisplayName: Novae Slug Heart
-		Tooltip: ""
-		ElementalPower: the comedic essence of NovaeSlug
-	}
-
-	OceanHeart: {
-		DisplayName: Ocean Heart
-		Tooltip: ""
-		ElementalPower: the comedic essence of Ocean
-	}
-
-	PerennialHeart: {
-		DisplayName: Perennial Heart
-		Tooltip: ""
-		ElementalPower: the comedic essence of Perennial
-	}
-
-	PlantyMushHeart: {
-		DisplayName: Planty Mush Heart
-		Tooltip: ""
-		ElementalPower: the comedic essence of PlantyMush
-	}
-
-	PolarizedHeart: {
-		DisplayName: Polarized Heart
-		Tooltip: ""
-		ElementalPower: the comedic essence of Polarized
-	}
-
-	ProfanedHeart: {
-		DisplayName: Profaned Heart
-		Tooltip: ""
-		ElementalPower: the comedic essence of Profaned
-	}
-
-	RottenHeart: {
-		DisplayName: Rotten Heart
-		Tooltip: ""
-		ElementalPower: the comedic essence of Rotten
-	}
-
-	ScoriaHeart: {
-		DisplayName: Scoria Heart
-		Tooltip: ""
-		ElementalPower: the comedic essence of Scoria
-	}
-
-	SeaPrismHeart: {
-		DisplayName: Sea Prism Heart
-		Tooltip: ""
-		ElementalPower: the comedic essence of SeaPrism
-	}
-
-	SulphurousSandHeart: {
-		DisplayName: Sulphurous Sand Heart
-		Tooltip: ""
-		ElementalPower: the comedic essence of SulphurousSand
-	}
-
-	SulphurousSandstoneHeart: {
-		DisplayName: Sulphurous Sandstone Heart
-		Tooltip: ""
-		ElementalPower: the comedic essence of SulphurousSandstone
-	}
-
-	TenebrisHeart: {
-		DisplayName: Tenebris Heart
-		Tooltip: ""
-		ElementalPower: the comedic essence of Tenebris
-	}
-
-	TwistingHeart: {
-		DisplayName: Twisting Heart
-		Tooltip: ""
-		ElementalPower: the comedic essence of Twisting
-	}
-
-	UelibloomHeart: {
-		DisplayName: Uelibloom Heart
-		Tooltip: ""
-		ElementalPower: the comedic essence of Uelibloom
-	}
-
-	VoidstoneHeart: {
-		DisplayName: Voidstone Heart
-		Tooltip: ""
-		ElementalPower: the comedic essence of Voidstone
-	}
-
-	CornucopiaHeart: {
-		DisplayName: Cornucopia Heart
-		Tooltip: ""
-		ElementalPower: the comedic essence of Cornucopia
-	}
-
-	CursedHeart: {
-		DisplayName: Cursed Heart
-		Tooltip: ""
-		ElementalPower: the comedic essence of Cursed
-	}
-
-	EasterHeart: {
-		DisplayName: Easter Heart
-		Tooltip: ""
-		ElementalPower: the comedic essence of Easter
-	}
-
-	AbyssalHeart: {
-		DisplayName: Abyssal Heart
-		Tooltip: ""
-		ElementalPower: the comedic essence of Abyssal
-	}
-
-	AquaiteHeart: {
-		DisplayName: Aquaite Heart
-		Tooltip: ""
-		ElementalPower: the comedic essence of Aquaite
-	}
-
-	BeholderHeart: {
-		DisplayName: Beholder Heart
-		Tooltip: ""
-		ElementalPower: the comedic essence of Beholder
-	}
-
-	BrackishClumpHeart: {
-		DisplayName: Brackish Clump Heart
-		Tooltip: ""
-		ElementalPower: the comedic essence of BrackishClump
-	}
-
-	DepthsRockHeart: {
-		DisplayName: Depths Rock Heart
-		Tooltip: ""
-		ElementalPower: the comedic essence of DepthsRock
-	}
-
-	DormantHeart: {
-		DisplayName: Dormant Heart
-		Tooltip: ""
-		ElementalPower: the comedic essence of Dormant
-	}
-
-	IceboundStriderHeart: {
-		DisplayName: Icebound Strider Heart
-		Tooltip: ""
-		ElementalPower: the comedic essence of IceboundStrider
-	}
-
-	IllumiteHeart: {
-		DisplayName: Illumite Heart
-		Tooltip: ""
-		ElementalPower: the comedic essence of Illumite
-	}
-
-	LifeQuartzHeart: {
-		DisplayName: Life Quartz Heart
-		Tooltip: ""
-		ElementalPower: the comedic essence of LifeQuartz
-	}
-
-	LodestoneHeart: {
-		DisplayName: Lodestone Heart
-		Tooltip: ""
-		ElementalPower: the comedic essence of Lodestone
-	}
-
-	MagmaHeart: {
-		DisplayName: Magma Heart
-		Tooltip: ""
-		ElementalPower: the comedic essence of Magma
-	}
-
-	MossyMarineRockHeart: {
-		DisplayName: Mossy Marine Rock Heart
-		Tooltip: ""
-		ElementalPower: the comedic essence of MossyMarineRock
-	}
-
-	OmegaHeart: {
-		DisplayName: Omega Heart
-		Tooltip: ""
-		ElementalPower: the comedic essence of Omega
-	}
-
-	OnyxHeart: {
-		DisplayName: Onyx Heart
-		Tooltip: ""
-		ElementalPower: the comedic essence of Onyx
-	}
-
-	OpalHeart: {
-		DisplayName: Opal Heart
-		Tooltip: ""
-		ElementalPower: the comedic essence of Opal
-	}
-
-	PearlHeart: {
-		DisplayName: Pearl Heart
-		Tooltip: ""
-		ElementalPower: the comedic essence of Pearl
-	}
-
-	PermafrostHeart: {
-		DisplayName: Permafrost Heart
-		Tooltip: ""
-		ElementalPower: the comedic essence of Permafrost
-	}
-
-	SeaBreezeHeart: {
-		DisplayName: Sea Breeze Heart
-		Tooltip: ""
-		ElementalPower: the comedic essence of SeaBreeze
-	}
-
-	SmoothCoalHeart: {
-		DisplayName: Smooth Coal Heart
-		Tooltip: ""
-		ElementalPower: the comedic essence of SmoothCoal
-	}
-
-	StormHeart: {
-		DisplayName: Storm Heart
-		Tooltip: ""
-		ElementalPower: the comedic essence of Storm
-	}
-
-	ThoriumHeart: {
-		DisplayName: Thorium Heart
-		Tooltip: ""
-		ElementalPower: the comedic essence of Thorium
-	}
-
-	ValadiumHeart: {
-		DisplayName: Valadium Heart
-		Tooltip: ""
-		ElementalPower: the comedic essence of Valadium
-	}
-
-	YewWoodHeart: {
-		DisplayName: Yew Wood Heart
-		Tooltip: ""
-		ElementalPower: the comedic essence of YewWood
-	}
-
-	# ── Life Shards (damage-based crafting materials) ──────────────────────────
-	CommonLifeShard: {
-		DisplayName: Life Shard
-		Tooltip: ""
-	}
-
-	UncommonLifeShard: {
-		DisplayName: Life Shard
-		Tooltip: ""
-	}
-
-	RareLifeShard: {
-		DisplayName: Life Shard
-		Tooltip: ""
-	}
-
-	EpicLifeShard: {
-		DisplayName: Life Shard
-		Tooltip: ""
-	}
-
-	LegendaryLifeShard: {
-		DisplayName: Life Shard
-		Tooltip: ""
-	}
-
-	# ── Animating Potions ───────────────────────────────────────────────────────
-	CommonAnimatingPotion: {
-		DisplayName: Animating Potion
-		Tooltip:
-			'''
-			Increases max life by 5%
-			Increases elemental life by 5%
-			'''
-	}
-
-	UncommonAnimatingPotion: {
-		DisplayName: Animating Potion
-		Tooltip:
-			'''
-			Increases max life by 5%
-			Increases elemental life by 10%
-			'''
-	}
-
-	RareAnimatingPotion: {
-		DisplayName: Animating Potion
-		Tooltip:
-			'''
-			Increases max life by 5%
-			Increases elemental life by 15%
-			'''
-	}
-
-	EpicAnimatingPotion: {
-		DisplayName: Animating Potion
-		Tooltip:
-			'''
-			Increases max life by 5%
-			Increases elemental life by 20%
-			'''
-	}
-
-	LegendaryAnimatingPotion: {
-		DisplayName: Animating Potion
-		Tooltip:
-			'''
-			Increases max life by 5%
-			Increases elemental life by 25%
-			'''
 	}
 }
 
@@ -1588,4 +955,12 @@ Buffs: {
 		DisplayName: Animating Potion
 		Description: +5% maximum life, +25% elemental life
 	}
+}
+
+NPCs: {
+	CommonAnimate.DisplayName: Animate
+	UncommonAnimate.DisplayName: Animate
+	RareAnimate.DisplayName: Animate
+	EpicAnimate.DisplayName: Animate
+	LegendaryAnimate.DisplayName: Animate
 }

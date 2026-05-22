@@ -53,7 +53,7 @@ public sealed class TieredItemDecraftGlobalItem : GlobalItem
 	{
 		if (item.ModItem is MenacingHeartItem menacingHeart)
 		{
-			if ((int)menacingHeart.Tier > AnimateProgressionSystem.UnlockedTier)
+			if ((int)menacingHeart.Tier != AnimateProgressionSystem.UnlockedTier)
 			{
 				// Decraft into 10 shards of the same tier. 
 				// The shards will then be automatically down-crafted by the TieredItemDecraftPlayer on subsequent ticks.

@@ -35,6 +35,15 @@ public sealed class AnimateProgressionSystem : ModSystem
 		}
 	}
 
+	public static void ClearTier()
+	{
+		UnlockedTier = 0;
+		if (Main.netMode == Terraria.ID.NetmodeID.Server)
+		{
+			NetMessage.SendData(Terraria.ID.MessageID.WorldData); // Sync world data
+		}
+	}
+
 	public override void ClearWorld()
 	{
 		UnlockedTier = 0;
