@@ -256,8 +256,13 @@ Conditions: {
 }
 
 UI: {
-	LifeShardPanel: Shards
-	Combine: Combine {0} Life Shards into the next tier
+	LifeShardPanel: Life
+	Combine: Combine {0} Life Shards into a {1} Life Shard
+	TierCommon: Common
+	TierUncommon: Uncommon
+	TierRare: Rare
+	TierEpic: Epic
+	TierLegendary: Legendary
 }
 
 # Display-name overrides. Anything not listed auto-generates from the class name.
@@ -1509,5 +1514,78 @@ Items: {
 	LegendaryLifeShard: {
 		DisplayName: Life Shard
 		Tooltip: ""
+	}
+
+	# ── Animating Potions ───────────────────────────────────────────────────────
+	CommonAnimatingPotion: {
+		DisplayName: Animating Potion
+		Tooltip:
+			'''
+			Increases max life by 5%
+			Increases elemental life by 5%
+			'''
+	}
+
+	UncommonAnimatingPotion: {
+		DisplayName: Animating Potion
+		Tooltip:
+			'''
+			Increases max life by 5%
+			Increases elemental life by 10%
+			'''
+	}
+
+	RareAnimatingPotion: {
+		DisplayName: Animating Potion
+		Tooltip:
+			'''
+			Increases max life by 5%
+			Increases elemental life by 15%
+			'''
+	}
+
+	EpicAnimatingPotion: {
+		DisplayName: Animating Potion
+		Tooltip:
+			'''
+			Increases max life by 5%
+			Increases elemental life by 20%
+			'''
+	}
+
+	LegendaryAnimatingPotion: {
+		DisplayName: Animating Potion
+		Tooltip:
+			'''
+			Increases max life by 5%
+			Increases elemental life by 25%
+			'''
+	}
+}
+
+Buffs: {
+	CommonAnimatingPotionBuff: {
+		DisplayName: Animating Potion
+		Description: +5% maximum life, +5% elemental life
+	}
+
+	UncommonAnimatingPotionBuff: {
+		DisplayName: Animating Potion
+		Description: +5% maximum life, +10% elemental life
+	}
+
+	RareAnimatingPotionBuff: {
+		DisplayName: Animating Potion
+		Description: +5% maximum life, +15% elemental life
+	}
+
+	EpicAnimatingPotionBuff: {
+		DisplayName: Animating Potion
+		Description: +5% maximum life, +20% elemental life
+	}
+
+	LegendaryAnimatingPotionBuff: {
+		DisplayName: Animating Potion
+		Description: +5% maximum life, +25% elemental life
 	}
 }

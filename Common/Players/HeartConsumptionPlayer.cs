@@ -1,7 +1,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using ElementalHearts.Common.Hearts;
+using ElementalHearts.Common.LifeShards;
 using ElementalHearts.Common.Systems;
+using ElementalHearts.Content.Items.Potions;
 using Terraria;
 using Terraria.ModLoader;
 using Terraria.ModLoader.IO;
@@ -97,10 +99,50 @@ public sealed class HeartConsumptionPlayer : ModPlayer
 		}
 	}
 
+	/// <summary>Highest Animating Potion tier active this frame, or -1 when none is.</summary>
+	private int _animatingPotionTier = -1;
+
+	/// <summary>
+	/// Registers an active Animating Potion buff for this frame; called by the buff every
+	/// tick it's up. If buffs of several tiers are somehow active at once the highest wins.
+	/// Cleared each frame by <see cref="ResetEffects"/> before buffs re-apply it.
+	/// </summary>
+	public void ApplyAnimatingPotion(LifeShardTier tier)
+	{
+		if ((int)tier > _animatingPotionTier)
+			_animatingPotionTier = (int)tier;
+	}
+
+	public override void ResetEffects()
+	{
+		_animatingPotionTier = -1;
+	}
+
+	/// <summary>
+	/// After buffs update, keeps only the strongest Animating Potion buff by clearing every
+	/// lower tier. This makes the five tiers mutually exclusive however the buff was applied
+	/// — including Quick Buff, which would otherwise stack one potion buff of every tier.
+	/// </summary>
+	public override void PostUpdateBuffs()
+	{
+		for (int lower = 0; lower < _animatingPotionTier; lower++)
+			Player.ClearBuff(AnimatingPotion.GetBuffType((LifeShardTier)lower));
+	}
+
 	public override void ModifyMaxStats(out StatModifier health, out StatModifier mana)
 	{
 		// `Base` is a flat add before multipliers — exactly what life-crystal-style HP gain should do.
 		health = StatModifier.Default with { Base = _bonus };
+
+		// An active Animating Potion raises overall max life, and — more strongly — the
+		// share of it that comes from elemental hearts (the live heart bonus, _bonus).
+		if (_animatingPotionTier >= 0)
+		{
+			var tier = (LifeShardTier)_animatingPotionTier;
+			health = health with { Base = health.Base + (_bonus * AnimatingPotion.GetElementalLifePercent(tier)) };
+			health += AnimatingPotion.GetMaxLifePercent(tier);
+		}
+
 		mana = StatModifier.Default;
 	}
 

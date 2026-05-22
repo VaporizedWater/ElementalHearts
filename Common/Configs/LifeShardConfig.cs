@@ -21,19 +21,19 @@ public sealed class LifeShardConfig : ModConfig
 
 	// ── Drop chances ──────────────────────────────────────────────────────────
 	[Header("DropChances")]
-	[DefaultValue(1f)] [Range(0f, 100f)] [Increment(0.1f)] [Slider]
+	[DefaultValue(2f)] [Range(0f, 100f)] [Increment(0.1f)] [Slider]
 	public float CommonDropChance;
 
-	[DefaultValue(1f)] [Range(0f, 100f)] [Increment(0.1f)] [Slider]
+	[DefaultValue(2f)] [Range(0f, 100f)] [Increment(0.1f)] [Slider]
 	public float UncommonDropChance;
 
-	[DefaultValue(1f)] [Range(0f, 100f)] [Increment(0.1f)] [Slider]
+	[DefaultValue(2f)] [Range(0f, 100f)] [Increment(0.1f)] [Slider]
 	public float RareDropChance;
 
-	[DefaultValue(1f)] [Range(0f, 100f)] [Increment(0.1f)] [Slider]
+	[DefaultValue(2f)] [Range(0f, 100f)] [Increment(0.1f)] [Slider]
 	public float EpicDropChance;
 
-	[DefaultValue(1f)] [Range(0f, 100f)] [Increment(0.1f)] [Slider]
+	[DefaultValue(2f)] [Range(0f, 100f)] [Increment(0.1f)] [Slider]
 	public float LegendaryDropChance;
 
 	// ── Damage thresholds ─────────────────────────────────────────────────────

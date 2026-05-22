@@ -1,5 +1,6 @@
 using ElementalHearts.Common.Configs;
 using Terraria;
+using Terraria.Audio;
 using Terraria.ID;
 using Terraria.Localization;
 using Terraria.ModLoader;
@@ -37,6 +38,27 @@ public sealed class LifeShardSystem : ModSystem
 
 	public override void PostSetupContent()
 		=> SetLifeCrystalExtractable(LifeShardConfig.Instance.SystemEnabled);
+
+	// ── Pickup-sound de-duplication ──────────────────────────────────────────────
+	// Several shards picked up on the same frame — an Extractinator can yield a few
+	// tiers at once — would otherwise stack their cues into a muddy chord. Each
+	// pickup only records its tier; the latest one is played once, at end of frame.
+	private static LifeShardTier? _pendingPickupSound;
+
+	/// <summary>
+	/// Queues a shard pickup cue. Repeated calls within a frame overwrite each other,
+	/// so only the last shard picked up that frame is heard.
+	/// </summary>
+	public static void QueuePickupSound(LifeShardTier tier) => _pendingPickupSound = tier;
+
+	public override void PostUpdateEverything()
+	{
+		if (_pendingPickupSound is not LifeShardTier tier)
+			return;
+
+		_pendingPickupSound = null;
+		SoundEngine.PlaySound(tier.GetPickupSound(), Main.LocalPlayer.Center);
+	}
 
 	/// <summary>
 	/// Makes a vanilla Life Crystal accepted by the Extractinator only while the system

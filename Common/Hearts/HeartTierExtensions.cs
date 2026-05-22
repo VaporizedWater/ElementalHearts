@@ -14,7 +14,7 @@ public static class HeartTierExtensions
 	/// </summary>
 	public static Color GetEffectColor(this HeartTier tier) => tier switch
 	{
-		HeartTier.Common    => new Color(255, 255, 255),
+		HeartTier.Common    => new Color(255, 205, 218),
 		HeartTier.Uncommon  => new Color(150, 230, 150),
 		HeartTier.Rare      => new Color(110, 170, 255),
 		HeartTier.Epic      => new Color(200, 130, 255),

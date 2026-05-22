@@ -1,6 +1,8 @@
 using ElementalHearts.Content.Items.LifeShards;
 using ElementalHearts.Content.Rarities;
 using Microsoft.Xna.Framework;
+using Terraria.Audio;
+using Terraria.Localization;
 using Terraria.ModLoader;
 
 namespace ElementalHearts.Common.LifeShards;
@@ -19,16 +21,18 @@ public static class LifeShardTierExtensions
 	};
 
 	/// <summary>
-	/// Tooltip text colour for a shard tier — the rarity colour ladder (white → green →
-	/// blue → purple → gold), so a shard's tier reads from its tooltip at a glance.
+	/// Tooltip name colour for a shard tier — pulled straight from the matching heart
+	/// rarity's <see cref="ModRarity.RarityColor"/>, so a shard's name shows the exact
+	/// custom colour the hearts of that tier use. The heart rarities are the single
+	/// source of truth: retune one and the shards and potions follow.
 	/// </summary>
 	public static Color GetTextColor(this LifeShardTier tier) => tier switch
 	{
-		LifeShardTier.Common    => new Color(255, 255, 255),
-		LifeShardTier.Uncommon  => new Color(150, 230, 150),
-		LifeShardTier.Rare      => new Color(110, 170, 255),
-		LifeShardTier.Epic      => new Color(200, 130, 255),
-		LifeShardTier.Legendary => new Color(255, 200, 90),
+		LifeShardTier.Common    => ModContent.GetInstance<CommonHeartRarity>().RarityColor,
+		LifeShardTier.Uncommon  => ModContent.GetInstance<UncommonHeartRarity>().RarityColor,
+		LifeShardTier.Rare      => ModContent.GetInstance<RareHeartRarity>().RarityColor,
+		LifeShardTier.Epic      => ModContent.GetInstance<EpicHeartRarity>().RarityColor,
+		LifeShardTier.Legendary => ModContent.GetInstance<LegendaryHeartRarity>().RarityColor,
 		_ => Color.White,
 	};
 
@@ -55,6 +59,42 @@ public static class LifeShardTierExtensions
 		LifeShardTier.Epic      => 3,
 		LifeShardTier.Legendary => 2,
 		_ => 0,
+	};
+
+	/// <summary>
+	/// How many shards of <paramref name="from"/> are consumed to craft one shard of the
+	/// higher tier <paramref name="to"/> directly, skipping every tier in between (the
+	/// per-step costs multiplied together). Returns 0 when <paramref name="to"/> is not
+	/// strictly above <paramref name="from"/>.
+	/// </summary>
+	public static int GetUpgradeCost(this LifeShardTier from, LifeShardTier to)
+	{
+		if (to <= from)
+			return 0;
+
+		int cost = 1;
+		for (LifeShardTier step = from + 1; step <= to; step++)
+			cost *= step.GetUpgradeCost();
+
+		return cost;
+	}
+
+	/// <summary>Localized display name for a tier ("Common", "Rare", …), used in tooltips.</summary>
+	public static string GetDisplayName(this LifeShardTier tier)
+		=> Language.GetTextValue($"Mods.ElementalHearts.UI.Tier{tier}");
+
+	/// <summary>
+	/// The "shard absorbed" cue for a tier — one custom sound per tier, played when a shard
+	/// of this tier is picked up into the Life Shard slots. The files live in <c>Sounds/</c>.
+	/// </summary>
+	public static SoundStyle GetPickupSound(this LifeShardTier tier) => tier switch
+	{
+		LifeShardTier.Common    => new SoundStyle("ElementalHearts/Sounds/CommonCrystalPickup"),
+		LifeShardTier.Uncommon  => new SoundStyle("ElementalHearts/Sounds/UncommonCrystalPickup"),
+		LifeShardTier.Rare      => new SoundStyle("ElementalHearts/Sounds/RareCrystalPickup"),
+		LifeShardTier.Epic      => new SoundStyle("ElementalHearts/Sounds/EpicCrystalPickup"),
+		LifeShardTier.Legendary => new SoundStyle("ElementalHearts/Sounds/LegendaryCrystalPickup"),
+		_ => new SoundStyle("ElementalHearts/Sounds/CommonCrystalPickup"),
 	};
 
 	/// <summary>

@@ -64,6 +64,10 @@ public abstract class LifeShardItem : ModItem
 		if (!LifeShardConfig.Instance.SystemEnabled)
 			return true;
 
+		// Queue the tier's cue rather than playing it now: several shards grabbed on the
+		// same frame collapse to a single sound (the last) instead of overlapping.
+		LifeShardSystem.QueuePickupSound(Tier);
+
 		return !player.GetModPlayer<LifeShardPlayer>().AbsorbShards(Item);
 	}
 

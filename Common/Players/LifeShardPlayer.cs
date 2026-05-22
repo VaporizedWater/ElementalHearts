@@ -31,7 +31,7 @@ public sealed class LifeShardPlayer : ModPlayer
 	/// <summary>
 	/// Merges a picked-up shard stack into its tier slot. Returns true when the whole
 	/// incoming stack was absorbed; false leaves <paramref name="incoming"/>'s remainder
-	/// for normal pickup (only possible if a slot is somehow at max stack).
+	/// for normal pickup when the slot can't fit all of it.
 	/// </summary>
 	public bool AbsorbShards(Item incoming)
 	{
@@ -43,9 +43,15 @@ public sealed class LifeShardPlayer : ModPlayer
 
 		if (slot.IsAir)
 		{
-			Shards[index] = incoming.Clone();
-			incoming.stack = 0;
-			return true;
+			// Clone into the empty slot, but never above the shard's max stack: an
+			// oversized incoming stack fills the slot to the cap and leaves the rest
+			// of its stack for normal pickup, so a slot can't exceed max stack.
+			Item clone = incoming.Clone();
+			int kept = Math.Min(clone.maxStack, incoming.stack);
+			clone.stack = kept;
+			Shards[index] = clone;
+			incoming.stack -= kept;
+			return incoming.stack <= 0;
 		}
 
 		if (slot.type != incoming.type)
@@ -62,44 +68,48 @@ public sealed class LifeShardPlayer : ModPlayer
 	}
 
 	/// <summary>
-	/// True when the slot for <paramref name="lowerTier"/> holds enough shards to combine
-	/// upward into one shard of the next tier.
+	/// True when the <paramref name="fromTier"/> slot holds enough shards to craft one shard
+	/// of the strictly-higher <paramref name="toTier"/> directly — skipping the tiers in
+	/// between — and the destination slot has room for it.
 	/// </summary>
-	public bool CanCombine(int lowerTier)
+	public bool CanUpgrade(int fromTier, int toTier)
 	{
-		if (lowerTier < 0 || lowerTier >= SlotCount - 1)
+		if (fromTier < 0 || toTier <= fromTier || toTier >= SlotCount)
 			return false;
 
-		int cost = ((LifeShardTier)(lowerTier + 1)).GetUpgradeCost();
-		return cost > 0 && Shards[lowerTier].stack >= cost;
+		int cost = ((LifeShardTier)fromTier).GetUpgradeCost((LifeShardTier)toTier);
+		if (cost <= 0 || Shards[fromTier].stack < cost)
+			return false;
+
+		Item destination = Shards[toTier];
+		return destination.IsAir || destination.stack < destination.maxStack;
 	}
 
 	/// <summary>
-	/// Consumes the required number of <paramref name="lowerTier"/> shards from their slot
-	/// and adds one shard of the next tier up to its slot. Returns false if there aren't
-	/// enough shards to combine.
+	/// Consumes the shards needed to craft one <paramref name="toTier"/> shard directly from
+	/// the <paramref name="fromTier"/> slot — skipping intermediate tiers — and adds the
+	/// result to the destination slot. Returns false if the upgrade can't be afforded.
 	/// </summary>
-	public bool TryCombine(int lowerTier)
+	public bool TryUpgrade(int fromTier, int toTier)
 	{
-		if (!CanCombine(lowerTier))
+		if (!CanUpgrade(fromTier, toTier))
 			return false;
 
-		int resultIndex = lowerTier + 1;
-		var resultTier = (LifeShardTier)resultIndex;
+		int cost = ((LifeShardTier)fromTier).GetUpgradeCost((LifeShardTier)toTier);
 
-		Shards[lowerTier].stack -= resultTier.GetUpgradeCost();
-		if (Shards[lowerTier].stack <= 0)
-			Shards[lowerTier].TurnToAir();
+		Shards[fromTier].stack -= cost;
+		if (Shards[fromTier].stack <= 0)
+			Shards[fromTier].TurnToAir();
 
-		if (Shards[resultIndex].IsAir)
+		if (Shards[toTier].IsAir)
 		{
 			var result = new Item();
-			result.SetDefaults(resultTier.GetItemType());
-			Shards[resultIndex] = result;
+			result.SetDefaults(((LifeShardTier)toTier).GetItemType());
+			Shards[toTier] = result;
 		}
 		else
 		{
-			Shards[resultIndex].stack++;
+			Shards[toTier].stack++;
 		}
 
 		return true;
