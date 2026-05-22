@@ -43,7 +43,6 @@ public static class BossHeartDropRegistry
 		Add<EmpressOfLightHeart>(NPCID.HallowBoss);
 		Add<LunaticCultistHeart>(NPCID.CultistBoss);
 		Add<MoonLordHeart>(NPCID.MoonLordCore);
-		Add<MenacingHeart>(NPCID.MoonLordCore);
 		Add<DeerclopsHeart>(NPCID.Deerclops);
 		Add<MourningWoodHeart>(NPCID.MourningWood);
 		Add<PumpkingHeart>(NPCID.Pumpking);

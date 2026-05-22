@@ -60,7 +60,8 @@ public abstract class MenacingHeartItem : ModItem
 	public override void AddRecipes()
 	{
 		CreateRecipe()
-			.AddIngredient(Tier.GetItemType(), 10)
+			.AddIngredient(ItemID.LifeCrystal, 1)
+			.AddIngredient(Tier.GetItemType(), 5)
 			.AddTile(TileID.DemonAltar)
 			.AddCondition(new Condition("Mods.ElementalHearts.Conditions.CurrentAnimateTier", () => global::ElementalHearts.Common.Systems.AnimateProgressionSystem.UnlockedTier == (int)Tier))
 			.Register();

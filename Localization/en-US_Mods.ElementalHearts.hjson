@@ -589,11 +589,6 @@ Items: {
 		DisplayName: Moon Lord Heart
 	}
 
-	MenacingHeart: {
-		Tooltip: ""
-		DisplayName: Menacing Heart
-	}
-
 	MartianSaucerHeart: {
 		Tooltip: ""
 		DisplayName: Martian Saucer Heart
@@ -964,3 +959,5 @@ NPCs: {
 	EpicAnimate.DisplayName: Animate
 	LegendaryAnimate.DisplayName: Animate
 }
+
+Projectiles.AnimateShardProjectile.DisplayName: Animate Shard Projectile

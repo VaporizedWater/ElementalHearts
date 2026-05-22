@@ -77,6 +77,6 @@ public abstract class AnimateBoss : ModNPC
 
 	public override void ModifyNPCLoot(NPCLoot npcLoot)
 	{
-		// Basic drops can be added later
+		npcLoot.Add(Terraria.GameContent.ItemDropRules.ItemDropRule.Common(ItemID.LifeCrystal, 1));
 	}
 }
