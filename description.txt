@@ -1,6 +1,6 @@
 Elemental Hearts adds 213 consumable, single-use hearts crafted from every Terraria material. Each one permanently raises your maximum life. Find your blocks, find your bench, get more HP. (Or fight a boss and harvest their organs.)
 
-NEW: Boss Fights that gate progression. Currently the first one is 90% finished with the rest coming soon.
+NEW: Boss Fights that gate progression. Currently the first one is 90% finished with the rest coming soon. Uncommon Animate is 70% done.
 NEW: Life Shards are now required to craft each heart, with differing requirements and tiers for each. They can be obtained naturally by dealing damage, or by processing Life Crystals in the Extractinator. They have dedicated inventory slots similar to coins.
 
 + Includes 57 Calamity hearts, 28 Thorium hearts, and 5 Consolaria hearts. 
