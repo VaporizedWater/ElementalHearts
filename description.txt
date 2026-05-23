@@ -56,4 +56,6 @@ Classic is the answer to "what should this have been all along?"
 
   - Cross-mod capabilities can be toggled through config settings if needed.
 
+  - Draggable UI so that you don't need to worry with cross-mod interactions.
+
 I built it to last this time.

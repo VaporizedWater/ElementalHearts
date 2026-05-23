@@ -17,6 +17,7 @@ using Terraria.Localization;
 using Terraria.ModLoader;
 using Terraria.UI;
 using Terraria.UI.Chat;
+using Terraria.ModLoader.Config;
 
 namespace ElementalHearts.Common.UI;
 
@@ -62,6 +63,9 @@ public sealed class LifeShardPanel : ModSystem
 	/// <summary>Whether the slot column is expanded. Session state, deliberately not saved.</summary>
 	private bool _expanded = true;
 
+	private static bool _dragging;
+	private static Vector2 _dragOffset;
+
 	public override void ModifyInterfaceLayers(List<GameInterfaceLayer> layers)
 	{
 		int inventoryLayer = layers.FindIndex(layer => layer.Name == "Vanilla: Inventory");
@@ -104,6 +108,26 @@ public sealed class LifeShardPanel : ModSystem
 		float columnX = OriginX + (ColumnIndex * gridPitch);
 		float firstSlotY = OriginY + (FirstSlotRow * gridPitch);
 		Vector2 mouse = UiMouse();
+
+		if (ElementalHeartsVisualConfig.Instance.DraggableUI && ElementalHeartsVisualConfig.Instance.UIPosition != Vector2.Zero)
+		{
+			columnX = ElementalHeartsVisualConfig.Instance.UIPosition.X;
+			firstSlotY = ElementalHeartsVisualConfig.Instance.UIPosition.Y;
+		}
+
+		if (_dragging)
+		{
+			if (Main.mouseLeft)
+			{
+				columnX = mouse.X - _dragOffset.X;
+				firstSlotY = mouse.Y - _dragOffset.Y;
+				ElementalHeartsVisualConfig.Instance.UIPosition = new Vector2(columnX, firstSlotY);
+			}
+			else
+			{
+				_dragging = false;
+			}
+		}
 
 		DrawToggleLabel(spriteBatch, columnX, firstSlotY, slotSize, mouse);
 
@@ -157,11 +181,29 @@ public sealed class LifeShardPanel : ModSystem
 			return;
 
 		Main.LocalPlayer.mouseInterface = true;
-		if (Main.mouseLeft && Main.mouseLeftRelease)
+		
+		if (ElementalHeartsVisualConfig.Instance.DraggableUI)
 		{
-			_expanded = !_expanded;
-			Main.mouseLeftRelease = false;
-			SoundEngine.PlaySound(SoundID.MenuTick);
+			if (Main.mouseLeft && Main.mouseLeftRelease && !_dragging)
+			{
+				_dragging = true;
+				_dragOffset = new Vector2(mouse.X - columnX, mouse.Y - firstSlotY);
+			}
+			if (Main.mouseRight && Main.mouseRightRelease)
+			{
+				_expanded = !_expanded;
+				Main.mouseRightRelease = false;
+				SoundEngine.PlaySound(SoundID.MenuTick);
+			}
+		}
+		else
+		{
+			if (Main.mouseLeft && Main.mouseLeftRelease)
+			{
+				_expanded = !_expanded;
+				Main.mouseLeftRelease = false;
+				SoundEngine.PlaySound(SoundID.MenuTick);
+			}
 		}
 	}
 

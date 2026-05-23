@@ -1,6 +1,8 @@
 using ElementalHearts.Common.LifeShards;
 using ElementalHearts.Common.Systems;
+using ReLogic.Utilities;
 using Terraria;
+using Terraria.Audio;
 using Terraria.ID;
 using Terraria.ModLoader;
 
@@ -10,6 +12,26 @@ public abstract class AnimateBoss : ModNPC
 {
 	public abstract int ProgressionTier { get; }
 	public abstract LifeShardTier Tier { get; }
+
+	public virtual SoundStyle? AmbientEmissionSound => null;
+	private SlotId _ambientSoundSlot;
+
+	public override bool PreAI()
+	{
+		if (AmbientEmissionSound.HasValue)
+		{
+			if (!SoundEngine.TryGetActiveSound(_ambientSoundSlot, out var activeSound))
+			{
+				_ambientSoundSlot = SoundEngine.PlaySound(AmbientEmissionSound.Value, NPC.Center, sound =>
+				{
+					if (!NPC.active) return false;
+					sound.Position = NPC.Center;
+					return true;
+				});
+			}
+		}
+		return true;
+	}
 
 	public override void SetStaticDefaults()
 	{
@@ -24,7 +46,7 @@ public abstract class AnimateBoss : ModNPC
 		NPC.damage = 20 * (ProgressionTier + 1);
 		NPC.defense = 5 * ProgressionTier;
 		NPC.lifeMax = 1000 * (ProgressionTier + 1);
-		NPC.HitSound = SoundID.NPCHit1;
+		NPC.HitSound = AnimateBossSounds.BossHit;
 		NPC.DeathSound = SoundID.NPCDeath1;
 		NPC.knockBackResist = 0f;
 		NPC.aiStyle = -1; // Custom AI

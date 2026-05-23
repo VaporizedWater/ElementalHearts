@@ -102,6 +102,16 @@ Configs: {
 			Label: Consumption Effect Strength
 			Tooltip: Scales the particles, screen shake, and lighting of the heart-consumption effect. 3 is the default.
 		}
+
+		DraggableUI: {
+			Label: Draggable U I
+			Tooltip: ""
+		}
+
+		UIPosition: {
+			Label: U I Position
+			Tooltip: ""
+		}
 	}
 
 	ElementalHeartsWorldConfig: {
@@ -958,6 +968,10 @@ NPCs: {
 	RareAnimate.DisplayName: Animate
 	EpicAnimate.DisplayName: Animate
 	LegendaryAnimate.DisplayName: Animate
+	RedAnimateMinion.DisplayName: Red Animate Minion
 }
 
-Projectiles.AnimateShardProjectile.DisplayName: Animate Shard Projectile
+Projectiles: {
+	AnimateShardProjectile.DisplayName: Animate Shard Projectile
+	UncommonShardProjectile.DisplayName: Uncommon Shard Projectile
+}

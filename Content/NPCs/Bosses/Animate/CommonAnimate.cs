@@ -15,6 +15,7 @@ public sealed class CommonAnimate : AnimateBoss
 {
 	public override int ProgressionTier => 0;
 	public override LifeShardTier Tier => LifeShardTier.Common;
+	public override SoundStyle? AmbientEmissionSound => AnimateBossSounds.CommonEmission;
 
 	public override string Texture => "ElementalHearts/Content/Items/BossSpawns/CommonMenacingHeart";
 	public override string BossHeadTexture => "ElementalHearts/Content/Items/BossSpawns/CommonMenacingHeart";
@@ -48,9 +49,30 @@ public sealed class CommonAnimate : AnimateBoss
 	public int teleportCooldown;
 	public int lastHidingHpThreshold;
 
+	// One-shot guards so each phase-transition stinger plays exactly once per fight
+	private bool _enteredP2;
+	private bool _enteredP3;
+
+	private void PlayPhaseTransitionStinger(State newState)
+	{
+		if (newState == State.Phase2_Spiral && !_enteredP2)
+		{
+			_enteredP2 = true;
+			SoundEngine.PlaySound(AnimateBossSounds.Phase2Transition, NPC.Center);
+		}
+		else if (newState == State.Phase3_Dash && !_enteredP3)
+		{
+			_enteredP3 = true;
+			SoundEngine.PlaySound(AnimateBossSounds.Phase3Transition, NPC.Center);
+		}
+	}
+
 	public override void SetDefaults()
 	{
 		base.SetDefaults();
+		NPC.width = 22;
+		NPC.height = 22;
+		NPC.scale = 2.0f;
 		NPC.lifeMax = 1200;
 		NPC.damage = 50;
 		NPC.defense = 13;
@@ -133,6 +155,12 @@ public sealed class CommonAnimate : AnimateBoss
 		{
 			NPC.velocity = Vector2.Normalize(NPC.velocity) * maxSpeed;
 		}
+
+		for (int i = NPC.oldPos.Length - 1; i > 0; i--)
+		{
+			NPC.oldPos[i] = NPC.oldPos[i - 1];
+		}
+		NPC.oldPos[0] = NPC.position;
 	}
 
 	private void ManagePhases()
@@ -152,6 +180,7 @@ public sealed class CommonAnimate : AnimateBoss
 		// Only force transition if we are actively fighting (not hiding) and not already in the correct phase.
 		if (CurrentState != State.Hiding && CurrentState != State.Intro && CurrentState != desiredState)
 		{
+			PlayPhaseTransitionStinger(desiredState);
 			SpawnTeleportVisuals();
 			CurrentState = desiredState;
 			Timer = 0;
@@ -653,8 +682,11 @@ public sealed class CommonAnimate : AnimateBoss
 			State nextState = State.Phase1_Roll;
 			if (healthPct <= 0.35f) nextState = State.Phase3_Dash;
 			else if (healthPct <= 0.70f) nextState = State.Phase2_Spiral;
-			
-			CurrentState = nextState; 
+
+			// In case the player drained him into a new phase while hidden, fire the stinger here too.
+			PlayPhaseTransitionStinger(nextState);
+
+			CurrentState = nextState;
 			Timer = 0;
 			Counter = 0;
 			StartX = (nextState == State.Phase1_Roll) ? NPC.Center.X : 0f;

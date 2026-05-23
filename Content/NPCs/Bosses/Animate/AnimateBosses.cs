@@ -6,25 +6,6 @@ using Terraria.ModLoader;
 namespace ElementalHearts.Content.NPCs.Bosses.Animate;
 
 [AutoloadBossHead]
-public sealed class UncommonAnimate : AnimateBoss
-{
-	public override int ProgressionTier => 1;
-	public override LifeShardTier Tier => LifeShardTier.Uncommon;
-	
-	public override string Texture => "ElementalHearts/Content/Items/BossSpawns/UncommonMenacingHeart";
-	public override string BossHeadTexture => "ElementalHearts/Content/Items/BossSpawns/UncommonMenacingHeart";
-
-	public override void SetDefaults()
-	{
-		base.SetDefaults();
-		if (!Main.dedServ)
-		{
-			Music = MusicLoader.GetMusicSlot(Mod, "Music/UncommonAnimateTheme");
-		}
-	}
-}
-
-[AutoloadBossHead]
 public sealed class RareAnimate : AnimateBoss
 {
 	public override int ProgressionTier => 2;

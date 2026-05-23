@@ -3,7 +3,11 @@
     "allow": [
       "Bash(ls \"C:\\\\Users\\\\vince\\\\Documents\\\\My Games\\\\Terraria\\\\tModLoader\\\\tModLoader.targets\" \"C:\\\\Users\\\\vince\\\\Documents\\\\My Games\\\\Terraria\\\\tModLoader\\\\references\\\\tModLoader.targets\" 2>&1)",
       "Bash(xxd \"C:\\\\Users\\\\vince\\\\Documents\\\\My Games\\\\Terraria\\\\tModLoader\\\\Mods\\\\ElementalHearts.tmod\")",
-      "PowerShell(& \"C:\\\\Users\\\\vince\\\\Documents\\\\My Games\\\\Terraria\\\\tModLoader\\\\ModSources\\\\ElementalHearts\\\\extract_tmod.ps1\" -TmodPath \"C:\\\\Users\\\\vince\\\\Documents\\\\My Games\\\\Terraria\\\\tModLoader\\\\Mods\\\\ElementalHearts.tmod\" -OutDir \"C:\\\\Users\\\\vince\\\\Documents\\\\My Games\\\\Terraria\\\\tModLoader\\\\ModSources\\\\ElementalHearts\\\\_extracted\")"
+      "PowerShell(& \"C:\\\\Users\\\\vince\\\\Documents\\\\My Games\\\\Terraria\\\\tModLoader\\\\ModSources\\\\ElementalHearts\\\\extract_tmod.ps1\" -TmodPath \"C:\\\\Users\\\\vince\\\\Documents\\\\My Games\\\\Terraria\\\\tModLoader\\\\Mods\\\\ElementalHearts.tmod\" -OutDir \"C:\\\\Users\\\\vince\\\\Documents\\\\My Games\\\\Terraria\\\\tModLoader\\\\ModSources\\\\ElementalHearts\\\\_extracted\")",
+      "Bash(dotnet build *)",
+      "Bash(python -c \"from PIL import Image; img=Image.open\\('UncommonAnimate.png'\\); print\\(img.size\\)\")",
+      "Bash(python3 -c \"from PIL import Image; img=Image.open\\('UncommonAnimate.png'\\); print\\(img.size\\)\")",
+      "Bash(identify UncommonAnimate.png)"
     ]
   }
 }

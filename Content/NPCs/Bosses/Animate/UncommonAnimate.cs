@@ -1,0 +1,1462 @@
+using ElementalHearts.Common.LifeShards;
+using ElementalHearts.Content.Projectiles;
+using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
+using System;
+using Terraria;
+using Terraria.Audio;
+using Terraria.GameContent;
+using Terraria.Graphics.CameraModifiers;
+using Terraria.ID;
+using Terraria.ModLoader;
+
+namespace ElementalHearts.Content.NPCs.Bosses.Animate;
+
+[AutoloadBossHead]
+public sealed class UncommonAnimate : AnimateBoss
+{
+	public override int ProgressionTier => 1;
+	public override LifeShardTier Tier => LifeShardTier.Uncommon;
+	public override SoundStyle? AmbientEmissionSound => AnimateBossSounds.UncommonEmission;
+
+	public override string Texture => "ElementalHearts/Content/NPCs/Bosses/Animate/UncommonAnimate";
+	public override string BossHeadTexture => "ElementalHearts/Content/Items/BossSpawns/UncommonMenacingHeart";
+
+	// State machine
+	private enum State
+	{
+		Intro,
+		Phase1_SkyShoot,
+		Hiding,
+		Phase2_CoopSpiral,
+		Phase3_CoopDashes,
+		Transitioning
+	}
+
+	private State CurrentState
+	{
+		get => (State)NPC.ai[0];
+		set => NPC.ai[0] = (float)value;
+	}
+
+	private ref float Timer => ref NPC.ai[1];
+	private ref float Counter1 => ref NPC.ai[2];
+	private ref float Counter2 => ref NPC.ai[3];
+
+	private float SubTimer { get => NPC.localAI[0]; set => NPC.localAI[0] = value; }
+	private float SubMode { get => NPC.localAI[1]; set => NPC.localAI[1] = value; }
+	private float TgX { get => NPC.localAI[2]; set => NPC.localAI[2] = value; }
+	private float TgY { get => NPC.localAI[3]; set => NPC.localAI[3] = value; }
+
+	// Class fields (don't sync in MP, but persist on the server-controlled NPC instance)
+	private int _redMinionWho = -1;
+	private int _lastHidingHpThreshold;
+	private int _lastPhase3Move = -1;
+	private bool _justWokeFromHide;
+	// Phase 2 telegraph mode: 0 = no laser, 1 = active. Boss orchestrates both telegraphs
+	// so that Red can keep orbiting without freezing.
+	private float _greenTelegraphActive;
+	private float _greenTelegraphTimer;
+	private float _redTelegraphActive;
+	private float _redTelegraphTimer;
+	private const float TelegraphDurationP2 = 30f;
+	
+	private int[] _p3Bag = new int[] { 1, 2, 3 };
+	private int _p3BagIndex = 3;
+
+	// Polish state — purely visual, decays in AI()
+	private const float BaseScale = 2.0f;
+	private float _scalePulse = 1f;     // multiplied into NPC.scale; decays toward 1 each tick
+	private float _hitFlash;            // 0..1 white flash on damage, decays each tick
+
+	// One-shot guards so each phase-transition stinger plays exactly once per fight
+	private bool _enteredP2;
+	private bool _enteredP3;
+
+	private void PlayPhaseTransitionStinger(State newState)
+	{
+		if (newState == State.Phase2_CoopSpiral && !_enteredP2)
+		{
+			_enteredP2 = true;
+			SoundEngine.PlaySound(AnimateBossSounds.Phase2Transition, NPC.Center);
+		}
+		else if (newState == State.Phase3_CoopDashes && !_enteredP3)
+		{
+			_enteredP3 = true;
+			SoundEngine.PlaySound(AnimateBossSounds.Phase3Transition, NPC.Center);
+		}
+	}
+
+	public override void SetStaticDefaults()
+	{
+		NPCID.Sets.TrailCacheLength[NPC.type] = 8;
+	}
+
+	public override void SetDefaults()
+	{
+		base.SetDefaults();
+		NPC.width = 22;
+		NPC.height = 22;
+		NPC.scale = 2.0f;
+		NPC.lifeMax = 5000;
+		NPC.damage = 40;
+		NPC.defense = 22;
+		NPC.noGravity = true;
+		NPC.noTileCollide = true;
+		NPC.behindTiles = false;
+
+		if (!Main.dedServ)
+		{
+			Music = MusicLoader.GetMusicSlot(Mod, "Music/UncommonAnimateTheme");
+		}
+	}
+
+	public override void AI()
+	{
+		if (NPC.target < 0 || NPC.target == 255 || Main.player[NPC.target].dead || !Main.player[NPC.target].active)
+		{
+			NPC.TargetClosest();
+		}
+		Player player = Main.player[NPC.target];
+
+		if (player.dead)
+		{
+			NPC.velocity.Y -= 0.04f;
+			NPC.EncourageDespawn(10);
+			if (TryGetRed(out var red)) red.Cmd_SetDespawn();
+			return;
+		}
+
+		if (_lastHidingHpThreshold == 0)
+			_lastHidingHpThreshold = NPC.lifeMax;
+
+		Lighting.AddLight(NPC.Center, 0.2f, 0.9f, 0.3f);
+
+		ManagePhases();
+
+		// Anti-despawn warp/dash if too far
+		if (CurrentState != State.Intro && CurrentState != State.Hiding && CurrentState != State.Transitioning)
+		{
+			if (Vector2.Distance(NPC.Center, player.Center) > 1600f)
+			{
+				NPC.velocity = Vector2.Normalize(player.Center - NPC.Center) * 40f;
+				NPC.noTileCollide = true;
+				if (Main.rand.NextBool(5)) SpawnTeleportVisuals();
+			}
+		}
+
+		switch (CurrentState)
+		{
+			case State.Intro: DoIntro(player); break;
+			case State.Phase1_SkyShoot: DoPhase1(player); break;
+			case State.Hiding: DoHiding(player); break;
+			case State.Phase2_CoopSpiral: DoPhase2(player); break;
+			case State.Phase3_CoopDashes: DoPhase3(player); break;
+			case State.Transitioning: DoTransitioning(player); break;
+		}
+
+		// Clamp speed
+		if (NPC.velocity.Length() > 30f)
+			NPC.velocity = Vector2.Normalize(NPC.velocity) * 30f;
+
+		// Decay polish state
+		if (_scalePulse > 1f) _scalePulse = MathHelper.Lerp(_scalePulse, 1f, 0.12f);
+		if (_hitFlash > 0f) _hitFlash = Math.Max(0f, _hitFlash - 0.08f);
+		NPC.scale = BaseScale * _scalePulse;
+
+		for (int i = NPC.oldPos.Length - 1; i > 0; i--)
+		{
+			NPC.oldPos[i] = NPC.oldPos[i - 1];
+		}
+		NPC.oldPos[0] = NPC.position;
+	}
+
+	private void PulseScale(float amount) { if (amount > _scalePulse) _scalePulse = amount; }
+
+	// Wipe oldPos[] so the segmented trail in PreDraw doesn't streak across the gap after a teleport.
+	private void ResetTrail()
+	{
+		for (int i = 0; i < NPC.oldPos.Length; i++)
+			NPC.oldPos[i] = NPC.position;
+	}
+
+	private void ManagePhases()
+	{
+		float healthPct = (float)NPC.life / NPC.lifeMax;
+
+		State desired = State.Phase1_SkyShoot;
+		if (healthPct <= 0.35f) desired = State.Phase3_CoopDashes;
+		else if (healthPct <= 0.70f) desired = State.Phase2_CoopSpiral;
+
+		if (CurrentState != State.Hiding && CurrentState != State.Intro && CurrentState != State.Transitioning && CurrentState != desired)
+		{
+			// Stinger plays at the moment the threshold is crossed — gives the player a
+			// 2-second dramatic buildup before the new phase actually starts.
+			PlayPhaseTransitionStinger(desired);
+
+			CurrentState = State.Transitioning;
+			Timer = 0; Counter1 = 0; Counter2 = 0;
+			SubTimer = 0; SubMode = 0; TgX = 0; TgY = 0;
+
+			if (TryGetRed(out var red))
+				red.Cmd_SetDespawn();
+			_redMinionWho = -1;
+		}
+	}
+
+	private void DoTransitioning(Player player)
+	{
+		NPC.dontTakeDamage = true; // Invulnerable during theatrical transition
+		NPC.noGravity = true;
+		NPC.noTileCollide = true;
+
+		Vector2 hover = player.Center + new Vector2(0, -300f);
+		NPC.velocity = (hover - NPC.Center) * 0.05f;
+		// Cap transition speed — without this, ending a Phase 3 dash far from player gives a
+		// massive 30 px/tick fly-up that drags an 8-frame trail across the screen.
+		if (NPC.velocity.Length() > 8f)
+			NPC.velocity = Vector2.Normalize(NPC.velocity) * 8f;
+		NPC.rotation = (NPC.Center - player.Center).ToRotation() + MathHelper.PiOver2;
+
+		Timer++;
+
+		if (Timer % 10 == 0)
+			EmitGreenBurst(15, 6f, 1.2f);
+
+		if (Timer >= 120)
+		{
+			NPC.dontTakeDamage = false;
+			DoPhaseTransitionBurst();
+			SoundEngine.PlaySound(SoundID.Roar, NPC.Center);
+
+			float healthPct = (float)NPC.life / NPC.lifeMax;
+			State next = State.Phase1_SkyShoot;
+			if (healthPct <= 0.35f) next = State.Phase3_CoopDashes;
+			else if (healthPct <= 0.70f) next = State.Phase2_CoopSpiral;
+
+			CurrentState = next;
+			Timer = 0; Counter1 = 0; Counter2 = 0;
+			SubTimer = 0; SubMode = 0; TgX = 0; TgY = 0;
+		}
+	}
+
+	private void SpawnTeleportVisuals()
+	{
+		SoundEngine.PlaySound(SoundID.Item8, NPC.Center);
+		for (int i = 0; i < 30; i++)
+		{
+			Dust.NewDustPerfect(NPC.Center, DustID.GreenTorch, Main.rand.NextVector2CircularEdge(5f, 5f), 0, default, 1.5f).noGravity = true;
+		}
+	}
+
+	// --- Polish helpers ---
+	private void EmitGreenBurst(int particles, float radius, float scale)
+	{
+		for (int i = 0; i < particles; i++)
+		{
+			Vector2 vel = Main.rand.NextVector2CircularEdge(radius, radius);
+			var d = Dust.NewDustPerfect(NPC.Center, DustID.GreenTorch, vel, 0, default, scale);
+			d.noGravity = true;
+		}
+		int shardCount = Math.Max(1, particles / 3);
+		for (int i = 0; i < shardCount; i++)
+		{
+			Vector2 vel = Main.rand.NextVector2Circular(radius * 0.6f, radius * 0.6f);
+			var d = Dust.NewDustPerfect(NPC.Center, DustID.GrassBlades, vel, 0, default, scale * 0.8f);
+			d.noGravity = true;
+		}
+	}
+
+	private void DoBigSpawnBurst()
+	{
+		SoundEngine.PlaySound(SoundID.Item62, NPC.Center);            // Life-crystal pickup (thematic)
+		SoundEngine.PlaySound(SoundID.Item74, NPC.Center);            // Magic harp shimmer
+		EmitGreenBurst(60, 8f, 1.8f);
+		EmitGreenBurst(25, 14f, 2.4f);
+		ShakeCamera(8f, 1500f, 20, "UncommonAnimateSpawn");
+	}
+
+	private void DoPhaseTransitionBurst()
+	{
+		SoundEngine.PlaySound(SoundID.Item62, NPC.Center);
+		EmitGreenBurst(45, 7f, 1.6f);
+		ShakeCamera(5f, 1200f, 16, "UncommonAnimatePhaseTransition");
+	}
+
+	private void EmitSmallPuff(int count = 12)
+	{
+		for (int i = 0; i < count; i++)
+		{
+			var d = Dust.NewDustPerfect(NPC.Center, DustID.GreenTorch, Main.rand.NextVector2Circular(2.5f, 2.5f), 0, default, 1.2f);
+			d.noGravity = true;
+		}
+	}
+
+	private void ShakeCamera(float strength, float range, int frames, string id)
+	{
+		if (Main.LocalPlayer?.active != true) return;
+		if (!Main.LocalPlayer.WithinRange(NPC.Center, range)) return;
+		Main.instance.CameraModifiers.Add(new PunchCameraModifier(NPC.Center, Main.rand.NextVector2Unit(), strength, 6f, frames, range, id));
+	}
+
+	private bool TryGetRed(out RedAnimateMinion red)
+	{
+		red = null;
+		if (_redMinionWho < 0 || _redMinionWho >= Main.maxNPCs) return false;
+		NPC n = Main.npc[_redMinionWho];
+		if (!n.active || n.ModNPC is not RedAnimateMinion rm) { _redMinionWho = -1; return false; }
+		red = rm;
+		return true;
+	}
+
+	private void EnsureRedExists(Vector2 spawnPos)
+	{
+		if (TryGetRed(out _)) return;
+		if (Main.netMode == NetmodeID.MultiplayerClient) return;
+		int who = NPC.NewNPC(NPC.GetSource_FromAI(), (int)spawnPos.X, (int)spawnPos.Y, ModContent.NPCType<RedAnimateMinion>());
+		if (who >= 0 && who < Main.maxNPCs)
+		{
+			_redMinionWho = who;
+			// Initialize target to spawn position so Red doesn't warp to world origin on his first tick
+			// (default ai[2]/ai[3] are 0, which DoIdleAir would treat as a target far from spawn and warp to).
+			Main.npc[who].ai[2] = spawnPos.X;
+			Main.npc[who].ai[3] = spawnPos.Y;
+			if (Main.netMode == NetmodeID.Server)
+				NetMessage.SendData(MessageID.SyncNPC, -1, -1, null, who);
+		}
+	}
+
+	// ====================================================================
+	// INTRO
+	// ====================================================================
+	private void DoIntro(Player player)
+	{
+		if (Timer == 0)
+		{
+			NPC.Center = player.Center + new Vector2(0, -260);
+			NPC.velocity = Vector2.Zero;
+			NPC.alpha = 255;       // Start invisible — we'll fade in during the intro
+			ResetTrail();
+			DoBigSpawnBurst();
+		}
+
+		Timer++;
+		// Fade in over the first ~45 ticks
+		NPC.alpha = (int)MathHelper.Clamp(255f * (1f - Timer / 45f), 0f, 255f);
+
+		// Sparkle dust trickling out during the intro for ambient life
+		if (Main.rand.NextBool(3))
+		{
+			var d = Dust.NewDustPerfect(NPC.Center + Main.rand.NextVector2Circular(20f, 20f), DustID.GreenTorch, Main.rand.NextVector2Circular(1f, 1f), 0, default, 1.3f);
+			d.noGravity = true;
+		}
+
+		if (Timer > 60)
+		{
+			NPC.alpha = 0;
+			DoPhaseTransitionBurst();
+			SoundEngine.PlaySound(SoundID.Roar, NPC.Center);   // Roar to mark "fight begins"
+			CurrentState = State.Phase1_SkyShoot;
+			Timer = 0; Counter1 = 0; Counter2 = 0;
+			SubTimer = 0; SubMode = 0;
+		}
+	}
+
+	// ====================================================================
+	// PHASE 1: Green sky-shoots with predicted aim, Red runs P1 roll on ground.
+	// 4-shot packs (2 direct + 2 predicted), 3s breather between packs.
+	// After 3 packs, attempt hide-and-heal.
+	// ====================================================================
+	// ai[2] = shotsInCurrentPack (0..4)
+	// ai[3] = packsCompleted (0..3)
+	// SubTimer = tick within current shot's 180-tick cycle, OR breather progress
+	// SubMode = 0 shooting / 1 breather
+	private void DoPhase1(Player player)
+	{
+		NPC.alpha = 0;
+		// During the breather Green "chills" — gravity + tile collision on so he can land.
+		bool isShooting = SubMode == 0f;
+		NPC.noGravity = isShooting;
+		NPC.noTileCollide = isShooting;
+
+		// Red rolls only during the active shooting portion. He poofs away during the breather
+		// so the player can clearly see the melee window on Green.
+		if (SubMode == 0f)
+		{
+			EnsureRedExists(player.Center + new Vector2(Main.rand.NextBool() ? -900f : 900f, 0f));
+			if (TryGetRed(out var red))
+				red.Cmd_SetP1Roll();
+		}
+
+		// If we just woke from hiding, teleport above player rather than approaching naturally
+		if (_justWokeFromHide)
+		{
+			SpawnTeleportVisuals();
+			NPC.Center = player.Center + new Vector2(0, -260f);
+			NPC.velocity = Vector2.Zero;
+			ResetTrail();
+			SpawnTeleportVisuals();
+			_justWokeFromHide = false;
+		}
+
+		// Smooth hover above player with a slight sine drift
+		Timer++;
+		float lateral = (float)Math.Sin(Timer * 0.02f) * 220f;
+		Vector2 hover = player.Center + new Vector2(lateral, -260f);
+		if (SubMode == 0f)
+		{
+			NPC.velocity = (hover - NPC.Center) * 0.04f;
+		}
+		
+		// Smoothly rotate to face directly away from the player.
+		// + PiOver2 because the heart sprite's natural "up" (curves on top) is the facing
+		// direction; ToRotation() assumes facing-right, so we rotate 90° to match.
+		float targetRot = (NPC.Center - player.Center).ToRotation() + MathHelper.PiOver2;
+		float diff = MathHelper.WrapAngle(targetRot - NPC.rotation);
+		NPC.rotation = MathHelper.WrapAngle(NPC.rotation + diff * 0.18f);
+
+		if (SubMode == 0f) // Shooting
+		{
+			SubTimer++;
+			const float cycle = 80f;           // 1.5x faster (from 120)
+			const float telegraphStart = 50f;  // last 30 ticks of the cycle are telegraph
+
+			if (SubTimer < telegraphStart)
+			{
+				// Idle drift, occasional dust
+				if (Main.rand.NextBool(20))
+					Dust.NewDust(NPC.position, NPC.width, NPC.height, DustID.GreenTorch);
+			}
+			else if (SubTimer < cycle)
+			{
+				// Telegraph phase. Compute target at start.
+				if (SubTimer == telegraphStart)
+				{
+					bool predicted = Counter1 >= 2;
+					Vector2 target = predicted ? PredictPlayerPos(player, NPC.Center, 9f) : player.Center;
+					TgX = target.X;
+					TgY = target.Y;
+					SoundEngine.PlaySound(SoundID.Item15 with { PitchVariance = 0.2f }, NPC.Center);
+				}
+				if (Main.rand.NextBool(2))
+				{
+					Vector2 spawnPos = NPC.Center + Main.rand.NextVector2CircularEdge(40f, 40f);
+					Dust d = Dust.NewDustPerfect(spawnPos, DustID.GreenTorch);
+					d.velocity = (NPC.Center - spawnPos) * 0.08f;
+					d.noGravity = true;
+				}
+			}
+
+			if (SubTimer >= cycle)
+			{
+				// Fire
+				if (Main.netMode != NetmodeID.MultiplayerClient)
+				{
+					Vector2 target = new(TgX, TgY);
+					Vector2 vel = Vector2.Normalize(target - NPC.Center) * 9f;
+					Projectile.NewProjectile(NPC.GetSource_FromAI(), NPC.Center, vel, ModContent.ProjectileType<UncommonShardProjectile>(), 12, 0, Main.myPlayer);
+				}
+				SoundEngine.PlaySound(SoundID.Item8 with { PitchVariance = 0.2f }, NPC.Center);
+				PulseScale(1.18f);
+				// Recoil kick opposite the firing direction
+				NPC.velocity += Vector2.Normalize(NPC.Center - new Vector2(TgX, TgY)) * 1.6f;
+				Counter1++;
+				SubTimer = 0f;
+
+				if (Counter1 >= 4f)
+				{
+					// Enter breather — exhale cue + Red rolls at player
+					SubMode = 1f;
+					SubTimer = 0f;
+					Counter1 = 0f;
+					Counter2++;
+					if (TryGetRed(out var redOut))
+						redOut.Cmd_SetP2P3Roll();
+					
+					SoundEngine.PlaySound(SoundID.Item25 with { PitchVariance = 0.1f }, NPC.Center);   // soft chime — "phew"
+					EmitSmallPuff(18);
+				}
+			}
+		}
+		else // Breather
+		{
+			SubTimer++;
+			// Slow down for melee window — smoothly damp horizontal velocity, let gravity pull down
+			NPC.velocity.X *= 0.95f; 
+			if (NPC.velocity.Y == 0) NPC.velocity.Y += (float)Math.Sin(Timer * 0.05f) * 0.15f; // Bob if landed
+			if (Main.rand.NextBool(10))
+				Dust.NewDust(NPC.position, NPC.width, NPC.height, DustID.GreenTorch);
+
+			if (SubTimer >= 180f)
+			{
+				// Reset Red before starting the new cycle
+				if (TryGetRed(out var rReset)) rReset.Cmd_SetDespawn();
+				_redMinionWho = -1;
+
+				// Resume shooting; after 3 packs, attempt hide
+				if (Counter2 >= 3f)
+				{
+					Counter2 = 0f;
+					StartHiding(State.Phase1_SkyShoot);
+					return;
+				}
+				SubMode = 0f;
+				SubTimer = 0f;
+				Counter1 = 0f;
+				SoundEngine.PlaySound(SoundID.Item28 with { PitchVariance = 0.2f }, NPC.Center);   // charge cue — "back to it"
+				EmitSmallPuff(14);
+			}
+		}
+	}
+
+	private static Vector2 PredictPlayerPos(Player player, Vector2 shooterPos, float projSpeed)
+	{
+		float dist = Vector2.Distance(shooterPos, player.Center);
+		float t = MathHelper.Clamp(dist / projSpeed, 0f, 60f); // cap lookahead to 1s
+		return player.Center + player.velocity * t;
+	}
+
+	// ====================================================================
+	// HIDING (same mechanic as CommonAnimate, but on wake → teleport above player)
+	// ====================================================================
+	private float PreviousState { get => NPC.localAI[1]; set => NPC.localAI[1] = value; }
+
+	private void StartHiding(State returnState)
+	{
+		if (NPC.life > _lastHidingHpThreshold)
+		{
+			// Anti-stall: skip hide if we haven't lost at least 5% HP since the last hide
+			Timer = 0; Counter1 = 0; Counter2 = 0;
+			SubTimer = 0; SubMode = 0;
+			return;
+		}
+
+		_lastHidingHpThreshold = NPC.life - (int)(NPC.lifeMax * 0.05f);
+
+		// Despawn Red — keeps the "hunt for the hidden boss" tension intact
+		if (TryGetRed(out var red))
+			red.Cmd_SetDespawn();
+		_redMinionWho = -1;
+
+		CurrentState = State.Hiding;
+		Timer = -30; // 0.5s windup
+		PreviousState = (float)returnState;
+		Counter1 = 0; Counter2 = 0;
+		SubTimer = 0; SubMode = 0;
+	}
+
+	private void ExecuteHideTeleport()
+	{
+		SpawnTeleportVisuals();
+		Vector2 bestPos = NPC.Center;
+		Vector2 fallbackPos = Vector2.Zero;
+		bool foundPerfectSpot = false;
+		bool foundFallback = false;
+
+		for (int attempts = 0; attempts < 60; attempts++)
+		{
+			float hideDir = Main.rand.NextBool() ? -1f : 1f;
+			float distance = Main.rand.NextFloat(1280f, 1600f);
+			Vector2 tryPos = Main.player[NPC.target].Center + new Vector2(distance * hideDir, -400f);
+
+			for (int i = 0; i < 60; i++)
+			{
+				int tileX = (int)(tryPos.X / 16f);
+				int tileY = (int)(tryPos.Y / 16f);
+				if (WorldGen.InWorld(tileX, tileY) && Main.tile[tileX, tileY].HasTile && Main.tileSolid[Main.tile[tileX, tileY].TileType] && !Main.tileSolidTop[Main.tile[tileX, tileY].TileType])
+				{
+					bool isPerfect = true;
+					for (int x = -4; x <= 4; x++)
+					{
+						for (int y = 1; y <= 20; y++)
+						{
+							int cx = tileX + x; int cy = tileY - y;
+							if (WorldGen.InWorld(cx, cy) && Main.tile[cx, cy].HasTile && Main.tileSolid[Main.tile[cx, cy].TileType] && !Main.tileSolidTop[Main.tile[cx, cy].TileType])
+							{
+								isPerfect = false; break;
+							}
+						}
+						if (!isPerfect) break;
+					}
+
+					bool hasBasicAir = true;
+					if (!isPerfect)
+					{
+						for (int y = 1; y <= 4; y++)
+						{
+							if (WorldGen.InWorld(tileX, tileY - y) && Main.tile[tileX, tileY - y].HasTile && Main.tileSolid[Main.tile[tileX, tileY - y].TileType] && !Main.tileSolidTop[Main.tile[tileX, tileY - y].TileType])
+							{
+								hasBasicAir = false; break;
+							}
+						}
+					}
+
+					if (isPerfect)
+					{
+						bestPos = new Vector2(tileX * 16f + 8f, tileY * 16f - (NPC.height / 2f) - 2f);
+						foundPerfectSpot = true; break;
+					}
+					else if (hasBasicAir && !foundFallback)
+					{
+						fallbackPos = new Vector2(tileX * 16f + 8f, tileY * 16f - (NPC.height / 2f) - 2f);
+						foundFallback = true;
+					}
+				}
+				tryPos.Y += 16f;
+			}
+			if (foundPerfectSpot) break;
+		}
+
+		if (!foundPerfectSpot)
+		{
+			if (foundFallback) bestPos = fallbackPos;
+			else
+			{
+				float hideDir = Main.rand.NextBool() ? -1f : 1f;
+				bestPos = Main.player[NPC.target].Center + new Vector2(1600f * hideDir, -200f);
+			}
+		}
+
+		NPC.Center = bestPos;
+		NPC.velocity = Vector2.Zero;
+		ResetTrail();
+		NPC.noGravity = false;
+		NPC.noTileCollide = false;
+		SpawnTeleportVisuals();
+	}
+
+	private void DoHiding(Player player)
+	{
+		if (Timer < 0) // Pre-hide windup
+		{
+			NPC.velocity *= 0.8f;
+			NPC.alpha = (int)MathHelper.Clamp(255f * ((30f + Timer) / 30f), 0f, 255f); // Fade out
+
+			if (Timer == -30) SoundEngine.PlaySound(SoundID.Item28, NPC.Center);
+			if (Main.rand.NextBool(2)) Dust.NewDust(NPC.position, NPC.width, NPC.height, DustID.GreenTorch);
+
+			Timer++;
+			if (Timer == 0)
+			{
+				ExecuteHideTeleport();
+				NPC.alpha = 150;
+			}
+			return;
+		}
+
+		if (Timer < 1000)
+		{
+			NPC.velocity.X *= 0.9f;
+			// Slow breathing alpha — visually communicates "asleep / vulnerable"
+			NPC.alpha = 130 + (int)(40f * Math.Sin(Timer * 0.05f));
+
+			// Healing sparkle — small green motes drifting upward from the boss
+			if (Main.rand.NextBool(4))
+			{
+				Vector2 spawn = NPC.Center + Main.rand.NextVector2Circular(28f, 28f);
+				var d = Dust.NewDustPerfect(spawn, DustID.GreenTorch, new Vector2(0f, -Main.rand.NextFloat(0.5f, 1.5f)), 0, default, 1.1f);
+				d.noGravity = true;
+				d.fadeIn = 1.0f;
+			}
+
+			float phaseBonus = 1.10f; // Phase 1
+			if (PreviousState == (float)State.Phase2_CoopSpiral) phaseBonus = 1.20f;
+			else if (PreviousState == (float)State.Phase3_CoopDashes) phaseBonus = 1.30f;
+
+			float hpPct = (float)NPC.life / NPC.lifeMax;
+			float progressiveMultiplier = MathHelper.Lerp(1.5f, 1.0f, hpPct); // Up to 1.5x faster at 0 HP
+			float baseHealRate = 2f * (20f * NPC.lifeMax / 1200f * phaseBonus) / 60f; // 2x as fast as Common Animate
+
+			SubTimer += baseHealRate * progressiveMultiplier;
+			if (SubTimer >= 1f)
+			{
+				int heal = (int)SubTimer;
+				SubTimer -= heal;
+				if (NPC.life < NPC.lifeMax)
+				{
+					NPC.life += heal;
+					if (NPC.life > NPC.lifeMax) NPC.life = NPC.lifeMax;
+					NPC.HealEffect(heal, true);
+				}
+			}
+
+			Timer++;
+		}
+
+		// Auto-wake after 10 idle seconds (no hits)
+		if (Timer >= 600 && Timer < 1000)
+		{
+			WakeFromHiding();
+			return;
+		}
+
+		// Interrupt from hit/contact
+		if (Timer >= 0 && Timer < 1000 && (NPC.Hitbox.Intersects(player.Hitbox) || NPC.justHit))
+		{
+			WakeFromHiding();
+			return;
+		}
+	}
+
+	private void WakeFromHiding()
+	{
+		NPC.alpha = 0;
+		// Impact polish — being struck out of a heal is a big satisfying moment
+		SoundEngine.PlaySound(SoundID.Item62, NPC.Center);        // Life-crystal shatter
+		SoundEngine.PlaySound(SoundID.Roar, NPC.Center);
+		SoundEngine.PlaySound(SoundID.Item14, NPC.Center);        // Impact bang
+		EmitGreenBurst(50, 8f, 2.0f);
+		EmitGreenBurst(22, 13f, 2.6f);
+		// Sparks
+		for (int i = 0; i < 20; i++)
+			Dust.NewDust(NPC.position, NPC.width, NPC.height, DustID.GreenTorch);
+		for (int i = 0; i < 10; i++)
+		{
+			var d = Dust.NewDustPerfect(NPC.Center, DustID.GrassBlades, Main.rand.NextVector2Circular(7f, 7f), 0, default, 1.6f);
+			d.noGravity = true;
+		}
+		ShakeCamera(7f, 1500f, 18, "UncommonAnimateWake");
+
+		float hpPct = (float)NPC.life / NPC.lifeMax;
+		State next = State.Phase1_SkyShoot;
+		if (hpPct <= 0.35f) next = State.Phase3_CoopDashes;
+		else if (hpPct <= 0.70f) next = State.Phase2_CoopSpiral;
+
+		// In case the player drained him into a new phase while hidden, fire the stinger here too
+		// (the guard flags ensure it never double-plays).
+		PlayPhaseTransitionStinger(next);
+
+		CurrentState = next;
+		Timer = 0; Counter1 = 0; Counter2 = 0;
+		SubTimer = 0; SubMode = 0; TgX = 0; TgY = 0;
+		_justWokeFromHide = true;
+	}
+
+	// ====================================================================
+	// PHASE 2: Co-op spiral, alternating telegraphed shots
+	// ai[1] = Timer (orbit driver + shot pacing, 60-tick cycle per shot)
+	// ai[2] = shotsThisRound (0..12)
+	// ai[3] = roundsCompleted (0..2)
+	// SubMode = 0 orbit/shoot loop, 1 breather (3s, red despawned)
+	// ====================================================================
+	private const float OrbitRadius = 360f;
+	private const float OrbitAngularSpeed = 0.015f; // radians per tick (~57° per second)
+
+	private void DoPhase2(Player player)
+	{
+		NPC.alpha = 0;
+		// During the breather (SubMode 1) Green "chills" — gravity + tile collision on
+		bool isOrbiting = SubMode == 0f;
+		NPC.noGravity = isOrbiting;
+		NPC.noTileCollide = isOrbiting;
+
+		Timer++;
+
+		// Orbit position
+		float angle = Timer * OrbitAngularSpeed;
+		Vector2 greenPos = player.Center + new Vector2((float)Math.Cos(angle), (float)Math.Sin(angle)) * OrbitRadius;
+		Vector2 redPos = player.Center + new Vector2((float)Math.Cos(angle + (float)Math.PI), (float)Math.Sin(angle + (float)Math.PI)) * OrbitRadius;
+
+		if (isOrbiting)
+		{
+			// Teleport-snap if a dash or external force flung us far off-orbit
+			if (Vector2.Distance(NPC.Center, greenPos) > 360f)
+			{
+				SpawnTeleportVisuals();
+				NPC.Center = greenPos;
+				ResetTrail();
+			}
+			NPC.velocity = (greenPos - NPC.Center) * 0.12f;
+			NPC.rotation += 0.05f;
+
+			if (Main.rand.NextBool(20))
+				Dust.NewDust(NPC.position, NPC.width, NPC.height, DustID.GreenTorch);
+		}
+
+		if (SubMode == 0f) // Orbit + alternate shoot
+		{
+			EnsureRedExists(redPos);
+			// Red ALWAYS stays in CmdIdleAir following the orbit. Boss handles both telegraphs
+			// itself so Red can keep moving and so we never overwrite his TargetX/Y mid-action.
+			if (TryGetRed(out var red))
+				red.Cmd_SetIdleAir(redPos);
+
+			SubTimer++;
+			float pacing = 60f;
+			bool greenShoots = (((int)Counter1) % 2) == 1;
+
+			// Start a telegraph at the beginning of each 60-tick slot
+			if (SubTimer == 1f)
+			{
+				if (greenShoots)
+				{
+					_greenTelegraphActive = 1f;
+					_greenTelegraphTimer = 0f;
+				}
+				else
+				{
+					_redTelegraphActive = 1f;
+					_redTelegraphTimer = 0f;
+				}
+				SoundEngine.PlaySound(SoundID.Item15 with { PitchVariance = 0.2f }, TryGetRed(out var rs) && !greenShoots ? rs.NPC.Center : NPC.Center);
+			}
+
+			// Green telegraph + fire
+			if (_greenTelegraphActive == 1f)
+			{
+				_greenTelegraphTimer++;
+				// Tracks player live for the duration
+				TgX = player.Center.X; TgY = player.Center.Y;
+
+				if (Main.rand.NextBool(2))
+				{
+					Vector2 spawnPos = NPC.Center + Main.rand.NextVector2CircularEdge(40f, 40f);
+					Dust d = Dust.NewDustPerfect(spawnPos, DustID.GreenTorch);
+					d.velocity = (NPC.Center - spawnPos) * 0.08f;
+					d.noGravity = true;
+				}
+
+				if (_greenTelegraphTimer >= TelegraphDurationP2)
+				{
+					if (Main.netMode != NetmodeID.MultiplayerClient)
+					{
+						Vector2 vel = Vector2.Normalize(player.Center - NPC.Center) * 9f;
+						Projectile.NewProjectile(NPC.GetSource_FromAI(), NPC.Center, vel, ModContent.ProjectileType<UncommonShardProjectile>(), 12, 0, Main.myPlayer);
+					}
+					SoundEngine.PlaySound(SoundID.Item8 with { PitchVariance = 0.2f }, NPC.Center);
+					PulseScale(1.16f);
+					_greenTelegraphActive = 0f;
+					_greenTelegraphTimer = 0f;
+				}
+			}
+
+			// Red telegraph + fire (boss-orchestrated; Red keeps orbiting)
+			if (_redTelegraphActive == 1f)
+			{
+				_redTelegraphTimer++;
+				if (_redTelegraphTimer >= TelegraphDurationP2)
+				{
+					if (TryGetRed(out var rShoot))
+					{
+						if (Main.netMode != NetmodeID.MultiplayerClient)
+						{
+							Vector2 vel = Vector2.Normalize(player.Center - rShoot.NPC.Center) * 9f;
+							Projectile.NewProjectile(NPC.GetSource_FromAI(), rShoot.NPC.Center, vel, ModContent.ProjectileType<AnimateShardProjectile>(), 12, 0, Main.myPlayer);
+						}
+						SoundEngine.PlaySound(SoundID.Item8 with { PitchVariance = 0.2f }, rShoot.NPC.Center);
+					}
+					_redTelegraphActive = 0f;
+					_redTelegraphTimer = 0f;
+				}
+			}
+
+			if (SubTimer >= pacing)
+			{
+				SubTimer = 0f;
+				Counter1++;
+				if (Counter1 >= 12f)
+				{
+					// End of round: red rolls at player, green chills for 3s
+					if (TryGetRed(out var rRoll))
+						rRoll.Cmd_SetP2P3Roll();
+					_redMinionWho = -1; // Detach reference momentarily so orbit logic doesn't conflict
+					_redTelegraphActive = 0f;
+					_greenTelegraphActive = 0f;
+					Counter1 = 0f;
+					SubMode = 1f;
+					SubTimer = 0f;
+					SoundEngine.PlaySound(SoundID.Item25 with { PitchVariance = 0.1f }, NPC.Center);
+					EmitSmallPuff(20);
+				}
+			}
+		}
+		else // Breather (red gone, green idles 3s for melee window)
+		{
+			NPC.velocity *= 0.96f;
+			NPC.velocity.Y += (float)Math.Sin(Timer * 0.05f) * 0.15f;
+			SubTimer++;
+			if (SubTimer >= 180f)
+			{
+				SubTimer = 0f;
+				Counter2++;
+				if (Counter2 >= 2f)
+				{
+					// After 2 rounds → heal attempt. If skipped (not 5% lost), reset and continue looping.
+					Counter2 = 0f;
+					StartHiding(State.Phase2_CoopSpiral);
+					return;
+				}
+				SubMode = 0f;
+				
+				// Reset Red before starting the new orbit cycle
+				if (TryGetRed(out var rReset)) rReset.Cmd_SetDespawn();
+				_redMinionWho = -1;
+				
+				SoundEngine.PlaySound(SoundID.Item28 with { PitchVariance = 0.2f }, NPC.Center);
+				EmitSmallPuff(16);
+			}
+		}
+	}
+
+	// ====================================================================
+	// PHASE 3: Co-op dashes — 3 moves, random order, no immediate repeats.
+	// After 3 moves attempt hide+heal.
+	// ai[2] = currentMove (1=dual slice, 2=predictive, 3=ground sweep)
+	// ai[3] = movesCompleted
+	// SubMode = sub-step (0=pick, 1=setup, 2=telegraph, 3=action, 5=chill after 3 moves)
+	// SubTimer = sub-step timer
+	// ====================================================================
+	private void DoPhase3(Player player)
+	{
+		NPC.alpha = 0;
+
+		// SubMode 5 = chill (only entered after 3 moves). Gravity ON so Green falls onto blocks/platforms.
+		if (SubMode == 5f)
+		{
+			NPC.noGravity = false;
+			NPC.noTileCollide = false;
+			NPC.velocity.X *= 0.95f;
+			if (NPC.velocity.Y == 0) NPC.velocity.Y += (float)Math.Sin(Timer * 0.05f) * 0.15f; // Add bobbing even here if on ground, well, only if hovering. Let's just do it
+			SubTimer++;
+			if (SubTimer >= 180f)
+			{
+				Counter2 = 0f;
+				// Reset Red before hiding or returning
+				if (TryGetRed(out var rReset)) rReset.Cmd_SetDespawn();
+				_redMinionWho = -1;
+				
+				StartHiding(State.Phase3_CoopDashes);
+			}
+			return;
+		}
+
+		// Active moves are airborne
+		NPC.noGravity = true;
+		NPC.noTileCollide = true;
+
+		if (SubMode == 0f) // PICK MOVE
+		{
+			if (_p3BagIndex >= 3)
+			{
+				do {
+					for (int i = 0; i < 3; i++)
+					{
+						int swapIndex = Main.rand.Next(3);
+						int temp = _p3Bag[i];
+						_p3Bag[i] = _p3Bag[swapIndex];
+						_p3Bag[swapIndex] = temp;
+					}
+				} while (_p3Bag[0] == _lastPhase3Move);
+				_p3BagIndex = 0;
+			}
+			
+			int move = _p3Bag[_p3BagIndex++];
+			_lastPhase3Move = move;
+			
+			Counter1 = move;
+			SubMode = 1f;
+			SubTimer = 0f;
+			Timer = 0f;
+
+			// Ensure red exists at a sensible position (further off for dodging room)
+			EnsureRedExists(player.Center + new Vector2(Main.rand.NextBool() ? -700 : 700, -200));
+
+			// Cue: alerting the player a new move is being chosen
+			SoundEngine.PlaySound(SoundID.Item28, NPC.Center);
+			EmitSmallPuff(14);
+			return;
+		}
+
+		switch ((int)Counter1)
+		{
+			case 1: DoP3MovePincer(player); break;
+			case 2: DoP3MovePredictive(player); break;
+			case 3: DoP3MoveGroundSweep(player); break;
+		}
+	}
+
+	// MOVE 1 — DUAL SLICE:
+	//   Setup: green ~3 blocks ABOVE the player on one side, red ~3 blocks BELOW on the other side
+	//   Telegraph: both fire long telegraph laser (2s lock-in)
+	//   Action: both dash horizontally — green slices over the player, red slices under
+	//   Dodge: stay at the player's current Y between them
+	private void DoP3MovePincer(Player player)
+	{
+		const float dx = 12f * 16f;          // 12 blocks horizontal each side
+		const float greenY = -3f * 16f;      // 3 blocks above player
+		const float redY = +3f * 16f;        // 3 blocks below player
+		Vector2 greenPos = player.Center + new Vector2(+dx, greenY);
+		Vector2 redPos = player.Center + new Vector2(-dx, redY);
+
+		if (SubMode == 1f) // SETUP
+		{
+			NPC.velocity = (greenPos - NPC.Center) * 0.2f;
+			if (TryGetRed(out var red))
+				red.Cmd_SetIdleAir(redPos);
+
+			SubTimer++;
+			bool greenInPlace = Vector2.Distance(NPC.Center, greenPos) < 32f;
+			bool redInPlace = TryGetRed(out var r2) && Vector2.Distance(r2.NPC.Center, redPos) < 32f;
+			if ((SubTimer > 60f && greenInPlace && redInPlace) || SubTimer > 150f)
+			{
+				NPC.velocity = Vector2.Zero;
+				if (TryGetRed(out var r3)) r3.NPC.velocity = Vector2.Zero;
+				// Red dashes RIGHT through the player's column at the lower slice height.
+				if (TryGetRed(out var r4))
+					r4.Cmd_SetTelegraphDash(player.Center + new Vector2(+dx * 2f, redY), 120f);
+				// Green dashes LEFT through the player's column at the upper slice height.
+				TgX = player.Center.X - dx * 2f;
+				TgY = player.Center.Y + greenY;
+				SubMode = 2f;
+				SubTimer = 0f;
+				SoundEngine.PlaySound(SoundID.Item28 with { PitchVariance = 0.2f }, NPC.Center);
+			}
+		}
+		else if (SubMode == 2f) // TELEGRAPH (2s lock-in)
+		{
+			NPC.velocity = Vector2.Zero;
+			SubTimer++;
+
+			if (Main.rand.NextBool(2))
+			{
+				Vector2 spawnPos = NPC.Center + Main.rand.NextVector2CircularEdge(40f, 40f);
+				Dust d = Dust.NewDustPerfect(spawnPos, DustID.GreenTorch);
+				d.velocity = (NPC.Center - spawnPos) * 0.08f;
+				d.noGravity = true;
+			}
+
+			if (SubTimer >= 120f)
+			{
+				NPC.velocity = Vector2.Normalize(new Vector2(TgX, TgY) - NPC.Center) * 20f;
+				SoundEngine.PlaySound(SoundID.Roar, NPC.Center);
+				SoundEngine.PlaySound(SoundID.Item14, NPC.Center);
+				SpawnTeleportVisuals();
+				PulseScale(1.30f);
+				ShakeCamera(3.5f, 1100f, 10, "UncommonAnimateDash");
+				EmitGreenBurst(30, 8f, 1.5f); // Shockwave
+				ShakeCamera(4f, 1000f, 10, "UncommonAnimateDash");
+				SubMode = 3f;
+				SubTimer = 0f;
+			}
+		}
+		else if (SubMode == 3f) // ACTION (dashing — full-commit, no decay so it never visibly "halts")
+		{
+			NPC.rotation += NPC.velocity.X * 0.05f;
+			SubTimer++;
+			if (Main.rand.NextBool())
+			{
+				Dust d = Dust.NewDustDirect(NPC.position, NPC.width, NPC.height, DustID.GreenTorch);
+				d.velocity = NPC.velocity * -0.5f;
+			}
+			if (SubTimer > 55f)
+				FinishPhase3Move();
+		}
+	}
+
+	// MOVE 2 — PREDICTIVE:
+	//   Setup: green/red align on opposite sides of player at radius
+	//   Telegraph: both telegraph dash toward predicted player position (60-tick lock-in)
+	//   Action: both dash
+	//   Chill: green idles 3s for melee
+	private void DoP3MovePredictive(Player player)
+	{
+		const float radius = 320f;
+		// Use TgX as a stable per-move angle seed. Set on the first tick (Counter1 was just assigned).
+		if (SubMode == 1f && SubTimer == 0f && TgX == 0f && TgY == 0f)
+		{
+			// Bias toward horizontal angles (the dash reads better when boss starts on a side)
+			float a = Main.rand.NextFloat(-0.7f, 0.7f);             // -40°..+40° from horizontal
+			if (Main.rand.NextBool()) a = MathHelper.Pi - a;        // mirror to left side half the time
+			TgX = (float)Math.Cos(a);
+			TgY = (float)Math.Sin(a);
+		}
+		Vector2 greenPos = player.Center + new Vector2(TgX, TgY) * radius;
+		Vector2 redPos = player.Center - (greenPos - player.Center);
+
+		if (SubMode == 1f) // SETUP
+		{
+			NPC.velocity = (greenPos - NPC.Center) * 0.2f;
+			if (TryGetRed(out var red))
+				red.Cmd_SetIdleAir(redPos);
+
+			SubTimer++;
+			bool greenInPlace = Vector2.Distance(NPC.Center, greenPos) < 40f;
+			bool redInPlace = TryGetRed(out var r2) && Vector2.Distance(r2.NPC.Center, redPos) < 40f;
+			if ((SubTimer > 40f && greenInPlace && redInPlace) || SubTimer > 120f)
+			{
+				NPC.velocity = Vector2.Zero;
+				// Predict player position 25 ticks ahead, capped to 250 px so fast players (mounts/hooks) don't overshoot
+				Vector2 lead = player.velocity * 25f;
+				if (lead.LengthSquared() > 250f * 250f)
+					lead = Vector2.Normalize(lead) * 250f;
+				Vector2 predict = player.Center + lead;
+				if (TryGetRed(out var r3))
+					r3.Cmd_SetTelegraphDash(predict, 60f);
+				TgX = predict.X;
+				TgY = predict.Y;
+				SubMode = 2f;
+				SubTimer = 0f;
+				SoundEngine.PlaySound(SoundID.Item28 with { PitchVariance = 0.2f }, NPC.Center);
+			}
+		}
+		else if (SubMode == 2f) // TELEGRAPH
+		{
+			NPC.velocity = Vector2.Zero;
+			SubTimer++;
+
+			if (Main.rand.NextBool(2))
+			{
+				Vector2 spawnPos = NPC.Center + Main.rand.NextVector2CircularEdge(40f, 40f);
+				Dust d = Dust.NewDustPerfect(spawnPos, DustID.GreenTorch);
+				d.velocity = (NPC.Center - spawnPos) * 0.08f;
+				d.noGravity = true;
+			}
+
+			if (SubTimer >= 60f)
+			{
+				NPC.velocity = Vector2.Normalize(new Vector2(TgX, TgY) - NPC.Center) * 22f;
+				SoundEngine.PlaySound(SoundID.Roar, NPC.Center);
+				SoundEngine.PlaySound(SoundID.Item14, NPC.Center);
+				SpawnTeleportVisuals();
+				PulseScale(1.30f);
+				ShakeCamera(3.5f, 1100f, 10, "UncommonAnimateDash");
+				EmitGreenBurst(30, 8f, 1.5f); // Shockwave
+				ShakeCamera(4f, 1000f, 10, "UncommonAnimateDash");
+				SubMode = 3f;
+				SubTimer = 0f;
+			}
+		}
+		else if (SubMode == 3f) // DASH (full-commit, no decay)
+		{
+			NPC.rotation += NPC.velocity.X * 0.05f;
+			SubTimer++;
+			if (Main.rand.NextBool())
+			{
+				Dust d = Dust.NewDustDirect(NPC.position, NPC.width, NPC.height, DustID.GreenTorch);
+				d.velocity = NPC.velocity * -0.5f;
+			}
+			if (SubTimer > 50f)
+				FinishPhase3Move();
+		}
+	}
+
+	// MOVE 3 — TRACKING SWEEP:
+	//   Setup: green/red fly into position on opposite sides of player at player's current Y.
+	//   Telegraph: both *continuously* match player's Y (they shadow the player vertically) until launch.
+	//   Action: at the launch instant Y is locked → both dash horizontally at that height.
+	//   Dodge: REACT — the moment the dash launches, move vertically (jump or fall) out of the line.
+	private void DoP3MoveGroundSweep(Player player)
+	{
+		const float dx = 10f * 16f; // 10 blocks each side → 20 blocks apart
+		Vector2 greenAnchor = new(player.Center.X + dx, player.Center.Y);
+		Vector2 redAnchor = new(player.Center.X - dx, player.Center.Y);
+
+		if (SubMode == 1f) // SETUP — fly to position at player's Y
+		{
+			NPC.noGravity = true;
+			NPC.noTileCollide = true;
+			NPC.velocity = (greenAnchor - NPC.Center) * 0.2f;
+			if (TryGetRed(out var red))
+				red.Cmd_SetIdleAir(redAnchor);
+
+			SubTimer++;
+			bool greenInPlace = Vector2.Distance(NPC.Center, greenAnchor) < 40f;
+			bool redInPlace = TryGetRed(out var r2) && Vector2.Distance(r2.NPC.Center, redAnchor) < 40f;
+			if ((SubTimer > 40f && greenInPlace && redInPlace) || SubTimer > 120f)
+			{
+				SubMode = 2f;
+				SubTimer = 0f;
+				// Reuse the Phase-2 red-telegraph state for drawing Red's beam in PreDraw
+				_redTelegraphActive = 1f;
+				_redTelegraphTimer = 0f;
+				SoundEngine.PlaySound(SoundID.Item28 with { PitchVariance = 0.2f }, NPC.Center);
+			}
+		}
+		else if (SubMode == 2f) // TELEGRAPH — continuously track player Y for both
+		{
+			NPC.noGravity = true;
+			NPC.noTileCollide = true;
+
+			// Boss tracks the right-side anchor — Y follows the player live
+			NPC.velocity = (greenAnchor - NPC.Center) * 0.25f;
+			// Red mirrors on the left at the same live Y
+			if (TryGetRed(out var red))
+				red.SetIdleTarget(redAnchor);
+
+			// Telegraph laser ends point at boss's CURRENT Y so the beam visibly tracks
+			TgX = player.Center.X - dx * 2f;
+			TgY = NPC.Center.Y;
+
+			SubTimer++;
+			_redTelegraphTimer = SubTimer; // drive Red beam's fade-in via the same counter
+
+			if (Main.rand.NextBool(2))
+			{
+				Vector2 spawnPos = NPC.Center + Main.rand.NextVector2CircularEdge(40f, 40f);
+				Dust d = Dust.NewDustPerfect(spawnPos, DustID.GreenTorch);
+				d.velocity = (NPC.Center - spawnPos) * 0.08f;
+				d.noGravity = true;
+			}
+
+			if (SubTimer >= 90f)
+			{
+				// LAUNCH — lock current Y values. From this frame onward the dash is fixed.
+				float greenLaunchY = NPC.Center.Y;
+				NPC.velocity = new Vector2(-24f, 0f);  // pure horizontal sweep to the left at locked Y
+				NPC.position = new Vector2(NPC.position.X, greenLaunchY - NPC.height / 2f);
+
+				if (TryGetRed(out var rDash))
+				{
+					float redLaunchY = rDash.NPC.Center.Y;
+					rDash.NPC.position = new Vector2(rDash.NPC.position.X, redLaunchY - rDash.NPC.height / 2f);
+					rDash.Cmd_SetDashImmediate(new Vector2(+22f, 0f), 55f);
+				}
+
+				SoundEngine.PlaySound(SoundID.Roar, NPC.Center);
+				SoundEngine.PlaySound(SoundID.Item14, NPC.Center);
+				SpawnTeleportVisuals();
+				PulseScale(1.30f);
+				ShakeCamera(4f, 1100f, 12, "UncommonAnimateGroundSweep");
+				EmitGreenBurst(30, 8f, 1.5f);
+
+				_redTelegraphActive = 0f;
+				_redTelegraphTimer = 0f;
+				SubMode = 3f;
+				SubTimer = 0f;
+			}
+		}
+		else if (SubMode == 3f) // DASH (full-commit, no decay)
+		{
+			NPC.rotation += NPC.velocity.X * 0.05f;
+			SubTimer++;
+			if (Main.rand.NextBool())
+			{
+				Dust d = Dust.NewDustDirect(NPC.position, NPC.width, NPC.height, DustID.GreenTorch);
+				d.velocity = NPC.velocity * -0.5f;
+			}
+			if (SubTimer > 55f)
+				FinishPhase3Move();
+		}
+	}
+
+	private void FinishPhase3Move()
+	{
+		EmitSmallPuff(12);
+		Counter2++;
+		if (Counter2 >= 3f)
+		{
+			// 3 moves done — enter the shared chill window (gravity on) before the heal attempt.
+			SubMode = 5f;
+			SubTimer = 0f;
+			Timer = 0f;
+			SoundEngine.PlaySound(SoundID.Item25, NPC.Center);
+			EmitSmallPuff(16);
+			
+			if (TryGetRed(out var rRoll))
+				rRoll.Cmd_SetP2P3Roll();
+			_redMinionWho = -1;
+			
+			return;
+		}
+		// Otherwise pick the next move right away. Reset TgX/TgY so per-move seeds re-roll cleanly.
+		Counter1 = 0; SubMode = 0; SubTimer = 0; Timer = 0;
+		TgX = 0; TgY = 0;
+	}
+
+	// ====================================================================
+	// PRE-DRAW: laser telegraphs (green from boss, red from minion in Phase 2)
+	// ====================================================================
+	public override Color? GetAlpha(Color drawColor)
+	{
+		// Punch a brief white flash on hit
+		if (_hitFlash > 0f)
+		{
+			Color c = Color.Lerp(drawColor, Color.White, _hitFlash * 0.7f);
+			c.A = (byte)(255 - NPC.alpha);
+			return c;
+		}
+		return null;
+	}
+
+	public override bool PreDraw(SpriteBatch spriteBatch, Vector2 screenPos, Color drawColor)
+	{
+		Color greenTint = new(40, 230, 100);
+		Color redTint = new(255, 60, 40);
+
+		// === AURA GLOW underlay — soft pulsing green halo behind the sprite ===
+		if (NPC.alpha < 255)
+		{
+			Texture2D glow = ModContent.Request<Texture2D>("Terraria/Images/Extra_98").Value;
+			Vector2 glowOrigin = glow.Size() / 2f;
+			float pulse = 1f + 0.12f * (float)Math.Sin(Main.GameUpdateCount * 0.10f);
+			float alphaMul = 1f - NPC.alpha / 255f;
+			Color glowColor = greenTint * (0.55f * alphaMul);
+			glowColor.A = 0;
+
+			spriteBatch.End();
+			spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.Additive, Main.DefaultSamplerState, DepthStencilState.None, RasterizerState.CullNone, null, Main.GameViewMatrix.ZoomMatrix);
+			spriteBatch.Draw(glow, NPC.Center - screenPos, null, glowColor, NPC.rotation, glowOrigin, NPC.scale * 0.85f * pulse, SpriteEffects.None, 0f);
+			spriteBatch.End();
+			spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, Main.DefaultSamplerState, DepthStencilState.None, RasterizerState.CullNone, null, Main.GameViewMatrix.ZoomMatrix);
+		}
+
+		// Green: Phase 1 sky-shoot telegraph
+		if (CurrentState == State.Phase1_SkyShoot && SubMode == 0f && SubTimer >= 50f)
+		{
+			float progress = MathHelper.Clamp((SubTimer - 50f) / 30f, 0f, 1f);
+			DrawLaserBeam(spriteBatch, screenPos, NPC.Center, new Vector2(TgX, TgY), greenTint, progress, 2f);
+		}
+		// Green: Phase 2 telegraph
+		if (CurrentState == State.Phase2_CoopSpiral && _greenTelegraphActive == 1f)
+		{
+			float progress = MathHelper.Clamp(_greenTelegraphTimer / TelegraphDurationP2, 0f, 1f);
+			DrawLaserBeam(spriteBatch, screenPos, NPC.Center, new Vector2(TgX, TgY), greenTint, progress, 2f);
+		}
+		// Red: Phase 2 telegraph (boss-orchestrated, beam drawn from Red's live position)
+		if (CurrentState == State.Phase2_CoopSpiral && _redTelegraphActive == 1f && TryGetRed(out var redTel))
+		{
+			float progress = MathHelper.Clamp(_redTelegraphTimer / TelegraphDurationP2, 0f, 1f);
+			Player p = Main.player[NPC.target];
+			DrawLaserBeam(spriteBatch, screenPos, redTel.NPC.Center, p.Center, redTint, progress, 2f);
+		}
+		// Green: Phase 3 dash/shoot telegraph
+		if (CurrentState == State.Phase3_CoopDashes && SubMode == 2f)
+		{
+			float dur = (int)Counter1 switch { 1 => 120f, 2 => 60f, 3 => 90f, _ => 60f };
+			float progress = MathHelper.Clamp(SubTimer / dur, 0f, 1f);
+			float thickness = 3f; // All three Phase 3 moves are dashes now — use heavy laser for all
+			DrawLaserBeam(spriteBatch, screenPos, NPC.Center, new Vector2(TgX, TgY), greenTint, progress, thickness);
+		}
+		// Red: Phase 3 Move 3 (Tracking Sweep) telegraph — boss-orchestrated since Red stays in IdleAir.
+		// Beam points from Red's live position horizontally toward the player's column at his current Y,
+		// so the laser visibly tracks vertically as Red shadows the player.
+		if (CurrentState == State.Phase3_CoopDashes && (int)Counter1 == 3 && SubMode == 2f && _redTelegraphActive == 1f && TryGetRed(out var redM3))
+		{
+			float progress = MathHelper.Clamp(_redTelegraphTimer / 90f, 0f, 1f);
+			Vector2 redEnd = redM3.NPC.Center + new Vector2(1f, 0f); // unit vector right — DrawLaserBeam extends 3000 px in this direction
+			DrawLaserBeam(spriteBatch, screenPos, redM3.NPC.Center, redEnd, redTint, progress, 3f);
+		}
+
+		Texture2D texture = TextureAssets.Npc[NPC.type].Value;
+		Vector2 origin = NPC.frame.Size() / 2f;
+		float hpPct = (float)NPC.life / NPC.lifeMax;
+		float pulseRate = MathHelper.Lerp(0.05f, 0.25f, 1f - hpPct);
+		float scalePulse = 1f + (float)Math.Sin(Main.GlobalTimeWrappedHourly * MathHelper.TwoPi * pulseRate * 60f) * 0.08f;
+		float drawScale = NPC.scale * scalePulse;
+
+		// Trails — speed-gated so they only appear at actual dash speeds, never during slow
+		// positioning movement (Transitioning fly-in, Phase 2 orbit, Phase 1 hover, etc).
+		// Also skip uninitialized slots and bail on huge gaps so a teleport doesn't streak.
+		Vector2 lastDrawnPos = NPC.Center;
+		for (int i = 1; i < NPC.oldPos.Length; i++)
+		{
+			if (NPC.oldPos[i] == Vector2.Zero) continue;
+			Vector2 oldCenter = NPC.oldPos[i] + NPC.Size / 2f;
+			if (Vector2.Distance(NPC.Center, oldCenter) > 300f) break;
+			
+			// Prevent blobs by skipping segments that haven't moved from the previous drawn position
+			if (Vector2.Distance(lastDrawnPos, oldCenter) < 2f) continue;
+
+			Vector2 oldDrawPos = oldCenter - screenPos + new Vector2(0f, NPC.gfxOffY);
+			Color color = NPC.GetAlpha(drawColor) * ((NPC.oldPos.Length - i) / (float)NPC.oldPos.Length);
+			spriteBatch.Draw(texture, oldDrawPos, NPC.frame, color, NPC.rotation, origin, drawScale, SpriteEffects.None, 0f);
+			lastDrawnPos = oldCenter;
+		}
+
+		// Main body
+		spriteBatch.Draw(texture, NPC.Center - screenPos + new Vector2(0f, NPC.gfxOffY), NPC.frame, NPC.GetAlpha(drawColor), NPC.rotation, origin, drawScale, SpriteEffects.None, 0f);
+
+		return false;
+	}
+
+	private static void DrawLaserBeam(SpriteBatch spriteBatch, Vector2 screenPos, Vector2 startWorld, Vector2 endWorld, Color baseTint, float aimProgress, float baseThickness)
+	{
+		Color baseColor = baseTint * aimProgress;
+		Vector2 startPos = startWorld - screenPos;
+		Vector2 endPos = endWorld - screenPos;
+
+		Texture2D magicPixel = TextureAssets.MagicPixel.Value;
+		Texture2D glowTex = ModContent.Request<Texture2D>("Terraria/Images/Extra_98").Value;
+		Vector2 glowOrigin = new(32f, 32f);
+
+		float angle = (endPos - startPos).ToRotation();
+		float beamLength = 3000f;
+
+		spriteBatch.End();
+		spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.Additive, Main.DefaultSamplerState, DepthStencilState.None, RasterizerState.CullNone, null, Main.GameViewMatrix.ZoomMatrix);
+
+		float auraThickness = baseThickness * 4f;
+		Color auraColor = baseColor * 0.8f;
+		spriteBatch.Draw(magicPixel, startPos, new Rectangle(0, 0, 1, 1), auraColor, angle, new Vector2(0, 0.5f), new Vector2(beamLength, auraThickness), SpriteEffects.None, 0f);
+		spriteBatch.Draw(glowTex, startPos, null, auraColor, 0f, glowOrigin, auraThickness / 20f, SpriteEffects.None, 0f);
+
+		float coreThickness = baseThickness * 1.5f;
+		Color coreColor = Color.White * aimProgress;
+		spriteBatch.Draw(magicPixel, startPos, new Rectangle(0, 0, 1, 1), coreColor, angle, new Vector2(0, 0.5f), new Vector2(beamLength, coreThickness), SpriteEffects.None, 0f);
+		spriteBatch.Draw(glowTex, startPos, null, coreColor, 0f, glowOrigin, coreThickness / 20f, SpriteEffects.None, 0f);
+
+		spriteBatch.End();
+		spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, Main.DefaultSamplerState, DepthStencilState.None, RasterizerState.CullNone, null, Main.GameViewMatrix.ZoomMatrix);
+	}
+
+	public override void OnKill()
+	{
+		base.OnKill();
+		if (TryGetRed(out var red))
+			red.Cmd_SetDespawn();
+	}
+
+	// HitEffect runs on every client (including in MP) for hits and for the death frame.
+	public override void HitEffect(NPC.HitInfo hit)
+	{
+		if (Main.netMode == NetmodeID.Server) return;
+
+		if (NPC.life <= 0)
+		{
+			// === DEATH SPECTACLE ===
+			SoundEngine.PlaySound(SoundID.NPCDeath6, NPC.Center);
+			SoundEngine.PlaySound(SoundID.Item62, NPC.Center);
+			SoundEngine.PlaySound(SoundID.Item14, NPC.Center);
+			SoundEngine.PlaySound(SoundID.Item74, NPC.Center);
+			EmitGreenBurst(120, 10f, 2.6f);
+			EmitGreenBurst(60, 18f, 3.0f);
+			// Shrapnel
+			for (int i = 0; i < 30; i++)
+			{
+				var d = Dust.NewDustPerfect(NPC.Center, DustID.GrassBlades, Main.rand.NextVector2CircularEdge(6f, 6f), 0, default, 2.0f);
+				d.noGravity = true;
+			}
+			// Lingering smoke / aura
+			for (int i = 0; i < 18; i++)
+			{
+				var d = Dust.NewDustPerfect(NPC.Center + Main.rand.NextVector2Circular(40f, 40f), DustID.GreenTorch, Main.rand.NextVector2Circular(3f, 3f), 100, default, 2.4f);
+				d.noGravity = true;
+				d.fadeIn = 1.2f;
+			}
+			ShakeCamera(14f, 2000f, 30, "UncommonAnimateDeath");
+			return;
+		}
+
+		// === REGULAR HIT FEEDBACK ===
+		_hitFlash = 1f;
+		PulseScale(1.10f);
+
+		int count = 4 + (int)Math.Min(20, hit.Damage / 8);
+		for (int i = 0; i < count; i++)
+		{
+			Vector2 vel = Main.rand.NextVector2Circular(4f, 4f);
+			var d = Dust.NewDustPerfect(NPC.Center + Main.rand.NextVector2Circular(16f, 16f), DustID.GreenTorch, vel, 0, default, 1.2f);
+			d.noGravity = true;
+		}
+		// Sparks for chunky hits
+		if (hit.Damage >= 30)
+		{
+			for (int i = 0; i < 4; i++)
+			{
+				var d = Dust.NewDustPerfect(NPC.Center, DustID.GrassBlades, Main.rand.NextVector2Circular(5f, 5f), 0, default, 1.4f);
+				d.noGravity = true;
+			}
+			ShakeCamera(2.5f, 900f, 6, "UncommonAnimateHit");
+		}
+	}
+}
