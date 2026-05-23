@@ -89,6 +89,18 @@ public sealed class CommonAnimate : AnimateBoss
 
 		// Handle phase transitions based on health
 		ManagePhases();
+		
+		// Anti-despawn safety teleport (1280 pixels = 80 blocks)
+		if (CurrentState != State.Intro && CurrentState != State.Hiding)
+		{
+			if (Vector2.Distance(NPC.Center, player.Center) > 1280f)
+			{
+				SpawnTeleportVisuals();
+				NPC.Center = player.Center - new Vector2(0, 160f); // Teleport above the player
+				NPC.velocity = Vector2.Zero;
+				SpawnTeleportVisuals();
+			}
+		}
 
 		if (teleportCooldown > 0) teleportCooldown--;
 
@@ -113,6 +125,13 @@ public sealed class CommonAnimate : AnimateBoss
 			case State.Phase3_Dash:
 				DoPhase3(player);
 				break;
+		}
+		
+		// Clamp max velocity to prevent glitches
+		float maxSpeed = 30f;
+		if (NPC.velocity.Length() > maxSpeed)
+		{
+			NPC.velocity = Vector2.Normalize(NPC.velocity) * maxSpeed;
 		}
 	}
 
@@ -187,20 +206,25 @@ public sealed class CommonAnimate : AnimateBoss
 			NPC.alpha = 255;
 			NPC.localAI[0]++;
 			
-			// Telegraph particles
-			if (Main.rand.NextBool(2))
+			// Telegraph particles at the TARGET destination where he WILL appear
+			Vector2 targetPos = new Vector2(NPC.localAI[2], NPC.localAI[3]);
+			for (int i = 0; i < 2; i++)
 			{
-				Dust d = Dust.NewDustDirect(NPC.position, NPC.width, NPC.height, DustID.PinkCrystalShard);
-				d.velocity = Main.rand.NextVector2Circular(2f, 2f);
+				Dust d = Dust.NewDustDirect(targetPos, NPC.width, NPC.height, DustID.PinkCrystalShard);
+				d.velocity = Main.rand.NextVector2Circular(3f, 3f);
 				d.noGravity = true;
 			}
 
 			if (NPC.localAI[0] >= 30f) // 0.5s pause
 			{
+				NPC.position = targetPos; // Actually teleport him now
+				
 				NPC.alpha = 0;
 				NPC.dontTakeDamage = false;
-				SpawnTeleportVisuals();
+				SpawnTeleportVisuals(); // Play second teleport sound & visuals at reappear location
+				
 				NPC.localAI[1] = 0f; // Will trigger sweep init below
+				StartX = NPC.Center.X;
 			}
 			else
 			{
@@ -354,7 +378,7 @@ public sealed class CommonAnimate : AnimateBoss
 				}
 				else
 				{
-					if (!wasStuck && Main.rand.NextFloat() < 0.40f) // 40% chance for Ground Reversal
+					if (!wasStuck && Main.rand.NextFloat() < 0.50f) // 50% chance for Ground Reversal
 					{
 						NPC.localAI[1] = 2f; // Enter ground reversal pause state
 						NPC.localAI[0] = 0f; 
@@ -362,17 +386,35 @@ public sealed class CommonAnimate : AnimateBoss
 					}
 					else
 					{
-						SpawnTeleportVisuals();
-						NPC.position.Y -= 160f; // Up 10 blocks
+						// Instantly disappear and enter Invisible Teleport Pause state
+						SpawnTeleportVisuals(); // Play first teleport sound & visuals at disappear location
 						
-						// Prevent teleporting into blocks
-						while (Collision.SolidCollision(NPC.position, NPC.width, NPC.height))
-							NPC.position.Y -= 16f;
-
-						StartX = NPC.Center.X;
+						// Calculate target destination
+						float targetY = Math.Min(NPC.position.Y - 160f, player.position.Y - 160f);
+						
+						// 66% chance to go straight up, 33% chance to mirror to the other side
+						float targetX = NPC.position.X;
+						if (Main.rand.NextFloat() < 0.33f)
+						{
+							float distX = NPC.position.X - player.position.X;
+							targetX = player.position.X - distX;
+						}
+						
+						Vector2 targetPos = new Vector2(targetX, targetY);
+						
+						while (Collision.SolidCollision(targetPos, NPC.width, NPC.height))
+						{
+							targetPos.Y -= 16f;
+						}
+						
+						NPC.localAI[2] = targetPos.X;
+						NPC.localAI[3] = targetPos.Y;
+						
+						NPC.alpha = 255; // Immediately invisible
+						NPC.dontTakeDamage = true;
+						
 						NPC.localAI[1] = 3f; // Enter invisible teleport pause state
 						NPC.localAI[0] = 0f;
-						NPC.alpha = 255; // Immediately invisible
 					}
 				}
 			}
@@ -395,13 +437,17 @@ public sealed class CommonAnimate : AnimateBoss
 		
 		lastHidingHpThreshold = NPC.life - (int)(NPC.lifeMax * 0.05f);
 
-		SpawnTeleportVisuals();
 		CurrentState = State.Hiding;
-		Timer = 0;
+		Timer = -30; // 0.5s windup before the actual teleport
 		PreviousState = (float)returnState;
 		Counter = 0;
 		NPC.localAI[0] = 0f;
 		teleportCooldown = 180;
+	}
+	
+	private void ExecuteHideTeleport()
+	{
+		SpawnTeleportVisuals();
 		
 		Vector2 bestPos = NPC.Center;
 		Vector2 fallbackPos = Vector2.Zero;
@@ -488,30 +534,112 @@ public sealed class CommonAnimate : AnimateBoss
 
 	private void DoHiding(Player player)
 	{
-		NPC.velocity.X *= 0.9f;
-		NPC.alpha = 150; // Semi-transparent
-		
-		float phaseBonus = 1.10f; // Phase 1
-		if (PreviousState == (float)State.Phase2_Spiral) phaseBonus = 1.20f;
-		else if (PreviousState == (float)State.Phase3_Dash) phaseBonus = 1.30f;
-
-		NPC.localAI[0] += (20f * NPC.lifeMax / 1200f * phaseBonus) / 60f;
-		if (NPC.localAI[0] >= 1f)
+		if (Timer < 0) // Pre-hide Windup!
 		{
-			int heal = (int)NPC.localAI[0];
-			NPC.localAI[0] -= heal;
-			if (NPC.life < NPC.lifeMax)
+			NPC.velocity *= 0.8f;
+			if (Timer == -30) SoundEngine.PlaySound(SoundID.Item28, NPC.Center);
+			if (Main.rand.NextBool(2)) Dust.NewDust(NPC.position, NPC.width, NPC.height, DustID.PinkCrystalShard);
+			
+			Timer++;
+			if (Timer == 0)
 			{
-				NPC.life += heal;
-				if (NPC.life > NPC.lifeMax) NPC.life = NPC.lifeMax;
-				NPC.HealEffect(heal, true);
+				ExecuteHideTeleport();
 			}
+			return;
+		}
+		
+		if (Timer < 1000)
+		{
+			NPC.velocity.X *= 0.9f;
+			NPC.alpha = 150; // Semi-transparent
+			
+			float phaseBonus = 1.10f; // Phase 1
+			if (PreviousState == (float)State.Phase2_Spiral) phaseBonus = 1.20f;
+			else if (PreviousState == (float)State.Phase3_Dash) phaseBonus = 1.30f;
+
+			NPC.localAI[0] += (20f * NPC.lifeMax / 1200f * phaseBonus) / 60f;
+			if (NPC.localAI[0] >= 1f)
+			{
+				int heal = (int)NPC.localAI[0];
+				NPC.localAI[0] -= heal;
+				if (NPC.life < NPC.lifeMax)
+				{
+					NPC.life += heal;
+					if (NPC.life > NPC.lifeMax) NPC.life = NPC.lifeMax;
+					NPC.HealEffect(heal, true);
+				}
+			}
+
+			Timer++;
+		}
+		
+		// Interrupt Dash logic
+		if (Timer >= 1000) 
+		{
+			NPC.alpha = 0; // Fully visible
+			NPC.localAI[1]++; // Use localAI[1] as the sequence timer
+			NPC.noGravity = true; // Stay afloat during dash sequence
+
+			if (NPC.localAI[1] < 30) // Telegraph
+			{
+				// Pull back
+				NPC.velocity += Vector2.Normalize(NPC.Center - player.Center) * 0.2f;
+				
+				// Aim laser
+				NPC.localAI[2] = player.Center.X;
+				NPC.localAI[3] = player.Center.Y;
+
+				if (Main.rand.NextBool())
+				{
+					Dust d = Dust.NewDustDirect(NPC.position, NPC.width, NPC.height, DustID.PinkCrystalShard);
+					d.velocity = Main.rand.NextVector2Circular(3f, 3f);
+					d.noGravity = true;
+				}
+				
+				if (NPC.localAI[1] == 1) SoundEngine.PlaySound(SoundID.Item28, NPC.Center);
+			}
+			else if (NPC.localAI[1] == 30) // LAUNCH
+			{
+				teleportCooldown = 180;
+				SpawnTeleportVisuals();
+				SoundEngine.PlaySound(SoundID.Roar, NPC.Center);
+				
+				Vector2 targetPos = new Vector2(NPC.localAI[2], NPC.localAI[3]);
+				float healthPct = (float)NPC.life / NPC.lifeMax;
+				float dashMultiplier = MathHelper.Lerp(1.5f, 2.0f, 1f - healthPct);
+				NPC.velocity = Vector2.Normalize(targetPos - NPC.Center) * (12f * dashMultiplier);
+			}
+			else if (NPC.localAI[1] > 30) // Dashing & Cooldown
+			{
+				NPC.rotation += NPC.velocity.X * 0.05f;
+				if (Main.rand.NextBool())
+				{
+					Dust d = Dust.NewDustDirect(NPC.position, NPC.width, NPC.height, DustID.PinkCrystalShard);
+					d.velocity = NPC.velocity * -0.5f;
+				}
+
+				if (NPC.localAI[1] > 50) NPC.velocity *= 0.96f; // Coast and smoothly decelerate
+				
+				if (NPC.localAI[1] > 210) // 3 seconds cooldown (30 + 180)
+				{
+					// Return to phase
+					float hpPct = (float)NPC.life / NPC.lifeMax;
+					State nextState = State.Phase1_Roll;
+					if (hpPct <= 0.35f) nextState = State.Phase3_Dash;
+					else if (hpPct <= 0.70f) nextState = State.Phase2_Spiral;
+					
+					CurrentState = nextState;
+					Timer = 0;
+					Counter = 0;
+					NPC.localAI[0] = 0f;
+					NPC.localAI[1] = 0f;
+				}
+			}
+			return; // Skip normal hiding logic
 		}
 
-		Timer++;
-		
-		// Wake up if 10 seconds pass, player touches, or takes damage
-		if (Timer >= 600 || NPC.Hitbox.Intersects(player.Hitbox) || NPC.justHit)
+		// Wake up if 10 seconds pass without being hit
+		if (Timer >= 600 && Timer < 1000)
 		{
 			NPC.alpha = 0;
 			SpawnTeleportVisuals();
@@ -530,7 +658,16 @@ public sealed class CommonAnimate : AnimateBoss
 			Timer = 0;
 			Counter = 0;
 			StartX = (nextState == State.Phase1_Roll) ? NPC.Center.X : 0f;
+			NPC.localAI[0] = 0f;
 			NPC.localAI[1] = 0f;
+		}
+		
+		// Interrupt from hit!
+		if (Timer >= 0 && Timer < 1000 && (NPC.Hitbox.Intersects(player.Hitbox) || NPC.justHit))
+		{
+			Timer = 1000;
+			NPC.localAI[1] = 0f; // Reset interrupt timer for the dash sequence
+			return;
 		}
 	}
 
@@ -586,11 +723,18 @@ public sealed class CommonAnimate : AnimateBoss
 
 		Vector2 targetPosSpiral = player.Center + new Vector2((float)Math.Cos(angle), (float)Math.Sin(angle)) * radius;
 		
+		// If off path by a huge margin (e.g. after a dash), teleport back to path
+		if (Vector2.Distance(NPC.Center, targetPosSpiral) > 320f)
+		{
+			SpawnTeleportVisuals();
+			NPC.Center = targetPosSpiral;
+		}
+
 		NPC.velocity = (targetPosSpiral - NPC.Center) * 0.05f; // Slower tracking
 		NPC.rotation += 0.05f;
 
 		// Dust trail
-		if (Main.rand.NextBool(2))
+		if (Main.rand.NextBool(20))
 		{
 			Dust.NewDust(NPC.position, NPC.width, NPC.height, DustID.PinkCrystalShard);
 		}
@@ -642,7 +786,9 @@ public sealed class CommonAnimate : AnimateBoss
 				
 				// Dash exactly towards where the line was pointing
 				Vector2 targetPos = new Vector2(NPC.localAI[2], NPC.localAI[3]);
-				NPC.velocity = Vector2.Normalize(targetPos - NPC.Center) * 18f; // Faster dash
+				float healthPct = (float)NPC.life / NPC.lifeMax;
+				float dashMultiplier = MathHelper.Lerp(1.5f, 2.0f, 1f - healthPct);
+				NPC.velocity = Vector2.Normalize(targetPos - NPC.Center) * (12f * dashMultiplier); // Scales up to 24f (2.0x) at 0 HP
 			}
 			return;
 		}
@@ -659,10 +805,10 @@ public sealed class CommonAnimate : AnimateBoss
 			NPC.localAI[1]++;
 			if (NPC.localAI[1] > 20) // After 20 ticks start decelerating smoothly
 			{
-				NPC.velocity *= 0.9f;
+				NPC.velocity *= 0.96f; // Coast and smooth deceleration
 			}
 			
-			if (NPC.localAI[1] > 35) // 0.58s total dash
+			if (NPC.localAI[1] > 180) // 3 seconds cooldown total
 			{
 				NPC.localAI[0] = 0f; // Back to spiraling
 				NPC.localAI[1] = 0f;
@@ -717,10 +863,17 @@ public sealed class CommonAnimate : AnimateBoss
 
 		Vector2 targetPosSpiral = player.Center + new Vector2((float)Math.Cos(angle), (float)Math.Sin(angle)) * radius;
 		
+		// If off path by a huge margin (e.g. after a dash), teleport back to path
+		if (Vector2.Distance(NPC.Center, targetPosSpiral) > 320f)
+		{
+			SpawnTeleportVisuals();
+			NPC.Center = targetPosSpiral;
+		}
+
 		NPC.velocity = (targetPosSpiral - NPC.Center) * 0.04f; // Slower tracking
 		NPC.rotation += 0.05f;
 
-		if (Main.rand.NextBool(2))
+		if (Main.rand.NextBool(20))
 		{
 			Dust.NewDust(NPC.position, NPC.width, NPC.height, DustID.PinkCrystalShard);
 		}
@@ -744,8 +897,10 @@ public sealed class CommonAnimate : AnimateBoss
 
 	public override bool PreDraw(SpriteBatch spriteBatch, Vector2 screenPos, Color drawColor)
 	{
+		bool isHidingDash = CurrentState == State.Hiding && Timer >= 1000 && NPC.localAI[1] < 30;
+
 		// Draw telegraph line
-		if ((CurrentState == State.Phase2_Spiral && NPC.localAI[0] == 1f) || (CurrentState == State.Phase3_Dash && (NPC.localAI[0] == 3f || NPC.localAI[0] == 1f)))
+		if ((CurrentState == State.Phase2_Spiral && NPC.localAI[0] == 1f) || (CurrentState == State.Phase3_Dash && (NPC.localAI[0] == 3f || NPC.localAI[0] == 1f)) || isHidingDash)
 		{
 			float aimProgress = NPC.localAI[1] / 30f; // 0 to 1
 			Color lineColor = Color.HotPink * aimProgress; // Fades in
@@ -755,13 +910,40 @@ public sealed class CommonAnimate : AnimateBoss
 			Vector2 endPos = targetPos - screenPos;
 
 			Texture2D magicPixel = Terraria.GameContent.TextureAssets.MagicPixel.Value;
-			float length = Vector2.Distance(startPos, endPos);
+			Texture2D glowTex = ModContent.Request<Texture2D>("Terraria/Images/Extra_98").Value;
+			Vector2 glowOrigin = new Vector2(32f, 32f);
+			
 			float angle = (endPos - startPos).ToRotation();
 
-			// Thicker line for dashes
-			float thickness = (CurrentState == State.Phase3_Dash && NPC.localAI[0] == 1f) ? 6f : 2f;
+			// Thinner base line for dashes so it isn't WAY too big
+			float baseThickness = ((CurrentState == State.Phase3_Dash && NPC.localAI[0] == 1f) || isHidingDash) ? 3f : 2f;
 
-			spriteBatch.Draw(magicPixel, startPos, new Rectangle(0, 0, 1, 1), lineColor, angle, new Vector2(0, 0.5f), new Vector2(length, thickness), SpriteEffects.None, 0f);
+			// Switch to Additive Blending for a true glowing laser effect
+			spriteBatch.End();
+			spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.Additive, Main.DefaultSamplerState, DepthStencilState.None, RasterizerState.CullNone, null, Main.GameViewMatrix.ZoomMatrix);
+
+			// Shoot the beam infinitely off-screen so you never see a blunt tip
+			float beamLength = 3000f;
+
+			// 1. Draw the smooth outer aura (No overlapping staggered layers!)
+			float auraThickness = baseThickness * 4f;
+			Color auraColor = lineColor * 0.8f;
+			spriteBatch.Draw(magicPixel, startPos, new Rectangle(0, 0, 1, 1), auraColor, angle, new Vector2(0, 0.5f), new Vector2(beamLength, auraThickness), SpriteEffects.None, 0f);
+			
+			// 2. Draw a massive soft glowing orb at the beginning of the laser so it emerges beautifully from the boss
+			spriteBatch.Draw(glowTex, startPos, null, auraColor, 0f, glowOrigin, auraThickness / 20f, SpriteEffects.None, 0f);
+
+			// 3. Draw the intense bright inner core
+			float coreThickness = baseThickness * 1.5f;
+			Color coreColor = Color.White * aimProgress;
+			spriteBatch.Draw(magicPixel, startPos, new Rectangle(0, 0, 1, 1), coreColor, angle, new Vector2(0, 0.5f), new Vector2(beamLength, coreThickness), SpriteEffects.None, 0f);
+			
+			// 4. Cap the inner core with an intense white orb
+			spriteBatch.Draw(glowTex, startPos, null, coreColor, 0f, glowOrigin, coreThickness / 20f, SpriteEffects.None, 0f);
+
+			// Restore original blend state
+			spriteBatch.End();
+			spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, Main.DefaultSamplerState, DepthStencilState.None, RasterizerState.CullNone, null, Main.GameViewMatrix.ZoomMatrix);
 		}
 		
 		return true; // Draw the boss normally
