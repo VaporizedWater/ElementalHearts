@@ -1,4 +1,6 @@
 using ElementalHearts.Common.Hearts;
+using ElementalHearts.Content.Items.LifeShards;
+using Terraria.ModLoader;
 using Terraria.ID;
 
 namespace ElementalHearts.Content.Items.Hearts.CrossMod.Calamity;
@@ -8,5 +10,5 @@ public sealed class NavystoneHeart : CalamityHeartItem
 	public override HeartTier Tier => HeartTier.Common;
 
 	public override void AddRecipes() =>
-		RegisterModRecipe("Navystone", 50, TileID.WorkBenches);
+		RegisterModRecipe("Navystone", 50, TileID.WorkBenches, ModContent.ItemType<CommonLifeShard>(), 3);
 }

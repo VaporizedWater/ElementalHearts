@@ -1,4 +1,6 @@
 using ElementalHearts.Common.Hearts;
+using ElementalHearts.Content.Items.LifeShards;
+using Terraria.ModLoader;
 using Terraria.ID;
 
 namespace ElementalHearts.Content.Items.Hearts.Uncommon;
@@ -11,6 +13,7 @@ public sealed class IronHeart : ElementalHeartItem
 	{
 		CreateRecipe()
 			.AddIngredient(ItemID.IronBar, RecipeCost(100))
+			.AddIngredient(ModContent.ItemType<UncommonLifeShard>(), 2)
 			.AddTile(TileID.Anvils)
 			.Register();
 	}

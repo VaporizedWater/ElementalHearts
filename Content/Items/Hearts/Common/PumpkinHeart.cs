@@ -1,4 +1,6 @@
 using ElementalHearts.Common.Hearts;
+using ElementalHearts.Content.Items.LifeShards;
+using Terraria.ModLoader;
 using Terraria.ID;
 
 namespace ElementalHearts.Content.Items.Hearts.Common;
@@ -11,6 +13,7 @@ public sealed class PumpkinHeart : ElementalHeartItem
 	{
 		CreateRecipe()
 			.AddIngredient(ItemID.Pumpkin, RecipeCost(500))
+			.AddIngredient(ModContent.ItemType<CommonLifeShard>(), 2)
 			.AddTile(TileID.Sawmill)
 			.Register();
 	}

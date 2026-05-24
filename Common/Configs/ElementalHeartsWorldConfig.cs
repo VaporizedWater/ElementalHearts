@@ -27,4 +27,15 @@ public sealed class ElementalHeartsWorldConfig : ModConfig
 				HeartConsumptionWorld.ClearAllHearts();
 		}
 	}
+
+	[DefaultValue(false)]
+	public bool ClearElementalTier
+	{
+		get => false;
+		set
+		{
+			if (value)
+				AnimateProgressionSystem.ClearTier();
+		}
+	}
 }

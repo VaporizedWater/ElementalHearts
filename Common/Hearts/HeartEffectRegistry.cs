@@ -180,7 +180,6 @@ public static class HeartEffectRegistry
 		["KingSlimeHeart"]      = Eff(92, 142, 222),
 		["LunaticCultistHeart"] = Eff(232, 216, 132),
 		["MartianSaucerHeart"]  = Eff(122, 222, 162),
-		["MenacingHeart"]       = Eff(152, 42, 52),
 		["MoonLordHeart"]       = Eff(162, 232, 222),
 		["MourningWoodHeart"]   = Eff(232, 122, 52),
 		["PlanteraHeart"]       = Eff(232, 92, 132),

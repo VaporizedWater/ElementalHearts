@@ -1,7 +1,7 @@
 using System.ComponentModel;
+using Microsoft.Xna.Framework;
 using Terraria.ModLoader;
 using Terraria.ModLoader.Config;
-
 namespace ElementalHearts.Common.Configs;
 
 /// <summary>Client-side tuning for the heart-consumption effect.</summary>
@@ -16,4 +16,9 @@ public sealed class ElementalHeartsVisualConfig : ModConfig
 	[Slider]
 	[Increment(1)]
 	public int ConsumptionEffectStrength;
+
+	[DefaultValue(false)]
+	public bool DraggableUI;
+
+	public Vector2 UIPosition;
 }

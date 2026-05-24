@@ -1,0 +1,362 @@
+using System;
+using System.Collections.Generic;
+using ElementalHearts.Common.Configs;
+using ElementalHearts.Common.LifeShards;
+using ElementalHearts.Common.Players;
+using ElementalHearts.Content.Items.LifeShards;
+using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
+using ReLogic.Content;
+using ReLogic.Graphics;
+using Terraria;
+using Terraria.Audio;
+using Terraria.GameContent;
+using Terraria.GameInput;
+using Terraria.ID;
+using Terraria.Localization;
+using Terraria.ModLoader;
+using Terraria.UI;
+using Terraria.UI.Chat;
+using Terraria.ModLoader.Config;
+
+namespace ElementalHearts.Common.UI;
+
+/// <summary>
+/// Draws the Life Shard panel as a column matching vanilla's Coins/Ammo columns, sitting
+/// directly right of Ammo. A text label heads the column; clicking it toggles the slot
+/// column open or closed. Each slot only accepts its own tier of shard, and the column
+/// compacts as slots are unlocked or emptied.
+/// </summary>
+public sealed class LifeShardPanel : ModSystem
+{
+	// Context passed to ItemSlot.Handle for standard pick-up / place behaviour. The slot
+	// background is drawn manually (see DrawSlot), so this affects interaction, not looks.
+	private const int SlotContext = ItemSlot.Context.InventoryItem;
+
+	/// <summary>
+	/// The vanilla main inventory grid's scale, used for column/row layout. It can't be
+	/// read from <see cref="Main.inventoryScale"/> here — other UI panels overwrite that
+	/// before this layer runs — so the grid's own constant is used instead.
+	/// </summary>
+	private const float MainInventoryScale = .755f;
+
+	/// <summary>Scale of the Coins/Ammo slots — smaller than a main inventory slot.</summary>
+	private const float SlotScale = 0.6f;
+
+	/// <summary>
+	/// Upgrade-button size as a fraction of a shard slot — kept small and compact so the
+	/// row of buttons sits unobtrusively beside the slot, in keeping with vanilla's UI.
+	/// </summary>
+	private const float UpgradeButtonScale = 0.31f;
+
+	/// <summary>Pixel gap between the slot and its buttons, and between adjacent buttons.</summary>
+	private const float UpgradeButtonGap = 3f;
+
+	// Column position in main-grid pitches from the grid's top-left origin. The 10-wide
+	// grid is columns 0-9; vanilla's Coins/Ammo columns follow, so the Shards column sits
+	// one pitch right of Ammo. Tune these two indices if the column doesn't line up.
+	private const float OriginX = 20f;
+	private const float OriginY = 20f;
+	private const float ColumnIndex = 13f;
+	private const float FirstSlotRow = 2f;
+
+	/// <summary>Whether the slot column is expanded. Session state, deliberately not saved.</summary>
+	private bool _expanded = true;
+
+	private static bool _dragging;
+	private static Vector2 _dragOffset;
+
+	public override void ModifyInterfaceLayers(List<GameInterfaceLayer> layers)
+	{
+		int inventoryLayer = layers.FindIndex(layer => layer.Name == "Vanilla: Inventory");
+		if (inventoryLayer < 0)
+			return;
+
+		layers.Insert(inventoryLayer + 1, new LegacyGameInterfaceLayer(
+			"ElementalHearts: Life Shard Panel",
+			() =>
+			{
+				Draw(Main.spriteBatch);
+				return true;
+			},
+			InterfaceScaleType.UI));
+	}
+
+	private void Draw(SpriteBatch spriteBatch)
+	{
+		if (!Main.playerInventory || Main.LocalPlayer == null)
+			return;
+		if (!LifeShardConfig.Instance.SystemEnabled)
+			return;
+
+		LifeShardPlayer shardPlayer = Main.LocalPlayer.GetModPlayer<LifeShardPlayer>();
+
+		// Tiers worth drawing: any unlocked (non-empty) slot, plus the tier of a shard
+		// held on the cursor — so a removed shard can always be put back, re-unlocking it.
+		List<int> visible = GetVisibleTiers(shardPlayer);
+		if (visible.Count == 0)
+			return;
+
+		// Pin Main.inventoryScale to this column's slot scale for the layer, then restore it,
+		// so scale-dependent vanilla slot code stays consistent with the smaller slots here.
+		float savedScale = Main.inventoryScale;
+		Main.inventoryScale = SlotScale;
+
+		float gridPitch = 56f * MainInventoryScale;
+		float slotPitch = 56f * SlotScale;
+		float slotSize = TextureAssets.InventoryBack.Value.Width * SlotScale;
+		float columnX = OriginX + (ColumnIndex * gridPitch);
+		float firstSlotY = OriginY + (FirstSlotRow * gridPitch);
+		Vector2 mouse = UiMouse();
+
+		if (ElementalHeartsVisualConfig.Instance.DraggableUI && ElementalHeartsVisualConfig.Instance.UIPosition != Vector2.Zero)
+		{
+			columnX = ElementalHeartsVisualConfig.Instance.UIPosition.X;
+			firstSlotY = ElementalHeartsVisualConfig.Instance.UIPosition.Y;
+		}
+
+		if (_dragging)
+		{
+			if (Main.mouseLeft)
+			{
+				columnX = mouse.X - _dragOffset.X;
+				firstSlotY = mouse.Y - _dragOffset.Y;
+				ElementalHeartsVisualConfig.Instance.UIPosition = new Vector2(columnX, firstSlotY);
+			}
+			else
+			{
+				_dragging = false;
+			}
+		}
+
+		DrawToggleLabel(spriteBatch, columnX, firstSlotY, slotSize, mouse);
+
+		if (_expanded)
+		{
+			float slotY = firstSlotY;
+			foreach (int tier in visible)
+			{
+				Vector2 slotPos = new Vector2(columnX, slotY);
+				DrawSlot(spriteBatch, shardPlayer, tier, slotPos, mouse);
+				DrawUpgradeButtons(spriteBatch, shardPlayer, tier, slotPos, slotSize, mouse);
+				slotY += slotPitch;
+			}
+		}
+
+		Main.inventoryScale = savedScale;
+	}
+
+	private static List<int> GetVisibleTiers(LifeShardPlayer shardPlayer)
+	{
+		int cursorTier = Main.mouseItem.ModItem is LifeShardItem held ? (int)held.Tier : -1;
+
+		var visible = new List<int>();
+		for (int tier = 0; tier < LifeShardPlayer.SlotCount; tier++)
+		{
+			if (!shardPlayer.Shards[tier].IsAir || tier == cursorTier)
+				visible.Add(tier);
+		}
+
+		return visible;
+	}
+
+	private void DrawToggleLabel(SpriteBatch spriteBatch, float columnX, float firstSlotY,
+		float slotSize, Vector2 mouse)
+	{
+		string text = Language.GetTextValue("Mods.ElementalHearts.UI.LifeShardPanel");
+		Vector2 textSize = FontAssets.MouseText.Value.MeasureString(text) * .6f;
+
+		// Centred horizontally over the slot column, hugging the first slot. The drawn width
+		// uses the real draw scale so the label lines up with the slot below it.
+		float drawnWidth = FontAssets.MouseText.Value.MeasureString(text).X * MainInventoryScale;
+		Vector2 pos = new Vector2(columnX + ((slotSize - drawnWidth) / 2f), firstSlotY - textSize.Y - 3);
+
+		// Pulsing color, no border — consistent with the vanilla "Coins"/"Ammo" labels.
+		Color pulsingColor = new Color(Main.mouseTextColor, Main.mouseTextColor, Main.mouseTextColor, Main.mouseTextColor);
+		spriteBatch.DrawString(FontAssets.MouseText.Value, text, pos, pulsingColor,
+			0f, Vector2.Zero, MainInventoryScale, SpriteEffects.None, 0f);
+
+		var rect = new Rectangle((int)pos.X, (int)pos.Y, (int)drawnWidth, (int)textSize.Y);
+		if (!rect.Contains((int)mouse.X, (int)mouse.Y) || PlayerInput.IgnoreMouseInterface)
+			return;
+
+		Main.LocalPlayer.mouseInterface = true;
+		
+		if (ElementalHeartsVisualConfig.Instance.DraggableUI)
+		{
+			if (Main.mouseLeft && Main.mouseLeftRelease && !_dragging)
+			{
+				_dragging = true;
+				_dragOffset = new Vector2(mouse.X - columnX, mouse.Y - firstSlotY);
+			}
+			if (Main.mouseRight && Main.mouseRightRelease)
+			{
+				_expanded = !_expanded;
+				Main.mouseRightRelease = false;
+				SoundEngine.PlaySound(SoundID.MenuTick);
+			}
+		}
+		else
+		{
+			if (Main.mouseLeft && Main.mouseLeftRelease)
+			{
+				_expanded = !_expanded;
+				Main.mouseLeftRelease = false;
+				SoundEngine.PlaySound(SoundID.MenuTick);
+			}
+		}
+	}
+
+	private static void DrawSlot(SpriteBatch spriteBatch, LifeShardPlayer shardPlayer, int tier,
+		Vector2 position, Vector2 mouse)
+	{
+		float slotSize = TextureAssets.InventoryBack.Value.Width * SlotScale;
+		var rect = new Rectangle((int)position.X, (int)position.Y, (int)slotSize, (int)slotSize);
+
+		if (rect.Contains((int)mouse.X, (int)mouse.Y) && !PlayerInput.IgnoreMouseInterface)
+		{
+			Main.LocalPlayer.mouseInterface = true;
+
+			// The slot only accepts its own tier of shard; an empty cursor (taking shards
+			// out) is always allowed.
+			bool cursorAllowed = Main.mouseItem.IsAir
+				|| (Main.mouseItem.ModItem is LifeShardItem held && (int)held.Tier == tier);
+			if (cursorAllowed)
+				ItemSlot.Handle(ref shardPlayer.Shards[tier], SlotContext);
+		}
+
+		// Drawn manually rather than via ItemSlot.Draw: that helper treats a ref-item slot
+		// as hotbar slot 0 and stamps a "1" hotbar number onto it. This isn't a hotbar slot.
+		Texture2D back = TextureAssets.InventoryBack.Value;
+		spriteBatch.Draw(back, position, null, Main.inventoryBack, 0f, Vector2.Zero,
+			SlotScale, SpriteEffects.None, 0f);
+
+		Item item = shardPlayer.Shards[tier];
+		if (item.IsAir)
+			return;
+
+		// Item icon, centred in the slot. Drawn at the slot's own scale — only shrunk
+		// further if the sprite is oversized — exactly how vanilla renders items in their
+		// slots, so small items stay small instead of being blown up to fill the slot.
+		Main.instance.LoadItem(item.type);
+		Texture2D icon = TextureAssets.Item[item.type].Value;
+		float iconScale = SlotScale;
+		float maxDim = Math.Max(icon.Width, icon.Height);
+		if (maxDim > 32f)
+			iconScale *= 32f / maxDim;
+		spriteBatch.Draw(icon, position + new Vector2(slotSize / 2f), null, Color.White, 0f,
+			new Vector2(icon.Width, icon.Height) / 2f, iconScale, SpriteEffects.None, 0f);
+
+		// Stack count, bottom-left like a vanilla slot.
+		if (item.stack > 1)
+		{
+			Vector2 stackPos = position + new Vector2(slotSize * 0.16f, slotSize * 0.56f);
+			ChatManager.DrawColorCodedStringWithShadow(spriteBatch, FontAssets.ItemStack.Value,
+				item.stack.ToString(), stackPos, Color.White, 0f, Vector2.Zero,
+				new Vector2(SlotScale), -1f, SlotScale);
+		}
+	}
+
+	/// <summary>
+	/// Draws the upgrade buttons in a row right of a slot — one per higher tier the slot can
+	/// currently afford to craft directly. Each button is that target tier's upgrade-label
+	/// sprite; clicking it consumes the shards and produces one shard of that tier, skipping
+	/// any tiers in between. A higher-tier button only appears once you can afford it, so a
+	/// big enough stockpile lets you jump straight past the tiers you don't want.
+	/// </summary>
+	private static void DrawUpgradeButtons(SpriteBatch spriteBatch, LifeShardPlayer shardPlayer,
+		int tier, Vector2 slotPos, float slotSize, Vector2 mouse)
+	{
+		// Small, compact buttons in a row, vertically centred on the slot.
+		float buttonSize = slotSize * UpgradeButtonScale;
+		float buttonY = slotPos.Y + ((slotSize - buttonSize) / 2f);
+		float x = slotPos.X + slotSize + UpgradeButtonGap;
+
+		// Passive "breathing" pulse — the label gently scales ±5% on a slow sine. The
+		// hit-test rect stays fixed to buttonSize, so only the visuals move.
+		float pulse = 1f + (0.05f * (float)Math.Sin(Main.GlobalTimeWrappedHourly * 3f));
+
+		// One button per higher tier — Uncommon through Legendary — that the slot can
+		// currently afford. The loop runs to the top tier, so the Legendary button is
+		// wired up exactly like the rest once you hold enough shards for it.
+		for (int target = tier + 1; target < LifeShardPlayer.SlotCount; target++)
+		{
+			if (!shardPlayer.CanUpgrade(tier, target))
+				continue;
+
+			var targetTier = (LifeShardTier)target;
+			Texture2D label = UpgradeLabel(targetTier);
+
+			var rect = new Rectangle((int)x, (int)buttonY, (int)buttonSize, (int)buttonSize);
+			bool hover = rect.Contains((int)mouse.X, (int)mouse.Y) && !PlayerInput.IgnoreMouseInterface;
+			Vector2 center = new Vector2(x + (buttonSize / 2f), buttonY + (buttonSize / 2f));
+
+			// Hovering lights a slot-style frame behind the button — a clear, vanilla-like
+			// cue that it's interactive — and the label itself nudges a touch larger.
+			if (hover)
+			{
+				Texture2D frame = TextureAssets.InventoryBack.Value;
+				spriteBatch.Draw(frame, center, null, Color.White * 0.65f, 0f,
+					new Vector2(frame.Width, frame.Height) / 2f, buttonSize / frame.Width,
+					SpriteEffects.None, 0f);
+			}
+
+			float scale = buttonSize / label.Width * pulse * (hover ? 1.15f : 1f);
+			spriteBatch.Draw(label, center, null, Color.White, 0f,
+				new Vector2(label.Width, label.Height) / 2f, scale, SpriteEffects.None, 0f);
+
+			if (hover)
+			{
+				Main.LocalPlayer.mouseInterface = true;
+				int cost = ((LifeShardTier)tier).GetUpgradeCost(targetTier);
+				Main.instance.MouseText(Language.GetTextValue(
+					"Mods.ElementalHearts.UI.Combine", cost, targetTier.GetDisplayName()));
+
+				// Left-click performs the upgrade: consume the shards, craft the result,
+				// and play the smith + crystal cue.
+				if (Clicked())
+				{
+					shardPlayer.TryUpgrade(tier, target);
+					PlayUpgradeSound(targetTier);
+				}
+			}
+
+			x += buttonSize + UpgradeButtonGap;
+		}
+	}
+
+	/// <summary>
+	/// The upgrade-label sprite for a craftable target tier (Uncommon…Legendary), loaded
+	/// from <c>Common/UI/</c> next to this panel. tModLoader caches the asset internally, so
+	/// requesting it per frame is cheap.
+	/// </summary>
+	private static Texture2D UpgradeLabel(LifeShardTier tier)
+		=> ModContent.Request<Texture2D>($"ElementalHearts/Common/UI/{tier}UpgradeLabel",
+			AssetRequestMode.ImmediateLoad).Value;
+
+	/// <summary>True on the frame the left mouse button is freshly pressed; consumes the press.</summary>
+	private static bool Clicked()
+	{
+		if (Main.mouseLeft && Main.mouseLeftRelease)
+		{
+			Main.mouseLeftRelease = false;
+			return true;
+		}
+
+		return false;
+	}
+
+	/// <summary>
+	/// Plays the feedback for a successful combine: the vanilla reforge "smith" tink layered
+	/// with the resulting tier's own crystal cue.
+	/// </summary>
+	private static void PlayUpgradeSound(LifeShardTier resultTier)
+	{
+		SoundEngine.PlaySound(SoundID.Item37);
+		SoundEngine.PlaySound(resultTier.GetPickupSound());
+	}
+
+	/// <summary>Mouse position transformed into the UI-scaled space the panel draws in.</summary>
+	private static Vector2 UiMouse()
+		=> Vector2.Transform(new Vector2(Main.mouseX, Main.mouseY), Matrix.Invert(Main.UIScaleMatrix));
+}

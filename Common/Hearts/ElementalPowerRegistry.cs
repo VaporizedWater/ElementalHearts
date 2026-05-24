@@ -125,7 +125,6 @@ internal static class ElementalPowerRegistry
 		["KingSlimeHeart"] = "monarch",
 		["LunaticCultistHeart"] = "sun",
 		["MartianSaucerHeart"] = "alien",
-		["MenacingHeart"] = "menace",
 		["MoonLordHeart"] = "moon",
 		["MourningWoodHeart"] = "ember",
 		["PlanteraHeart"] = "plantera",

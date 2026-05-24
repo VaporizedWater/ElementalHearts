@@ -1,4 +1,6 @@
 using ElementalHearts.Common.Hearts;
+using ElementalHearts.Content.Items.LifeShards;
+using Terraria.ModLoader;
 using Terraria.ID;
 
 namespace ElementalHearts.Content.Items.Hearts.Rare;
@@ -11,6 +13,7 @@ public sealed class DiscordHeart : ElementalHeartItem
 	{
 		CreateRecipe()
 			.AddIngredient(ItemID.PixieDust, RecipeCost(300))
+			.AddIngredient(ModContent.ItemType<RareLifeShard>(), 3)
 			.AddTile(TileID.CrystalBall)
 			.Register();
 	}
