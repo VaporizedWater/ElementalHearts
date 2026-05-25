@@ -13,8 +13,9 @@ public sealed class PlatinumHeart : ElementalHeartItem
 	{
 		CreateRecipe()
 			.AddIngredient(ItemID.PlatinumBar, RecipeCost(100))
-			.AddIngredient(ModContent.ItemType<UncommonLifeShard>(), 4)
+			.AddOptionalIngredient(ModContent.ItemType<UncommonLifeShard>(), 4)
 			.AddTile(TileID.Anvils)
 			.Register();
 	}
 }
+

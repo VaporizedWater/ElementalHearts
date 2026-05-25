@@ -13,8 +13,9 @@ public sealed class TungstenHeart : ElementalHeartItem
 	{
 		CreateRecipe()
 			.AddIngredient(ItemID.TungstenBar, RecipeCost(100))
-			.AddIngredient(ModContent.ItemType<UncommonLifeShard>(), 3)
+			.AddOptionalIngredient(ModContent.ItemType<UncommonLifeShard>(), 3)
 			.AddTile(TileID.Anvils)
 			.Register();
 	}
 }
+

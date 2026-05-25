@@ -13,8 +13,9 @@ public sealed class RubyHeart : ElementalHeartItem
 	{
 		CreateRecipe()
 			.AddIngredient(ItemID.Ruby, RecipeCost(40))
-			.AddIngredient(ModContent.ItemType<UncommonLifeShard>(), 3)
+			.AddOptionalIngredient(ModContent.ItemType<UncommonLifeShard>(), 3)
 			.AddTile(TileID.HeavyWorkBench)
 			.Register();
 	}
 }
+

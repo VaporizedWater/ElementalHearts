@@ -13,8 +13,9 @@ public sealed class DynastyHeart : ElementalHeartItem
 	{
 		CreateRecipe()
 			.AddIngredient(ItemID.DynastyWood, RecipeCost(1000))
-			.AddIngredient(ModContent.ItemType<CommonLifeShard>(), 5)
+			.AddOptionalIngredient(ModContent.ItemType<CommonLifeShard>(), 5)
 			.AddTile(TileID.WorkBenches)
 			.Register();
 	}
 }
+

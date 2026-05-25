@@ -13,8 +13,9 @@ public sealed class DirtHeart : ElementalHeartItem
 	{
 		CreateRecipe()
 			.AddIngredient(ItemID.DirtBlock, RecipeCost(1000))
-			.AddIngredient(ModContent.ItemType<CommonLifeShard>(), 1)
+			.AddOptionalIngredient(ModContent.ItemType<CommonLifeShard>(), 1)
 			.AddTile(TileID.WorkBenches)
 			.Register();
 	}
 }
+

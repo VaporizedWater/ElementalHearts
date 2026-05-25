@@ -13,8 +13,9 @@ public sealed class RainbowHeart : ElementalHeartItem
 	{
 		CreateRecipe()
 			.AddIngredient(ItemID.RainbowBrick, RecipeCost(50))
-			.AddIngredient(ModContent.ItemType<CommonLifeShard>(), 5)
+			.AddOptionalIngredient(ModContent.ItemType<CommonLifeShard>(), 5)
 			.AddTile(TileID.WorkBenches)
 			.Register();
 	}
 }
+

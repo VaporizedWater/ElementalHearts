@@ -12,41 +12,36 @@ namespace ElementalHearts.Common.Hearts;
 /// </summary>
 public readonly struct HeartEffect
 {
-	public readonly Color Primary;
-	public readonly Color Secondary;
+	public readonly Color[]? Colors;
 	public readonly bool Rainbow;
 
-	public HeartEffect(Color primary)
-	{
-		Primary = primary;
-		Secondary = primary;
-		Rainbow = false;
-	}
+	public Color Primary => Colors != null && Colors.Length > 0 ? Colors[0] : Color.White;
 
-	public HeartEffect(Color primary, Color secondary)
+	public HeartEffect(params Color[] colors)
 	{
-		Primary = primary;
-		Secondary = secondary;
+		Colors = colors;
 		Rainbow = false;
 	}
 
 	private HeartEffect(bool rainbow)
 	{
-		Primary = Color.White;
-		Secondary = Color.White;
+		Colors = null;
 		Rainbow = rainbow;
 	}
 
 	/// <summary>A heart whose particles cycle the full hue wheel instead of using fixed colours.</summary>
 	public static HeartEffect Prismatic => new(rainbow: true);
 
-	/// <summary>Picks a particle colour: a random hue if prismatic, otherwise one of the two theme colours.</summary>
+	/// <summary>Picks a particle colour: a random hue if prismatic, otherwise one of the theme colours.</summary>
 	public Color Pick(UnifiedRandom rand)
 	{
 		if (Rainbow)
 			return Main.hslToRgb(rand.NextFloat(), 1f, 0.62f);
 
-		return rand.NextBool() ? Primary : Secondary;
+		if (Colors != null && Colors.Length > 0)
+			return Colors[rand.Next(Colors.Length)];
+
+		return Color.White;
 	}
 }
 
@@ -61,6 +56,9 @@ public static class HeartEffectRegistry
 
 	private static HeartEffect Eff(int r1, int g1, int b1, int r2, int g2, int b2) =>
 		new(new Color(r1, g1, b1), new Color(r2, g2, b2));
+
+	private static HeartEffect Eff(int r1, int g1, int b1, int r2, int g2, int b2, int r3, int g3, int b3) =>
+		new(new Color(r1, g1, b1), new Color(r2, g2, b2), new Color(r3, g3, b3));
 
 	private static readonly Dictionary<string, HeartEffect> Effects = new()
 	{
@@ -152,9 +150,11 @@ public static class HeartEffectRegistry
 		// ── Vanilla: Epic ────────────────────────────────────────────────────────
 		["AdamantiteHeart"]  = Eff(228, 82, 62),
 		["ChlorophyteHeart"] = Eff(122, 202, 52),
-		["CrystalHeart"]     = Eff(232, 92, 132),
+		["CrystalHeart"]     = Eff(255, 50, 50, 255, 100, 200),
 		["HallowedHeart"]    = Eff(246, 240, 172),
+		["LifeFruitHeart"]   = Eff(180, 255, 50, 50, 255, 50),
 		["MechanicalHeart"]  = Eff(122, 162, 172),
+		["ShardHeart"]       = Eff(180, 50, 220, 50, 100, 255, 255, 100, 200),
 		["SoulOfFrightHeart"]= Eff(212, 72, 72),
 		["SoulOfMightHeart"] = Eff(232, 212, 92),
 		["SoulOfSightHeart"] = Eff(92, 152, 222),
@@ -165,6 +165,18 @@ public static class HeartEffectRegistry
 		["LuminiteHeart"]    = Eff(202, 182, 232),
 		["ShroomiteHeart"]   = Eff(82, 182, 202),
 		["SpectreHeart"]     = Eff(162, 222, 216),
+		// Lunar bricks
+		["AstraHeart"] = new HeartEffect(
+			new Color( 22,  82, 212), new Color( 52, 122, 246), new Color( 32, 152, 252),
+			new Color( 72,  92, 232), new Color(102, 172, 252),                            // 5 vibrant blues
+			new Color( 22,  22,  28), new Color( 52,  52,  62), new Color( 82,  82,  92)), // 3 black-grays
+		["CosmicEmberHeart"]   = Eff(132, 132, 138, 232, 132, 42),                  // gray + ember orange
+		["CryocoreHeart"]      = Eff(162, 172, 182, 62, 152, 246, 32, 52, 122),     // gray + vibrant blue + dark blue
+		["DarkCelestialHeart"] = Eff(172, 62, 232, 122, 122, 132, 62, 32, 92),      // vibrant purple + gray + dark purple
+		["HeavenforgeHeart"]   = Eff(250, 250, 252, 192, 192, 202, 102, 102, 112),  // vibrant white + light gray + dark gray
+		["LunarRustHeart"]     = Eff(122, 32, 42, 102, 222, 202, 242, 92, 182),     // maroon + lime-blue (teal) + vibrant pink
+		["MercuryHeart"]       = Eff(22, 22, 28, 132, 132, 142, 172, 212, 246),     // black + gray + light blue
+		["StarRoyaleHeart"]    = Eff(252, 222, 52, 52, 122, 246),                   // vibrant yellow + vibrant blue
 
 		// ── Vanilla: Exotic (boss-themed) ────────────────────────────────────────
 		["BetsyHeart"]          = Eff(152, 132, 222),
@@ -285,6 +297,13 @@ public static class HeartEffectRegistry
 		["CursedHeart"]       = Eff(92, 72, 122),
 		["EasterHeart"]       = Eff(240, 170, 200, 150, 220, 150),
 		["SoulOfBlightHeart"] = Eff(132, 162, 92),
+
+		// ── Pacified Hearts ──────────────────────────────────────────────────────
+		["CommonPacifiedHeart"]    = new HeartEffect(new Color(255, 60, 60), new Color(255, 105, 180)),
+		["UncommonPacifiedHeart"]  = new HeartEffect(new Color(50, 205, 50), new Color(0, 128, 0)),
+		["RarePacifiedHeart"]      = new HeartEffect(new Color(30, 144, 255), new Color(0, 0, 139)),
+		["EpicPacifiedHeart"]      = new HeartEffect(new Color(138, 43, 226), new Color(75, 0, 130), new Color(148, 0, 211)),
+		["LegendaryPacifiedHeart"] = new HeartEffect(new Color(255, 215, 0), new Color(255, 255, 0), new Color(255, 165, 0), new Color(255, 140, 0), new Color(218, 165, 32)),
 	};
 
 	/// <summary>

@@ -13,8 +13,9 @@ public sealed class ObsidianHeart : ElementalHeartItem
 	{
 		CreateRecipe()
 			.AddIngredient(ItemID.Obsidian, RecipeCost(250))
-			.AddIngredient(ModContent.ItemType<CommonLifeShard>(), 5)
+			.AddOptionalIngredient(ModContent.ItemType<CommonLifeShard>(), 5)
 			.AddTile(TileID.Hellforge)
 			.Register();
 	}
 }
+

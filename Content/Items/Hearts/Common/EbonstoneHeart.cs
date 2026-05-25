@@ -13,8 +13,9 @@ public sealed class EbonstoneHeart : ElementalHeartItem
 	{
 		CreateRecipe()
 			.AddIngredient(ItemID.EbonstoneBlock, RecipeCost(1000))
-			.AddIngredient(ModContent.ItemType<CommonLifeShard>(), 3)
+			.AddOptionalIngredient(ModContent.ItemType<CommonLifeShard>(), 3)
 			.AddTile(TileID.DemonAltar)
 			.Register();
 	}
 }
+

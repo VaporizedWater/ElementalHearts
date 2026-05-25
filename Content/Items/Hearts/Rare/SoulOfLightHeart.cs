@@ -13,8 +13,9 @@ public sealed class SoulOfLightHeart : ElementalHeartItem
 	{
 		CreateRecipe()
 			.AddIngredient(ItemID.SoulofLight, RecipeCost(150))
-			.AddIngredient(ModContent.ItemType<RareLifeShard>(), 1)
+			.AddOptionalIngredient(ModContent.ItemType<RareLifeShard>(), 1)
 			.AddTile(TileID.MythrilAnvil)
 			.Register();
 	}
 }
+

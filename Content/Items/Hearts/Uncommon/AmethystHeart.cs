@@ -13,8 +13,9 @@ public sealed class AmethystHeart : ElementalHeartItem
 	{
 		CreateRecipe()
 			.AddIngredient(ItemID.Amethyst, RecipeCost(60))
-			.AddIngredient(ModContent.ItemType<UncommonLifeShard>(), 1)
+			.AddOptionalIngredient(ModContent.ItemType<UncommonLifeShard>(), 1)
 			.AddTile(TileID.HeavyWorkBench)
 			.Register();
 	}
 }
+

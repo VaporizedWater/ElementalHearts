@@ -13,8 +13,9 @@ public sealed class IceHeart : ElementalHeartItem
 	{
 		CreateRecipe()
 			.AddIngredient(ItemID.IceBlock, RecipeCost(1000))
-			.AddIngredient(ModContent.ItemType<CommonLifeShard>(), 2)
+			.AddOptionalIngredient(ModContent.ItemType<CommonLifeShard>(), 2)
 			.AddTile(TileID.IceMachine)
 			.Register();
 	}
 }
+

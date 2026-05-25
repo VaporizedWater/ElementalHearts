@@ -13,8 +13,9 @@ public sealed class EmeraldHeart : ElementalHeartItem
 	{
 		CreateRecipe()
 			.AddIngredient(ItemID.Emerald, RecipeCost(40))
-			.AddIngredient(ModContent.ItemType<UncommonLifeShard>(), 3)
+			.AddOptionalIngredient(ModContent.ItemType<UncommonLifeShard>(), 3)
 			.AddTile(TileID.HeavyWorkBench)
 			.Register();
 	}
 }
+

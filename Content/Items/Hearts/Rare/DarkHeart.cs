@@ -13,8 +13,9 @@ public sealed class DarkHeart : ElementalHeartItem
 	{
 		CreateRecipe()
 			.AddIngredient(ItemID.DefenderMedal, RecipeCost(200))
-			.AddIngredient(ModContent.ItemType<RareLifeShard>(), 2)
+			.AddOptionalIngredient(ModContent.ItemType<RareLifeShard>(), 2)
 			.AddTile(TileID.WorkBenches)
 			.Register();
 	}
 }
+

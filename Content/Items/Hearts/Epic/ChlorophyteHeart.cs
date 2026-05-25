@@ -13,8 +13,9 @@ public sealed class ChlorophyteHeart : ElementalHeartItem
 	{
 		CreateRecipe()
 			.AddIngredient(ItemID.ChlorophyteBar, RecipeCost(80))
-			.AddIngredient(ModContent.ItemType<EpicLifeShard>(), 2)
+			.AddOptionalIngredient(ModContent.ItemType<EpicLifeShard>(), 2)
 			.AddTile(TileID.AdamantiteForge)
 			.Register();
 	}
 }
+

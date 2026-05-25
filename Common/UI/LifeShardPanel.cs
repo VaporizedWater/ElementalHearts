@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using ElementalHearts.Common.Configs;
 using ElementalHearts.Common.LifeShards;
 using ElementalHearts.Common.Players;
+using ElementalHearts.Common.Systems;
 using ElementalHearts.Content.Items.LifeShards;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -66,6 +67,35 @@ public sealed class LifeShardPanel : ModSystem
 	private static bool _dragging;
 	private static Vector2 _dragOffset;
 
+	/// <summary>One-shot flag — the Lite chat sequence only fires on the first tip click each
+	/// world load, reset by <see cref="OnWorldLoad"/> / <see cref="OnWorldUnload"/>.</summary>
+	private static bool _liteChatFiredThisLoad;
+
+	/// <summary>Pending Lite chat lines, paired with the <see cref="Main.GameUpdateCount"/> tick
+	/// they should print on. Drained by <see cref="PostUpdateEverything"/> so the staggered
+	/// delivery keeps working even when the inventory (and this panel) is closed.</summary>
+	private static readonly Queue<(uint TriggerTick, string Text)> _liteChatQueue = new();
+
+	public static bool IsHoveringShardSlot { get; internal set; }
+
+	public override void OnWorldLoad()
+	{
+		_liteChatFiredThisLoad = false;
+		_liteChatQueue.Clear();
+	}
+
+	public override void OnWorldUnload()
+	{
+		_liteChatFiredThisLoad = false;
+		_liteChatQueue.Clear();
+	}
+
+	public override void PostUpdateEverything()
+	{
+		while (_liteChatQueue.Count > 0 && _liteChatQueue.Peek().TriggerTick <= Main.GameUpdateCount)
+			Main.NewText(_liteChatQueue.Dequeue().Text);
+	}
+
 	public override void ModifyInterfaceLayers(List<GameInterfaceLayer> layers)
 	{
 		int inventoryLayer = layers.FindIndex(layer => layer.Name == "Vanilla: Inventory");
@@ -84,6 +114,8 @@ public sealed class LifeShardPanel : ModSystem
 
 	private void Draw(SpriteBatch spriteBatch)
 	{
+		IsHoveringShardSlot = false;
+
 		if (!Main.playerInventory || Main.LocalPlayer == null)
 			return;
 		if (!LifeShardConfig.Instance.SystemEnabled)
@@ -113,6 +145,17 @@ public sealed class LifeShardPanel : ModSystem
 		{
 			columnX = ElementalHeartsVisualConfig.Instance.UIPosition.X;
 			firstSlotY = ElementalHeartsVisualConfig.Instance.UIPosition.Y;
+
+			// Enforce safe zone on load to prevent spawning in the top left
+			if (columnX < 300f && firstSlotY < 300f)
+			{
+				if (300f - columnX < 300f - firstSlotY)
+					columnX = 300f;
+				else
+					firstSlotY = 300f;
+			}
+			columnX = Math.Clamp(columnX, 0f, Main.screenWidth - slotSize);
+			firstSlotY = Math.Clamp(firstSlotY, 0f, Main.screenHeight - slotSize);
 		}
 
 		if (_dragging)
@@ -121,11 +164,27 @@ public sealed class LifeShardPanel : ModSystem
 			{
 				columnX = mouse.X - _dragOffset.X;
 				firstSlotY = mouse.Y - _dragOffset.Y;
+
+				if (columnX < 300f && firstSlotY < 300f)
+				{
+					if (300f - columnX < 300f - firstSlotY)
+						columnX = 300f;
+					else
+						firstSlotY = 300f;
+				}
+				columnX = Math.Clamp(columnX, 0f, Main.screenWidth - slotSize);
+				firstSlotY = Math.Clamp(firstSlotY, 0f, Main.screenHeight - slotSize);
+
 				ElementalHeartsVisualConfig.Instance.UIPosition = new Vector2(columnX, firstSlotY);
 			}
 			else
 			{
 				_dragging = false;
+				var saveMethod = typeof(Terraria.ModLoader.Config.ConfigManager).GetMethod("Save", System.Reflection.BindingFlags.Static | System.Reflection.BindingFlags.NonPublic);
+				if (saveMethod != null)
+				{
+					saveMethod.Invoke(null, new object[] { ElementalHeartsVisualConfig.Instance });
+				}
 			}
 		}
 
@@ -141,6 +200,11 @@ public sealed class LifeShardPanel : ModSystem
 				DrawUpgradeButtons(spriteBatch, shardPlayer, tier, slotPos, slotSize, mouse);
 				slotY += slotPitch;
 			}
+
+			// Tip badge sits in place of the upgrade button on the highest tier whose upgrade is
+			// still gated by an undefeated Animate. Single badge, only when affordable.
+			DrawAnimateTipBadge(spriteBatch, shardPlayer, columnX, firstSlotY, slotSize,
+				slotPitch, visible, mouse);
 		}
 
 		Main.inventoryScale = savedScale;
@@ -215,6 +279,7 @@ public sealed class LifeShardPanel : ModSystem
 
 		if (rect.Contains((int)mouse.X, (int)mouse.Y) && !PlayerInput.IgnoreMouseInterface)
 		{
+			IsHoveringShardSlot = true;
 			Main.LocalPlayer.mouseInterface = true;
 
 			// The slot only accepts its own tier of shard; an empty cursor (taking shards
@@ -291,15 +356,7 @@ public sealed class LifeShardPanel : ModSystem
 			bool hover = rect.Contains((int)mouse.X, (int)mouse.Y) && !PlayerInput.IgnoreMouseInterface;
 			Vector2 center = new Vector2(x + (buttonSize / 2f), buttonY + (buttonSize / 2f));
 
-			// Hovering lights a slot-style frame behind the button — a clear, vanilla-like
-			// cue that it's interactive — and the label itself nudges a touch larger.
-			if (hover)
-			{
-				Texture2D frame = TextureAssets.InventoryBack.Value;
-				spriteBatch.Draw(frame, center, null, Color.White * 0.65f, 0f,
-					new Vector2(frame.Width, frame.Height) / 2f, buttonSize / frame.Width,
-					SpriteEffects.None, 0f);
-			}
+			// Hovering nudges the label itself a touch larger.
 
 			float scale = buttonSize / label.Width * pulse * (hover ? 1.15f : 1f);
 			spriteBatch.Draw(label, center, null, Color.White, 0f,
@@ -308,9 +365,14 @@ public sealed class LifeShardPanel : ModSystem
 			if (hover)
 			{
 				Main.LocalPlayer.mouseInterface = true;
-				int cost = ((LifeShardTier)tier).GetUpgradeCost(targetTier);
+				var lowerTier = (LifeShardTier)tier;
+				int cost = lowerTier.GetUpgradeCost(targetTier);
+				// "Life Shards" / "Life Shard" tinted with each tier's own colour, so the tier
+				// reads from the colour alone instead of repeating the word ("Uncommon", etc.).
+				string lowerText = Tinted("Life Shards", lowerTier.GetTextColor());
+				string targetText = Tinted("Life Shard", targetTier.GetTextColor());
 				Main.instance.MouseText(Language.GetTextValue(
-					"Mods.ElementalHearts.UI.Combine", cost, targetTier.GetDisplayName()));
+					"Mods.ElementalHearts.UI.Fuse", cost, lowerText, targetText));
 
 				// Left-click performs the upgrade: consume the shards, craft the result,
 				// and play the smith + crystal cue.
@@ -356,7 +418,124 @@ public sealed class LifeShardPanel : ModSystem
 		SoundEngine.PlaySound(resultTier.GetPickupSound());
 	}
 
-	/// <summary>Mouse position transformed into the UI-scaled space the panel draws in.</summary>
+	/// <summary>
+	/// Draws the Animate progression hint — a pulsing badge sitting in place of the upgrade
+	/// button on the highest shard slot whose upgrade is still gated by an undefeated Animate.
+	/// Only renders when the Tips config is on, there is a higher tier to unlock, the gated
+	/// slot has shards equal to or above the fuse cost, and that slot is visible. Hovering
+	/// shows the short tip; clicking broadcasts an expanded version to chat.
+	/// </summary>
+	private static void DrawAnimateTipBadge(SpriteBatch spriteBatch, LifeShardPlayer shardPlayer,
+		float columnX, float firstSlotY, float slotSize, float slotPitch, List<int> visible,
+		Vector2 mouse)
+	{
+		if (!ElementalHeartsTipsConfig.Instance.EnableTips)
+			return;
+
+		// Slot whose upgrade is currently locked by Animate progression — the lowest target
+		// CanUpgrade would still reject is UnlockedTier + 1, so the gated source slot is
+		// UnlockedTier itself. Bail when there's no higher tier left to gate.
+		int gatedTier = AnimateProgressionSystem.UnlockedTier;
+		int nextTier = gatedTier + 1;
+		if (nextTier >= LifeShardPlayer.SlotCount)
+			return;
+
+		int rowIndex = visible.IndexOf(gatedTier);
+		if (rowIndex < 0)
+			return;
+
+		// Hide the tip if the player couldn't fuse one shard up even if the gate lifted —
+		// keeps the badge from nagging when there isn't enough material for an upgrade anyway.
+		int cost = ((LifeShardTier)gatedTier).GetUpgradeCost((LifeShardTier)nextTier);
+		if (cost <= 0 || shardPlayer.Shards[gatedTier].stack < cost)
+			return;
+
+		float slotY = firstSlotY + (rowIndex * slotPitch);
+		float buttonSize = slotSize * UpgradeButtonScale;
+		Vector2 center = new Vector2(
+			columnX + slotSize + UpgradeButtonGap + (buttonSize / 2f),
+			slotY + (slotSize / 2f));
+
+		// Soft "breathing" pulse — matches the passive animation on the upgrade-label sprites
+		// it sits in line with.
+		float pulse = 1f + (0.05f * (float)Math.Sin(Main.GlobalTimeWrappedHourly * 3f));
+
+		Texture2D label = ModContent.Request<Texture2D>("ElementalHearts/Common/UI/TipLabel",
+			AssetRequestMode.ImmediateLoad).Value;
+
+		Rectangle rect = new Rectangle((int)(center.X - (buttonSize / 2f)),
+			(int)(center.Y - (buttonSize / 2f)), (int)buttonSize, (int)buttonSize);
+		bool hover = rect.Contains((int)mouse.X, (int)mouse.Y) && !PlayerInput.IgnoreMouseInterface;
+
+		float scale = buttonSize / label.Width * pulse * (hover ? 1.15f : 1f);
+		spriteBatch.Draw(label, center, null, Color.White, 0f,
+			new Vector2(label.Width, label.Height) / 2f, scale, SpriteEffects.None, 0f);
+
+		if (!hover)
+			return;
+
+		Main.LocalPlayer.mouseInterface = true;
+
+		// "Animate" takes the gated tier's colour, "next tier" takes the unlock target's —
+		// so the wording mirrors the slots the tip references without naming the tiers.
+		Color currentColor = ((LifeShardTier)gatedTier).GetTextColor();
+		Color nextColor = ((LifeShardTier)nextTier).GetTextColor();
+		string animate = Tinted("Animate", currentColor);
+		string nextText = Tinted("next tier", nextColor);
+
+		// The very first tip (no Animate ever defeated) bundles the "Spawn him with a Menacing
+		// Heart!" call to action; higher-tier tips are deliberately terser — by then the player
+		// already knows the loop and just needs the colour cue for the next step.
+		bool firstTip = gatedTier == 0;
+		if (firstTip)
+		{
+			string menacing = Tinted("Menacing Heart", currentColor);
+			Main.instance.MouseText(string.Format(
+				Language.GetTextValue("Mods.ElementalHearts.UI.AnimateTip"),
+				animate, nextText, menacing));
+		}
+		else
+		{
+			Main.instance.MouseText(string.Format(
+				Language.GetTextValue("Mods.ElementalHearts.UI.AnimateTipNext"),
+				animate, nextText));
+		}
+
+		if (Main.mouseLeft && Main.mouseLeftRelease)
+		{
+			Main.mouseLeftRelease = false;
+			SoundEngine.PlaySound(SoundID.MenuTick);
+			QueueLiteChat();
+		}
+	}
+
+	/// <summary>Wraps a string in Terraria's chat colour code so it renders in the given colour
+	/// inside any text widget that runs through <c>ChatManager</c> (MouseText, chat messages).</summary>
+	private static string Tinted(string text, Color color)
+		=> $"[c/{color.R:X2}{color.G:X2}{color.B:X2}:{text}]";
+
+	/// <summary>
+	/// Schedules the four-line "Lite" chat sequence into <see cref="_liteChatQueue"/>, one line
+	/// per second. Guarded by <see cref="_liteChatFiredThisLoad"/> so the sequence only plays on
+	/// the very first tip click each world load — replaying would dilute the "natural chat" feel.
+	/// </summary>
+	private static void QueueLiteChat()
+	{
+		if (_liteChatFiredThisLoad)
+			return;
+		_liteChatFiredThisLoad = true;
+
+		uint now = Main.GameUpdateCount;
+		for (int i = 1; i <= 4; i++)
+		{
+			string line = Language.GetTextValue($"Mods.ElementalHearts.UI.LiteChat{i}");
+			// 60 ticks ≈ 1 second at Terraria's fixed 60 FPS. First line fires after a 1s beat
+			// too, so it doesn't collide with the tick sound and reads as a fresh chat ping.
+			_liteChatQueue.Enqueue(((uint)(now + (i * 60)), $"<Lite> {line}"));
+		}
+	}
+
+	/// <summary>Mouse position (already scaled by tModLoader in 1.4).</summary>
 	private static Vector2 UiMouse()
-		=> Vector2.Transform(new Vector2(Main.mouseX, Main.mouseY), Matrix.Invert(Main.UIScaleMatrix));
+		=> new Vector2(Main.mouseX, Main.mouseY);
 }

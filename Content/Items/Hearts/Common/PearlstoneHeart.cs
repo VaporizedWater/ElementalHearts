@@ -13,8 +13,9 @@ public sealed class PearlstoneHeart : ElementalHeartItem
 	{
 		CreateRecipe()
 			.AddIngredient(ItemID.PearlstoneBlock, RecipeCost(1000))
-			.AddIngredient(ModContent.ItemType<CommonLifeShard>(), 4)
+			.AddOptionalIngredient(ModContent.ItemType<CommonLifeShard>(), 4)
 			.AddTile(TileID.MythrilAnvil)
 			.Register();
 	}
 }
+

@@ -13,8 +13,9 @@ public sealed class BorealWoodHeart : ElementalHeartItem
 	{
 		CreateRecipe()
 			.AddIngredient(ItemID.BorealWood, RecipeCost(750))
-			.AddIngredient(ModContent.ItemType<CommonLifeShard>(), 1)
+			.AddOptionalIngredient(ModContent.ItemType<CommonLifeShard>(), 1)
 			.AddTile(TileID.WorkBenches)
 			.Register();
 	}
 }
+

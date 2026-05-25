@@ -13,8 +13,9 @@ public sealed class HayHeart : ElementalHeartItem
 	{
 		CreateRecipe()
 			.AddIngredient(ItemID.Hay, RecipeCost(2000))
-			.AddIngredient(ModContent.ItemType<CommonLifeShard>(), 2)
+			.AddOptionalIngredient(ModContent.ItemType<CommonLifeShard>(), 2)
 			.AddTile(TileID.WorkBenches)
 			.Register();
 	}
 }
+

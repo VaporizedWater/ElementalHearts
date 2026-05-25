@@ -13,8 +13,9 @@ public sealed class MeteoriteHeart : ElementalHeartItem
 	{
 		CreateRecipe()
 			.AddIngredient(ItemID.MeteoriteBar, RecipeCost(100))
-			.AddIngredient(ModContent.ItemType<RareLifeShard>(), 2)
+			.AddOptionalIngredient(ModContent.ItemType<RareLifeShard>(), 2)
 			.AddTile(TileID.Anvils)
 			.Register();
 	}
 }
+

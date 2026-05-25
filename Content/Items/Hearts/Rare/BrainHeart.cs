@@ -13,8 +13,9 @@ public sealed class BrainHeart : ElementalHeartItem
 	{
 		CreateRecipe()
 			.AddIngredient(ItemID.Vertebrae, RecipeCost(150))
-			.AddIngredient(ModContent.ItemType<RareLifeShard>(), 2)
+			.AddOptionalIngredient(ModContent.ItemType<RareLifeShard>(), 2)
 			.AddTile(TileID.DemonAltar)
 			.Register();
 	}
 }
+

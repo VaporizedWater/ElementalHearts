@@ -13,8 +13,9 @@ public sealed class CrimstoneHeart : ElementalHeartItem
 	{
 		CreateRecipe()
 			.AddIngredient(ItemID.CrimstoneBlock, RecipeCost(1000))
-			.AddIngredient(ModContent.ItemType<CommonLifeShard>(), 3)
+			.AddOptionalIngredient(ModContent.ItemType<CommonLifeShard>(), 3)
 			.AddTile(TileID.DemonAltar)
 			.Register();
 	}
 }
+

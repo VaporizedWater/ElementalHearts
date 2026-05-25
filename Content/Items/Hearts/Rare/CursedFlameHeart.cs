@@ -13,8 +13,9 @@ public sealed class CursedFlameHeart : ElementalHeartItem
 	{
 		CreateRecipe()
 			.AddIngredient(ItemID.CursedFlame, RecipeCost(150))
-			.AddIngredient(ModContent.ItemType<RareLifeShard>(), 3)
+			.AddOptionalIngredient(ModContent.ItemType<RareLifeShard>(), 3)
 			.AddTile(TileID.DemonAltar)
 			.Register();
 	}
 }
+

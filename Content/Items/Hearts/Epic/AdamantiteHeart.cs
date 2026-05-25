@@ -13,8 +13,9 @@ public sealed class AdamantiteHeart : ElementalHeartItem
 	{
 		CreateRecipe()
 			.AddIngredient(ItemID.AdamantiteBar, RecipeCost(100))
-			.AddIngredient(ModContent.ItemType<EpicLifeShard>(), 1)
+			.AddOptionalIngredient(ModContent.ItemType<EpicLifeShard>(), 1)
 			.AddTile(TileID.AdamantiteForge)
 			.Register();
 	}
 }
+

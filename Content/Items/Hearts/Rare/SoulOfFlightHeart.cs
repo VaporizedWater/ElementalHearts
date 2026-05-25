@@ -13,8 +13,9 @@ public sealed class SoulOfFlightHeart : ElementalHeartItem
 	{
 		CreateRecipe()
 			.AddIngredient(ItemID.SoulofFlight, RecipeCost(80))
-			.AddIngredient(ModContent.ItemType<RareLifeShard>(), 1)
+			.AddOptionalIngredient(ModContent.ItemType<RareLifeShard>(), 1)
 			.AddTile(TileID.MythrilAnvil)
 			.Register();
 	}
 }
+

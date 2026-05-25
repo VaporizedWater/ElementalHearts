@@ -13,8 +13,9 @@ public sealed class SunplateHeart : ElementalHeartItem
 	{
 		CreateRecipe()
 			.AddIngredient(ItemID.SunplateBlock, RecipeCost(200))
-			.AddIngredient(ModContent.ItemType<CommonLifeShard>(), 5)
+			.AddOptionalIngredient(ModContent.ItemType<CommonLifeShard>(), 5)
 			.AddTile(TileID.SkyMill)
 			.Register();
 	}
 }
+

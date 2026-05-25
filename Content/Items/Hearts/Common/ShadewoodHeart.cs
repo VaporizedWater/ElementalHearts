@@ -13,8 +13,9 @@ public sealed class ShadewoodHeart : ElementalHeartItem
 	{
 		CreateRecipe()
 			.AddIngredient(ItemID.Shadewood, RecipeCost(750))
-			.AddIngredient(ModContent.ItemType<CommonLifeShard>(), 3)
+			.AddOptionalIngredient(ModContent.ItemType<CommonLifeShard>(), 3)
 			.AddTile(TileID.WorkBenches)
 			.Register();
 	}
 }
+

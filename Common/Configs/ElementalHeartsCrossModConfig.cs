@@ -20,6 +20,7 @@ public sealed class ElementalHeartsCrossModConfig : ModConfig
 	public override ConfigScope Mode => ConfigScope.ServerSide;
 	public static ElementalHeartsCrossModConfig Instance => ModContent.GetInstance<ElementalHeartsCrossModConfig>();
 
+	[Header("SupportedMods")]
 	[DefaultValue(true)]
 	[ReloadRequired]
 	public bool EnableCalamityHearts;

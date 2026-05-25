@@ -13,8 +13,9 @@ public sealed class LesionHeart : ElementalHeartItem
 	{
 		CreateRecipe()
 			.AddIngredient(ItemID.LesionBlock, RecipeCost(400))
-			.AddIngredient(ModContent.ItemType<CommonLifeShard>(), 5)
+			.AddOptionalIngredient(ModContent.ItemType<CommonLifeShard>(), 5)
 			.AddTile(TileID.WorkBenches)
 			.Register();
 	}
 }
+

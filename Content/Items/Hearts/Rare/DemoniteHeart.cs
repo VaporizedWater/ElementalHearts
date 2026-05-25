@@ -13,8 +13,9 @@ public sealed class DemoniteHeart : ElementalHeartItem
 	{
 		CreateRecipe()
 			.AddIngredient(ItemID.DemoniteBar, RecipeCost(150))
-			.AddIngredient(ModContent.ItemType<RareLifeShard>(), 2)
+			.AddOptionalIngredient(ModContent.ItemType<RareLifeShard>(), 2)
 			.AddTile(TileID.DemonAltar)
 			.Register();
 	}
 }
+

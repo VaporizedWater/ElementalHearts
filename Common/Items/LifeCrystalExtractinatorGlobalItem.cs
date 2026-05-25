@@ -46,6 +46,28 @@ public sealed class LifeCrystalExtractinatorGlobalItem : GlobalItem
 		TrySpawnBonus(config.ExtractinatorRareChance, LifeShardTier.Rare, config.ExtractinatorRareMin, config.ExtractinatorRareMax);
 		TrySpawnBonus(config.ExtractinatorEpicChance, LifeShardTier.Epic, config.ExtractinatorEpicMin, config.ExtractinatorEpicMax);
 		TrySpawnBonus(config.ExtractinatorLegendaryChance, LifeShardTier.Legendary, config.ExtractinatorLegendaryMin, config.ExtractinatorLegendaryMax);
+
+		TrySpawnSeed();
+	}
+
+	/// <summary>
+	/// Independent bonus: a Life Crystal Seed for replanting the crystal on Vital Quartz.
+	/// Spawned alongside the shard yield rather than replacing it — the seed roll never
+	/// reduces shard output.
+	/// </summary>
+	private static void TrySpawnSeed()
+	{
+		VitalTilesConfig vitalCfg = VitalTilesConfig.Instance;
+		if (!vitalCfg.SystemEnabled)
+			return;
+		if (Main.netMode == NetmodeID.Server)
+			return;
+		if (Main.rand.NextFloat() >= vitalCfg.LifeCrystalSeedChance / 100f)
+			return;
+
+		Player player = Main.LocalPlayer;
+		player.QuickSpawnItem(player.GetSource_Misc("LifeCrystalSeedExtractinator"),
+			ModContent.ItemType<Content.Items.Tiles.LifeCrystalSeedItem>(), 1);
 	}
 
 	private static int RollStack(int a, int b)

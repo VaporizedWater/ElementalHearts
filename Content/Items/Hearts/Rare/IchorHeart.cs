@@ -13,8 +13,9 @@ public sealed class IchorHeart : ElementalHeartItem
 	{
 		CreateRecipe()
 			.AddIngredient(ItemID.Ichor, RecipeCost(150))
-			.AddIngredient(ModContent.ItemType<RareLifeShard>(), 3)
+			.AddOptionalIngredient(ModContent.ItemType<RareLifeShard>(), 3)
 			.AddTile(TileID.DemonAltar)
 			.Register();
 	}
 }
+

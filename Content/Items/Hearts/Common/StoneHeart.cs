@@ -13,8 +13,9 @@ public sealed class StoneHeart : ElementalHeartItem
 	{
 		CreateRecipe()
 			.AddIngredient(ItemID.StoneBlock, RecipeCost(1000))
-			.AddIngredient(ModContent.ItemType<CommonLifeShard>(), 1)
+			.AddOptionalIngredient(ModContent.ItemType<CommonLifeShard>(), 1)
 			.AddTile(TileID.WorkBenches)
 			.Register();
 	}
 }
+

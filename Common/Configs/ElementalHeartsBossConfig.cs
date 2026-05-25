@@ -11,12 +11,14 @@ public sealed class ElementalHeartsBossConfig : ModConfig
 	public override ConfigScope Mode => ConfigScope.ServerSide;
 	public static ElementalHeartsBossConfig Instance => ModContent.GetInstance<ElementalHeartsBossConfig>();
 
+	[Header("Drops")]
 	[DefaultValue(true)]
 	public bool BossHeartsGuaranteedOnFirstKill;
 
 	[DefaultValue(10)]
 	[Range(1, 100)]
-	[Slider]
 	[Increment(1)]
+	[Slider]
+	[SliderColor(255, 120, 110, 255)]
 	public int BossHeartDropChance;
 }

@@ -94,8 +94,9 @@ public abstract class AnimatingPotionItem : ModItem
 		}
 
 		// The Life Shard of the matching tier — the same tier value indexes both ladders.
-		recipe.AddIngredient(Tier.GetItemType(), 1)
+		recipe.AddOptionalIngredient(Tier.GetItemType(), 1)
 			.AddTile(TileID.Bottles)
 			.Register();
 	}
 }
+

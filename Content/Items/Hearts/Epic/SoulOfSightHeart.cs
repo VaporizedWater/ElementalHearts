@@ -13,8 +13,9 @@ public sealed class SoulOfSightHeart : ElementalHeartItem
 	{
 		CreateRecipe()
 			.AddIngredient(ItemID.SoulofSight, RecipeCost(80))
-			.AddIngredient(ModContent.ItemType<EpicLifeShard>(), 1)
+			.AddOptionalIngredient(ModContent.ItemType<EpicLifeShard>(), 1)
 			.AddTile(TileID.MythrilAnvil)
 			.Register();
 	}
 }
+

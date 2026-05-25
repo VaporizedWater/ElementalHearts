@@ -13,8 +13,9 @@ public sealed class HallowedHeart : ElementalHeartItem
 	{
 		CreateRecipe()
 			.AddIngredient(ItemID.HallowedBar, RecipeCost(100))
-			.AddIngredient(ModContent.ItemType<EpicLifeShard>(), 2)
+			.AddOptionalIngredient(ModContent.ItemType<EpicLifeShard>(), 2)
 			.AddTile(TileID.MythrilAnvil)
 			.Register();
 	}
 }
+

@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using ElementalHearts.Common.LifeShards;
 using Terraria;
@@ -27,7 +28,7 @@ public abstract class MenacingHeartItem : ModItem
 		Item.useAnimation = 45;
 		Item.useTime = 45;
 		Item.useStyle = ItemUseStyleID.HoldUp;
-		Item.UseSound = SoundID.Roar;
+		Item.UseSound = new SoundStyle($"ElementalHearts/Sounds/{Tier}BossItemUsed");
 		Item.consumable = true;
 	}
 
@@ -37,10 +38,10 @@ public abstract class MenacingHeartItem : ModItem
 		return !NPC.AnyNPCs(NPCSpawnType);
 	}
 
-	public override bool? UseItem(Player player)
+	public override Nullable<bool> UseItem(Player player)/* tModPorter Suggestion: Return null instead of false */
 	{
 		if (player.whoAmI == Main.myPlayer)
-			SoundEngine.PlaySound(SoundID.Roar, player.position);
+			SoundEngine.PlaySound(new SoundStyle($"ElementalHearts/Sounds/{Tier}BossItemUsed"), player.position);
 
 		if (Main.netMode != NetmodeID.MultiplayerClient)
 			NPC.SpawnOnPlayer(player.whoAmI, NPCSpawnType);
@@ -61,9 +62,10 @@ public abstract class MenacingHeartItem : ModItem
 	{
 		CreateRecipe()
 			.AddIngredient(ItemID.LifeCrystal, 1)
-			.AddIngredient(Tier.GetItemType(), 5)
+			.AddOptionalIngredient(Tier.GetItemType(), 1)
 			.AddTile(TileID.DemonAltar)
 			.AddCondition(new Condition("Mods.ElementalHearts.Conditions.CurrentAnimateTier", () => global::ElementalHearts.Common.Systems.AnimateProgressionSystem.UnlockedTier == (int)Tier))
 			.Register();
 	}
 }
+

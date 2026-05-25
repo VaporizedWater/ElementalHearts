@@ -13,8 +13,9 @@ public sealed class CobaltHeart : ElementalHeartItem
 	{
 		CreateRecipe()
 			.AddIngredient(ItemID.CobaltBar, RecipeCost(100))
-			.AddIngredient(ModContent.ItemType<RareLifeShard>(), 2)
+			.AddOptionalIngredient(ModContent.ItemType<RareLifeShard>(), 2)
 			.AddTile(TileID.MythrilAnvil)
 			.Register();
 	}
 }
+

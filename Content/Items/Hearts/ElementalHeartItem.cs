@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using ElementalHearts.Common.Configs;
 using ElementalHearts.Common.Hearts;
@@ -109,7 +109,7 @@ public abstract class ElementalHeartItem : ModItem
 	public override bool CanUseItem(Player player) =>
 		!HeartConsumptionWorld.IsConsumed(ConsumptionId);
 
-	public override bool? UseItem(Player player)
+	public override Nullable<bool> UseItem(Player player)/* tModPorter Suggestion: Return null instead of false */
 	{
 		if (player.whoAmI != Main.myPlayer)
 			return false;

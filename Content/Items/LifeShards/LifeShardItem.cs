@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using ElementalHearts.Common.Configs;
 using ElementalHearts.Common.LifeShards;
 using ElementalHearts.Common.Players;
+using ElementalHearts.Common.UI;
 using Terraria;
 using Terraria.ModLoader;
 
@@ -19,6 +20,8 @@ namespace ElementalHearts.Content.Items.LifeShards;
 public abstract class LifeShardItem : ModItem
 {
 	public abstract LifeShardTier Tier { get; }
+
+	public override bool IsLoadingEnabled(Mod mod) => LifeShardConfig.Instance.SystemEnabled;
 
 	public override void SetStaticDefaults()
 	{
@@ -49,7 +52,6 @@ public abstract class LifeShardItem : ModItem
 
 		CreateRecipe()
 			.AddIngredient(lower.GetItemType(), Tier.GetUpgradeCost())
-			.AddCondition(LifeShardSystem.SystemEnabledCondition)
 			.AddCondition(LifeShardSystem.UIUpgradeOnlyCondition)
 			.Register();
 	}
@@ -81,6 +83,16 @@ public abstract class LifeShardItem : ModItem
 		{
 			if (line.Mod == "Terraria" && line.Name == "ItemName")
 				line.OverrideColor = Tier.GetTextColor();
+		}
+
+		if (!LifeShardPanel.IsHoveringShardSlot)
+		{
+			int healAmount = Tier.GetHealAmount();
+			if (healAmount > 0)
+			{
+				TooltipLine healTooltip = new TooltipLine(Mod, "HealLife", $"Restores {healAmount} life");
+				tooltips.Add(healTooltip);
+			}
 		}
 	}
 }

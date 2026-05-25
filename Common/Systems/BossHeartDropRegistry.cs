@@ -25,6 +25,7 @@ public static class BossHeartDropRegistry
 		RegisterCalamity();
 		RegisterThorium();
 		RegisterConsolaria();
+		RegisterAnimateBosses();
 	}
 
 	private static void RegisterVanilla()
@@ -106,6 +107,15 @@ public static class BossHeartDropRegistry
 		TryAddMod<SoulOfBlightHeart>(mod, "Ocram");
 		TryAddMod<EasterHeart>(mod, "Lepus");
 		TryAddMod<CornucopiaHeart>(mod, "Turkor");
+	}
+
+	private static void RegisterAnimateBosses()
+	{
+		Add<CommonPacifiedHeart>(ModContent.NPCType<global::ElementalHearts.Content.NPCs.Bosses.Animate.CommonAnimate>());
+		Add<UncommonPacifiedHeart>(ModContent.NPCType<global::ElementalHearts.Content.NPCs.Bosses.Animate.UncommonAnimate>());
+		Add<RarePacifiedHeart>(ModContent.NPCType<global::ElementalHearts.Content.NPCs.Bosses.Animate.RareAnimate>());
+		Add<EpicPacifiedHeart>(ModContent.NPCType<global::ElementalHearts.Content.NPCs.Bosses.Animate.EpicAnimate>());
+		Add<LegendaryPacifiedHeart>(ModContent.NPCType<global::ElementalHearts.Content.NPCs.Bosses.Animate.LegendaryAnimate>());
 	}
 
 	private static void Add<THeart>(int npcType) where THeart : ModItem =>

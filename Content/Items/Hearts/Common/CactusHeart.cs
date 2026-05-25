@@ -13,8 +13,9 @@ public sealed class CactusHeart : ElementalHeartItem
 	{
 		CreateRecipe()
 			.AddIngredient(ItemID.Cactus, RecipeCost(500))
-			.AddIngredient(ModContent.ItemType<CommonLifeShard>(), 2)
+			.AddOptionalIngredient(ModContent.ItemType<CommonLifeShard>(), 2)
 			.AddTile(TileID.WorkBenches)
 			.Register();
 	}
 }
+

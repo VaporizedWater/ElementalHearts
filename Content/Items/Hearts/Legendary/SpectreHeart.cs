@@ -13,8 +13,9 @@ public sealed class SpectreHeart : ElementalHeartItem
 	{
 		CreateRecipe()
 			.AddIngredient(ItemID.SpectreBar, RecipeCost(50))
-			.AddIngredient(ModContent.ItemType<LegendaryLifeShard>(), 1)
+			.AddOptionalIngredient(ModContent.ItemType<LegendaryLifeShard>(), 1)
 			.AddTile(TileID.AdamantiteForge)
 			.Register();
 	}
 }
+

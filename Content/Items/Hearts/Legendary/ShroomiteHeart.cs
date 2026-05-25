@@ -13,8 +13,9 @@ public sealed class ShroomiteHeart : ElementalHeartItem
 	{
 		CreateRecipe()
 			.AddIngredient(ItemID.ShroomiteBar, RecipeCost(50))
-			.AddIngredient(ModContent.ItemType<LegendaryLifeShard>(), 1)
+			.AddOptionalIngredient(ModContent.ItemType<LegendaryLifeShard>(), 1)
 			.AddTile(TileID.Autohammer)
 			.Register();
 	}
 }
+

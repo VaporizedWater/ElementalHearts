@@ -13,8 +13,9 @@ public sealed class EbonwoodHeart : ElementalHeartItem
 	{
 		CreateRecipe()
 			.AddIngredient(ItemID.Ebonwood, RecipeCost(750))
-			.AddIngredient(ModContent.ItemType<CommonLifeShard>(), 3)
+			.AddOptionalIngredient(ModContent.ItemType<CommonLifeShard>(), 3)
 			.AddTile(TileID.WorkBenches)
 			.Register();
 	}
 }
+

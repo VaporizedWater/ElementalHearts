@@ -1,3 +1,4 @@
+using ElementalHearts.Common.Configs;
 using ElementalHearts.Content.Items.LifeShards;
 using ElementalHearts.Content.Rarities;
 using Microsoft.Xna.Framework;
@@ -96,6 +97,24 @@ public static class LifeShardTierExtensions
 		LifeShardTier.Legendary => new SoundStyle("ElementalHearts/Sounds/LegendaryCrystalPickup"),
 		_ => new SoundStyle("ElementalHearts/Sounds/CommonCrystalPickup"),
 	};
+
+	/// <summary>
+	/// Quick-heal value for one shard of this tier, sourced from <see cref="LifeShardConfig"/>
+	/// so the consumable feature can be retuned without recompiling.
+	/// </summary>
+	public static int GetHealAmount(this LifeShardTier tier)
+	{
+		LifeShardConfig cfg = LifeShardConfig.Instance;
+		return tier switch
+		{
+			LifeShardTier.Common    => cfg.CommonHealAmount,
+			LifeShardTier.Uncommon  => cfg.UncommonHealAmount,
+			LifeShardTier.Rare      => cfg.RareHealAmount,
+			LifeShardTier.Epic      => cfg.EpicHealAmount,
+			LifeShardTier.Legendary => cfg.LegendaryHealAmount,
+			_ => 0,
+		};
+	}
 
 	/// <summary>
 	/// Yields the tier one step below this one. Returns false for <see cref="LifeShardTier.Common"/>,

@@ -13,8 +13,9 @@ public sealed class EnchantedHeart : ElementalHeartItem
 	{
 		CreateRecipe()
 			.AddIngredient(ItemID.FallenStar, RecipeCost(100))
-			.AddIngredient(ModContent.ItemType<UncommonLifeShard>(), 4)
+			.AddOptionalIngredient(ModContent.ItemType<UncommonLifeShard>(), 4)
 			.AddTile(TileID.CrystalBall)
 			.Register();
 	}
 }
+

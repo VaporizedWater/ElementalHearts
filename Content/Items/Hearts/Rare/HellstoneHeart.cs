@@ -13,8 +13,9 @@ public sealed class HellstoneHeart : ElementalHeartItem
 	{
 		CreateRecipe()
 			.AddIngredient(ItemID.HellstoneBar, RecipeCost(100))
-			.AddIngredient(ModContent.ItemType<RareLifeShard>(), 2)
+			.AddOptionalIngredient(ModContent.ItemType<RareLifeShard>(), 2)
 			.AddTile(TileID.Hellforge)
 			.Register();
 	}
 }
+

@@ -13,8 +13,9 @@ public sealed class PearlwoodHeart : ElementalHeartItem
 	{
 		CreateRecipe()
 			.AddIngredient(ItemID.Pearlwood, RecipeCost(750))
-			.AddIngredient(ModContent.ItemType<CommonLifeShard>(), 4)
+			.AddOptionalIngredient(ModContent.ItemType<CommonLifeShard>(), 4)
 			.AddTile(TileID.WorkBenches)
 			.Register();
 	}
 }
+

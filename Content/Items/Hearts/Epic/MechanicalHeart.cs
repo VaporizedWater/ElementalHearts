@@ -15,8 +15,9 @@ public sealed class MechanicalHeart : ElementalHeartItem
 			.AddIngredient(ItemID.SoulofFright, RecipeCost(40))
 			.AddIngredient(ItemID.SoulofMight, RecipeCost(40))
 			.AddIngredient(ItemID.SoulofSight, RecipeCost(40))
-			.AddIngredient(ModContent.ItemType<EpicLifeShard>(), 2)
+			.AddOptionalIngredient(ModContent.ItemType<EpicLifeShard>(), 2)
 			.AddTile(TileID.MythrilAnvil)
 			.Register();
 	}
 }
+

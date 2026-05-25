@@ -53,6 +53,37 @@ public sealed class UncommonAnimate : AnimateBoss
 	private int _lastHidingHpThreshold;
 	private int _lastPhase3Move = -1;
 	private bool _justWokeFromHide;
+	// MP target lock — set once, kept for the whole phase, only rotated at phase transitions.
+	// Prevents the boss (and Red, who mirrors it) from snapping between players mid-attack.
+	private int _currentPhaseTarget = -1;
+	// Cooldown between Phase 2 safety teleports — prevents back-to-back warps if the orbit
+	// keeps getting knocked off after a dash or piercing weapon.
+	public int teleportCooldown;
+	// Phase 2 safety teleport state — 0.5s telegraph at destination, then warp.
+	private float _p2TeleportActive;
+	private float _p2TeleportTimer;
+	private float _p2TeleportTargetX;
+	private float _p2TeleportTargetY;
+	// Phase 3 dash: captured at launch so SubMode 3 can decay velocity from 2x base → 0 over 120 ticks.
+	private float _dashDirX;
+	private float _dashDirY;
+	private float _dashPeakSpeed;
+	private const float Phase3DashDuration = 120f;          // 2-second dash for all Phase 3 moves
+	// Boss-driven Red laser aim point (used by PreDraw when Red is in Cmd_SetSlaved and
+	// can't draw his own telegraph). Boss writes these each tick during track/lock.
+	private float _redLaserAimX;
+	private float _redLaserAimY;
+	private bool _redLaserShown;
+	// Pincer (Move 1): snapshot positions at teleport, dash direction at lock.
+	private float _pincerStartY;
+	private float _pincerGreenX;
+	private float _pincerRedX;
+	private float _pincerGreenDashDirX;
+	private float _pincerRedDashDirX;
+	// Ground sweep: snapshot of locked Y values after the 90-tick tracking window
+	private bool _groundSweepLocked;
+	private float _groundSweepGreenLockedY;
+	private float _groundSweepRedLockedY;
 	// Phase 2 telegraph mode: 0 = no laser, 1 = active. Boss orchestrates both telegraphs
 	// so that Red can keep orbiting without freezing.
 	private float _greenTelegraphActive;
@@ -99,7 +130,7 @@ public sealed class UncommonAnimate : AnimateBoss
 		NPC.height = 22;
 		NPC.scale = 2.0f;
 		NPC.lifeMax = 5000;
-		NPC.damage = 40;
+		NPC.damage = 55; // contact — pre-Skeletron tier (Skeletron 30, Queen Bee 30; ours is the harder boss)
 		NPC.defense = 22;
 		NPC.noGravity = true;
 		NPC.noTileCollide = true;
@@ -113,10 +144,16 @@ public sealed class UncommonAnimate : AnimateBoss
 
 	public override void AI()
 	{
-		if (NPC.target < 0 || NPC.target == 255 || Main.player[NPC.target].dead || !Main.player[NPC.target].active)
+		// Lock onto a single player for the whole phase. Only rotates targets when
+		// ManagePhases() triggers a phase transition, exactly like CommonAnimate —
+		// so the boss can't be pulled apart between two players mid-attack.
+		if (_currentPhaseTarget < 0 || _currentPhaseTarget == 255 || !Main.player[_currentPhaseTarget].active || Main.player[_currentPhaseTarget].dead)
 		{
 			NPC.TargetClosest();
+			_currentPhaseTarget = NPC.target;
 		}
+		NPC.target = _currentPhaseTarget;
+
 		Player player = Main.player[NPC.target];
 
 		if (player.dead)
@@ -127,12 +164,26 @@ public sealed class UncommonAnimate : AnimateBoss
 			return;
 		}
 
+		// Force Red to mirror the boss's target so the two never desync onto different players.
+		if (TryGetRed(out var redSync))
+			redSync.NPC.target = NPC.target;
+
+		if (teleportCooldown > 0) teleportCooldown--;
+
 		if (_lastHidingHpThreshold == 0)
 			_lastHidingHpThreshold = NPC.lifeMax;
 
 		Lighting.AddLight(NPC.Center, 0.2f, 0.9f, 0.3f);
 
 		ManagePhases();
+
+		// Per-phase defense bump — slightly tougher in later phases to compensate for player gear scaling.
+		NPC.defense = 22 + CurrentState switch
+		{
+			State.Phase2_CoopSpiral => 1,
+			State.Phase3_CoopDashes => 2,
+			_ => 0,
+		};
 
 		// Anti-despawn warp/dash if too far
 		if (CurrentState != State.Intro && CurrentState != State.Hiding && CurrentState != State.Transitioning)
@@ -190,6 +241,21 @@ public sealed class UncommonAnimate : AnimateBoss
 
 		if (CurrentState != State.Hiding && CurrentState != State.Intro && CurrentState != State.Transitioning && CurrentState != desired)
 		{
+			// Rotate target at phase boundaries in MP so the boss doesn't fixate on one player.
+			if (Main.netMode != NetmodeID.SinglePlayer)
+			{
+				for (int i = 1; i < Main.maxPlayers; i++)
+				{
+					int nextPlayer = (_currentPhaseTarget + i) % Main.maxPlayers;
+					if (Main.player[nextPlayer].active && !Main.player[nextPlayer].dead)
+					{
+						_currentPhaseTarget = nextPlayer;
+						NPC.target = _currentPhaseTarget;
+						break;
+					}
+				}
+			}
+
 			// Stinger plays at the moment the threshold is crossed — gives the player a
 			// 2-second dramatic buildup before the new phase actually starts.
 			PlayPhaseTransitionStinger(desired);
@@ -326,6 +392,81 @@ public sealed class UncommonAnimate : AnimateBoss
 		}
 	}
 
+	// Slave Red to the boss-relative position by reflecting boss's position across the player.
+	// Used during APPROACH, TELEGRAPH, and IDLE_BETWEEN — wherever Red shouldn't be doing his
+	// own AI lerping. Boss writes Red's Center directly; Red's CmdSlaved keeps him still.
+	private void SyncRedMirrored(Player player)
+	{
+		if (!TryGetRed(out var red)) return;
+		red.Cmd_SetSlaved();
+		red.NPC.Center = 2f * player.Center - NPC.Center;
+		red.NPC.velocity = Vector2.Zero;
+	}
+
+	// Same as SyncRedMirrored but with an explicit override position — used by M1 Pincer
+	// where Red's Y is computed from a snapshot of player.Y at teleport time, not from the
+	// live player position (so the safe band remains where the player teleported in).
+	private void SyncRedExplicit(Vector2 redPos)
+	{
+		if (!TryGetRed(out var red)) return;
+		red.Cmd_SetSlaved();
+		red.NPC.Center = redPos;
+		red.NPC.velocity = Vector2.Zero;
+	}
+
+	// Capture launch direction and peak (2x base) so SubMode 3 can scale velocity each tick.
+	private void LaunchPhase3Dash(Vector2 unitDir, float baseSpeed)
+	{
+		_dashDirX = unitDir.X;
+		_dashDirY = unitDir.Y;
+		_dashPeakSpeed = baseSpeed * 2f;
+		NPC.velocity = unitDir * _dashPeakSpeed;
+	}
+
+	// Per-tick velocity for a Phase 3 dash: linear decay from peak to 0 over Phase3DashDuration.
+	// Average is baseSpeed × 1, so travel distance ≈ baseSpeed × duration (same as a constant 1× dash).
+	// Also drives a CONSTANT visible roll throughout the dash — independent of decaying velocity —
+	// so the boss never appears to "stop spinning" as he coasts to a stop.
+	private void TickPhase3DashVelocity()
+	{
+		float ratio = MathHelper.Clamp(1f - SubTimer / Phase3DashDuration, 0f, 1f);
+		NPC.velocity = new Vector2(_dashDirX, _dashDirY) * _dashPeakSpeed * ratio;
+
+		// Roll rate decays with the same ratio as velocity — at end of dash both reach 0
+		// simultaneously, so the boss smoothly stops spinning as he coasts to a stop.
+		float rollDir = _dashDirX != 0f ? Math.Sign(_dashDirX) : 1f;
+		NPC.rotation += rollDir * 0.35f * ratio;
+	}
+
+	// Smooth lerp approach into a Phase 3 setup position. Boss is visible and vulnerable
+	// during the approach (player gets free hits while hearts reposition). Speed-capped at
+	// 8 px/tick so they can never ram the player at dash speeds. Returns true on the last tick.
+	private bool ExecuteSetupApproach(Vector2 destination, float duration)
+	{
+		if (SubTimer == 0f)
+		{
+			SoundEngine.PlaySound(SoundID.Item28 with { PitchVariance = 0.2f }, NPC.Center);
+		}
+		SubTimer++;
+		NPC.noGravity = true;
+		NPC.noTileCollide = true;
+		NPC.alpha = 0;
+
+		Vector2 delta = destination - NPC.Center;
+		Vector2 desiredVel = delta * 0.06f;
+		if (desiredVel.Length() > 8f) desiredVel = Vector2.Normalize(desiredVel) * 8f;
+		NPC.velocity = Vector2.Lerp(NPC.velocity, desiredVel, 0.2f);
+		NPC.rotation += 0.05f;
+
+		if (Main.rand.NextBool(8))
+		{
+			var d = Dust.NewDustPerfect(NPC.Center, DustID.GreenTorch, NPC.velocity * -0.3f, 0, default, 1.0f);
+			d.noGravity = true;
+		}
+
+		return SubTimer >= duration;
+	}
+
 	// ====================================================================
 	// INTRO
 	// ====================================================================
@@ -405,7 +546,10 @@ public sealed class UncommonAnimate : AnimateBoss
 		Vector2 hover = player.Center + new Vector2(lateral, -260f);
 		if (SubMode == 0f)
 		{
-			NPC.velocity = (hover - NPC.Center) * 0.04f;
+			// Lerp toward the hover velocity so the shot recoil below persists for a few
+			// frames and bleeds off smoothly instead of being wiped on the next tick.
+			Vector2 desiredVel = (hover - NPC.Center) * 0.04f;
+			NPC.velocity = Vector2.Lerp(NPC.velocity, desiredVel, 0.08f);
 		}
 		
 		// Smoothly rotate to face directly away from the player.
@@ -454,12 +598,14 @@ public sealed class UncommonAnimate : AnimateBoss
 				{
 					Vector2 target = new(TgX, TgY);
 					Vector2 vel = Vector2.Normalize(target - NPC.Center) * 9f;
-					Projectile.NewProjectile(NPC.GetSource_FromAI(), NPC.Center, vel, ModContent.ProjectileType<UncommonShardProjectile>(), 12, 0, Main.myPlayer);
+					Projectile.NewProjectile(NPC.GetSource_FromAI(), NPC.Center, vel, ModContent.ProjectileType<UncommonShardProjectile>(), 30, 0, Main.myPlayer);
 				}
 				SoundEngine.PlaySound(SoundID.Item8 with { PitchVariance = 0.2f }, NPC.Center);
 				PulseScale(1.18f);
-				// Recoil kick opposite the firing direction
-				NPC.velocity += Vector2.Normalize(NPC.Center - new Vector2(TgX, TgY)) * 1.6f;
+				// Recoil — full overwrite (not +=) so the kick is visible even if hover lerp
+				// was already pushing toward the player. Hover Lerp then absorbs it smoothly.
+				Vector2 fireDir = Vector2.Normalize(new Vector2(TgX, TgY) - NPC.Center);
+				NPC.velocity = -fireDir * 8f;
 				Counter1++;
 				SubTimer = 0f;
 
@@ -507,6 +653,17 @@ public sealed class UncommonAnimate : AnimateBoss
 				EmitSmallPuff(14);
 			}
 		}
+	}
+
+	// Subtle prediction — mostly aim AT the player, with a slight lead toward where they're
+	// heading. 15-tick (0.25s) lookahead, capped at 200 px so fast mounts can't yank the
+	// reticle off-screen. The dash still primarily threatens the player's current spot.
+	private static Vector2 PredictPlayer(Player player)
+	{
+		Vector2 lead = player.velocity * 15f;
+		if (lead.LengthSquared() > 200f * 200f)
+			lead = Vector2.Normalize(lead) * 200f;
+		return player.Center + lead;
 	}
 
 	private static Vector2 PredictPlayerPos(Player player, Vector2 shooterPos, float projSpeed)
@@ -744,6 +901,47 @@ public sealed class UncommonAnimate : AnimateBoss
 
 	private void DoPhase2(Player player)
 	{
+		// Handle in-progress safety teleport first — 0.5s dust telegraph at the destination,
+		// then warp. Boss is invincible during the warp so the player can't get a free hit on
+		// a sitting target, mirroring CommonAnimate's invisible-teleport pattern.
+		if (_p2TeleportActive == 1f)
+		{
+			NPC.velocity = Vector2.Zero;
+			NPC.noGravity = true;
+			NPC.noTileCollide = true;
+			NPC.alpha = 255;
+			NPC.dontTakeDamage = true;
+			_p2TeleportTimer++;
+
+			Vector2 telePos = new(_p2TeleportTargetX, _p2TeleportTargetY);
+			for (int i = 0; i < 2; i++)
+			{
+				Dust d = Dust.NewDustDirect(telePos, NPC.width, NPC.height, DustID.GreenTorch);
+				d.velocity = Main.rand.NextVector2Circular(3f, 3f);
+				d.noGravity = true;
+			}
+			// A few pink motes too to match the boss's signature teleport poof palette
+			if (Main.rand.NextBool(2))
+			{
+				Dust d = Dust.NewDustDirect(telePos, NPC.width, NPC.height, DustID.PinkCrystalShard);
+				d.velocity = Main.rand.NextVector2Circular(3f, 3f);
+				d.noGravity = true;
+			}
+
+			if (_p2TeleportTimer >= 30f)
+			{
+				NPC.Center = telePos;
+				ResetTrail();
+				NPC.alpha = 0;
+				NPC.dontTakeDamage = false;
+				SpawnTeleportVisuals();
+				_p2TeleportActive = 0f;
+				_p2TeleportTimer = 0f;
+				teleportCooldown = 180;
+			}
+			return;
+		}
+
 		NPC.alpha = 0;
 		// During the breather (SubMode 1) Green "chills" — gravity + tile collision on
 		bool isOrbiting = SubMode == 0f;
@@ -759,14 +957,25 @@ public sealed class UncommonAnimate : AnimateBoss
 
 		if (isOrbiting)
 		{
-			// Teleport-snap if a dash or external force flung us far off-orbit
-			if (Vector2.Distance(NPC.Center, greenPos) > 360f)
+			// Telegraphed safety teleport if a dash or piercing weapon flung us way off-orbit.
+			// Threshold widened from 360 → 640 so small bumps don't trigger it, and the 3-second
+			// cooldown prevents back-to-back warps.
+			if (Vector2.Distance(NPC.Center, greenPos) > 640f && teleportCooldown == 0)
 			{
+				_p2TeleportActive = 1f;
+				_p2TeleportTimer = 0f;
+				_p2TeleportTargetX = greenPos.X;
+				_p2TeleportTargetY = greenPos.Y;
 				SpawnTeleportVisuals();
-				NPC.Center = greenPos;
-				ResetTrail();
+				NPC.alpha = 255;
+				NPC.dontTakeDamage = true;
+				NPC.velocity = Vector2.Zero;
+				return;
 			}
-			NPC.velocity = (greenPos - NPC.Center) * 0.12f;
+			// Lerp toward orbit velocity instead of overwriting so projectile recoil persists
+			// for a few frames and decays naturally before snapping back to orbit.
+			Vector2 desiredVel = (greenPos - NPC.Center) * 0.12f;
+			NPC.velocity = Vector2.Lerp(NPC.velocity, desiredVel, 0.15f);
 			NPC.rotation += 0.05f;
 
 			if (Main.rand.NextBool(20))
@@ -818,13 +1027,15 @@ public sealed class UncommonAnimate : AnimateBoss
 
 				if (_greenTelegraphTimer >= TelegraphDurationP2)
 				{
+					Vector2 projVel = Vector2.Normalize(player.Center - NPC.Center) * 9f;
 					if (Main.netMode != NetmodeID.MultiplayerClient)
 					{
-						Vector2 vel = Vector2.Normalize(player.Center - NPC.Center) * 9f;
-						Projectile.NewProjectile(NPC.GetSource_FromAI(), NPC.Center, vel, ModContent.ProjectileType<UncommonShardProjectile>(), 12, 0, Main.myPlayer);
+						Projectile.NewProjectile(NPC.GetSource_FromAI(), NPC.Center, projVel, ModContent.ProjectileType<UncommonShardProjectile>(), 30, 0, Main.myPlayer);
 					}
 					SoundEngine.PlaySound(SoundID.Item8 with { PitchVariance = 0.2f }, NPC.Center);
 					PulseScale(1.16f);
+					// Recoil — kicked back along the firing axis. Orbit lerp smoothly pulls us back.
+					NPC.velocity = -projVel.SafeNormalize(Vector2.Zero) * 8f;
 					_greenTelegraphActive = 0f;
 					_greenTelegraphTimer = 0f;
 				}
@@ -838,12 +1049,15 @@ public sealed class UncommonAnimate : AnimateBoss
 				{
 					if (TryGetRed(out var rShoot))
 					{
+						Vector2 projVel = Vector2.Normalize(player.Center - rShoot.NPC.Center) * 9f;
 						if (Main.netMode != NetmodeID.MultiplayerClient)
 						{
-							Vector2 vel = Vector2.Normalize(player.Center - rShoot.NPC.Center) * 9f;
-							Projectile.NewProjectile(NPC.GetSource_FromAI(), rShoot.NPC.Center, vel, ModContent.ProjectileType<AnimateShardProjectile>(), 12, 0, Main.myPlayer);
+							Projectile.NewProjectile(NPC.GetSource_FromAI(), rShoot.NPC.Center, projVel, ModContent.ProjectileType<AnimateShardProjectile>(), 30, 0, Main.myPlayer);
 						}
 						SoundEngine.PlaySound(SoundID.Item8 with { PitchVariance = 0.2f }, rShoot.NPC.Center);
+						// Recoil Red the same way Green is recoiled — the boss orbits Red around the
+						// player via Cmd_SetIdleAir each tick, so the lerp pulls him back smoothly.
+						rShoot.NPC.velocity = -projVel.SafeNormalize(Vector2.Zero) * 8f;
 					}
 					_redTelegraphActive = 0f;
 					_redTelegraphTimer = 0f;
@@ -903,7 +1117,7 @@ public sealed class UncommonAnimate : AnimateBoss
 	// After 3 moves attempt hide+heal.
 	// ai[2] = currentMove (1=dual slice, 2=predictive, 3=ground sweep)
 	// ai[3] = movesCompleted
-	// SubMode = sub-step (0=pick, 1=setup, 2=telegraph, 3=action, 5=chill after 3 moves)
+	// SubMode = sub-step (0=pick, 1=approach, 2=telegraph track+lock, 3=dash, 5=chill after 3 moves, 6=idle between moves)
 	// SubTimer = sub-step timer
 	// ====================================================================
 	private void DoPhase3(Player player)
@@ -918,14 +1132,41 @@ public sealed class UncommonAnimate : AnimateBoss
 			NPC.velocity.X *= 0.95f;
 			if (NPC.velocity.Y == 0) NPC.velocity.Y += (float)Math.Sin(Timer * 0.05f) * 0.15f; // Add bobbing even here if on ground, well, only if hovering. Let's just do it
 			SubTimer++;
-			if (SubTimer >= 180f)
+			if (SubTimer >= 180f) // 3-second chill window — melee players get a real damage opportunity
 			{
 				Counter2 = 0f;
 				// Reset Red before hiding or returning
 				if (TryGetRed(out var rReset)) rReset.Cmd_SetDespawn();
 				_redMinionWho = -1;
-				
+
 				StartHiding(State.Phase3_CoopDashes);
+			}
+			return;
+		}
+
+		// SubMode 6 = inter-move IDLE. Hearts drift naturally for a moment instead of
+		// instantly snapping into the next move's setup — keeps the fight breathing.
+		if (SubMode == 6f)
+		{
+			NPC.noGravity = true;
+			NPC.noTileCollide = true;
+			NPC.alpha = 0;
+
+			SubTimer++;
+			// Gentle bob: drift toward player at conversational speed + small vertical sine.
+			Vector2 toPlayer = player.Center - NPC.Center;
+			Vector2 driftVel = (toPlayer.Length() > 1f ? Vector2.Normalize(toPlayer) : Vector2.Zero) * 2.0f
+				+ new Vector2(0, (float)Math.Sin(SubTimer * 0.15f) * 0.8f);
+			NPC.velocity = Vector2.Lerp(NPC.velocity, driftVel, 0.08f);
+			NPC.rotation += 0.04f;
+
+			// Red is slaved — perfectly mirrored across the player every tick.
+			SyncRedMirrored(player);
+
+			if (SubTimer >= 45f) // ~0.75s breather
+			{
+				SubMode = 0f;
+				SubTimer = 0f;
 			}
 			return;
 		}
@@ -975,47 +1216,106 @@ public sealed class UncommonAnimate : AnimateBoss
 		}
 	}
 
-	// MOVE 1 — DUAL SLICE:
-	//   Setup: green ~3 blocks ABOVE the player on one side, red ~3 blocks BELOW on the other side
-	//   Telegraph: both fire long telegraph laser (2s lock-in)
-	//   Action: both dash horizontally — green slices over the player, red slices under
-	//   Dodge: stay at the player's current Y between them
+	// MOVE 1 — DUAL SLICE (Pincer):
+	//   Setup: both hearts teleport in at the player's current Y, 30 blocks apart on X
+	//          (15 blocks left for red, 15 blocks right for green), player sandwiched in middle.
+	//   Aim:   over 2s, green drifts UP 3 blocks and red drifts DOWN 3 blocks. Lasers are flat-
+	//          horizontal toward the player's X direction and track the heart's current Y.
+	//   Lock:  0.5s frozen — final positions and dash directions snapshot.
+	//   Dash:  pure horizontal at locked Y; each heart dashes toward wherever the player is
+	//          on the X axis at the moment of launch (sign of player.X − heart.X).
+	//   Dodge: stay at your original Y. Green passes 3 blocks above, red 3 below — the band
+	//          right where you teleported in is the safe zone. Jumping or falling = hit.
 	private void DoP3MovePincer(Player player)
 	{
-		const float dx = 12f * 16f;          // 12 blocks horizontal each side
-		const float greenY = -3f * 16f;      // 3 blocks above player
-		const float redY = +3f * 16f;        // 3 blocks below player
-		Vector2 greenPos = player.Center + new Vector2(+dx, greenY);
-		Vector2 redPos = player.Center + new Vector2(-dx, redY);
+		const float halfSep = 37.5f * 16f;   // 37.5 blocks each side → 75 blocks total apart
+		const float vertOffset = 3f * 16f;   // 3 blocks of vertical separation by lock time
+		const float teleportDur = 30f;       // 0.5s teleport telegraph
+		const float aimDur = 120f;           // 2s aiming (vertical drift)
+		const float lockDur = 30f;           // 0.5s final lock
 
-		if (SubMode == 1f) // SETUP
+		if (SubMode == 1f) // TELEPORT IN — dust telegraph at destination, then snap
 		{
-			NPC.velocity = (greenPos - NPC.Center) * 0.2f;
-			if (TryGetRed(out var red))
-				red.Cmd_SetIdleAir(redPos);
+			if (SubTimer == 0f)
+			{
+				_pincerStartY = player.Center.Y;
+				_pincerGreenX = player.Center.X + halfSep;
+				_pincerRedX = player.Center.X - halfSep;
+
+				if (TryGetRed(out var redTel))
+					redTel.Cmd_SetTelegraphTeleport(new Vector2(_pincerRedX, _pincerStartY), teleportDur);
+			}
 
 			SubTimer++;
-			bool greenInPlace = Vector2.Distance(NPC.Center, greenPos) < 32f;
-			bool redInPlace = TryGetRed(out var r2) && Vector2.Distance(r2.NPC.Center, redPos) < 32f;
-			if ((SubTimer > 60f && greenInPlace && redInPlace) || SubTimer > 150f)
+			NPC.velocity = Vector2.Zero;
+			NPC.noGravity = true;
+			NPC.noTileCollide = true;
+			NPC.alpha = 255;
+			NPC.dontTakeDamage = true;
+
+			if (SubTimer == 1f)
+				SoundEngine.PlaySound(SoundID.Item8 with { PitchVariance = 0.2f }, NPC.Center);
+
+			Vector2 dest = new(_pincerGreenX, _pincerStartY);
+			for (int i = 0; i < 2; i++)
 			{
-				NPC.velocity = Vector2.Zero;
-				if (TryGetRed(out var r3)) r3.NPC.velocity = Vector2.Zero;
-				// Red dashes RIGHT through the player's column at the lower slice height.
-				if (TryGetRed(out var r4))
-					r4.Cmd_SetTelegraphDash(player.Center + new Vector2(+dx * 2f, redY), 120f);
-				// Green dashes LEFT through the player's column at the upper slice height.
-				TgX = player.Center.X - dx * 2f;
-				TgY = player.Center.Y + greenY;
+				Dust d = Dust.NewDustDirect(dest, NPC.width, NPC.height, DustID.GreenTorch);
+				d.velocity = Main.rand.NextVector2Circular(3f, 3f);
+				d.noGravity = true;
+			}
+
+			if (SubTimer >= teleportDur)
+			{
+				NPC.Center = dest;
+				ResetTrail();
+				NPC.alpha = 0;
+				NPC.dontTakeDamage = false;
+				SpawnTeleportVisuals();
 				SubMode = 2f;
 				SubTimer = 0f;
-				SoundEngine.PlaySound(SoundID.Item28 with { PitchVariance = 0.2f }, NPC.Center);
 			}
 		}
-		else if (SubMode == 2f) // TELEGRAPH (2s lock-in)
+		else if (SubMode == 2f) // AIM (vertical drift over 2s) + LOCK (0.5s)
 		{
-			NPC.velocity = Vector2.Zero;
 			SubTimer++;
+			NPC.noGravity = true;
+			NPC.noTileCollide = true;
+			NPC.velocity = Vector2.Zero;
+
+			bool isAiming = SubTimer <= aimDur;
+
+			// Vertical position: lerp from start Y to ±vertOffset over aimDur ticks, then hold.
+			float aimProgress = MathHelper.Clamp(SubTimer / aimDur, 0f, 1f);
+			float greenY = MathHelper.Lerp(_pincerStartY, _pincerStartY - vertOffset, aimProgress);
+			float redY = MathHelper.Lerp(_pincerStartY, _pincerStartY + vertOffset, aimProgress);
+
+			NPC.Center = new Vector2(_pincerGreenX, greenY);
+			// Red is a pure puppet — boss writes his position; CmdSlaved keeps him still.
+			SyncRedExplicit(new Vector2(_pincerRedX, redY));
+
+			// Dash direction: track live while aiming, snapshot at lock.
+			if (isAiming)
+			{
+				float gDir = Math.Sign(player.Center.X - NPC.Center.X);
+				if (gDir == 0f) gDir = -1f;
+				_pincerGreenDashDirX = gDir;
+
+				if (TryGetRed(out var redDir))
+				{
+					float rDir = Math.Sign(player.Center.X - redDir.NPC.Center.X);
+					if (rDir == 0f) rDir = 1f;
+					_pincerRedDashDirX = rDir;
+				}
+			}
+			// else: directions frozen — laser already shows the locked-in direction
+
+			// Green laser endpoint — purely horizontal at boss's current Y, pointing toward player's X.
+			TgX = NPC.Center.X + _pincerGreenDashDirX * 3000f;
+			TgY = NPC.Center.Y;
+
+			// Drive boss-orchestrated red laser (PreDraw uses _redTelegraphActive / _redTelegraphTimer).
+			_redTelegraphActive = 1f;
+			_redTelegraphTimer = Math.Min(SubTimer, aimDur); // fade in over aim phase, hold during lock
 
 			if (Main.rand.NextBool(2))
 			{
@@ -1025,30 +1325,41 @@ public sealed class UncommonAnimate : AnimateBoss
 				d.noGravity = true;
 			}
 
-			if (SubTimer >= 120f)
+			if (SubTimer >= aimDur + lockDur)
 			{
-				NPC.velocity = Vector2.Normalize(new Vector2(TgX, TgY) - NPC.Center) * 20f;
+				// LAUNCH — flat horizontal dashes at locked Y; direction toward player.
+				LaunchPhase3Dash(new Vector2(_pincerGreenDashDirX, 0f), 10f);
+
+				if (TryGetRed(out var rDash))
+				{
+					rDash.Cmd_SetDashImmediate(new Vector2(_pincerRedDashDirX * 20f, 0f), Phase3DashDuration);
+				}
+
+				_redTelegraphActive = 0f;
+				_redTelegraphTimer = 0f;
+
 				SoundEngine.PlaySound(SoundID.Roar, NPC.Center);
 				SoundEngine.PlaySound(SoundID.Item14, NPC.Center);
 				SpawnTeleportVisuals();
 				PulseScale(1.30f);
 				ShakeCamera(3.5f, 1100f, 10, "UncommonAnimateDash");
-				EmitGreenBurst(30, 8f, 1.5f); // Shockwave
+				EmitGreenBurst(30, 8f, 1.5f);
 				ShakeCamera(4f, 1000f, 10, "UncommonAnimateDash");
 				SubMode = 3f;
 				SubTimer = 0f;
 			}
 		}
-		else if (SubMode == 3f) // ACTION (dashing — full-commit, no decay so it never visibly "halts")
+		else if (SubMode == 3f) // DASH — flat horizontal, decay 2x → 0 over Phase3DashDuration
 		{
-			NPC.rotation += NPC.velocity.X * 0.05f;
+			TickPhase3DashVelocity();
+			// No rotation update — sprite stays visually flat for the horizontal pincer sweep.
 			SubTimer++;
 			if (Main.rand.NextBool())
 			{
 				Dust d = Dust.NewDustDirect(NPC.position, NPC.width, NPC.height, DustID.GreenTorch);
 				d.velocity = NPC.velocity * -0.5f;
 			}
-			if (SubTimer > 55f)
+			if (SubTimer > Phase3DashDuration)
 				FinishPhase3Move();
 		}
 	}
@@ -1073,36 +1384,44 @@ public sealed class UncommonAnimate : AnimateBoss
 		Vector2 greenPos = player.Center + new Vector2(TgX, TgY) * radius;
 		Vector2 redPos = player.Center - (greenPos - player.Center);
 
-		if (SubMode == 1f) // SETUP
-		{
-			NPC.velocity = (greenPos - NPC.Center) * 0.2f;
-			if (TryGetRed(out var red))
-				red.Cmd_SetIdleAir(redPos);
+		const float trackDur = 60f; // 1s tracking — laser follows the predicted spot
+		const float lockDur = 30f;  // 0.5s lock
 
-			SubTimer++;
-			bool greenInPlace = Vector2.Distance(NPC.Center, greenPos) < 40f;
-			bool redInPlace = TryGetRed(out var r2) && Vector2.Distance(r2.NPC.Center, redPos) < 40f;
-			if ((SubTimer > 40f && greenInPlace && redInPlace) || SubTimer > 120f)
+		if (SubMode == 1f) // APPROACH — smooth lerp into orbit-radius position
+		{
+			if (ExecuteSetupApproach(greenPos, 60f))
 			{
-				NPC.velocity = Vector2.Zero;
-				// Predict player position 25 ticks ahead, capped to 250 px so fast players (mounts/hooks) don't overshoot
-				Vector2 lead = player.velocity * 25f;
-				if (lead.LengthSquared() > 250f * 250f)
-					lead = Vector2.Normalize(lead) * 250f;
-				Vector2 predict = player.Center + lead;
-				if (TryGetRed(out var r3))
-					r3.Cmd_SetTelegraphDash(predict, 60f);
-				TgX = predict.X;
-				TgY = predict.Y;
+				// Initial predict (will refresh each tick during tracking)
+				Vector2 initPredict = PredictPlayer(player);
+				TgX = initPredict.X;
+				TgY = initPredict.Y;
+				_redLaserAimX = initPredict.X;
+				_redLaserAimY = initPredict.Y;
+				_redLaserShown = true;
 				SubMode = 2f;
 				SubTimer = 0f;
-				SoundEngine.PlaySound(SoundID.Item28 with { PitchVariance = 0.2f }, NPC.Center);
 			}
+			// Red mirrors boss across the player throughout approach.
+			SyncRedMirrored(player);
 		}
-		else if (SubMode == 2f) // TELEGRAPH
+		else if (SubMode == 2f) // TELEGRAPH — track predicted spot live for trackDur, then 0.5s lock
 		{
 			NPC.velocity = Vector2.Zero;
 			SubTimer++;
+
+			if (SubTimer <= trackDur)
+			{
+				// Recompute the prediction each tick — laser visibly homes in as player turns/decelerates
+				Vector2 predict = PredictPlayer(player);
+				TgX = predict.X;
+				TgY = predict.Y;
+				_redLaserAimX = predict.X;
+				_redLaserAimY = predict.Y;
+			}
+			// else: lock — TgX/TgY frozen (and _redLaserAimX/Y too)
+
+			// Red is slaved + mirrored every tick. Boss draws Red's laser via PreDraw.
+			SyncRedMirrored(player);
 
 			if (Main.rand.NextBool(2))
 			{
@@ -1112,9 +1431,21 @@ public sealed class UncommonAnimate : AnimateBoss
 				d.noGravity = true;
 			}
 
-			if (SubTimer >= 60f)
+			if (SubTimer >= trackDur + lockDur)
 			{
-				NPC.velocity = Vector2.Normalize(new Vector2(TgX, TgY) - NPC.Center) * 22f;
+				// Boss launches its decaying dash; Red launches a mirrored one — peak velocity
+				// is the symmetric reflection of boss's launch direction (mirror about player).
+				Vector2 greenDir = Vector2.Normalize(new Vector2(TgX, TgY) - NPC.Center);
+				LaunchPhase3Dash(greenDir, 11f); // peak 22 px/tick → decays to 0
+
+				if (TryGetRed(out var rDash))
+				{
+					Vector2 redTarget = 2f * player.Center - new Vector2(TgX, TgY);
+					Vector2 redDir = Vector2.Normalize(redTarget - rDash.NPC.Center);
+					rDash.Cmd_SetDashImmediate(redDir * 22f, Phase3DashDuration);
+				}
+				_redLaserShown = false;
+
 				SoundEngine.PlaySound(SoundID.Roar, NPC.Center);
 				SoundEngine.PlaySound(SoundID.Item14, NPC.Center);
 				SpawnTeleportVisuals();
@@ -1126,16 +1457,16 @@ public sealed class UncommonAnimate : AnimateBoss
 				SubTimer = 0f;
 			}
 		}
-		else if (SubMode == 3f) // DASH (full-commit, no decay)
+		else if (SubMode == 3f) // DASH — decay 2x → 0 over Phase3DashDuration
 		{
-			NPC.rotation += NPC.velocity.X * 0.05f;
+			TickPhase3DashVelocity(); // also handles roll rotation
 			SubTimer++;
 			if (Main.rand.NextBool())
 			{
 				Dust d = Dust.NewDustDirect(NPC.position, NPC.width, NPC.height, DustID.GreenTorch);
 				d.velocity = NPC.velocity * -0.5f;
 			}
-			if (SubTimer > 50f)
+			if (SubTimer > Phase3DashDuration)
 				FinishPhase3Move();
 		}
 	}
@@ -1147,48 +1478,57 @@ public sealed class UncommonAnimate : AnimateBoss
 	//   Dodge: REACT — the moment the dash launches, move vertically (jump or fall) out of the line.
 	private void DoP3MoveGroundSweep(Player player)
 	{
-		const float dx = 10f * 16f; // 10 blocks each side → 20 blocks apart
+		const float dx = 28f * 16f; // 28 blocks each side → 56 blocks apart, so the player has real reaction time to jump out of the sweep line
 		Vector2 greenAnchor = new(player.Center.X + dx, player.Center.Y);
 		Vector2 redAnchor = new(player.Center.X - dx, player.Center.Y);
 
-		if (SubMode == 1f) // SETUP — fly to position at player's Y
-		{
-			NPC.noGravity = true;
-			NPC.noTileCollide = true;
-			NPC.velocity = (greenAnchor - NPC.Center) * 0.2f;
-			if (TryGetRed(out var red))
-				red.Cmd_SetIdleAir(redAnchor);
+		const float trackDur = 90f; // 1.5s of Y-tracking
+		const float lockDur = 30f;  // 0.5s lock
 
-			SubTimer++;
-			bool greenInPlace = Vector2.Distance(NPC.Center, greenAnchor) < 40f;
-			bool redInPlace = TryGetRed(out var r2) && Vector2.Distance(r2.NPC.Center, redAnchor) < 40f;
-			if ((SubTimer > 40f && greenInPlace && redInPlace) || SubTimer > 120f)
+		if (SubMode == 1f) // APPROACH — lerp into position; Y tracks player throughout
+		{
+			_groundSweepLocked = false;
+
+			if (ExecuteSetupApproach(greenAnchor, 60f))
 			{
 				SubMode = 2f;
 				SubTimer = 0f;
-				// Reuse the Phase-2 red-telegraph state for drawing Red's beam in PreDraw
+				// Boss draws both red and green lasers via PreDraw during the telegraph
 				_redTelegraphActive = 1f;
 				_redTelegraphTimer = 0f;
-				SoundEngine.PlaySound(SoundID.Item28 with { PitchVariance = 0.2f }, NPC.Center);
 			}
+			// Red mirrors boss across the player — always exactly opposite.
+			SyncRedMirrored(player);
 		}
-		else if (SubMode == 2f) // TELEGRAPH — continuously track player Y for both
+		else if (SubMode == 2f) // TELEGRAPH — trackDur of Y-tracking, then 0.5s Y-locked hold
 		{
 			NPC.noGravity = true;
 			NPC.noTileCollide = true;
 
-			// Boss tracks the right-side anchor — Y follows the player live
-			NPC.velocity = (greenAnchor - NPC.Center) * 0.25f;
-			// Red mirrors on the left at the same live Y
-			if (TryGetRed(out var red))
-				red.SetIdleTarget(redAnchor);
-
-			// Telegraph laser ends point at boss's CURRENT Y so the beam visibly tracks
-			TgX = player.Center.X - dx * 2f;
-			TgY = NPC.Center.Y;
-
 			SubTimer++;
-			_redTelegraphTimer = SubTimer; // drive Red beam's fade-in via the same counter
+			_redTelegraphTimer = SubTimer;
+
+			if (SubTimer <= trackDur)
+			{
+				NPC.velocity = (greenAnchor - NPC.Center) * 0.25f;
+				TgY = NPC.Center.Y;
+			}
+			else
+			{
+				if (!_groundSweepLocked)
+				{
+					_groundSweepLocked = true;
+					_groundSweepGreenLockedY = NPC.Center.Y;
+					_groundSweepRedLockedY = 2f * player.Center.Y - NPC.Center.Y; // mirrored
+				}
+				Vector2 lockedAnchor = new(greenAnchor.X, _groundSweepGreenLockedY);
+				NPC.velocity = (lockedAnchor - NPC.Center) * 0.25f;
+				TgY = _groundSweepGreenLockedY;
+			}
+
+			TgX = player.Center.X - dx * 2f;
+			// Red is slaved + mirrored every tick.
+			SyncRedMirrored(player);
 
 			if (Main.rand.NextBool(2))
 			{
@@ -1198,18 +1538,16 @@ public sealed class UncommonAnimate : AnimateBoss
 				d.noGravity = true;
 			}
 
-			if (SubTimer >= 90f)
+			if (SubTimer >= trackDur + lockDur)
 			{
-				// LAUNCH — lock current Y values. From this frame onward the dash is fixed.
-				float greenLaunchY = NPC.Center.Y;
-				NPC.velocity = new Vector2(-24f, 0f);  // pure horizontal sweep to the left at locked Y
-				NPC.position = new Vector2(NPC.position.X, greenLaunchY - NPC.height / 2f);
+				// LAUNCH — snap to locked Y and dash horizontally with the decay system.
+				NPC.position = new Vector2(NPC.position.X, _groundSweepGreenLockedY - NPC.height / 2f);
+				LaunchPhase3Dash(new Vector2(-1f, 0f), 12f); // peak -24 px/tick → decays to 0
 
 				if (TryGetRed(out var rDash))
 				{
-					float redLaunchY = rDash.NPC.Center.Y;
-					rDash.NPC.position = new Vector2(rDash.NPC.position.X, redLaunchY - rDash.NPC.height / 2f);
-					rDash.Cmd_SetDashImmediate(new Vector2(+22f, 0f), 55f);
+					rDash.NPC.position = new Vector2(rDash.NPC.position.X, _groundSweepRedLockedY - rDash.NPC.height / 2f);
+					rDash.Cmd_SetDashImmediate(new Vector2(+22f, 0f), Phase3DashDuration); // peak +22 px/tick → decays to 0
 				}
 
 				SoundEngine.PlaySound(SoundID.Roar, NPC.Center);
@@ -1225,16 +1563,16 @@ public sealed class UncommonAnimate : AnimateBoss
 				SubTimer = 0f;
 			}
 		}
-		else if (SubMode == 3f) // DASH (full-commit, no decay)
+		else if (SubMode == 3f) // DASH — decay 2x → 0 over Phase3DashDuration
 		{
-			NPC.rotation += NPC.velocity.X * 0.05f;
+			TickPhase3DashVelocity(); // also handles roll rotation
 			SubTimer++;
 			if (Main.rand.NextBool())
 			{
 				Dust d = Dust.NewDustDirect(NPC.position, NPC.width, NPC.height, DustID.GreenTorch);
 				d.velocity = NPC.velocity * -0.5f;
 			}
-			if (SubTimer > 55f)
+			if (SubTimer > Phase3DashDuration)
 				FinishPhase3Move();
 		}
 	}
@@ -1245,21 +1583,22 @@ public sealed class UncommonAnimate : AnimateBoss
 		Counter2++;
 		if (Counter2 >= 3f)
 		{
-			// 3 moves done — enter the shared chill window (gravity on) before the heal attempt.
+			// 3 moves done — enter the chill window so melee players get a damage opportunity.
+			// Despawn Red cleanly here so he can't keep rolling/dashing while green is alone.
 			SubMode = 5f;
 			SubTimer = 0f;
 			Timer = 0f;
 			SoundEngine.PlaySound(SoundID.Item25, NPC.Center);
 			EmitSmallPuff(16);
-			
-			if (TryGetRed(out var rRoll))
-				rRoll.Cmd_SetP2P3Roll();
+
+			if (TryGetRed(out var rDespawn))
+				rDespawn.Cmd_SetDespawn();
 			_redMinionWho = -1;
-			
+
 			return;
 		}
-		// Otherwise pick the next move right away. Reset TgX/TgY so per-move seeds re-roll cleanly.
-		Counter1 = 0; SubMode = 0; SubTimer = 0; Timer = 0;
+		// Brief inter-move idle (SubMode 6) so hearts drift naturally before the next setup.
+		Counter1 = 0; SubMode = 6; SubTimer = 0; Timer = 0;
 		TgX = 0; TgY = 0;
 	}
 
@@ -1322,6 +1661,8 @@ public sealed class UncommonAnimate : AnimateBoss
 		// Green: Phase 3 dash/shoot telegraph
 		if (CurrentState == State.Phase3_CoopDashes && SubMode == 2f)
 		{
+			// Use the *charge* duration (not the lock extension) so the beam visibly hits
+			// full intensity when the position is decided, then stays at 1.0 through the lock.
 			float dur = (int)Counter1 switch { 1 => 120f, 2 => 60f, 3 => 90f, _ => 60f };
 			float progress = MathHelper.Clamp(SubTimer / dur, 0f, 1f);
 			float thickness = 3f; // All three Phase 3 moves are dashes now — use heavy laser for all
@@ -1335,6 +1676,25 @@ public sealed class UncommonAnimate : AnimateBoss
 			float progress = MathHelper.Clamp(_redTelegraphTimer / 90f, 0f, 1f);
 			Vector2 redEnd = redM3.NPC.Center + new Vector2(1f, 0f); // unit vector right — DrawLaserBeam extends 3000 px in this direction
 			DrawLaserBeam(spriteBatch, screenPos, redM3.NPC.Center, redEnd, redTint, progress, 3f);
+		}
+		// Red: Phase 3 Move 1 (Pincer) telegraph — flat horizontal toward the locked dash direction.
+		if (CurrentState == State.Phase3_CoopDashes && (int)Counter1 == 1 && SubMode == 2f && _redTelegraphActive == 1f && TryGetRed(out var redM1))
+		{
+			float progress = MathHelper.Clamp(_redTelegraphTimer / 120f, 0f, 1f);
+			Vector2 redEnd = redM1.NPC.Center + new Vector2(_pincerRedDashDirX, 0f);
+			DrawLaserBeam(spriteBatch, screenPos, redM1.NPC.Center, redEnd, redTint, progress, 3f);
+		}
+		// Red: Phase 3 Move 2 (Predictive) — boss-orchestrated, points at the symmetric
+		// reflection of the green aim point (player ± offset).
+		if (CurrentState == State.Phase3_CoopDashes && (int)Counter1 == 2 && _redLaserShown && (SubMode == 1f || SubMode == 2f) && TryGetRed(out var redM2))
+		{
+			Player p = Main.player[NPC.target];
+			float trackDurM2 = 60f;
+			float progress = SubMode == 2f
+				? MathHelper.Clamp(SubTimer / trackDurM2, 0f, 1f)
+				: 0.5f;
+			Vector2 redEnd = 2f * p.Center - new Vector2(_redLaserAimX, _redLaserAimY);
+			DrawLaserBeam(spriteBatch, screenPos, redM2.NPC.Center, redEnd, redTint, progress, 2f);
 		}
 
 		Texture2D texture = TextureAssets.Npc[NPC.type].Value;
@@ -1397,6 +1757,16 @@ public sealed class UncommonAnimate : AnimateBoss
 
 		spriteBatch.End();
 		spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, Main.DefaultSamplerState, DepthStencilState.None, RasterizerState.CullNone, null, Main.GameViewMatrix.ZoomMatrix);
+	}
+
+	// Use a non-default immunity-cooldown slot so contact damage from green is on its OWN
+	// timer, independent from red's (slot 2). Result: in M1 Pincer, if the player gets caught
+	// in the middle, both hearts can land their hit on the same tick — nothing gets free
+	// i-frame coverage from the other.
+	public override bool CanHitPlayer(Player target, ref int cooldownSlot)
+	{
+		cooldownSlot = ImmunityCooldownID.Bosses;
+		return true;
 	}
 
 	public override void OnKill()

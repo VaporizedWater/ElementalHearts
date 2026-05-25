@@ -17,6 +17,7 @@ public sealed class ElementalHeartsWorldConfig : ModConfig
 	/// refunds the max life those hearts granted, then immediately resets — so the
 	/// getter always reports false.
 	/// </summary>
+	[Header("ResetActions")]
 	[DefaultValue(false)]
 	public bool ClearHeartRegistry
 	{
@@ -38,4 +39,19 @@ public sealed class ElementalHeartsWorldConfig : ModConfig
 				AnimateProgressionSystem.ClearTier();
 		}
 	}
+
+	// ── Worldgen ──────────────────────────────────────────────────────────────
+	// Mini-biome generation only runs on world creation; toggling these on an existing
+	// world has no retroactive effect. ReloadRequired so the GenPass insertion happens
+	// at mod load — disabling avoids the pass running on a fresh world.
+	[Header("Worldgen")]
+	[DefaultValue(true)]
+	[ReloadRequired]
+	public bool GenerateLifeBiomes;
+
+	[DefaultValue(1)] [Range(0, 10)] [Increment(1)] [Slider]
+	public int SurfaceBiomeCountMultiplier;
+
+	[DefaultValue(1)] [Range(0, 10)] [Increment(1)] [Slider]
+	public int JungleBiomeCountMultiplier;
 }

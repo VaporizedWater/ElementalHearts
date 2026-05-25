@@ -12,9 +12,10 @@ public sealed class CrystalHeart : ElementalHeartItem
 	public override void AddRecipes()
 	{
 		CreateRecipe()
-			.AddIngredient(ItemID.CrystalShard, RecipeCost(200))
-			.AddIngredient(ModContent.ItemType<EpicLifeShard>(), 1)
+			.AddIngredient(ItemID.LifeCrystal, RecipeCost(20))
+			.AddOptionalIngredient(ModContent.ItemType<EpicLifeShard>(), 1)
 			.AddTile(TileID.MythrilAnvil)
 			.Register();
 	}
 }
+

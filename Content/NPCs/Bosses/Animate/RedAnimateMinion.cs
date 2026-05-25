@@ -24,6 +24,8 @@ public sealed class RedAnimateMinion : ModNPC
 	public const int CmdDespawn = 6;          // Poof and remove.
 	public const int CmdP2P3Roll = 7;         // Teleport to ground and roll at player.
 	public const int CmdDashImmediate = 8;    // Set velocity to (TargetX, TargetY) and dash for TelegraphDuration ticks (no telegraph). Auto-returns to CmdIdleAir.
+	public const int CmdTelegraphTeleport = 9; // Dust telegraph at (TargetX, TargetY) for TelegraphDuration ticks, then warp. Auto-returns to CmdIdleAir.
+	public const int CmdSlaved = 10;           // No-op state. Boss writes NPC.Center directly each tick; Red doesn't touch position or velocity.
 
 	private ref float Cmd => ref NPC.ai[0];
 	private ref float TelegraphDuration => ref NPC.ai[1];
@@ -114,6 +116,24 @@ public sealed class RedAnimateMinion : ModNPC
 		TelegraphDuration = 0f;
 	}
 
+	// Slave Red entirely — Red runs no positioning logic of his own. Boss is expected to
+	// write NPC.Center directly each tick (mirrored across the player typically). Keeps the
+	// pair perfectly synced regardless of independent AI ordering.
+	public void Cmd_SetSlaved()
+	{
+		if (Cmd != CmdSlaved) Cmd = CmdSlaved;
+	}
+
+	// Telegraph at target with dust + sound for `duration` ticks, then warp to it. Used by
+	// the boss for Phase 3 setup repositioning so Red doesn't ram the player by flying in.
+	public void Cmd_SetTelegraphTeleport(Vector2 target, float duration = 30f)
+	{
+		Cmd = CmdTelegraphTeleport;
+		TelegraphDuration = duration;
+		TargetX = target.X;
+		TargetY = target.Y;
+	}
+
 	// Launch an instant dash with the given velocity for `duration` ticks. No telegraph;
 	// boss has already drawn the laser externally during a longer charge-up.
 	public void Cmd_SetDashImmediate(Vector2 velocity, float duration = 55f)
@@ -136,7 +156,7 @@ public sealed class RedAnimateMinion : ModNPC
 	{
 		NPC.width = 14;
 		NPC.height = 14;
-		NPC.damage = 40;
+		NPC.damage = 55; // contact — matches the main boss; he's just as dangerous to touch
 		NPC.defense = 0;
 		NPC.lifeMax = 1;
 		NPC.HitSound = SoundID.NPCHit1;
@@ -151,6 +171,14 @@ public sealed class RedAnimateMinion : ModNPC
 		NPC.noTileCollide = false;
 		NPC.scale = 2.0f;
 		NPC.alpha = 0;
+	}
+
+	// Use a separate immunity-cooldown slot from green (Bosses=1) so both can land contact
+	// damage on the same tick during M1 Pincer if the player misjudges the safe band.
+	public override bool CanHitPlayer(Player target, ref int cooldownSlot)
+	{
+		cooldownSlot = ImmunityCooldownID.TileContactDamage;
+		return true;
 	}
 
 	public override bool CheckActive() => false;
@@ -190,6 +218,8 @@ public sealed class RedAnimateMinion : ModNPC
 			case CmdDespawn: DoDespawn(); break;
 			case CmdP2P3Roll: DoP2P3Roll(player); break;
 			case CmdDashImmediate: DoDashImmediate(player); break;
+			case CmdTelegraphTeleport: DoTelegraphTeleport(player); break;
+			case CmdSlaved: DoSlaved(player); break;
 		}
 
 		if (NPC.velocity.Length() > 30f)
@@ -231,7 +261,11 @@ public sealed class RedAnimateMinion : ModNPC
 		}
 		else
 		{
-			NPC.velocity = delta * 0.15f;
+			// Lerp toward tracking velocity instead of overwriting, so a one-shot impulse
+			// (e.g. Phase 2 projectile recoil applied by the boss) persists for a few frames
+			// and decays naturally rather than being wiped on the very next tick.
+			Vector2 desired = delta * 0.15f;
+			NPC.velocity = Vector2.Lerp(NPC.velocity, desired, 0.3f);
 		}
 		NPC.rotation += 0.05f;
 		if (Main.rand.NextBool(20))
@@ -411,6 +445,13 @@ public sealed class RedAnimateMinion : ModNPC
 					float distX = NPC.position.X - player.position.X;
 					targetX = player.position.X - distX;
 				}
+				// Telefrag safety — enforce a 10-block (160 px) minimum X distance from the player
+				// so Red can never reappear right on top of them. Matches CommonAnimate's clamp.
+				float finalDistX = targetX - player.position.X;
+				if (Math.Abs(finalDistX) < 160f)
+				{
+					targetX = player.position.X + (finalDistX >= 0 ? 160f : -160f);
+				}
 				Vector2 targetPos = new(targetX, targetY);
 				while (Collision.SolidCollision(targetPos, NPC.width, NPC.height))
 					targetPos.Y -= 16f;
@@ -451,7 +492,7 @@ public sealed class RedAnimateMinion : ModNPC
 			{
 				Vector2 targetPos = new(TargetX, TargetY);
 				Vector2 vel = Vector2.Normalize(targetPos - NPC.Center) * 9f;
-				Projectile.NewProjectile(NPC.GetSource_FromAI(), NPC.Center, vel, ModContent.ProjectileType<AnimateShardProjectile>(), 10, 0, Main.myPlayer);
+				Projectile.NewProjectile(NPC.GetSource_FromAI(), NPC.Center, vel, ModContent.ProjectileType<AnimateShardProjectile>(), 30, 0, Main.myPlayer);
 			}
 			SoundEngine.PlaySound(SoundID.Item8 with { PitchVariance = 0.2f }, NPC.Center);
 			PulseScale(1.18f);
@@ -463,14 +504,19 @@ public sealed class RedAnimateMinion : ModNPC
 		}
 	}
 
-	// === TELEGRAPH DASH: laser telegraph (TelegraphDuration ticks), then dash to (TargetX, TargetY) ===
-	// Sub0 = timer, Sub1 = post-dash counter
+	// === TELEGRAPH DASH: laser telegraph (TelegraphDuration ticks, includes any post-lock
+	// the boss baked in), then dash to (TargetX, TargetY) with linear velocity decay from 2x → 0
+	// over Phase3DashDuration ticks. ===
+	// Sub0 = timer, Sub1 = post-dash counter, Sub2/Sub3 = launch unit direction
+	private const float Phase3DashDuration = 120f;
+	private const float Phase3DashBaseSpeed = 10f; // peak = 20 px/tick → decays to 0 over Phase3DashDuration
+
 	private void DoTelegraphDash(Player player)
 	{
 		NPC.noGravity = true;
 		NPC.noTileCollide = true;
 
-		if (Sub1 == 0f) // Telegraph phase
+		if (Sub1 == 0f) // Telegraph phase (charge + any post-lock baked into TelegraphDuration)
 		{
 			NPC.velocity = Vector2.Zero;
 			Sub0++;
@@ -490,23 +536,29 @@ public sealed class RedAnimateMinion : ModNPC
 				PoofVisuals();
 				SoundEngine.PlaySound(SoundID.Roar with { PitchVariance = 0.1f }, NPC.Center);
 				SoundEngine.PlaySound(SoundID.Item14, NPC.Center);
-				Vector2 targetPos = new(TargetX, TargetY);
-				NPC.velocity = Vector2.Normalize(targetPos - NPC.Center) * 20f;
+				Vector2 dir = Vector2.Normalize(new Vector2(TargetX, TargetY) - NPC.Center);
+				Sub2 = dir.X;
+				Sub3 = dir.Y;
+				NPC.velocity = dir * (Phase3DashBaseSpeed * 2f); // peak = 2x base
 				PulseScale(1.30f);
 				Sub1 = 1f;
 				Sub0 = 0f;
 			}
 		}
-		else // Dashing — full-commit, no decay so he never visibly halts mid-dash
+		else // Dashing — linear decay from 2x base to 0 over Phase3DashDuration
 		{
-			NPC.rotation += NPC.velocity.X * 0.05f;
 			Sub0++;
+			float ratio = MathHelper.Clamp(1f - Sub0 / Phase3DashDuration, 0f, 1f);
+			NPC.velocity = new Vector2(Sub2, Sub3) * (Phase3DashBaseSpeed * 2f) * ratio;
+			// Roll rate decays with velocity — both reach 0 together for a polished coast-to-stop.
+			float rollDir = Sub2 != 0f ? Math.Sign(Sub2) : 1f;
+			NPC.rotation += rollDir * 0.35f * ratio;
 			if (Main.rand.NextBool())
 			{
 				Dust d = Dust.NewDustDirect(NPC.position, NPC.width, NPC.height, DustID.RedTorch);
 				d.velocity = NPC.velocity * -0.5f;
 			}
-			if (Sub0 > 55f)
+			if (Sub0 > Phase3DashDuration)
 			{
 				Cmd = CmdIdleAir;
 				TelegraphDuration = 0f;
@@ -554,9 +606,9 @@ public sealed class RedAnimateMinion : ModNPC
 		NPC.active = false;
 	}
 
-	// === DASH IMMEDIATE: launch with (TargetX, TargetY) as velocity vector; no telegraph.
-	// Used by Move 3 Ground Sweep where the boss draws the telegraph externally so it can
-	// track the player's Y until the very last frame before launch. ===
+	// === DASH IMMEDIATE: (TargetX, TargetY) is the PEAK velocity vector. Linear decay
+	// from peak → 0 over TelegraphDuration ticks. Used by Move 3 Ground Sweep where the boss
+	// draws the telegraph externally so it can track the player's Y until the last frame. ===
 	private void DoDashImmediate(Player player)
 	{
 		NPC.noGravity = true;
@@ -564,7 +616,7 @@ public sealed class RedAnimateMinion : ModNPC
 
 		if (Sub0 == 0f)
 		{
-			// First-tick launch: stamp velocity from the passed-in vector
+			// First-tick launch: stamp peak velocity
 			NPC.velocity = new Vector2(TargetX, TargetY);
 			PoofVisuals();
 			SoundEngine.PlaySound(SoundID.Roar with { PitchVariance = 0.1f }, NPC.Center);
@@ -572,8 +624,12 @@ public sealed class RedAnimateMinion : ModNPC
 			PulseScale(1.30f);
 		}
 
-		NPC.rotation += NPC.velocity.X * 0.05f;
 		Sub0++;
+		float ratio = MathHelper.Clamp(1f - Sub0 / TelegraphDuration, 0f, 1f);
+		NPC.velocity = new Vector2(TargetX, TargetY) * ratio;
+		// Roll rate decays with velocity for a polished coast-to-stop.
+		float rollDir = TargetX != 0f ? Math.Sign(TargetX) : 1f;
+		NPC.rotation += rollDir * 0.35f * ratio;
 		if (Main.rand.NextBool())
 		{
 			Dust d = Dust.NewDustDirect(NPC.position, NPC.width, NPC.height, DustID.RedTorch);
@@ -586,6 +642,52 @@ public sealed class RedAnimateMinion : ModNPC
 			Cmd = CmdIdleAir;
 			TelegraphDuration = 0f;
 			_lastCmd = (int)Cmd;
+		}
+	}
+
+	// === SLAVED: do nothing. Boss writes NPC.Center each tick. ===
+	private void DoSlaved(Player player)
+	{
+		NPC.noGravity = true;
+		NPC.noTileCollide = true;
+		NPC.velocity = Vector2.Zero;
+		NPC.alpha = 0;
+		if (Main.rand.NextBool(20))
+			Dust.NewDust(NPC.position, NPC.width, NPC.height, DustID.RedTorch);
+	}
+
+	// === TELEGRAPH TELEPORT: dust + sound at (TargetX, TargetY) for `TelegraphDuration` ticks,
+	// then warp there. Red is invisible during the telegraph so the dust at the destination
+	// (rather than his sprite flying in) is the only spatial cue the player needs to read. ===
+	// Sub0 = timer
+	private void DoTelegraphTeleport(Player player)
+	{
+		NPC.noGravity = true;
+		NPC.noTileCollide = true;
+		NPC.velocity = Vector2.Zero;
+		NPC.alpha = 255;
+		Sub0++;
+
+		if (Sub0 == 1f) SoundEngine.PlaySound(SoundID.Item8 with { PitchVariance = 0.2f }, NPC.Center);
+
+		Vector2 targetPos = new(TargetX, TargetY);
+		for (int i = 0; i < 2; i++)
+		{
+			Dust d = Dust.NewDustDirect(targetPos, NPC.width, NPC.height, DustID.RedTorch);
+			d.velocity = Main.rand.NextVector2Circular(3f, 3f);
+			d.noGravity = true;
+		}
+
+		if (Sub0 >= EffectiveTelegraphDuration)
+		{
+			NPC.Center = targetPos;
+			NPC.alpha = 0;
+			ResetTrail();
+			PoofVisuals();
+			Cmd = CmdIdleAir;
+			TelegraphDuration = 0f;
+			_lastCmd = (int)Cmd;
+			Sub0 = 0f;
 		}
 	}
 

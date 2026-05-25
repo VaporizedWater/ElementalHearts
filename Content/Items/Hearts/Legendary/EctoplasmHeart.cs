@@ -13,8 +13,9 @@ public sealed class EctoplasmHeart : ElementalHeartItem
 	{
 		CreateRecipe()
 			.AddIngredient(ItemID.Ectoplasm, RecipeCost(100))
-			.AddIngredient(ModContent.ItemType<LegendaryLifeShard>(), 1)
+			.AddOptionalIngredient(ModContent.ItemType<LegendaryLifeShard>(), 1)
 			.AddTile(TileID.Bookcases)
 			.Register();
 	}
 }
+

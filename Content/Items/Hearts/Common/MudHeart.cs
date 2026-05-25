@@ -13,8 +13,9 @@ public sealed class MudHeart : ElementalHeartItem
 	{
 		CreateRecipe()
 			.AddIngredient(ItemID.MudBlock, RecipeCost(1000))
-			.AddIngredient(ModContent.ItemType<CommonLifeShard>(), 2)
+			.AddOptionalIngredient(ModContent.ItemType<CommonLifeShard>(), 2)
 			.AddTile(TileID.WorkBenches)
 			.Register();
 	}
 }
+

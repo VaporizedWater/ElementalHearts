@@ -13,8 +13,9 @@ public sealed class CrimsandHeart : ElementalHeartItem
 	{
 		CreateRecipe()
 			.AddIngredient(ItemID.CrimsandBlock, RecipeCost(800))
-			.AddIngredient(ModContent.ItemType<CommonLifeShard>(), 3)
+			.AddOptionalIngredient(ModContent.ItemType<CommonLifeShard>(), 3)
 			.AddTile(TileID.WorkBenches)
 			.Register();
 	}
 }
+

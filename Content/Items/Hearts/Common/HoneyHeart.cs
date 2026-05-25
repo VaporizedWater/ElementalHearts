@@ -13,8 +13,9 @@ public sealed class HoneyHeart : ElementalHeartItem
 	{
 		CreateRecipe()
 			.AddIngredient(ItemID.HoneyBlock, RecipeCost(200))
-			.AddIngredient(ModContent.ItemType<CommonLifeShard>(), 3)
+			.AddOptionalIngredient(ModContent.ItemType<CommonLifeShard>(), 3)
 			.AddTile(TileID.HoneyDispenser)
 			.Register();
 	}
 }
+

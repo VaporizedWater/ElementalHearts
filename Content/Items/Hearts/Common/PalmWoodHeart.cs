@@ -13,8 +13,9 @@ public sealed class PalmWoodHeart : ElementalHeartItem
 	{
 		CreateRecipe()
 			.AddIngredient(ItemID.PalmWood, RecipeCost(500))
-			.AddIngredient(ModContent.ItemType<CommonLifeShard>(), 2)
+			.AddOptionalIngredient(ModContent.ItemType<CommonLifeShard>(), 2)
 			.AddTile(TileID.WorkBenches)
 			.Register();
 	}
 }
+

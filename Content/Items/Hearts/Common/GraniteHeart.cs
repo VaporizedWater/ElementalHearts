@@ -13,8 +13,9 @@ public sealed class GraniteHeart : ElementalHeartItem
 	{
 		CreateRecipe()
 			.AddIngredient(ItemID.Granite, RecipeCost(400))
-			.AddIngredient(ModContent.ItemType<CommonLifeShard>(), 4)
+			.AddOptionalIngredient(ModContent.ItemType<CommonLifeShard>(), 4)
 			.AddTile(TileID.WorkBenches)
 			.Register();
 	}
 }
+

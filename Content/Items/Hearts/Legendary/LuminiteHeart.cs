@@ -13,8 +13,9 @@ public sealed class LuminiteHeart : ElementalHeartItem
 	{
 		CreateRecipe()
 			.AddIngredient(ItemID.LunarBar, RecipeCost(60))
-			.AddIngredient(ModContent.ItemType<LegendaryLifeShard>(), 1)
+			.AddOptionalIngredient(ModContent.ItemType<LegendaryLifeShard>(), 1)
 			.AddTile(TileID.LunarCraftingStation)
 			.Register();
 	}
 }
+

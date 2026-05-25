@@ -13,8 +13,9 @@ public sealed class RainCloudHeart : ElementalHeartItem
 	{
 		CreateRecipe()
 			.AddIngredient(ItemID.RainCloud, RecipeCost(100))
-			.AddIngredient(ModContent.ItemType<CommonLifeShard>(), 3)
+			.AddOptionalIngredient(ModContent.ItemType<CommonLifeShard>(), 3)
 			.AddTile(TileID.SkyMill)
 			.Register();
 	}
 }
+

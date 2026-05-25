@@ -13,8 +13,9 @@ public sealed class TopazHeart : ElementalHeartItem
 	{
 		CreateRecipe()
 			.AddIngredient(ItemID.Topaz, RecipeCost(50))
-			.AddIngredient(ModContent.ItemType<UncommonLifeShard>(), 2)
+			.AddOptionalIngredient(ModContent.ItemType<UncommonLifeShard>(), 2)
 			.AddTile(TileID.HeavyWorkBench)
 			.Register();
 	}
 }
+

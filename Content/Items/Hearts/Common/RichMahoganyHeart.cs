@@ -13,8 +13,9 @@ public sealed class RichMahoganyHeart : ElementalHeartItem
 	{
 		CreateRecipe()
 			.AddIngredient(ItemID.RichMahogany, RecipeCost(750))
-			.AddIngredient(ModContent.ItemType<CommonLifeShard>(), 1)
+			.AddOptionalIngredient(ModContent.ItemType<CommonLifeShard>(), 1)
 			.AddTile(TileID.WorkBenches)
 			.Register();
 	}
 }
+

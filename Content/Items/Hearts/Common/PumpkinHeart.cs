@@ -13,8 +13,9 @@ public sealed class PumpkinHeart : ElementalHeartItem
 	{
 		CreateRecipe()
 			.AddIngredient(ItemID.Pumpkin, RecipeCost(500))
-			.AddIngredient(ModContent.ItemType<CommonLifeShard>(), 2)
+			.AddOptionalIngredient(ModContent.ItemType<CommonLifeShard>(), 2)
 			.AddTile(TileID.Sawmill)
 			.Register();
 	}
 }
+

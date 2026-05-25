@@ -13,8 +13,9 @@ public sealed class CogHeart : ElementalHeartItem
 	{
 		CreateRecipe()
 			.AddIngredient(ItemID.Cog, RecipeCost(300))
-			.AddIngredient(ModContent.ItemType<RareLifeShard>(), 3)
+			.AddOptionalIngredient(ModContent.ItemType<RareLifeShard>(), 3)
 			.AddTile(TileID.SteampunkBoiler)
 			.Register();
 	}
 }
+

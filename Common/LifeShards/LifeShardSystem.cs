@@ -1,4 +1,6 @@
 using ElementalHearts.Common.Configs;
+using ElementalHearts.Content.Items.Hearts;
+using ElementalHearts.Content.Items.LifeShards;
 using Terraria;
 using Terraria.Audio;
 using Terraria.ID;
@@ -13,17 +15,7 @@ namespace ElementalHearts.Common.LifeShards;
 /// </summary>
 public sealed class LifeShardSystem : ModSystem
 {
-	private static Condition _systemEnabledCondition;
 
-	/// <summary>
-	/// Live recipe gate for every Life Shard recipe. The crafting UI re-evaluates it,
-	/// so toggling <see cref="LifeShardConfig.SystemEnabled"/> shows or hides the
-	/// recipes without a reload.
-	/// </summary>
-	public static Condition SystemEnabledCondition =>
-		_systemEnabledCondition ??= new Condition(
-			Language.GetText("Mods.ElementalHearts.Conditions.LifeShardSystemEnabled"),
-			() => LifeShardConfig.Instance.SystemEnabled);
 
 	private static Condition _uiUpgradeOnlyCondition;
 
@@ -38,6 +30,8 @@ public sealed class LifeShardSystem : ModSystem
 
 	public override void PostSetupContent()
 		=> SetLifeCrystalExtractable(LifeShardConfig.Instance.SystemEnabled);
+
+
 
 	// ── Pickup-sound de-duplication ──────────────────────────────────────────────
 	// Several shards picked up on the same frame — an Extractinator can yield a few

@@ -13,8 +13,9 @@ public sealed class CloudHeart : ElementalHeartItem
 	{
 		CreateRecipe()
 			.AddIngredient(ItemID.Cloud, RecipeCost(200))
-			.AddIngredient(ModContent.ItemType<CommonLifeShard>(), 3)
+			.AddOptionalIngredient(ModContent.ItemType<CommonLifeShard>(), 3)
 			.AddTile(TileID.SkyMill)
 			.Register();
 	}
 }
+

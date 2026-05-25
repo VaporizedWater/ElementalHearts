@@ -110,6 +110,15 @@ internal static class ElementalPowerRegistry
 		["LuminiteHeart"] = "starlight",
 		["ShroomiteHeart"] = "shroomite",
 		["SpectreHeart"] = "spectre",
+		// Lunar bricks — each is a moon-phase joke (work, comedy timing, royalty, decay)
+		["AstraHeart"] = "moonlighting",         // Third Quarter — late shift / second job by moonlight
+		["CosmicEmberHeart"] = "slow burn",      // Waxing Gibbous — slow growth + ember combustion
+		["CryocoreHeart"] = "cold open",         // First Quarter — the opening; comedy term + literally cold
+		["DarkCelestialHeart"] = "lights out",   // Waning Crescent — almost-gone moon = bedtime
+		["HeavenforgeHeart"] = "overtime",       // Full Moon — peak shift at the celestial forge
+		["LunarRustHeart"] = "moonrot",          // Waning Gibbous — wane = decay; rust pun
+		["MercuryHeart"] = "mood swing",         // New Moon — mercurial + dark new-moon mood
+		["StarRoyaleHeart"] = "moonarch",        // Waxing Crescent — moon + monarch; crescent = crown
 
 		// ── Exotic (boss-themed) ──────────────────────────────────────────────────
 		["BetsyHeart"] = "dragon",

@@ -13,8 +13,9 @@ public sealed class MarbleHeart : ElementalHeartItem
 	{
 		CreateRecipe()
 			.AddIngredient(ItemID.Marble, RecipeCost(400))
-			.AddIngredient(ModContent.ItemType<CommonLifeShard>(), 4)
+			.AddOptionalIngredient(ModContent.ItemType<CommonLifeShard>(), 4)
 			.AddTile(TileID.WorkBenches)
 			.Register();
 	}
 }
+

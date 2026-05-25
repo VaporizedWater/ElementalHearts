@@ -13,8 +13,9 @@ public sealed class SnowCloudHeart : ElementalHeartItem
 	{
 		CreateRecipe()
 			.AddIngredient(ItemID.SnowCloudBlock, RecipeCost(100))
-			.AddIngredient(ModContent.ItemType<CommonLifeShard>(), 3)
+			.AddOptionalIngredient(ModContent.ItemType<CommonLifeShard>(), 3)
 			.AddTile(TileID.SkyMill)
 			.Register();
 	}
 }
+

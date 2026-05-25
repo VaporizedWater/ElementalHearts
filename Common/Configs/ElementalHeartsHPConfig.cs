@@ -17,46 +17,27 @@ public sealed class ElementalHeartsHPConfig : ModConfig
 	public override ConfigScope Mode => ConfigScope.ServerSide;
 	public static ElementalHeartsHPConfig Instance => ModContent.GetInstance<ElementalHeartsHPConfig>();
 
-	[DefaultValue(2)]
-	[Range(1, 20)]
-	[Slider]
-	[Increment(1)]
+	[Header("CraftableTiers")]
+	[DefaultValue(2)]  [Range(1, 20)]  [Increment(1)] [Slider] [SliderColor(255, 205, 218, 255)]
 	public int Common;
 
-	[DefaultValue(4)]
-	[Range(2, 40)]
-	[Slider]
-	[Increment(1)]
+	[DefaultValue(4)]  [Range(2, 40)]  [Increment(1)] [Slider] [SliderColor(150, 230, 150, 255)]
 	public int Uncommon;
 
-	[DefaultValue(6)]
-	[Range(3, 60)]
-	[Slider]
-	[Increment(1)]
+	[DefaultValue(6)]  [Range(3, 60)]  [Increment(1)] [Slider] [SliderColor(110, 170, 255, 255)]
 	public int Rare;
 
-	[DefaultValue(8)]
-	[Range(4, 80)]
-	[Slider]
-	[Increment(1)]
+	[DefaultValue(8)]  [Range(4, 80)]  [Increment(1)] [Slider] [SliderColor(200, 130, 255, 255)]
 	public int Epic;
 
-	[DefaultValue(10)]
-	[Range(5, 100)]
-	[Slider]
-	[Increment(1)]
+	[DefaultValue(10)] [Range(5, 100)] [Increment(1)] [Slider] [SliderColor(255, 200, 90, 255)]
 	public int Legendary;
 
-	[DefaultValue(10)]
-	[Range(5, 100)]
-	[Slider]
-	[Increment(1)]
+	[Header("BossTiers")]
+	[DefaultValue(10)] [Range(5, 100)] [Increment(1)] [Slider] [SliderColor(255, 120, 110, 255)]
 	public int Exotic;
 
-	[DefaultValue(50)]
-	[Range(25, 500)]
-	[Slider]
-	[Increment(1)]
+	[DefaultValue(50)] [Range(25, 500)] [Increment(1)] [Slider] [SliderColor(255, 235, 150, 255)]
 	public int Mythic;
 
 	/// <summary>

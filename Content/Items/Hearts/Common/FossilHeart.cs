@@ -13,8 +13,9 @@ public sealed class FossilHeart : ElementalHeartItem
 	{
 		CreateRecipe()
 			.AddIngredient(ItemID.DesertFossil, RecipeCost(300))
-			.AddIngredient(ModContent.ItemType<CommonLifeShard>(), 4)
+			.AddOptionalIngredient(ModContent.ItemType<CommonLifeShard>(), 4)
 			.AddTile(TileID.Extractinator)
 			.Register();
 	}
 }
+

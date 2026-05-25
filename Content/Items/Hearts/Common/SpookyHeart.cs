@@ -13,8 +13,9 @@ public sealed class SpookyHeart : ElementalHeartItem
 	{
 		CreateRecipe()
 			.AddIngredient(ItemID.SpookyWood, RecipeCost(1000))
-			.AddIngredient(ModContent.ItemType<CommonLifeShard>(), 4)
+			.AddOptionalIngredient(ModContent.ItemType<CommonLifeShard>(), 4)
 			.AddTile(TileID.Sawmill)
 			.Register();
 	}
 }
+

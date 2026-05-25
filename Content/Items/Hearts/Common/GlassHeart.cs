@@ -13,8 +13,9 @@ public sealed class GlassHeart : ElementalHeartItem
 	{
 		CreateRecipe()
 			.AddIngredient(ItemID.Glass, RecipeCost(500))
-			.AddIngredient(ModContent.ItemType<CommonLifeShard>(), 2)
+			.AddOptionalIngredient(ModContent.ItemType<CommonLifeShard>(), 2)
 			.AddTile(TileID.GlassKiln)
 			.Register();
 	}
 }
+

@@ -13,8 +13,9 @@ public sealed class DiscordHeart : ElementalHeartItem
 	{
 		CreateRecipe()
 			.AddIngredient(ItemID.PixieDust, RecipeCost(300))
-			.AddIngredient(ModContent.ItemType<RareLifeShard>(), 3)
+			.AddOptionalIngredient(ModContent.ItemType<RareLifeShard>(), 3)
 			.AddTile(TileID.CrystalBall)
 			.Register();
 	}
 }
+

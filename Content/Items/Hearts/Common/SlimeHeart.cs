@@ -13,8 +13,9 @@ public sealed class SlimeHeart : ElementalHeartItem
 	{
 		CreateRecipe()
 			.AddIngredient(ItemID.SlimeBlock, RecipeCost(500))
-			.AddIngredient(ModContent.ItemType<CommonLifeShard>(), 1)
+			.AddOptionalIngredient(ModContent.ItemType<CommonLifeShard>(), 1)
 			.AddTile(TileID.Solidifier)
 			.Register();
 	}
 }
+

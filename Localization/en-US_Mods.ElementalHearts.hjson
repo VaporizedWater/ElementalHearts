@@ -16,115 +16,214 @@ Common: {
 Configs: {
 	ElementalHeartsBossConfig: {
 		DisplayName: Boss Drop Settings
+		Headers.Drops: Boss Heart Drops
 
 		BossHeartsGuaranteedOnFirstKill: {
 			Label: Guaranteed On First Kill
-			Tooltip: Defeating a boss for the first time always drops its heart, ignoring the drop chance below.
+			Tooltip:
+				'''
+				If enabled, the very first time you defeat a boss it will always drop its themed heart.
+				The drop chance below only applies on subsequent kills.
+				'''
 		}
 
 		BossHeartDropChance: {
 			Label: Boss Heart Drop Chance (%)
-			Tooltip: Percentage chance for a boss to drop its heart on each kill after the first.
+			Tooltip: Percentage chance for a boss to drop its themed heart on each kill after the first.
 		}
 	}
 
 	ElementalHeartsCrossModConfig: {
 		DisplayName: Cross-Mod Settings
+		Headers.SupportedMods: Supported Mods
 
 		EnableCalamityHearts: {
 			Label: Enable Calamity Hearts
-			Tooltip: Load hearts themed around Calamity Mod content. Disabling removes them entirely. Requires a reload.
+			Tooltip:
+				'''
+				Load hearts themed around Calamity Mod content.
+				Disabling removes them entirely — they can't be crafted, dropped, or found.
+				Requires a reload.
+				'''
 		}
 
 		EnableThoriumHearts: {
 			Label: Enable Thorium Hearts
-			Tooltip: Load hearts themed around Thorium Mod content. Disabling removes them entirely. Requires a reload.
+			Tooltip:
+				'''
+				Load hearts themed around Thorium Mod content.
+				Disabling removes them entirely — they can't be crafted, dropped, or found.
+				Requires a reload.
+				'''
 		}
 
 		EnableConsolariaHearts: {
 			Label: Enable Consolaria Hearts
-			Tooltip: Load hearts themed around Consolaria content. Disabling removes them entirely. Requires a reload.
+			Tooltip:
+				'''
+				Load hearts themed around Consolaria content.
+				Disabling removes them entirely — they can't be crafted, dropped, or found.
+				Requires a reload.
+				'''
 		}
 	}
 
 	ElementalHeartsHPConfig: {
 		DisplayName: HP Settings
 
+		Headers: {
+			CraftableTiers: Craftable Heart Tiers
+			BossTiers: Boss Heart Tiers
+		}
+
 		Common: {
 			Label: Common Heart HP
-			Tooltip: Maximum life each Common-tier heart grants when consumed.
+			Tooltip: Maximum life each Common-tier heart grants when consumed. Default 2.
 		}
 
 		Uncommon: {
 			Label: Uncommon Heart HP
-			Tooltip: Maximum life each Uncommon-tier heart grants when consumed.
+			Tooltip: Maximum life each Uncommon-tier heart grants when consumed. Default 4.
 		}
 
 		Rare: {
 			Label: Rare Heart HP
-			Tooltip: Maximum life each Rare-tier heart grants when consumed.
+			Tooltip: Maximum life each Rare-tier heart grants when consumed. Default 6.
 		}
 
 		Epic: {
 			Label: Epic Heart HP
-			Tooltip: Maximum life each Epic-tier heart grants when consumed.
+			Tooltip: Maximum life each Epic-tier heart grants when consumed. Default 8.
 		}
 
 		Legendary: {
 			Label: Legendary Heart HP
-			Tooltip: Maximum life each Legendary-tier heart grants when consumed.
+			Tooltip: Maximum life each Legendary-tier heart grants when consumed. Default 10.
 		}
 
 		Exotic: {
 			Label: Exotic Heart HP
-			Tooltip: Maximum life each Exotic-tier (boss) heart grants when consumed.
+			Tooltip: Maximum life each Exotic-tier (vanilla boss) heart grants when consumed. Default 10.
 		}
 
 		Mythic: {
 			Label: Mythic Heart HP
-			Tooltip: Maximum life each Mythic-tier heart grants when consumed.
+			Tooltip: Maximum life each Mythic-tier (Animate final-boss) heart grants when consumed. Default 50.
 		}
 	}
 
 	ElementalHeartsRecipeConfig: {
 		DisplayName: Recipe Settings
+		Headers.Crafting: Crafting Difficulty
 
 		RecipeDifficulty: {
-			Label: Recipe Difficulty
-			Tooltip: Scales the materials every heart recipe needs. 10 is the default (1x cost); 5 is half, 20 is double. Requires a reload.
+			Label: Recipe Difficulty (x0.1 cost)
+			Tooltip:
+				'''
+				Scales the materials every heart recipe needs.
+				10 is the default (1x cost); 5 is half cost, 20 is double.
+				Requires a reload.
+				'''
 		}
 	}
 
 	ElementalHeartsVisualConfig: {
 		DisplayName: Visual Settings
 
+		Headers: {
+			Effects: Consumption Effect
+			UI: Heads-Up Display
+		}
+
 		ConsumptionEffectStrength: {
 			Label: Consumption Effect Strength
-			Tooltip: Scales the particles, screen shake, and lighting of the heart-consumption effect. 3 is the default.
+			Tooltip:
+				'''
+				Scales the particles, screen shake, and lighting of the heart-consumption effect.
+				1 is subtle, 3 is the default, 5 is dramatic.
+				'''
 		}
 
 		DraggableUI: {
-			Label: Draggable U I
-			Tooltip: ""
+			Label: Draggable Life Shard UI
+			Tooltip:
+				'''
+				When enabled, the Life Shard panel can be clicked and dragged to any screen position.
+				The new position is saved automatically to UI Position below.
+				'''
 		}
 
 		UIPosition: {
-			Label: U I Position
-			Tooltip: ""
+			Label: Life Shard UI Position
+			Tooltip:
+				'''
+				Saved screen coordinates of the Life Shard panel. Only used while Draggable UI is enabled.
+				Set both to 0 to fall back to the default location.
+				'''
+		}
+	}
+
+	ElementalHeartsTipsConfig: {
+		DisplayName: Tips Settings
+		Headers.Tips: In-Game Tips
+
+		EnableTips: {
+			Label: Enable Tips
+			Tooltip:
+				'''
+				When enabled, helpful in-game tips appear on the Life Shard UI (e.g. the Animate
+				progression hint). Turn off to hide all tip badges.
+				'''
 		}
 	}
 
 	ElementalHeartsWorldConfig: {
 		DisplayName: World Settings
 
+		Headers: {
+			ResetActions: Reset Actions (one-shot)
+			Worldgen: Mini-Biome Generation
+		}
+
 		ClearHeartRegistry: {
 			Label: Clear Consumed Hearts
-			Tooltip: Enable to wipe this world's consumed-heart record and refund the max life it granted, so every heart can be consumed again. Resets itself once it runs.
+			Tooltip:
+				'''
+				Enable to wipe this world's consumed-heart record and refund the max life it granted,
+				so every heart can be consumed again. Resets itself once it runs.
+				'''
 		}
 
 		ClearElementalTier: {
-			Tooltip: ""
 			Label: Clear Elemental Tier
+			Tooltip:
+				'''
+				Enable to reset the Animate progression tier in this world back to the starting tier.
+				Resets itself once it runs.
+				'''
+		}
+
+		GenerateLifeBiomes: {
+			Label: Generate Life Mini-Biomes
+			Tooltip:
+				'''
+				When on, new worlds generate Vital Soil patches on the surface and heart-shaped
+				Vital Quartz formations in the jungle. Only affects fresh worlds.
+				'''
+		}
+
+		SurfaceBiomeCountMultiplier: {
+			Label: Surface Biome Count Multiplier
+			Tooltip:
+				'''
+				Multiplies the surface Vital Soil biome count. 1 is the default (~3 on small,
+				~5 on medium, ~7 on large worlds). Set to 0 to disable surface biomes only.
+				'''
+		}
+
+		JungleBiomeCountMultiplier: {
+			Label: Jungle Biome Count Multiplier
+			Tooltip: Multiplies the jungle Vital Quartz biome count. 1 is the default (~3 on small, ~4 on medium, ~6 on large worlds). Set to 0 to disable jungle biomes only.
 		}
 	}
 
@@ -136,6 +235,7 @@ Configs: {
 			DropChances: Damage-Based Drop Chances
 			DamageThresholds: Damage Thresholds
 			Extractinator: Extractinator Yields
+			Consumable: Consumable Shards
 		}
 
 		SystemEnabled: {
@@ -262,24 +362,126 @@ Configs: {
 			Label: Extractinator Legendary Maximum
 			Tooltip: Most Legendary Life Shards yielded when the Legendary bonus roll succeeds.
 		}
+
+		ShardsAreConsumable: {
+			Label: Shards Are Consumable
+			Tooltip: When on, Life Shards held in the regular inventory can be used as quick-heal items. Shards inside the Life Shard panel are never consumed.
+		}
+
+		ShardSicknessSeconds: {
+			Label: Shard Sickness Duration (seconds)
+			Tooltip: Seconds of Shard Sickness applied after consuming a Life Shard. Independent of Potion Sickness from healing potions.
+		}
+
+		CommonHealAmount: {
+			Label: Common Shard Heal Amount
+			Tooltip: Hit points restored when a Common Life Shard is consumed via quick-heal.
+		}
+
+		UncommonHealAmount: {
+			Label: Uncommon Shard Heal Amount
+			Tooltip: Hit points restored when an Uncommon Life Shard is consumed via quick-heal.
+		}
+
+		RareHealAmount: {
+			Label: Rare Shard Heal Amount
+			Tooltip: Hit points restored when a Rare Life Shard is consumed via quick-heal.
+		}
+
+		EpicHealAmount: {
+			Label: Epic Shard Heal Amount
+			Tooltip: Hit points restored when an Epic Life Shard is consumed via quick-heal.
+		}
+
+		LegendaryHealAmount: {
+			Label: Legendary Shard Heal Amount
+			Tooltip: Hit points restored when a Legendary Life Shard is consumed via quick-heal.
+		}
+	}
+
+	VitalTilesConfig: {
+		DisplayName: Vital Tiles Settings
+
+		Headers: {
+			General: General
+			Spread: Spread Rates
+			Buffs: Buff Strengths
+			Seeds: Seed Drop Chances
+		}
+
+		SystemEnabled: {
+			Label: Enable Vital Tiles System
+			Tooltip: Master switch for the Vital Soil and Vital Quartz tiles, their buffs, plants, and the Life Crystal/Fruit seed drops. Turn this off to disable it completely.
+		}
+
+		VitalSoilSpreadChance: {
+			Label: Vital Soil Spread Chance
+			Tooltip: Per-random-update chance for a Vital Soil block to convert one adjacent Dirt, Mud, or Silt block. Set to 0 to disable spread.
+		}
+
+		VitalQuartzSpreadChance: {
+			Label: Vital Quartz Spread Chance
+			Tooltip: Per-random-update chance for a Vital Quartz block to convert one adjacent Stone block. Set to 0 to disable spread.
+		}
+
+		VitalSoilRegenPercent: {
+			Label: Vital Soil Regen Boost (%)
+			Tooltip: Percent of the player's current life regeneration added back while they stand on Vital Soil.
+		}
+
+		VitalQuartzMaxHpPercent: {
+			Label: Vital Quartz Max HP Boost (%)
+			Tooltip: Percent of maximum life added while the player is within range of a Vital Quartz block.
+		}
+
+		VitalQuartzVerticalRange: {
+			Label: Vital Quartz Vertical Range (tiles)
+			Tooltip: How far above or below a Vital Quartz block the aura reaches.
+		}
+
+		VitalQuartzHorizontalRange: {
+			Label: Vital Quartz Horizontal Range (tiles)
+			Tooltip: How far to either side of a Vital Quartz block the aura reaches. Smaller than vertical to encourage column-style placements.
+		}
+
+		LifeCrystalSeedChance: {
+			Label: Life Crystal Seed Chance (%)
+			Tooltip: Chance an extractinated Life Crystal also yields a Life Crystal Seed. The chance is independent of the standard shard yield.
+		}
+
+		LifeFruitSeedChance: {
+			Label: Life Fruit Seed Chance (%)
+			Tooltip: Chance an extractinated Life Fruit yields a Life Fruit Seed. Life Fruit extractination only produces seeds — a missed roll consumes the fruit for nothing.
+		}
 	}
 }
 
 Conditions: {
-	LifeShardSystemEnabled: Life Shard system enabled
-	UIUpgradeOnly: Can only be upgraded via the Life Shard UI
-	DownedLegendaryAnimate: Mods.ElementalHearts.Conditions.DownedLegendaryAnimate
-	CurrentAnimateTier: Mods.ElementalHearts.Conditions.CurrentAnimateTier
+	LifeShardSystemEnabled: Life Shard System Enabled
+	UIUpgradeOnly: Life Shard UI
+	DownedLegendaryAnimate: All Legendary Hearts Animated
+	CurrentAnimateTier: Current Animate Tier
+	LifeShardSystemDisabled: Life Shard System Disabled
 }
 
 UI: {
 	LifeShardPanel: Life
-	Combine: Combine {0} Life Shards into a {1} Life Shard
+	Fuse: Fuse {0} {1} into a {2}
 	TierCommon: Common
 	TierUncommon: Uncommon
 	TierRare: Rare
 	TierEpic: Epic
 	TierLegendary: Legendary
+	AnimateTip:
+		'''
+		{0} locks the {1}...
+		Spawn him with a {2}!
+		'''
+	AnimateTipNext: "{0} locks the {1}..."
+	LiteChat1: In order to upgrade your life shards to the next tier, you must defeat Animate.
+	LiteChat2: He can be spawned with a Menacing Heart, which is crafted with life shards and a life crystal at a Demon Altar.
+	LiteChat3: I heard that once you defeat him, he will allow you access to higher tiers but he also gets stronger to guard the next tier.
+	LiteChat4: Be safe!
 }
 
 # Display-name overrides. Anything not listed auto-generates from the class name.
@@ -309,28 +511,78 @@ Items: {
 		Tooltip: Summons Animate
 	}
 
-	UncommonAnimatingPotion: {
+	CommonPacifiedHeart: {
+		DisplayName: Pacified Heart
+		ElementalPower: common
 		Tooltip: ""
+	}
+
+	UncommonPacifiedHeart: {
+		DisplayName: Pacified Heart
+		ElementalPower: uncommon
+		Tooltip: ""
+	}
+
+	RarePacifiedHeart: {
+		DisplayName: Pacified Heart
+		ElementalPower: rare
+		Tooltip: ""
+	}
+
+	EpicPacifiedHeart: {
+		DisplayName: Pacified Heart
+		ElementalPower: epic
+		Tooltip: ""
+	}
+
+	LegendaryPacifiedHeart: {
+		DisplayName: Pacified Heart
+		ElementalPower: legendary
+		Tooltip: ""
+	}
+
+	UncommonAnimatingPotion: {
+		Tooltip:
+			'''
+			5% increased maximum life
+			10% increased elemental heart life
+			'''
 		DisplayName: Uncommon Animating Potion
 	}
 
 	RareAnimatingPotion: {
-		Tooltip: ""
+		Tooltip:
+			'''
+			5% increased maximum life
+			15% increased elemental heart life
+			'''
 		DisplayName: Rare Animating Potion
 	}
 
 	LegendaryAnimatingPotion: {
-		Tooltip: ""
+		Tooltip:
+			'''
+			5% increased maximum life
+			25% increased elemental heart life
+			'''
 		DisplayName: Legendary Animating Potion
 	}
 
 	EpicAnimatingPotion: {
-		Tooltip: ""
+		Tooltip:
+			'''
+			5% increased maximum life
+			20% increased elemental heart life
+			'''
 		DisplayName: Epic Animating Potion
 	}
 
 	CommonAnimatingPotion: {
-		Tooltip: ""
+		Tooltip:
+			'''
+			5% increased maximum life
+			5% increased elemental heart life
+			'''
 		DisplayName: Common Animating Potion
 	}
 
@@ -694,9 +946,19 @@ Items: {
 		DisplayName: Hallowed Heart
 	}
 
+	ShardHeart: {
+		Tooltip: ""
+		DisplayName: Shard Heart
+	}
+
 	CrystalHeart: {
 		Tooltip: ""
 		DisplayName: Crystal Heart
+	}
+
+	LifeFruitHeart: {
+		Tooltip: ""
+		DisplayName: Fruit Heart
 	}
 
 	ChlorophyteHeart: {
@@ -933,6 +1195,700 @@ Items: {
 		Tooltip: ""
 		DisplayName: Boreal Wood Heart
 	}
+
+	ZephyrHeart: {
+		Tooltip: ""
+		DisplayName: Zephyr Heart
+	}
+
+	YewWoodHeart: {
+		Tooltip: ""
+		DisplayName: Yew Wood Heart
+	}
+
+	VampireHeart: {
+		Tooltip: ""
+		DisplayName: Vampire Heart
+	}
+
+	ValadiumHeart: {
+		Tooltip: ""
+		DisplayName: Valadium Heart
+	}
+
+	ThoriumHeart: {
+		Tooltip: ""
+		DisplayName: Thorium Heart
+	}
+
+	StormHeart: {
+		Tooltip: ""
+		DisplayName: Storm Heart
+	}
+
+	SmoothCoalHeart: {
+		Tooltip: ""
+		DisplayName: Smooth Coal Heart
+	}
+
+	SeaBreezeHeart: {
+		Tooltip: ""
+		DisplayName: Sea Breeze Heart
+	}
+
+	PermafrostHeart: {
+		Tooltip: ""
+		DisplayName: Permafrost Heart
+	}
+
+	PearlHeart: {
+		Tooltip: ""
+		DisplayName: Pearl Heart
+	}
+
+	OpalHeart: {
+		Tooltip: ""
+		DisplayName: Opal Heart
+	}
+
+	OnyxHeart: {
+		Tooltip: ""
+		DisplayName: Onyx Heart
+	}
+
+	OmegaHeart: {
+		Tooltip: ""
+		DisplayName: Omega Heart
+	}
+
+	MossyMarineRockHeart: {
+		Tooltip: ""
+		DisplayName: Mossy Marine Rock Heart
+	}
+
+	MagmaHeart: {
+		Tooltip: ""
+		DisplayName: Magma Heart
+	}
+
+	LodestoneHeart: {
+		Tooltip: ""
+		DisplayName: Lodestone Heart
+	}
+
+	LifeQuartzHeart: {
+		Tooltip: ""
+		DisplayName: Life Quartz Heart
+	}
+
+	LichHeart: {
+		Tooltip: ""
+		DisplayName: Lich Heart
+	}
+
+	IllumiteHeart: {
+		Tooltip: ""
+		DisplayName: Illumite Heart
+	}
+
+	IceboundStriderHeart: {
+		Tooltip: ""
+		DisplayName: Icebound Strider Heart
+	}
+
+	DormantHeart: {
+		Tooltip: ""
+		DisplayName: Dormant Heart
+	}
+
+	DepthsRockHeart: {
+		Tooltip: ""
+		DisplayName: Depths Rock Heart
+	}
+
+	ChampionHeart: {
+		Tooltip: ""
+		DisplayName: Champion Heart
+	}
+
+	BrackishClumpHeart: {
+		Tooltip: ""
+		DisplayName: Brackish Clump Heart
+	}
+
+	BeholderHeart: {
+		Tooltip: ""
+		DisplayName: Beholder Heart
+	}
+
+	AquaiteHeart: {
+		Tooltip: ""
+		DisplayName: Aquaite Heart
+	}
+
+	AbyssalHeart: {
+		Tooltip: ""
+		DisplayName: Abyssal Heart
+	}
+
+	SoulOfBlightHeart: {
+		Tooltip: ""
+		DisplayName: Soul Of Blight Heart
+	}
+
+	EasterHeart: {
+		Tooltip: ""
+		DisplayName: Easter Heart
+	}
+
+	CursedHeart: {
+		Tooltip: ""
+		DisplayName: Cursed Heart
+	}
+
+	CornucopiaHeart: {
+		Tooltip: ""
+		DisplayName: Cornucopia Heart
+	}
+
+	VoidstoneHeart: {
+		Tooltip: ""
+		DisplayName: Voidstone Heart
+	}
+
+	UelibloomHeart: {
+		Tooltip: ""
+		DisplayName: Uelibloom Heart
+	}
+
+	TwistingHeart: {
+		Tooltip: ""
+		DisplayName: Twisting Heart
+	}
+
+	TenebrisHeart: {
+		Tooltip: ""
+		DisplayName: Tenebris Heart
+	}
+
+	SulphurousSandstoneHeart: {
+		Tooltip: ""
+		DisplayName: Sulphurous Sandstone Heart
+	}
+
+	SulphurousSandHeart: {
+		Tooltip: ""
+		DisplayName: Sulphurous Sand Heart
+	}
+
+	SeaPrismHeart: {
+		Tooltip: ""
+		DisplayName: Sea Prism Heart
+	}
+
+	ScoriaHeart: {
+		Tooltip: ""
+		DisplayName: Scoria Heart
+	}
+
+	RottenHeart: {
+		Tooltip: ""
+		DisplayName: Rotten Heart
+	}
+
+	ProfanedHeart: {
+		Tooltip: ""
+		DisplayName: Profaned Heart
+	}
+
+	PolarizedHeart: {
+		Tooltip: ""
+		DisplayName: Polarized Heart
+	}
+
+	PlantyMushHeart: {
+		Tooltip: ""
+		DisplayName: Planty Mush Heart
+	}
+
+	PerennialHeart: {
+		Tooltip: ""
+		DisplayName: Perennial Heart
+	}
+
+	OceanHeart: {
+		Tooltip: ""
+		DisplayName: Ocean Heart
+	}
+
+	NovaeSlugHeart: {
+		Tooltip: ""
+		DisplayName: Novae Slug Heart
+	}
+
+	NebulousHeart: {
+		Tooltip: ""
+		DisplayName: Nebulous Heart
+	}
+
+	NavystoneHeart: {
+		Tooltip: ""
+		DisplayName: Navystone Heart
+	}
+
+	MutatedHeart: {
+		Tooltip: ""
+		DisplayName: Mutated Heart
+	}
+
+	HardenedSulphurousSandstoneHeart: {
+		Tooltip: ""
+		DisplayName: Hardened Sulphurous Sandstone Heart
+	}
+
+	HardenedAstralSandHeart: {
+		Tooltip: ""
+		DisplayName: Hardened Astral Sand Heart
+	}
+
+	GravistarHeart: {
+		Tooltip: ""
+		DisplayName: Gravistar Heart
+	}
+
+	GehennaHeart: {
+		Tooltip: ""
+		DisplayName: Gehenna Heart
+	}
+
+	FungalHeart: {
+		Tooltip: ""
+		DisplayName: Fungal Heart
+	}
+
+	ExodiumClusterHeart: {
+		Tooltip: ""
+		DisplayName: Exodium Cluster Heart
+	}
+
+	EutrophicSandHeart: {
+		Tooltip: ""
+		DisplayName: Eutrophic Sand Heart
+	}
+
+	DynamoStemHeart: {
+		Tooltip: ""
+		DisplayName: Dynamo Stem Heart
+	}
+
+	DraconicHeart: {
+		Tooltip: ""
+		DisplayName: Draconic Heart
+	}
+
+	DarkPlasmicHeart: {
+		Tooltip: ""
+		DisplayName: Dark Plasmic Heart
+	}
+
+	CrystallizedToxicHeart: {
+		Tooltip: ""
+		DisplayName: Crystallized Toxic Heart
+	}
+
+	CryonicHeart: {
+		Tooltip: ""
+		DisplayName: Cryonic Heart
+	}
+
+	CryogenHeart: {
+		Tooltip: ""
+		DisplayName: Cryogen Heart
+	}
+
+	CosmiliteHeart: {
+		Tooltip: ""
+		DisplayName: Cosmilite Heart
+	}
+
+	CorpusHeart: {
+		Tooltip: ""
+		DisplayName: Corpus Heart
+	}
+
+	CinderplateHeart: {
+		Tooltip: ""
+		DisplayName: Cinderplate Heart
+	}
+
+	CelestialRemainsHeart: {
+		Tooltip: ""
+		DisplayName: Celestial Remains Heart
+	}
+
+	CalamitousHeart: {
+		Tooltip: ""
+		DisplayName: Calamitous Heart
+	}
+
+	BrimstoneSlagHeart: {
+		Tooltip: ""
+		DisplayName: Brimstone Slag Heart
+	}
+
+	BloodyWormHeart: {
+		Tooltip: ""
+		DisplayName: Bloody Worm Heart
+	}
+
+	BlazingHeart: {
+		Tooltip: ""
+		DisplayName: Blazing Heart
+	}
+
+	AuricHeart: {
+		Tooltip: ""
+		DisplayName: Auric Heart
+	}
+
+	AstralStoneHeart: {
+		Tooltip: ""
+		DisplayName: Astral Stone Heart
+	}
+
+	AstralSnowHeart: {
+		Tooltip: ""
+		DisplayName: Astral Snow Heart
+	}
+
+	AstralSandstoneHeart: {
+		Tooltip: ""
+		DisplayName: Astral Sandstone Heart
+	}
+
+	AstralSandHeart: {
+		Tooltip: ""
+		DisplayName: Astral Sand Heart
+	}
+
+	AstralMonolithHeart: {
+		Tooltip: ""
+		DisplayName: Astral Monolith Heart
+	}
+
+	AstralIceHeart: {
+		Tooltip: ""
+		DisplayName: Astral Ice Heart
+	}
+
+	AstralHeart: {
+		Tooltip: ""
+		DisplayName: Astral Heart
+	}
+
+	AstralDirtHeart: {
+		Tooltip: ""
+		DisplayName: Astral Dirt Heart
+	}
+
+	AstralClayHeart: {
+		Tooltip: ""
+		DisplayName: Astral Clay Heart
+	}
+
+	AstralBossHeart: {
+		Tooltip: ""
+		DisplayName: Astral Boss Heart
+	}
+
+	ArmoredHeart: {
+		Tooltip: ""
+		DisplayName: Armored Heart
+	}
+
+	AquaticHeart: {
+		Tooltip: ""
+		DisplayName: Aquatic Heart
+	}
+
+	AmbergrisHeart: {
+		Tooltip: ""
+		DisplayName: Ambergris Heart
+	}
+
+	AfflictedHeart: {
+		Tooltip: ""
+		DisplayName: Afflicted Heart
+	}
+
+	AerialiteHeart: {
+		Tooltip: ""
+		DisplayName: Aerialite Heart
+	}
+
+	AbyssGravelHeart: {
+		Tooltip: ""
+		DisplayName: Abyss Gravel Heart
+	}
+
+	GlowingMushroomHeart: {
+		DisplayName: Glowing Mushroom Heart
+		Tooltip: ""
+	}
+
+	AstraHeart: {
+		DisplayName: Astra Heart
+		Tooltip: ""
+	}
+
+	CosmicEmberHeart: {
+		DisplayName: Cosmic Ember Heart
+		Tooltip: ""
+	}
+
+	CryocoreHeart: {
+		DisplayName: Cryocore Heart
+		Tooltip: ""
+	}
+
+	DarkCelestialHeart: {
+		DisplayName: Dark Celestial Heart
+		Tooltip: ""
+	}
+
+	HeavenforgeHeart: {
+		DisplayName: Heavenforge Heart
+		Tooltip: ""
+	}
+
+	LunarRustHeart: {
+		DisplayName: Lunar Rust Heart
+		Tooltip: ""
+	}
+
+	MercuryHeart: {
+		DisplayName: Mercury Heart
+		Tooltip: ""
+	}
+
+	StarRoyaleHeart: {
+		DisplayName: Star Royale Heart
+		Tooltip: ""
+	}
+
+	JungleSporeHeart: {
+		DisplayName: Jungle Spore Heart
+		Tooltip: ""
+	}
+
+	AppleHeart: {
+		DisplayName: Apple Heart
+		Tooltip: ""
+	}
+
+	ApricotHeart: {
+		DisplayName: Apricot Heart
+		Tooltip: ""
+	}
+
+	BananaHeart: {
+		DisplayName: Banana Heart
+		Tooltip: ""
+	}
+
+	BlackcurrantHeart: {
+		DisplayName: Blackcurrant Heart
+		Tooltip: ""
+	}
+
+	BlinkrootHeart: {
+		DisplayName: Blinkroot Heart
+		Tooltip: ""
+	}
+
+	BloodOrangeHeart: {
+		DisplayName: Blood Orange Heart
+		Tooltip: ""
+	}
+
+	BlueHeart: {
+		DisplayName: Blue Heart
+		Tooltip: ""
+	}
+
+	CherryHeart: {
+		DisplayName: Cherry Heart
+		Tooltip: ""
+	}
+
+	CoconutHeart: {
+		DisplayName: Coconut Heart
+		Tooltip: ""
+	}
+
+	DaybloomHeart: {
+		DisplayName: Daybloom Heart
+		Tooltip: ""
+	}
+
+	DeathweedHeart: {
+		DisplayName: Deathweed Heart
+		Tooltip: ""
+	}
+
+	DragonFruitHeart: {
+		DisplayName: Dragon Fruit Heart
+		Tooltip: ""
+	}
+
+	ElderberryHeart: {
+		DisplayName: Elderberry Heart
+		Tooltip: ""
+	}
+
+	FireblossomHeart: {
+		DisplayName: Fireblossom Heart
+		Tooltip: ""
+	}
+
+	GrapefruitHeart: {
+		DisplayName: Grapefruit Heart
+		Tooltip: ""
+	}
+
+	GrapeHeart: {
+		DisplayName: Grape Heart
+		Tooltip: ""
+	}
+
+	GreenHeart: {
+		DisplayName: Green Heart
+		Tooltip: ""
+	}
+
+	LemonHeart: {
+		DisplayName: Lemon Heart
+		Tooltip: ""
+	}
+
+	LimeHeart: {
+		DisplayName: Lime Heart
+		Tooltip: ""
+	}
+
+	MangoHeart: {
+		DisplayName: Mango Heart
+		Tooltip: ""
+	}
+
+	MoonglowHeart: {
+		DisplayName: Moonglow Heart
+		Tooltip: ""
+	}
+
+	OrangeHeart: {
+		DisplayName: Orange Heart
+		Tooltip: ""
+	}
+
+	PeachHeart: {
+		DisplayName: Peach Heart
+		Tooltip: ""
+	}
+
+	PineappleHeart: {
+		DisplayName: Pineapple Heart
+		Tooltip: ""
+	}
+
+	PlumHeart: {
+		DisplayName: Plum Heart
+		Tooltip: ""
+	}
+
+	PomegranateHeart: {
+		DisplayName: Pomegranate Heart
+		Tooltip: ""
+	}
+
+	RambutanHeart: {
+		DisplayName: Rambutan Heart
+		Tooltip: ""
+	}
+
+	ShiverthornHeart: {
+		DisplayName: Shiverthorn Heart
+		Tooltip: ""
+	}
+
+	StarFruitHeart: {
+		DisplayName: Star Fruit Heart
+		Tooltip: ""
+	}
+
+	TealHeart: {
+		DisplayName: Teal Heart
+		Tooltip: ""
+	}
+
+	ViciousMushroomHeart: {
+		DisplayName: Vicious Mushroom Heart
+		Tooltip: ""
+	}
+
+	VileMushroomHeart: {
+		DisplayName: Vile Mushroom Heart
+		Tooltip: ""
+	}
+
+	WaterleafHeart: {
+		DisplayName: Waterleaf Heart
+		Tooltip: ""
+	}
+
+	VitalSoilItem: {
+		DisplayName: Vital Soil
+		Tooltip:
+			'''
+			Faintly glowing, life-aspected silt
+			Spreads slowly to nearby Dirt, Mud, and Silt
+			Can be crushed in the Extractinator
+			Standing on it boosts life regeneration
+			'''
+	}
+
+	VitalQuartzItem: {
+		DisplayName: Vital Quartz
+		Tooltip:
+			'''
+			Living stone shot through with peach and lime green
+			Spreads slowly to nearby Stone
+			Can be crushed in the Extractinator
+			Grants extra maximum life while you are nearby
+			'''
+	}
+
+	LifeFruitSeedItem: {
+		DisplayName: Life Fruit Seed
+		Tooltip: Plant on Vital Soil to grow a Life Fruit
+	}
+
+	LifeCrystalSeedItem: {
+		DisplayName: Life Crystal Seed
+		Tooltip: Plant on Vital Quartz to grow a Life Crystal
+	}
+}
+
+Tiles: {
+	VitalSoilTile.MapEntry: Vital Soil
+	VitalQuartzTile.MapEntry: Vital Quartz
+	LifeFruitPlantTile.MapEntry: Life Fruit Plant
+	LifeCrystalPlantTile.MapEntry: Life Crystal Plant
+}
+
+WorldGen: {
+	VitalSoilBiomes: Seeding Life Mini-Biomes
+	VitalQuartzBiomes: Growing the Jungle's Heart
 }
 
 Buffs: {
@@ -959,6 +1915,21 @@ Buffs: {
 	LegendaryAnimatingPotionBuff: {
 		DisplayName: Animating Potion
 		Description: +5% maximum life, +25% elemental life
+	}
+
+	ShardSickness: {
+		DisplayName: Shard Sickness
+		Description: Cannot consume another Life Shard until this wears off.
+	}
+
+	VitalSoilRegen: {
+		DisplayName: Vital Soil Regeneration
+		Description: Standing on Vital Soil boosts your life regeneration.
+	}
+
+	VitalQuartzAura: {
+		DisplayName: Vital Quartz Aura
+		Description: A nearby Vital Quartz block is boosting your maximum life.
 	}
 }
 
