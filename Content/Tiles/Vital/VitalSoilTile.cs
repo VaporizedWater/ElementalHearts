@@ -22,6 +22,7 @@ public sealed class VitalSoilTile : ModTile
 		Main.tileBlockLight[Type] = true;
 		Main.tileLighted[Type] = true;
 		Main.tileMergeDirt[Type] = true;
+		Main.tileBlendAll[Type] = true; // Visually blend with everything to prevent slope air gaps
 		
 		int[] mergeTiles = {
 			TileID.Dirt, TileID.Grass, TileID.CorruptGrass, TileID.CrimsonGrass, TileID.HallowedGrass, 
@@ -29,7 +30,12 @@ public sealed class VitalSoilTile : ModTile
 			TileID.Stone, TileID.Ebonstone, TileID.Crimstone, TileID.Pearlstone,
 			TileID.Sand, TileID.Ebonsand, TileID.Crimsand, TileID.Pearlsand,
 			TileID.Ash, TileID.Silt, TileID.Slush, TileID.SnowBlock, TileID.IceBlock, TileID.CorruptIce,
-			TileID.FleshIce, TileID.HallowedIce, TileID.Marble, TileID.Granite
+			TileID.FleshIce, TileID.HallowedIce, TileID.Marble, TileID.Granite,
+			TileID.Copper, TileID.Tin, TileID.Iron, TileID.Lead, TileID.Silver, TileID.Tungsten,
+			TileID.Gold, TileID.Platinum, TileID.Demonite, TileID.Crimtane, TileID.Meteorite,
+			TileID.Obsidian, TileID.Hellstone, TileID.Cobalt, TileID.Palladium, TileID.Mythril,
+			TileID.Orichalcum, TileID.Adamantite, TileID.Titanium, TileID.Chlorophyte,
+			TileID.Amethyst, TileID.Topaz, TileID.Sapphire, TileID.Emerald, TileID.Ruby, TileID.Diamond
 		};
 		foreach (int tileId in mergeTiles) {
 			Main.tileMerge[Type][tileId] = true;
@@ -42,43 +48,30 @@ public sealed class VitalSoilTile : ModTile
 
 		RegisterItemDrop(ModContent.ItemType<VitalSoilItem>());
 
-		AddMapEntry(new Color(96, 50, 60), CreateMapEntryName());
+		AddMapEntry(new Color(140, 110, 120), CreateMapEntryName());
 	}
 
 	public override void ModifyLight(int i, int j, ref float r, ref float g, ref float b)
 	{
-		// Only glow on the outer edges (where it's touching a different block or air)
-		bool isEdge = false;
-		for (int dx = -1; dx <= 1; dx++)
-		{
-			for (int dy = -1; dy <= 1; dy++)
-			{
-				if (dx == 0 && dy == 0) continue;
-				int nx = i + dx;
-				int ny = j + dy;
-				if (nx >= 0 && nx < Main.maxTilesX && ny >= 0 && ny < Main.maxTilesY)
-				{
-					Tile neighbor = Main.tile[nx, ny];
-					if (!neighbor.HasTile || neighbor.TileType != Type)
-					{
-						isEdge = true;
-						break;
-					}
-				}
-			}
-			if (isEdge) break;
-		}
+		// Only glow on the outer edges (touching a different block or air). Cardinal-only
+		// check — visually identical to a full 3x3 for solid masses, half the tile reads.
+		ushort type = Type;
+		bool isEdge =
+			(i > 0 && (!Main.tile[i - 1, j].HasTile || Main.tile[i - 1, j].TileType != type)) ||
+			(i < Main.maxTilesX - 1 && (!Main.tile[i + 1, j].HasTile || Main.tile[i + 1, j].TileType != type)) ||
+			(j > 0 && (!Main.tile[i, j - 1].HasTile || Main.tile[i, j - 1].TileType != type)) ||
+			(j < Main.maxTilesY - 1 && (!Main.tile[i, j + 1].HasTile || Main.tile[i, j + 1].TileType != type));
 
 		if (isEdge)
 		{
 			// Breathing effect similar to vital quartz, but maroon/crimson
 			float time = Main.GlobalTimeWrappedHourly * 0.8f;
 			float phase = (i * 0.05f) + (j * 0.05f);
-			float noise = ((i * 37 + j * 19) % 100) / 100f * 3f; 
+			float noise = ((i * 37 + j * 19) % 100) / 100f * 3f;
 			float intensity = (float)System.Math.Sin(time + phase + noise);
-			
+
 			float glow = (intensity * 0.5f + 0.5f);
-			glow = (float)System.Math.Pow(glow, 4); 
+			glow *= glow; glow *= glow; // glow^4 without the Math.Pow call
 
 			// Subtle, pulsing maroon glow on the edges
 			r = 0.18f * glow + 0.02f;

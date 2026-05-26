@@ -86,7 +86,6 @@ public sealed class LifeBiomeGenSystem : ModSystem
 				continue;
 
 			PlaceVitalSoilBlob(x, y);
-			PlaceBonusLifeCrystals(x, y, 2);
 
 			placedXs.Add(x);
 			placed++;
@@ -137,6 +136,31 @@ public sealed class LifeBiomeGenSystem : ModSystem
 		if (t.TileType == TileID.JungleGrass || t.TileType == TileID.MushroomGrass)
 			return true;
 
+		// The Vital Soil shouldn't generate in Sand / Desert biomes. Sample a 15-block
+		// radius, stepping by 3 — sand/snow biomes are large contiguous patches so a
+		// sparse scan reliably catches them at ~9× less cost than a per-tile check.
+		for (int i = x - 15; i <= x + 15; i += 3)
+		{
+			for (int j = y - 15; j <= y + 15; j += 3)
+			{
+				if (i >= 0 && i < Main.maxTilesX && j >= 0 && j < Main.maxTilesY)
+				{
+					Tile check = Main.tile[i, j];
+					if (check.HasTile)
+					{
+						ushort type = check.TileType;
+						if (type == TileID.Sand || type == TileID.Ebonsand || type == TileID.Crimsand || type == TileID.Pearlsand ||
+							type == TileID.Sandstone || type == TileID.CorruptSandstone || type == TileID.CrimsonSandstone || type == TileID.HallowSandstone ||
+							type == TileID.HardenedSand || type == TileID.CorruptHardenedSand || type == TileID.CrimsonHardenedSand || type == TileID.HallowHardenedSand ||
+							type == TileID.SnowBlock || type == TileID.IceBlock || type == TileID.CorruptIce || type == TileID.FleshIce || type == TileID.HallowedIce)
+						{
+							return true;
+						}
+					}
+				}
+			}
+		}
+
 		return false;
 	}
 
@@ -166,64 +190,71 @@ public sealed class LifeBiomeGenSystem : ModSystem
 					if (cx > 5 && cx < Main.maxTilesX - 5 && cy > 5 && cy < Main.maxTilesY - 5)
 					{
 						Tile t = Main.tile[cx, cy];
-						if (t.HasTile) // Only replace existing terrain, don't fill air pockets!
+						if (t.HasTile)
 						{
-							t.TileType = (ushort)vitalSoilType;
+							ushort type = t.TileType;
+							// Only replace base terrain to preserve surface grass blocks and prevent bald spots!
+							if (type == TileID.Dirt || type == TileID.Stone || type == TileID.ClayBlock || type == TileID.Mud || type == TileID.Silt || type == TileID.Slush)
+							{
+								t.TileType = (ushort)vitalSoilType;
+							}
 						}
 					}
 				}
 			}
 		}
 
-		// Post-pass: Encapsulate any Vital Soil that is exposed to air
-		int checkRadius = boxRadius + 2;
-		for (int i = originX - checkRadius; i <= originX + checkRadius; i++)
-		{
-			for (int j = originY - checkRadius; j <= originY + checkRadius; j++)
-			{
-				if (i < 5 || i > Main.maxTilesX - 5 || j < 5 || j > Main.maxTilesY - 5)
-					continue;
-
-				Tile t = Main.tile[i, j];
-				if (t.HasTile && t.TileType == vitalSoilType)
-				{
-					// Check 8-way neighbors for air
-					if (!Main.tile[i - 1, j].HasTile || 
-						!Main.tile[i + 1, j].HasTile || 
-						!Main.tile[i, j - 1].HasTile || 
-						!Main.tile[i, j + 1].HasTile ||
-						!Main.tile[i - 1, j - 1].HasTile || 
-						!Main.tile[i + 1, j - 1].HasTile || 
-						!Main.tile[i - 1, j + 1].HasTile || 
-						!Main.tile[i + 1, j + 1].HasTile)
-					{
-						// Revert to a surrounding block type to form a natural shell
-						ushort replaceType = TileID.Dirt;
-						if (Main.tile[i - 1, j].HasTile && Main.tile[i - 1, j].TileType != vitalSoilType) replaceType = Main.tile[i - 1, j].TileType;
-						else if (Main.tile[i + 1, j].HasTile && Main.tile[i + 1, j].TileType != vitalSoilType) replaceType = Main.tile[i + 1, j].TileType;
-						else if (Main.tile[i, j + 1].HasTile && Main.tile[i, j + 1].TileType != vitalSoilType) replaceType = Main.tile[i, j + 1].TileType;
-						else if (Main.tile[i, j - 1].HasTile && Main.tile[i, j - 1].TileType != vitalSoilType) replaceType = Main.tile[i, j - 1].TileType;
-						
-						t.TileType = replaceType;
-					}
-				}
-			}
-		}
 	}
 
 	// ── Jungle pass ──────────────────────────────────────────────────────────
 
+	private static System.Collections.Generic.List<int> _availableImpossibleHearts = new System.Collections.Generic.List<int>();
+
+	private static void InitializeImpossibleHearts()
+	{
+		_availableImpossibleHearts.Clear();
+
+		if (WorldGen.SavedOreTiers.Copper == TileID.Copper) _availableImpossibleHearts.Add(ModContent.ItemType<TinHeart>());
+		else _availableImpossibleHearts.Add(ModContent.ItemType<CopperHeart>());
+
+		if (WorldGen.SavedOreTiers.Iron == TileID.Iron) _availableImpossibleHearts.Add(ModContent.ItemType<LeadHeart>());
+		else _availableImpossibleHearts.Add(ModContent.ItemType<IronHeart>());
+
+		if (WorldGen.SavedOreTiers.Silver == TileID.Silver) _availableImpossibleHearts.Add(ModContent.ItemType<TungstenHeart>());
+		else _availableImpossibleHearts.Add(ModContent.ItemType<SilverHeart>());
+
+		if (WorldGen.SavedOreTiers.Gold == TileID.Gold) _availableImpossibleHearts.Add(ModContent.ItemType<PlatinumHeart>());
+		else _availableImpossibleHearts.Add(ModContent.ItemType<GoldHeart>());
+
+		if (WorldGen.crimson)
+		{
+			_availableImpossibleHearts.Add(ModContent.ItemType<EbonstoneHeart>());
+			_availableImpossibleHearts.Add(ModContent.ItemType<EbonwoodHeart>());
+			_availableImpossibleHearts.Add(ModContent.ItemType<EbonsandHeart>());
+			_availableImpossibleHearts.Add(ModContent.ItemType<VileMushroomHeart>());
+		}
+		else
+		{
+			_availableImpossibleHearts.Add(ModContent.ItemType<CrimstoneHeart>());
+			_availableImpossibleHearts.Add(ModContent.ItemType<ShadewoodHeart>());
+			_availableImpossibleHearts.Add(ModContent.ItemType<CrimsandHeart>());
+			_availableImpossibleHearts.Add(ModContent.ItemType<ViciousMushroomHeart>());
+		}
+	}
+
 	private void JungleBiomePass(GenerationProgress progress, GameConfiguration config)
 	{
 		progress.Message = Language.GetTextValue("Mods.ElementalHearts.WorldGen.VitalQuartzBiomes");
+		InitializeImpossibleHearts();
 
 		int multiplier = ElementalHeartsWorldConfig.Instance.JungleBiomeCountMultiplier;
 		if (multiplier <= 0)
 			return;
 
-		// Scale with world size, guarantee at least 3 at 1x multiplier
-		int baseCount = System.Math.Max(3, Main.maxTilesX / 1400); 
-		int target = baseCount * multiplier;
+		int sets = 1;
+		if (Main.maxTilesX > 6000) sets = 2; // Medium World
+		if (Main.maxTilesX > 8000) sets = 3; // Large World
+		int target = sets * 3 * multiplier;
 
 		int placed = 0;
 		int attempts = 0;
@@ -231,20 +262,46 @@ public sealed class LifeBiomeGenSystem : ModSystem
 		int maxAttempts = target * 10000;
 
 		List<Microsoft.Xna.Framework.Vector2> placedPositions = new();
-		const int MinSpacing = 150; // Ensure biomes aren't right next to each other
 
 		while (placed < target && attempts < maxAttempts)
 		{
 			attempts++;
 			progress.Set((float)placed / target);
 
+			int sizeCategory = placed % 3;
+			
+			int minY = (int)Main.worldSurface + 40;
+			int maxY = Main.maxTilesY - 250;
+			int depthTier = (maxY - minY) / 3;
+
 			int x = WorldGen.genRand.Next(300, Main.maxTilesX - 300);
-			int y = WorldGen.genRand.Next((int)Main.worldSurface + 40, Main.maxTilesY - 250);
+			int y;
+			
+			if (sizeCategory == 0) // Small, surface
+			{
+				y = WorldGen.genRand.Next(minY, minY + depthTier);
+			}
+			else if (sizeCategory == 1) // Medium, center
+			{
+				y = WorldGen.genRand.Next(minY + depthTier, minY + depthTier * 2);
+			}
+			else // Large, bottom
+			{
+				y = WorldGen.genRand.Next(minY + depthTier * 2, maxY);
+			}
+
+			// Simulated Annealing spacing: starts incredibly strict to force maximum spread,
+			// but gracefully relaxes if the jungle is too crowded to prevent infinite loops.
+			int currentMinSpacing = 600 - (attempts / 5);
+			if (currentMinSpacing < 150) currentMinSpacing = 150;
 
 			bool tooClose = false;
+			float minSpacingSq = (float)currentMinSpacing * currentMinSpacing;
 			foreach (var pos in placedPositions)
 			{
-				if (Microsoft.Xna.Framework.Vector2.Distance(pos, new Microsoft.Xna.Framework.Vector2(x, y)) < MinSpacing)
+				float ddx = pos.X - x;
+				float ddy = pos.Y - y;
+				if (ddx * ddx + ddy * ddy < minSpacingSq)
 				{
 					tooClose = true;
 					break;
@@ -257,10 +314,11 @@ public sealed class LifeBiomeGenSystem : ModSystem
 			if (!IsInJungle(x, y))
 				continue;
 
-			if (PlaceJungleHeart(x, y))
+			if (PlaceJungleHeart(x, y, sizeCategory))
 			{
 				placedPositions.Add(new Microsoft.Xna.Framework.Vector2(x, y));
 				placed++;
+				attempts = 0; // Reset attempts so the next heart gets the maximum spacing requirement!
 			}
 		}
 	}
@@ -309,7 +367,7 @@ public sealed class LifeBiomeGenSystem : ModSystem
 		Tile t = Main.tile[x, y];
 		if (noise > 0.4f)
 		{
-			t.WallType = WallID.Stone;
+			t.WallType = WallID.Cave6Unsafe;
 		}
 		else if (noise < -0.4f)
 		{
@@ -321,12 +379,49 @@ public sealed class LifeBiomeGenSystem : ModSystem
 		}
 	}
 
-	private static bool PlaceJungleHeart(int centerX, int centerY)
+	private static bool PlaceJungleHeart(int centerX, int centerY, int sizeCategory)
 	{
-		int Width = WorldGen.genRand.Next(30, 46);
+		int minWidth, maxWidth;
+		if (sizeCategory == 0)
+		{
+			minWidth = 18;
+			maxWidth = 24;
+		}
+		else if (sizeCategory == 1)
+		{
+			minWidth = 25;
+			maxWidth = 32;
+		}
+		else
+		{
+			minWidth = 33;
+			maxWidth = 46;
+		}
+
+		int Width = WorldGen.genRand.Next(minWidth, maxWidth);
 		int Height = Width;
 		bool[,] mask = HeartShape.Get(Width, Height);
 		int vitalQuartzType = ModContent.TileType<VitalQuartzTile>();
+		int vitalSoilType = ModContent.TileType<VitalSoilTile>();
+
+		// Tiles to call WorldGen.TileFrame on at the very end. Populated whenever a
+		// vital tile is placed; the 3x3 around each placement is added so neighbors
+		// reframe to merge cleanly. Replaces the old (W+10)x(H+10) scan that did the
+		// same set membership check on every cell of the bounding box.
+		HashSet<(int, int)> framePositions = new();
+		void EnqueueFrame(int tx, int ty)
+		{
+			for (int fdx = -1; fdx <= 1; fdx++)
+			{
+				for (int fdy = -1; fdy <= 1; fdy++)
+				{
+					int ni = tx + fdx;
+					int nj = ty + fdy;
+					if (ni > 5 && ni < Main.maxTilesX - 5 && nj > 5 && nj < Main.maxTilesY - 5)
+						framePositions.Add((ni, nj));
+				}
+			}
+		}
 
 		int originX = centerX - Width / 2;
 		int originY = centerY - Height / 2;
@@ -415,41 +510,15 @@ public sealed class LifeBiomeGenSystem : ModSystem
 		if (edgeCount == 0 || (float)solidEdgeCount / edgeCount < 0.75f)
 			return false;
 
-		// 2. Pre-scan organic blob to ensure enough blocks can be converted
-		int validConvertCount = 0;
+		// 2. Single-pass candidate gather: collect Stone/Mud/Dirt tiles inside the blob
+		// outline. Atan2/Sqrt only run for tiles that could actually convert (skipping
+		// air and unrelated terrain), and the conversion loop reuses the cached
+		// dist/angleRaw instead of recomputing them. RNG is rolled only on candidates,
+		// so seed-for-seed output differs slightly from the two-pass version — still
+		// a procedurally valid heart, just laid out a hair differently.
 		int bounds = (int)(radius * 1.5f);
-		for (int x = centerX - bounds; x <= centerX + bounds; x++)
-		{
-			for (int y = centerY - bounds; y <= centerY + bounds; y++)
-			{
-				if (x < 0 || x >= Main.maxTilesX || y < 0 || y >= Main.maxTilesY)
-					continue;
-				
-				float dx = x - centerX;
-				float dy = y - centerY;
-				float dist = (float)System.Math.Sqrt(dx * dx + dy * dy);
-				
-				double angleRaw = System.Math.Atan2(dy, dx) * 180.0 / System.Math.PI;
-				if (angleRaw < 0) angleRaw += 360.0;
-				int angle = (int)angleRaw % 360;
-
-				if (dist <= angles[angle])
-				{
-					Tile t = Main.tile[x, y];
-					if (t.HasTile && (t.TileType == TileID.Stone || t.TileType == TileID.Mud || t.TileType == TileID.Dirt))
-					{
-						validConvertCount++;
-					}
-				}
-			}
-		}
-
-		if (validConvertCount < 30)
-			return false; // Not eligible, bail before modifying any tiles
-
-		// 3. Actually convert the mud/dirt/stone using a curving vine/tendril algorithm
-		float vineTwist = WorldGen.genRand.NextFloat(0.3f, 0.8f) * (WorldGen.genRand.NextBool() ? 1 : -1);
-		int numVines = WorldGen.genRand.Next(10, 20);
+		int boundsArea = (2 * bounds + 1) * (2 * bounds + 1);
+		var candidates = new List<(int x, int y, float dist, double angleRaw, float maxDist)>(boundsArea / 4);
 
 		for (int x = centerX - bounds; x <= centerX + bounds; x++)
 		{
@@ -457,66 +526,86 @@ public sealed class LifeBiomeGenSystem : ModSystem
 			{
 				if (x < 0 || x >= Main.maxTilesX || y < 0 || y >= Main.maxTilesY)
 					continue;
-				
+
+				Tile t = Main.tile[x, y];
+				if (!t.HasTile)
+					continue;
+				ushort tt = t.TileType;
+				if (tt != TileID.Stone && tt != TileID.Mud && tt != TileID.Dirt)
+					continue;
+
 				float dx = x - centerX;
 				float dy = y - centerY;
 				float dist = (float)System.Math.Sqrt(dx * dx + dy * dy);
-				
+
 				double angleRaw = System.Math.Atan2(dy, dx) * 180.0 / System.Math.PI;
 				if (angleRaw < 0) angleRaw += 360.0;
 				int angle = (int)angleRaw % 360;
 
 				float maxDist = angles[angle];
-				
-				if (dist <= maxDist)
-				{
-					float normalizedDist = dist / maxDist;
-					
-					// Calculate vine intensity based on angle and twisted distance
-					float vineVal = (float)System.Math.Sin((angleRaw + dist * vineTwist) * numVines * System.Math.PI / 180f);
-					
-					bool convert = false;
-					if (normalizedDist < 0.6f)
-					{
-						// Solid base around the heart, adding a little noise as it reaches 0.6
-						if (WorldGen.genRand.NextFloat() > (normalizedDist - 0.4f) * 2.5f)
-							convert = true;
-						else if (vineVal > 0f)
-							convert = true;
-					}
-					else
-					{
-						// Tendrils thinning out
-						float threshold = MathHelper.Lerp(-0.2f, 0.9f, (normalizedDist - 0.6f) / 0.4f);
-						threshold += WorldGen.genRand.NextFloat(-0.4f, 0.4f); // noise
-						if (vineVal > threshold)
-							convert = true;
-					}
+				if (dist > maxDist)
+					continue;
 
-					if (convert)
-					{
-						Tile t = Main.tile[x, y];
-						if (t.HasTile && (t.TileType == TileID.Stone || t.TileType == TileID.Mud || t.TileType == TileID.Dirt))
-						{
-							// Smooth noise to mix Stone (50%), Mud (25%), and Vital Quartz (25%)
-							float noise = (float)System.Math.Sin(x * 0.12f) * (float)System.Math.Cos(y * 0.12f) + 
-										  (float)System.Math.Sin(x * 0.08f + y * 0.11f);
-							
-							if (noise > 0f)
-							{
-								t.TileType = TileID.Stone;
-							}
-							else if (noise > -0.6f)
-							{
-								t.TileType = TileID.Mud;
-							}
-							else
-							{
-								t.TileType = (ushort)vitalQuartzType;
-							}
-						}
-					}
-				}
+				candidates.Add((x, y, dist, angleRaw, maxDist));
+			}
+		}
+
+		if (candidates.Count < 30)
+			return false; // Not eligible, bail before modifying any tiles
+
+		// 3. Convert the gathered tiles using a curving vine/tendril algorithm
+		float vineTwist = WorldGen.genRand.NextFloat(0.3f, 0.8f) * (WorldGen.genRand.NextBool() ? 1 : -1);
+		int numVines = WorldGen.genRand.Next(10, 20);
+
+		foreach (var c in candidates)
+		{
+			float normalizedDist = c.dist / c.maxDist;
+
+			// Calculate vine intensity based on angle and twisted distance
+			float vineVal = (float)System.Math.Sin((c.angleRaw + c.dist * vineTwist) * numVines * System.Math.PI / 180f);
+
+			bool convert = false;
+			if (normalizedDist < 0.6f)
+			{
+				// Solid base around the heart, adding a little noise as it reaches 0.6
+				if (WorldGen.genRand.NextFloat() > (normalizedDist - 0.4f) * 2.5f)
+					convert = true;
+				else if (vineVal > 0f)
+					convert = true;
+			}
+			else
+			{
+				// Tendrils thinning out
+				float threshold = MathHelper.Lerp(-0.2f, 0.9f, (normalizedDist - 0.6f) / 0.4f);
+				threshold += WorldGen.genRand.NextFloat(-0.4f, 0.4f); // noise
+				if (vineVal > threshold)
+					convert = true;
+			}
+
+			if (!convert)
+				continue;
+
+			Tile t = Main.tile[c.x, c.y];
+			// Tile-type check is implicit — candidates were Stone/Mud/Dirt at gather
+			// time. Could theoretically have changed if something else mutated tiles
+			// between then and now, but nothing in this method does.
+
+			// Smooth noise to mix Stone (50%), Mud (25%), and Vital Quartz (25%)
+			float noise = (float)System.Math.Sin(c.x * 0.12f) * (float)System.Math.Cos(c.y * 0.12f) +
+						  (float)System.Math.Sin(c.x * 0.08f + c.y * 0.11f);
+
+			if (noise > 0f)
+			{
+				t.TileType = TileID.Stone;
+			}
+			else if (noise > -0.6f)
+			{
+				t.TileType = TileID.Mud;
+			}
+			else
+			{
+				t.TileType = (ushort)vitalQuartzType;
+				EnqueueFrame(c.x, c.y);
 			}
 		}
 
@@ -586,14 +675,14 @@ public sealed class LifeBiomeGenSystem : ModSystem
 						t.TileType = (ushort)vitalQuartzType;
 						t.Slope = SlopeType.Solid;
 						t.IsHalfBlock = false;
+						EnqueueFrame(tx, ty);
 					}
 					PlaceJungleHeartWall(tx, ty);
 				}
 				else if (dy >= floorY)
 				{
-					// Fill the entire bottom of the heart mask with mud so the floor connects naturally
+					// Fill the entire bottom of the heart mask
 					t.HasTile = true;
-					t.TileType = TileID.Mud;
 					t.Slope = SlopeType.Solid;
 					t.IsHalfBlock = false;
 					
@@ -601,6 +690,17 @@ public sealed class LifeBiomeGenSystem : ModSystem
 					{
 						t.TileType = TileID.JungleGrass;
 					}
+					else
+					{
+						// Smooth wavy pattern mixture of Mud, Quartz, and Soil
+						float noise = (float)System.Math.Sin(tx * 0.25f) * (float)System.Math.Cos(ty * 0.25f) +
+									  (float)System.Math.Sin(tx * 0.15f + ty * 0.1f);
+
+						if (noise > 0.8f) { t.TileType = (ushort)vitalQuartzType; EnqueueFrame(tx, ty); }
+						else if (noise > -0.2f) { t.TileType = (ushort)vitalSoilType; EnqueueFrame(tx, ty); }
+						else t.TileType = TileID.Mud;
+					}
+
 					PlaceJungleHeartWall(tx, ty);
 				}
 				else
@@ -647,18 +747,81 @@ public sealed class LifeBiomeGenSystem : ModSystem
 			}
 		}
 
+		// 5.5. Spawn Common Life Shards very rarely along the interior edges
+		int shardType = ModContent.TileType<CommonLifeShardTile>();
+
+		for (int dx = 0; dx < Width; dx++)
+		{
+			for (int dy = 0; dy < Height; dy++) // Check the whole interior
+			{
+				if (!mask[dx, dy]) continue;
+				int tx = originX + dx;
+				int ty = originY + dy;
+
+				Tile t1 = Main.tile[tx, ty];
+				Tile t2 = Main.tile[tx + 1, ty];
+				Tile t3 = Main.tile[tx, ty + 1];
+				Tile t4 = Main.tile[tx + 1, ty + 1];
+
+				if (!t1.HasTile && !t2.HasTile && !t3.HasTile && !t4.HasTile)
+				{
+					if (WorldGen.genRand.NextBool(2)) // Drastically increased chance to compensate for strict flat surface requirements!
+					{
+						int baseFrameY = -1;
+
+						// Check Floor
+						if (Main.tile[tx, ty + 2].HasTile && Main.tile[tx, ty + 2].TileType == vitalQuartzType &&
+							Main.tile[tx + 1, ty + 2].HasTile && Main.tile[tx + 1, ty + 2].TileType == vitalQuartzType)
+						{
+							baseFrameY = 0;
+						}
+						// Check Ceiling
+						else if (Main.tile[tx, ty - 1].HasTile && Main.tile[tx, ty - 1].TileType == vitalQuartzType &&
+								 Main.tile[tx + 1, ty - 1].HasTile && Main.tile[tx + 1, ty - 1].TileType == vitalQuartzType)
+						{
+							baseFrameY = 36;
+						}
+						// Check Left Wall
+						else if (Main.tile[tx - 1, ty].HasTile && Main.tile[tx - 1, ty].TileType == vitalQuartzType &&
+								 Main.tile[tx - 1, ty + 1].HasTile && Main.tile[tx - 1, ty + 1].TileType == vitalQuartzType)
+						{
+							baseFrameY = 108; // Points right
+						}
+						// Check Right Wall
+						else if (Main.tile[tx + 2, ty].HasTile && Main.tile[tx + 2, ty].TileType == vitalQuartzType &&
+								 Main.tile[tx + 2, ty + 1].HasTile && Main.tile[tx + 2, ty + 1].TileType == vitalQuartzType)
+						{
+							baseFrameY = 72; // Points left
+						}
+
+						if (baseFrameY != -1)
+						{
+							int style = WorldGen.genRand.Next(3);
+							short frameX = (short)(style * 36);
+
+							t1.HasTile = true; t1.TileType = (ushort)shardType; t1.TileFrameX = frameX; t1.TileFrameY = (short)baseFrameY;
+							t2.HasTile = true; t2.TileType = (ushort)shardType; t2.TileFrameX = (short)(frameX + 18); t2.TileFrameY = (short)baseFrameY;
+							t3.HasTile = true; t3.TileType = (ushort)shardType; t3.TileFrameX = frameX; t3.TileFrameY = (short)(baseFrameY + 18);
+							t4.HasTile = true; t4.TileType = (ushort)shardType; t4.TileFrameX = (short)(frameX + 18); t4.TileFrameY = (short)(baseFrameY + 18);
+						}
+					}
+				}
+			}
+		}
+
 		// 6. Spawn jungle spores (3x likely) and life fruit (2x likely) in a 30-block radius
 		int plantRadius = Width / 2 + 30;
+		int plantRadiusSq = plantRadius * plantRadius;
 		for (int x = centerX - plantRadius; x <= centerX + plantRadius; x++)
 		{
 			for (int y = centerY - plantRadius; y <= centerY + plantRadius; y++)
 			{
 				if (x < 5 || x >= Main.maxTilesX - 5 || y < 5 || y >= Main.maxTilesY - 5)
 					continue;
-				
-				float dx = x - centerX;
-				float dy = y - centerY;
-				if (System.Math.Sqrt(dx * dx + dy * dy) <= plantRadius)
+
+				int dxP = x - centerX;
+				int dyP = y - centerY;
+				if (dxP * dxP + dyP * dyP <= plantRadiusSq)
 				{
 					Tile t = Main.tile[x, y];
 					Tile tAbove = Main.tile[x, y - 1];
@@ -682,6 +845,17 @@ public sealed class LifeBiomeGenSystem : ModSystem
 		PlaceGuaranteedLifeCrystalsInHeart(originX, originY, Width, Height, floorY);
 		PlaceImpossibleHeartChest(originX, originY, Width, Height, floorY);
 		PlaceRadiatingVitalSoil(originX, originY);
+
+		// Frame only tiles in the 3x3 neighborhood of each placed vital tile. Set membership
+		// guarantees no tile is framed twice even when vital tiles are densely packed.
+		// Tiles converted later by PlaceRadiatingVitalSoil aren't enqueued because VitalSoil
+		// has tileBlendAll = true, so its visual seam with surrounding terrain is identical
+		// regardless of frame state.
+		foreach (var (i, j) in framePositions)
+		{
+			WorldGen.TileFrame(i, j, resetFrame: true, noBreak: true);
+		}
+
 		return true;
 	}
 
@@ -764,49 +938,15 @@ public sealed class LifeBiomeGenSystem : ModSystem
 
 	private static void PlaceImpossibleHeartChest(int originX, int originY, int width, int height, int floorY)
 	{
-		// 1. Build list of impossible hearts for this world
-		System.Collections.Generic.List<int> impossibleHearts = new System.Collections.Generic.List<int>();
-
-		// Ores
-		if (WorldGen.SavedOreTiers.Copper == TileID.Copper)
-			impossibleHearts.Add(ModContent.ItemType<TinHeart>());
-		else
-			impossibleHearts.Add(ModContent.ItemType<CopperHeart>());
-
-		if (WorldGen.SavedOreTiers.Iron == TileID.Iron)
-			impossibleHearts.Add(ModContent.ItemType<LeadHeart>());
-		else
-			impossibleHearts.Add(ModContent.ItemType<IronHeart>());
-
-		if (WorldGen.SavedOreTiers.Silver == TileID.Silver)
-			impossibleHearts.Add(ModContent.ItemType<TungstenHeart>());
-		else
-			impossibleHearts.Add(ModContent.ItemType<SilverHeart>());
-
-		if (WorldGen.SavedOreTiers.Gold == TileID.Gold)
-			impossibleHearts.Add(ModContent.ItemType<PlatinumHeart>());
-		else
-			impossibleHearts.Add(ModContent.ItemType<GoldHeart>());
-
-		// Evils
-		if (WorldGen.crimson)
+		if (_availableImpossibleHearts.Count == 0)
 		{
-			// World is Crimson -> Corruption is impossible
-			impossibleHearts.Add(ModContent.ItemType<EbonstoneHeart>());
-			impossibleHearts.Add(ModContent.ItemType<EbonwoodHeart>());
-			impossibleHearts.Add(ModContent.ItemType<EbonsandHeart>());
-			impossibleHearts.Add(ModContent.ItemType<VileMushroomHeart>());
-		}
-		else
-		{
-			// World is Corruption -> Crimson is impossible
-			impossibleHearts.Add(ModContent.ItemType<CrimstoneHeart>());
-			impossibleHearts.Add(ModContent.ItemType<ShadewoodHeart>());
-			impossibleHearts.Add(ModContent.ItemType<CrimsandHeart>());
-			impossibleHearts.Add(ModContent.ItemType<ViciousMushroomHeart>());
+			// Repopulate if we run out of unique impossible hearts (rare, but prevents crashes)
+			InitializeImpossibleHearts();
 		}
 
-		int selectedHeart = impossibleHearts[WorldGen.genRand.Next(impossibleHearts.Count)];
+		int heartIndex = WorldGen.genRand.Next(_availableImpossibleHearts.Count);
+		int selectedHeart = _availableImpossibleHearts[heartIndex];
+		_availableImpossibleHearts.RemoveAt(heartIndex); // Ensure uniqueness!
 
 		// 2. Find a spot on the mud floor to place the chest
 		// Place near the center of the mud floor
@@ -878,13 +1018,14 @@ public sealed class LifeBiomeGenSystem : ModSystem
 	{
 		int vitalSoilType = ModContent.TileType<VitalSoilTile>();
 		int radius = 100;
+		int radiusSq = radius * radius;
 
 		for (int x = -radius; x <= radius; x++)
 		{
 			for (int y = -radius; y <= radius; y++)
 			{
-				float distance = (float)System.Math.Sqrt(x * x + y * y);
-				if (distance <= radius)
+				int distSq = x * x + y * y;
+				if (distSq <= radiusSq)
 				{
 					int cx = originX + x;
 					int cy = originY + y;
@@ -896,6 +1037,7 @@ public sealed class LifeBiomeGenSystem : ModSystem
 						if (t.HasTile && (t.TileType == TileID.Dirt || t.TileType == TileID.Mud))
 						{
 							// Calculate fade-out factor (1.0 at center, 0.0 at edge)
+							float distance = (float)System.Math.Sqrt(distSq);
 							float fade = 1f - (distance / radius);
 
 							// Smooth noise to generate organic flowing veins
@@ -903,10 +1045,10 @@ public sealed class LifeBiomeGenSystem : ModSystem
 										  (float)System.Math.Sin(cx * 0.07f + cy * 0.09f);
 
 							// Threshold determines the density of the veins.
-							// At the center (fade=1), threshold=0 -> 50% coverage.
-							// As distance increases (fade->0), threshold increases up to 2.0 -> 0% coverage.
-							// This causes the veins to naturally taper off and dissipate at the edges.
-							float threshold = (1f - fade) * 2.0f;
+							// Make patches much more rare (~10% coverage) so they look like thin growing vines/roots
+							// At the center (fade=1), threshold=1.0 -> ~10% coverage.
+							// As distance increases (fade->0), threshold increases up to 2.5 -> 0% coverage.
+							float threshold = 1.0f + (1f - fade) * 1.5f;
 
 							if (noise > threshold)
 							{

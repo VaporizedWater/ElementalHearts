@@ -1877,6 +1877,11 @@ Items: {
 		DisplayName: Life Crystal Seed
 		Tooltip: Plant on Vital Quartz to grow a Life Crystal
 	}
+
+	CommonLifeShardItem: {
+		DisplayName: Common Life Shard Item
+		Tooltip: ""
+	}
 }
 
 Tiles: {
@@ -1884,6 +1889,7 @@ Tiles: {
 	VitalQuartzTile.MapEntry: Vital Quartz
 	LifeFruitPlantTile.MapEntry: Life Fruit Plant
 	LifeCrystalPlantTile.MapEntry: Life Crystal Plant
+	CommonLifeShardTile.MapEntry: Common Life Shard Tile
 }
 
 WorldGen: {

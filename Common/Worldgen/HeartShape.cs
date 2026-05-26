@@ -1,3 +1,5 @@
+using System.Collections.Generic;
+
 namespace ElementalHearts.Common.Worldgen;
 
 /// <summary>
@@ -8,24 +10,25 @@ namespace ElementalHearts.Common.Worldgen;
 /// </summary>
 public static class HeartShape
 {
-	private static bool[,] _cached;
-	private static int _cachedWidth;
-	private static int _cachedHeight;
+	// Width is randomly chosen in [18, 46] across three size buckets, so the working
+	// set tops out at ~29 unique masks (~60 KB combined). A dict keeps every size
+	// hot instead of thrashing the previous single-slot cache when sizes interleave.
+	private static readonly Dictionary<(int, int), bool[,]> _cache = new();
 
 	/// <summary>
 	/// Returns a <paramref name="width"/>×<paramref name="height"/> mask where
-	/// <c>true</c> cells lie inside the heart. The most recent request is cached;
-	/// repeated calls at the same dimensions reuse the same array.
+	/// <c>true</c> cells lie inside the heart. Every distinct (width, height) pair
+	/// is cached for the lifetime of the process.
 	/// </summary>
 	public static bool[,] Get(int width, int height)
 	{
-		if (_cached != null && _cachedWidth == width && _cachedHeight == height)
-			return _cached;
+		var key = (width, height);
+		if (_cache.TryGetValue(key, out bool[,] mask))
+			return mask;
 
-		_cached = Build(width, height);
-		_cachedWidth = width;
-		_cachedHeight = height;
-		return _cached;
+		mask = Build(width, height);
+		_cache[key] = mask;
+		return mask;
 	}
 
 	private static bool[,] Build(int width, int height)

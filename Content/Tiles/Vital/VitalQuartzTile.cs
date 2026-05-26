@@ -21,16 +21,26 @@ public sealed class VitalQuartzTile : ModTile
 		Main.tileBlockLight[Type] = true;
 		Main.tileLighted[Type] = true;
 		Main.tileMergeDirt[Type] = true;
-		Main.tileMerge[Type][TileID.Dirt] = true;
-		Main.tileMerge[TileID.Dirt][Type] = true;
-		Main.tileMerge[Type][TileID.Mud] = true;
-		Main.tileMerge[TileID.Mud][Type] = true;
-		Main.tileMerge[Type][TileID.Stone] = true;
-		Main.tileMerge[TileID.Stone][Type] = true;
-		Main.tileMerge[Type][TileID.JungleGrass] = true;
-		Main.tileMerge[TileID.JungleGrass][Type] = true;
-		Main.tileMerge[Type][TileID.MushroomGrass] = true;
-		Main.tileMerge[TileID.MushroomGrass][Type] = true;
+		Main.tileStone[Type] = true;
+		Main.tileBlendAll[Type] = true; // Visually blend with everything to prevent slope air gaps
+		
+		int[] mergeTiles = {
+			TileID.Dirt, TileID.Grass, TileID.CorruptGrass, TileID.CrimsonGrass, TileID.HallowedGrass, 
+			TileID.JungleGrass, TileID.MushroomGrass, TileID.AshGrass, TileID.ClayBlock, TileID.Mud, 
+			TileID.Stone, TileID.Ebonstone, TileID.Crimstone, TileID.Pearlstone,
+			TileID.Sand, TileID.Ebonsand, TileID.Crimsand, TileID.Pearlsand,
+			TileID.Ash, TileID.Silt, TileID.Slush, TileID.SnowBlock, TileID.IceBlock, TileID.CorruptIce,
+			TileID.FleshIce, TileID.HallowedIce, TileID.Marble, TileID.Granite,
+			TileID.Copper, TileID.Tin, TileID.Iron, TileID.Lead, TileID.Silver, TileID.Tungsten,
+			TileID.Gold, TileID.Platinum, TileID.Demonite, TileID.Crimtane, TileID.Meteorite,
+			TileID.Obsidian, TileID.Hellstone, TileID.Cobalt, TileID.Palladium, TileID.Mythril,
+			TileID.Orichalcum, TileID.Adamantite, TileID.Titanium, TileID.Chlorophyte,
+			TileID.Amethyst, TileID.Topaz, TileID.Sapphire, TileID.Emerald, TileID.Ruby, TileID.Diamond
+		};
+		foreach (int tileId in mergeTiles) {
+			Main.tileMerge[Type][tileId] = true;
+			Main.tileMerge[tileId][Type] = true;
+		}
 
 		// Mirrors Desert Fossil's "any pick breaks it quickly" feel rather than gating
 		// behind a specific pickaxe tier.
@@ -41,7 +51,7 @@ public sealed class VitalQuartzTile : ModTile
 
 		RegisterItemDrop(ModContent.ItemType<VitalQuartzItem>());
 
-		AddMapEntry(new Color(160, 220, 130), CreateMapEntryName());
+		AddMapEntry(new Color(110, 140, 110), CreateMapEntryName());
 	}
 
 	public override void ModifyLight(int i, int j, ref float r, ref float g, ref float b)
@@ -56,7 +66,7 @@ public sealed class VitalQuartzTile : ModTile
 		
 		// Map from [-1, 1] to [0, 1] and use a power curve for a subtle peak
 		float glow = (intensity * 0.5f + 0.5f);
-		glow = (float)System.Math.Pow(glow, 4); // Stays dark mostly, smooth subtle swell
+		glow *= glow; glow *= glow; // glow^4 without the Math.Pow call
 		
 		r = 0.08f * glow + 0.01f; // Base very dim glow so it's not pitch black
 		g = 0.12f * glow + 0.01f;
@@ -70,6 +80,23 @@ public sealed class VitalQuartzTile : ModTile
 			Dust dust = Dust.NewDustDirect(new Microsoft.Xna.Framework.Vector2(i * 16f, j * 16f), 16, 4, Terraria.ID.DustID.JungleSpore,
 				0f, -0.3f, 100, default, 0.7f);
 			dust.noGravity = true;
+		}
+
+		// Naturally grow Jungle Vines downwards from the ceiling
+		if (Main.rand.NextBool(15))
+		{
+			Tile tileBelow = Main.tile[i, j + 1];
+			Tile tile = Main.tile[i, j];
+			if (!tileBelow.HasTile && !tile.BottomSlope && !tile.IsHalfBlock)
+			{
+				tileBelow.HasTile = true;
+				tileBelow.TileType = Terraria.ID.TileID.JungleVines;
+				WorldGen.SquareTileFrame(i, j + 1, true);
+				if (Main.netMode == Terraria.ID.NetmodeID.Server)
+				{
+					NetMessage.SendTileSquare(-1, i, j + 1);
+				}
+			}
 		}
 
 		float spreadChance = VitalTilesConfig.Instance.VitalQuartzSpreadChance;
@@ -108,7 +135,9 @@ public sealed class VitalQuartzTile : ModTile
 
 			if (targetX >= 5 && targetX < Main.maxTilesX - 5 && targetY >= 5 && targetY < Main.maxTilesY - 5)
 			{
-				if (Microsoft.Xna.Framework.Vector2.Distance(new Microsoft.Xna.Framework.Vector2(i, j), new Microsoft.Xna.Framework.Vector2(targetX, targetY)) <= radius)
+				int ddx = targetX - i;
+				int ddy = targetY - j;
+				if (ddx * ddx + ddy * ddy <= radius * radius)
 				{
 					Tile target = Main.tile[targetX, targetY];
 					Tile tileAbove = Main.tile[targetX, targetY - 1];
