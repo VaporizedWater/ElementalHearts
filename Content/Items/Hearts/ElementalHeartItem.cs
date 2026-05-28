@@ -60,7 +60,12 @@ public abstract class ElementalHeartItem : ModItem
 		}
 	}
 
-	public int HpGain => Tier.GetHpGain();
+	/// <summary>
+	/// Max-life granted on consumption. Virtual so a subclass can opt out of the HP
+	/// grant entirely — see <see cref="PotionHeartItem"/>, where buff-granting hearts
+	/// trade HP for a world-wide buff and return 0 here while that buff is active.
+	/// </summary>
+	public virtual int HpGain => Tier.GetHpGain();
 
 	/// <summary>Base consumption sound. Boss hearts layer extra audio on top of this.</summary>
 	protected virtual SoundStyle ConsumeSound =>
@@ -210,8 +215,14 @@ public abstract class ElementalHeartItem : ModItem
 
 	public override void ModifyTooltips(List<TooltipLine> tooltips)
 	{
-		tooltips.Add(new TooltipLine(Mod, "ElementalHeartHp",
-			Language.GetTextValue("Mods.ElementalHearts.Common.HpGain", HpGain)));
+		// Hearts that opt out of HP entirely (buff-granting potion hearts while the
+		// world-wide effect is enabled) skip the HP line — printing "Permanently
+		// increases maximum life by 0" would be wrong and ugly.
+		if (HpGain > 0)
+		{
+			tooltips.Add(new TooltipLine(Mod, "ElementalHeartHp",
+				Language.GetTextValue("Mods.ElementalHearts.Common.HpGain", HpGain)));
+		}
 
 		if (HeartConsumptionWorld.IsConsumed(ConsumptionId))
 		{

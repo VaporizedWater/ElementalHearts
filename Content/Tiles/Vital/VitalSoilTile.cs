@@ -51,6 +51,13 @@ public sealed class VitalSoilTile : ModTile
 		AddMapEntry(new Color(140, 110, 120), CreateMapEntryName());
 	}
 
+	public override bool CreateDust(int i, int j, ref int type)
+	{
+		// Suppress most of the dust vanilla would spawn for hits and breaks — the default
+		// Crimstone burst is far too loud for a soft soil block. Roughly 1 in 6 survives.
+		return Main.rand.NextBool(6);
+	}
+
 	public override void ModifyLight(int i, int j, ref float r, ref float g, ref float b)
 	{
 		// Only glow on the outer edges (touching a different block or air). Cardinal-only

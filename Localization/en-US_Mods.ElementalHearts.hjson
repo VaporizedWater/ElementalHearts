@@ -163,6 +163,21 @@ Configs: {
 		}
 	}
 
+	ElementalHeartsPotionEffectConfig: {
+		DisplayName: Potion Heart Settings
+		Headers.PotionHearts: Potion Hearts
+
+		WorldwidePotionEffectsEnabled: {
+			Label: Enable World-Wide Potion Effects
+			Tooltip:
+				'''
+				When on, consuming a Potion Heart keeps that potion's buff permanently active
+				on every player in the world. When off, Potion Hearts only grant their HP boost
+				and behave like any other elemental heart.
+				'''
+		}
+	}
+
 	ElementalHeartsTipsConfig: {
 		DisplayName: Tips Settings
 		Headers.Tips: In-Game Tips
@@ -1882,6 +1897,196 @@ Items: {
 		DisplayName: Common Life Shard Item
 		Tooltip: ""
 	}
+
+	EnduranceHeart: {
+		DisplayName: Endurance Heart
+		Tooltip: ""
+	}
+
+	LifeforceHeart: {
+		DisplayName: Lifeforce Heart
+		Tooltip: ""
+	}
+
+	LoveHeart: {
+		DisplayName: Love Heart
+		Tooltip: ""
+	}
+
+	StinkHeart: {
+		DisplayName: Stink Heart
+		Tooltip: ""
+	}
+
+	AmmoReservationHeart: {
+		DisplayName: Ammo Reservation Heart
+		Tooltip: ""
+	}
+
+	DangersenseHeart: {
+		DisplayName: Dangersense Heart
+		Tooltip: ""
+	}
+
+	GravitationHeart: {
+		DisplayName: Gravitation Heart
+		Tooltip: ""
+	}
+
+	InfernoHeart: {
+		DisplayName: Inferno Heart
+		Tooltip: ""
+	}
+
+	ObsidianSkinHeart: {
+		DisplayName: Obsidian Skin Heart
+		Tooltip: ""
+	}
+
+	RageHeart: {
+		DisplayName: Rage Heart
+		Tooltip: ""
+	}
+
+	SummoningHeart: {
+		DisplayName: Summoning Heart
+		Tooltip: ""
+	}
+
+	WarmthHeart: {
+		DisplayName: Warmth Heart
+		Tooltip: ""
+	}
+
+	WaterWalkingHeart: {
+		DisplayName: Water Walking Heart
+		Tooltip: ""
+	}
+
+	WrathHeart: {
+		DisplayName: Wrath Heart
+		Tooltip: ""
+	}
+
+	ArcheryHeart: {
+		DisplayName: Archery Heart
+		Tooltip: ""
+	}
+
+	BattleHeart: {
+		DisplayName: Battle Heart
+		Tooltip: ""
+	}
+
+	BiomeSightHeart: {
+		DisplayName: Biome Sight Heart
+		Tooltip: ""
+	}
+
+	BuilderHeart: {
+		DisplayName: Builder Heart
+		Tooltip: ""
+	}
+
+	CalmingHeart: {
+		DisplayName: Calming Heart
+		Tooltip: ""
+	}
+
+	CrateHeart: {
+		DisplayName: Crate Heart
+		Tooltip: ""
+	}
+
+	FeatherfallHeart: {
+		DisplayName: Featherfall Heart
+		Tooltip: ""
+	}
+
+	FishingHeart: {
+		DisplayName: Fishing Heart
+		Tooltip: ""
+	}
+
+	FlipperHeart: {
+		DisplayName: Flipper Heart
+		Tooltip: ""
+	}
+
+	GillsHeart: {
+		DisplayName: Gills Heart
+		Tooltip: ""
+	}
+
+	HeartreachHeart: {
+		DisplayName: Heartreach Heart
+		Tooltip: ""
+	}
+
+	HunterHeart: {
+		DisplayName: Hunter Heart
+		Tooltip: ""
+	}
+
+	IronskinHeart: {
+		DisplayName: Ironskin Heart
+		Tooltip: ""
+	}
+
+	MagicPowerHeart: {
+		DisplayName: Magic Power Heart
+		Tooltip: ""
+	}
+
+	ManaRegenerationHeart: {
+		DisplayName: Mana Regeneration Heart
+		Tooltip: ""
+	}
+
+	MiningHeart: {
+		DisplayName: Mining Heart
+		Tooltip: ""
+	}
+
+	NightOwlHeart: {
+		DisplayName: Night Owl Heart
+		Tooltip: ""
+	}
+
+	RegenerationHeart: {
+		DisplayName: Regeneration Heart
+		Tooltip: ""
+	}
+
+	ShineHeart: {
+		DisplayName: Shine Heart
+		Tooltip: ""
+	}
+
+	SonarHeart: {
+		DisplayName: Sonar Heart
+		Tooltip: ""
+	}
+
+	SpelunkerHeart: {
+		DisplayName: Spelunker Heart
+		Tooltip: ""
+	}
+
+	SwiftnessHeart: {
+		DisplayName: Swiftness Heart
+		Tooltip: ""
+	}
+
+	ThornsHeart: {
+		DisplayName: Thorns Heart
+		Tooltip: ""
+	}
+
+	TitanHeart: {
+		DisplayName: Titan Heart
+		Tooltip: ""
+	}
 }
 
 Tiles: {
@@ -1929,13 +2134,13 @@ Buffs: {
 	}
 
 	VitalSoilRegen: {
-		DisplayName: Vital Soil Regeneration
-		Description: Standing on Vital Soil boosts your life regeneration.
+		DisplayName: Elemental Growth
+		Description: Nearby Vital Soil increases your life regeneration
 	}
 
 	VitalQuartzAura: {
-		DisplayName: Vital Quartz Aura
-		Description: A nearby Vital Quartz block is boosting your maximum life.
+		DisplayName: Elemental Aura
+		Description: Nearby Vital Quartz increases your maximum life
 	}
 }
 

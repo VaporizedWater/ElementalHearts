@@ -54,6 +54,13 @@ public sealed class VitalQuartzTile : ModTile
 		AddMapEntry(new Color(110, 140, 110), CreateMapEntryName());
 	}
 
+	public override bool CreateDust(int i, int j, ref int type)
+	{
+		// Suppress most of the dust vanilla would spawn for hits and breaks — bright Jungle
+		// Spore dust at full density reads as a particle explosion. Roughly 1 in 6 survives.
+		return Main.rand.NextBool(6);
+	}
+
 	public override void ModifyLight(int i, int j, ref float r, ref float g, ref float b)
 	{
 		// Slower, smoother breathing effect with natural variation

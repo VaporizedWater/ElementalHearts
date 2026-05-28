@@ -1,8 +1,11 @@
 using System.Collections.Generic;
-using ElementalHearts.Content.Items.Hearts.CrossMod.Calamity;
-using ElementalHearts.Content.Items.Hearts.CrossMod.Consolaria;
-using ElementalHearts.Content.Items.Hearts.CrossMod.Thorium;
-using ElementalHearts.Content.Items.Hearts.Exotic;
+using ElementalHearts.Content.Items.Hearts.CrossMod.Calamity.Exotic.Bosses;
+using ElementalHearts.Content.Items.Hearts.CrossMod.Consolaria.Exotic.Bosses;
+using ElementalHearts.Content.Items.Hearts.CrossMod.Thorium.Exotic.Bosses;
+using ElementalHearts.Content.Items.Hearts.Vanilla.Exotic.EventBosses;
+using ElementalHearts.Content.Items.Hearts.Vanilla.Exotic.HardmodeBosses;
+using ElementalHearts.Content.Items.Hearts.Vanilla.Exotic.Pacified;
+using ElementalHearts.Content.Items.Hearts.Vanilla.Exotic.PreHardmodeBosses;
 using Terraria.ID;
 using Terraria.ModLoader;
 

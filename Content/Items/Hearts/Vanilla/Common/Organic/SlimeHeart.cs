@@ -1,0 +1,21 @@
+using ElementalHearts.Common.Hearts;
+using ElementalHearts.Content.Items.LifeShards;
+using Terraria.ModLoader;
+using Terraria.ID;
+
+namespace ElementalHearts.Content.Items.Hearts.Vanilla.Common.Organic;
+
+public sealed class SlimeHeart : ElementalHeartItem
+{
+	public override HeartTier Tier => HeartTier.Common;
+
+	public override void AddRecipes()
+	{
+		CreateRecipe()
+			.AddIngredient(ItemID.SlimeBlock, RecipeCost(500))
+			.AddOptionalIngredient(ModContent.ItemType<CommonLifeShard>(), 1)
+			.AddTile(TileID.Solidifier)
+			.Register();
+	}
+}
+
