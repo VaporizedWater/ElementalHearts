@@ -1,7 +1,13 @@
+using System.Collections.Generic;
 using System.IO;
+using ElementalHearts.Common.CrossMod.BossChecklist;
+using ElementalHearts.Common.CrossMod.MusicDisplay;
+using ElementalHearts.Common.CrossMod.Munchies;
 using ElementalHearts.Common.Hearts;
 using ElementalHearts.Common.Network;
+using ElementalHearts.Common.Players;
 using ElementalHearts.Common.Systems;
+using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.Audio;
 using Terraria.ModLoader;
@@ -25,6 +31,9 @@ public sealed class ElementalHearts : Mod
 		HeartRegistry.Build();
 		PotionHeartRegistry.Build();
 		BossHeartDropRegistry.Build();
+		MunchiesIntegration.Register(this);
+		MusicDisplayIntegration.Register(this);
+		BossChecklistIntegration.Register(this);
 	}
 
 	public override void HandlePacket(BinaryReader reader, int whoAmI)
@@ -39,6 +48,38 @@ public sealed class ElementalHearts : Mod
 			case MessageType.HeartsCleared:
 				HeartConsumptionWorld.ReceiveClear(whoAmI);
 				break;
+
+			case MessageType.HeartDeactivated:
+				HeartConsumptionWorld.ReceiveDeactivation(reader, whoAmI);
+				break;
 		}
+	}
+
+	// ── BiomeTitles integration (see Biomes.md) ──────────────────────────────
+	// Called every frame by the BiomeTitles mod if it's loaded; reads the flag
+	// VitalTilesPlayer already maintains so the per-frame cost is a single bool.
+
+	public string BTitlesHook_MiniBiomeChecker(Player player)
+	{
+		if (!player.ZoneJungle)
+			return "";
+
+		VitalTilesPlayer vitals = player.GetModPlayer<VitalTilesPlayer>();
+		if (vitals.VitalQuartzAuraActive)
+			return "vital_canopy";
+
+		return "";
+	}
+
+	public IEnumerable<dynamic> BTitlesHook_GetBiomes()
+	{
+		yield return new
+		{
+			Key = "vital_canopy",
+			Title = "Vital Canopy",
+			SubTitle = "Elemental Hearts",
+			TitleColor = new Color(120, 230, 130),
+			TitleStroke = new Color(20, 60, 30),
+		};
 	}
 }

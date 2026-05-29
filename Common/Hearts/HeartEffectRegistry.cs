@@ -243,7 +243,6 @@ public static class HeartEffectRegistry
 		["GehennaHeart"]                       = Eff(202, 72, 52),
 		["GravistarHeart"]                     = Eff(132, 112, 202),
 		["HardenedAstralSandHeart"]            = Eff(172, 152, 202),
-		["HardenedSulphurousSandstoneHeart"]   = Eff(212, 196, 92),
 		["MutatedHeart"]                       = Eff(132, 202, 92),
 		["NavystoneHeart"]                     = Eff(62, 102, 152),
 		["NebulousHeart"]                      = Eff(172, 92, 202),

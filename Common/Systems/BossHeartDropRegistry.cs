@@ -21,6 +21,13 @@ public static class BossHeartDropRegistry
 	public static IEnumerable<int> GetDrops(int npcType) =>
 		DropsByNpc.TryGetValue(npcType, out List<int> drops) ? drops : [];
 
+	/// <summary>
+	/// Read-only enumeration of every (boss NPC type → heart item types) mapping.
+	/// Used by BossChecklist integration to submit hearts as collectibles for each
+	/// matching boss entry without duplicating the drop registration logic.
+	/// </summary>
+	public static IEnumerable<KeyValuePair<int, List<int>>> AllDrops => DropsByNpc;
+
 	public static void Build()
 	{
 		DropsByNpc.Clear();

@@ -77,6 +77,29 @@ public sealed class HeartConsumptionPlayer : ModPlayer
 	}
 
 	/// <summary>
+	/// Symmetrical inverse of <see cref="ReconcileWorldHp"/> for a single heart: drops
+	/// the HP a toggleable heart granted this character and forgets the credit so the
+	/// next consumption will grant it again. Called when a heart is deactivated locally
+	/// (see <see cref="HeartConsumptionWorld.Unrecord"/>).
+	/// </summary>
+	public void HandleHeartDeactivated(string heartId)
+	{
+		if (Player.whoAmI != Main.myPlayer)
+			return;
+
+		string key = WorldKey(heartId);
+		if (!WorldHpApplied.Remove(key))
+			return;
+
+		// HpGain is live (config-dependent), so just re-derive — same cost as a single
+		// lookup, and it covers the edge case where the HP value changed between grant
+		// and deactivation.
+		int hp = HeartRegistry.GetHp(heartId);
+		if (hp > 0)
+			_bonus -= hp;
+	}
+
+	/// <summary>
 	/// Re-derives <see cref="_bonus"/> from scratch using the live HP of every
 	/// current-world heart this character has been granted. Called on world enter and
 	/// whenever the HP config changes, so heart bonuses always reflect current values.

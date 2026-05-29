@@ -66,6 +66,85 @@ public sealed class HeartConsumptionWorld : ModSystem
 			Main.LocalPlayer?.GetModPlayer<HeartConsumptionPlayer>().ReconcileWorldHp();
 	}
 
+	/// <summary>
+	/// Re-enables a toggleable heart's slot in the world registry: drops the id from
+	/// <see cref="Consumed"/> and refunds the HP it granted to the local character so
+	/// the heart can be consumed again to re-activate. Used by buff Potion Hearts as
+	/// their "re-use to disable" action. Returns false if the heart wasn't consumed.
+	/// </summary>
+	public static bool TryDeactivate(ElementalHeartItem heart)
+	{
+		string id = heart.ConsumptionId;
+		if (!_consumed.Contains(id))
+			return false;
+
+		switch (Main.netMode)
+		{
+			case NetmodeID.SinglePlayer:
+				Unrecord(id);
+				return true;
+
+			case NetmodeID.MultiplayerClient:
+				// Optimistic local apply mirrors the consume path.
+				Unrecord(id);
+				SendDeactivateRequest(heart.Type);
+				return true;
+
+			default:
+				Unrecord(id);
+				BroadcastDeactivate(heart.Type, ignoreClient: -1);
+				return true;
+		}
+	}
+
+	internal static void Unrecord(string heartId)
+	{
+		_consumed.Remove(heartId);
+
+		if (Main.netMode != NetmodeID.Server)
+			Main.LocalPlayer?.GetModPlayer<HeartConsumptionPlayer>().HandleHeartDeactivated(heartId);
+	}
+
+	internal static void ReceiveDeactivation(BinaryReader reader, int whoAmI)
+	{
+		int itemType = reader.ReadInt32();
+
+		if (!TryResolveHeart(itemType, out ElementalHeartItem heart))
+			return;
+
+		if (Main.netMode == NetmodeID.Server)
+		{
+			if (!_consumed.Contains(heart.ConsumptionId))
+				return;
+
+			Unrecord(heart.ConsumptionId);
+			BroadcastDeactivate(itemType, ignoreClient: whoAmI);
+			return;
+		}
+
+		// Client receiving the server's announcement.
+		if (!_consumed.Contains(heart.ConsumptionId))
+			return;
+
+		Unrecord(heart.ConsumptionId);
+	}
+
+	private static void SendDeactivateRequest(int itemType)
+	{
+		ModPacket packet = ModContent.GetInstance<ElementalHearts>().GetPacket();
+		packet.Write((byte)MessageType.HeartDeactivated);
+		packet.Write(itemType);
+		packet.Send();
+	}
+
+	private static void BroadcastDeactivate(int itemType, int ignoreClient)
+	{
+		ModPacket packet = ModContent.GetInstance<ElementalHearts>().GetPacket();
+		packet.Write((byte)MessageType.HeartDeactivated);
+		packet.Write(itemType);
+		packet.Send(toClient: -1, ignoreClient: ignoreClient);
+	}
+
 	internal static void ReceiveConsumption(BinaryReader reader, int whoAmI)
 	{
 		int itemType = reader.ReadInt32();

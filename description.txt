@@ -1,6 +1,7 @@
 Elemental Hearts adds 538 consumable, single-use hearts crafted from every Terraria material. Each one permanently raises your maximum life. Find your blocks, find your bench, get more HP. (Or fight a boss and harvest their organs.)
 
-NEW: POTION HEARTS (Perma-potions) (Still WIP)
+NEW: Added compatibility with Munchies, Biome Titles, Display Music, and Boss Checklist
+NEW: POTION HEARTS (Perma-potions)
 NEW: Boss Fights that gate progression. Currently the first one is 90% finished with the rest coming soon. Uncommon Animate is 70% done.
 NEW: Life Shards are now required to craft each heart, with differing requirements and tiers for each. They can be obtained naturally by dealing damage, or by processing Life Crystals in the Extractinator. They have dedicated inventory slots similar to coins.
 

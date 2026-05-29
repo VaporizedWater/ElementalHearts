@@ -67,6 +67,29 @@ public abstract class ElementalHeartItem : ModItem
 	/// </summary>
 	public virtual int HpGain => Tier.GetHpGain();
 
+	/// <summary>
+	/// Munchies-checklist presentation for this heart. Each hook has a sensible default so
+	/// new hearts appear in the Munchies list with no extra work; only override when a
+	/// specific heart needs custom phrasing, difficulty, or availability gating.
+	/// See <see cref="Common.CrossMod.Munchies.MunchiesIntegration"/>.
+	/// </summary>
+	public virtual string MunchiesDifficulty => "classic";
+
+	/// <summary>Text colour used for the heart's row in Munchies. Defaults to its tier colour.</summary>
+	public virtual Color? MunchiesTextColor => Tier.GetEffectColor();
+
+	/// <summary>
+	/// Func returning whether the heart can currently be consumed. <c>null</c> means
+	/// always available — the default, since hearts only require the right materials.
+	/// </summary>
+	public virtual Func<bool> MunchiesAvailability => null;
+
+	/// <summary>Extra tooltip line for the Munchies entry, or <c>null</c> for none.</summary>
+	public virtual LocalizedText MunchiesExtraTooltip => null;
+
+	/// <summary>Acquisition hint shown at the top of the Munchies hover tooltip, or <c>null</c>.</summary>
+	public virtual LocalizedText MunchiesAcquisitionText => null;
+
 	/// <summary>Base consumption sound. Boss hearts layer extra audio on top of this.</summary>
 	protected virtual SoundStyle ConsumeSound =>
 		SoundID.Item4.WithPitchOffset(0.5f - ((int)Tier * 0.1f));
@@ -109,6 +132,12 @@ public abstract class ElementalHeartItem : ModItem
 		Item.consumable = false;
 		Item.rare = Tier.GetRarityType();
 		Item.value = Item.sellPrice(silver: (int)Tier * 25);
+
+		// Craftable hearts are capped at 1/10 of their recipe's material sell value
+		// (see CraftableHeartSellValueSystem). Boss-drop hearts and any heart without a
+		// registered recipe keep the tier-based value above.
+		if (CraftableHeartSellValueSystem.TryGetSellValue(Item.type, out int recipeCappedValue))
+			Item.value = recipeCappedValue;
 	}
 
 	public override bool CanUseItem(Player player) =>

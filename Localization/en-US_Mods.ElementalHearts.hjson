@@ -1456,11 +1456,6 @@ Items: {
 		DisplayName: Mutated Heart
 	}
 
-	HardenedSulphurousSandstoneHeart: {
-		Tooltip: ""
-		DisplayName: Hardened Sulphurous Sandstone Heart
-	}
-
 	HardenedAstralSandHeart: {
 		Tooltip: ""
 		DisplayName: Hardened Astral Sand Heart
@@ -2156,4 +2151,63 @@ NPCs: {
 Projectiles: {
 	AnimateShardProjectile.DisplayName: Animate Shard Projectile
 	UncommonShardProjectile.DisplayName: Uncommon Shard Projectile
+}
+
+TrackNames: {
+	ModName: Elemental Hearts
+
+	CommonAnimate: {
+		Name: Common Animate
+		Author: Vincent Jenei
+	}
+
+	UncommonAnimate: {
+		Name: Uncommon Animate
+		Author: Vincent Jenei
+	}
+
+	RareAnimate: {
+		Name: Rare Animate
+		Author: Vincent Jenei
+	}
+
+	EpicAnimate: {
+		Name: Epic Animate
+		Author: Vincent Jenei
+	}
+
+	LegendaryAnimate: {
+		Name: Legendary Animate
+		Author: Vincent Jenei
+	}
+}
+
+# BossChecklist integration — spawn / despawn strings shown on each Animate
+# boss's entry page. The [i:ItemInternalName] chat tag renders the spawn item's
+# icon inline; "{0}" in despawn messages is replaced with the NPC's full name.
+BossChecklist: {
+	CommonAnimate: {
+		SpawnInfo: Use a [i:ElementalHearts/CommonMenacingHeart] anywhere. Always craftable from a [i:LifeCrystal] at a [i:DemonAltar].
+		DespawnMessage: "{0} retreats into the dark, biding its time."
+	}
+
+	UncommonAnimate: {
+		SpawnInfo: Use an [i:ElementalHearts/UncommonMenacingHeart] anywhere. Crafted from a [i:LifeCrystal] at a [i:DemonAltar] only after Common Animate has been defeated.
+		DespawnMessage: "{0} fades from this world, its menace unanswered."
+	}
+
+	RareAnimate: {
+		SpawnInfo: Use a [i:ElementalHearts/RareMenacingHeart] anywhere. Crafted from a [i:LifeCrystal] at a [i:DemonAltar] only after Uncommon Animate has been defeated.
+		DespawnMessage: "{0} fades from this world, its menace unanswered."
+	}
+
+	EpicAnimate: {
+		SpawnInfo: Use an [i:ElementalHearts/EpicMenacingHeart] anywhere. Crafted from a [i:LifeCrystal] at a [i:DemonAltar] only after Rare Animate has been defeated.
+		DespawnMessage: "{0} fades from this world, its menace unanswered."
+	}
+
+	LegendaryAnimate: {
+		SpawnInfo: Use a [i:ElementalHearts/LegendaryMenacingHeart] anywhere. Crafted from a [i:LifeCrystal] at a [i:DemonAltar] only after Epic Animate has been defeated.
+		DespawnMessage: "{0} fades from this world, its menace unanswered."
+	}
 }

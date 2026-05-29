@@ -185,7 +185,6 @@ internal static class ElementalPowerRegistry
 		["GehennaHeart"] = "gehenna",
 		["GravistarHeart"] = "gravity",
 		["HardenedAstralSandHeart"] = "hardened void",
-		["HardenedSulphurousSandstoneHeart"] = "sulphur stone",
 		["MutatedHeart"] = "mutation",
 		["NavystoneHeart"] = "tide",
 		["NebulousHeart"] = "nebula",

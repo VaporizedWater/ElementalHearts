@@ -34,7 +34,7 @@ public sealed class ElementalHeartsHPConfig : ModConfig
 	public int Legendary;
 
 	[Header("BossTiers")]
-	[DefaultValue(10)] [Range(5, 100)] [Increment(1)] [Slider] [SliderColor(255, 120, 110, 255)]
+	[DefaultValue(5)] [Range(1, 100)] [Increment(1)] [Slider] [SliderColor(255, 120, 110, 255)]
 	public int Exotic;
 
 	[DefaultValue(50)] [Range(25, 500)] [Increment(1)] [Slider] [SliderColor(255, 235, 150, 255)]

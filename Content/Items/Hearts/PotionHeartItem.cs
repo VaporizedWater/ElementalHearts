@@ -51,6 +51,13 @@ public abstract class PotionHeartItem : ElementalHeartItem
 		}
 	}
 
+	/// <summary>
+	/// True for hearts whose consumption-registry slot can be flipped off and on by
+	/// re-using the item. Only buff-granting Potion Hearts support this — novelty
+	/// hearts (Love, Stink) behave like standard one-shot hearts.
+	/// </summary>
+	public bool IsToggleable => BuffType > 0;
+
 	public sealed override void AddRecipes()
 	{
 		CreateRecipe()
@@ -58,6 +65,39 @@ public abstract class PotionHeartItem : ElementalHeartItem
 			.AddOptionalIngredient(MatchingLifeShard(), 1)
 			.AddTile(TileID.Bottles)
 			.Register();
+	}
+
+	/// <summary>
+	/// Toggleable hearts stay usable while consumed so re-using them deactivates the
+	/// world-wide effect. Non-toggleable hearts fall through to the base one-shot rule.
+	/// </summary>
+	public override bool CanUseItem(Player player) =>
+		IsToggleable || base.CanUseItem(player);
+
+	/// <summary>
+	/// Toggleable hearts flip between consumed (effect active) and not-consumed
+	/// (effect off). A standard heart's <see cref="ElementalHeartItem.UseItem"/>
+	/// always tries to consume; we intercept that so a re-use deactivates instead.
+	/// </summary>
+	public override bool? UseItem(Player player)
+	{
+		if (player.whoAmI != Main.myPlayer)
+			return false;
+
+		if (!IsToggleable)
+			return base.UseItem(player);
+
+		bool wasConsumed = HeartConsumptionWorld.IsConsumed(ConsumptionId);
+		bool ok = wasConsumed
+			? HeartConsumptionWorld.TryDeactivate(this)
+			: HeartConsumptionWorld.TryConsume(this);
+
+		// Same visual feedback either direction so the player gets clear confirmation
+		// that the toggle landed.
+		if (ok)
+			PlayConsumeEffect(player.Center);
+
+		return ok;
 	}
 
 	private int MatchingLifeShard() => Tier switch
@@ -88,12 +128,21 @@ public abstract class PotionHeartItem : ElementalHeartItem
 		// Each heart subclass curates its own phrasing via PermanentEffectText so the
 		// grammar reads cleanly even when the vanilla potion tooltip starts with a
 		// number or symbol (e.g. "25% increased movement speed"). Greyed out once
-		// consumed to signal "this is currently active in the world".
+		// consumed so the player can tell the effect is currently live; a second gray
+		// line explains they can re-use the item to switch it back off.
 		bool consumed = HeartConsumptionWorld.IsConsumed(ConsumptionId);
-		var line = new TooltipLine(Mod, "PotionHeartEffect", PermanentEffectText);
+		var effectLine = new TooltipLine(Mod, "PotionHeartEffect", PermanentEffectText);
 		if (consumed)
-			line.OverrideColor = Color.Gray;
-		tooltips.Add(line);
+			effectLine.OverrideColor = Color.Gray;
+		tooltips.Add(effectLine);
+
+		if (consumed)
+		{
+			tooltips.Add(new TooltipLine(Mod, "PotionHeartDeactivateHint", "Use again to deactivate")
+			{
+				OverrideColor = Color.Gray,
+			});
+		}
 	}
 
 	/// <summary>
