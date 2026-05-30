@@ -156,7 +156,7 @@ public sealed class RedAnimateMinion : ModNPC
 	{
 		NPC.width = 14;
 		NPC.height = 14;
-		NPC.damage = 55; // contact — matches the main boss; he's just as dangerous to touch
+		NPC.damage = 68; // contact — matches the main boss; he's just as dangerous to touch
 		NPC.defense = 0;
 		NPC.lifeMax = 1;
 		NPC.HitSound = SoundID.NPCHit1;
@@ -177,8 +177,13 @@ public sealed class RedAnimateMinion : ModNPC
 	// damage on the same tick during M1 Pincer if the player misjudges the safe band.
 	public override bool CanHitPlayer(Player target, ref int cooldownSlot)
 	{
+		Rectangle customHitbox = NPC.Hitbox;
+		customHitbox.Inflate(-customHitbox.Width / 4, -customHitbox.Height / 4);
+		if (!customHitbox.Intersects(target.Hitbox)) return false;
+
 		cooldownSlot = ImmunityCooldownID.TileContactDamage;
-		return true;
+		int cmd = (int)Cmd;
+		return cmd == CmdP1Roll || cmd == CmdP2P3Roll || cmd == CmdTelegraphDash || cmd == CmdDashImmediate;
 	}
 
 	public override bool CheckActive() => false;

@@ -53,6 +53,10 @@ public sealed class ElementalHearts : Mod
 			case MessageType.HeartDeactivated:
 				HeartConsumptionWorld.ReceiveDeactivation(reader, whoAmI);
 				break;
+
+			case MessageType.BossHeartDropped:
+				BossHeartDropFx.Receive(reader);
+				break;
 		}
 	}
 

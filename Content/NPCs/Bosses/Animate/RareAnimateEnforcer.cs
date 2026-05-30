@@ -101,6 +101,22 @@ public sealed class RareAnimateEnforcer : ModNPC
 	public void Cmd_Frenzy() { if (Cmd != CmdFrenzy) Cmd = CmdFrenzy; }
 	public void Cmd_Despawn() => Cmd = CmdDespawn;
 
+	private ReLogic.Utilities.SlotId _ambientSoundSlot;
+
+	public override bool PreAI()
+	{
+		if (!SoundEngine.TryGetActiveSound(_ambientSoundSlot, out var activeSound))
+		{
+			_ambientSoundSlot = SoundEngine.PlaySound(AnimateBossSounds.RareEmission, NPC.Center, sound =>
+			{
+				if (!NPC.active) return false;
+				sound.Position = NPC.Center;
+				return true;
+			});
+		}
+		return true;
+	}
+
 	public override void SetStaticDefaults()
 	{
 		Main.npcFrameCount[NPC.type] = 1;
@@ -139,6 +155,10 @@ public sealed class RareAnimateEnforcer : ModNPC
 	// player threads between them, and neither hides behind the other's i-frames.
 	public override bool CanHitPlayer(Player target, ref int cooldownSlot)
 	{
+		Rectangle customHitbox = NPC.Hitbox;
+		customHitbox.Inflate(-customHitbox.Width / 4, -customHitbox.Height / 4);
+		if (!customHitbox.Intersects(target.Hitbox)) return false;
+
 		// Only have collision when actively dashing (Phase 1 / Finale dashes)
 		if (Cmd == CmdSlaved || Cmd == CmdIdleAir) return false;
 		if (Cmd == CmdTelegraphDash && Sub1 == 0f) return false;

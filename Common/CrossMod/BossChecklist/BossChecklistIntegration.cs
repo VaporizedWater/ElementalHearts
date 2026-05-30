@@ -218,5 +218,6 @@ internal static class BossChecklistIntegration
 		{ NPCID.CultistBoss, "CultistBoss" },
 		{ NPCID.DD2Betsy, "DD2Betsy" },
 		{ NPCID.PirateShip, "PirateShip" },
+		{ NPCID.SkeletronHead, "Skeletron" },
 	};
 }

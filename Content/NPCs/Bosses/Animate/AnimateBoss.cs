@@ -1,3 +1,4 @@
+using Microsoft.Xna.Framework;
 using ElementalHearts.Common.LifeShards;
 using ElementalHearts.Common.Systems;
 using ReLogic.Utilities;
@@ -90,6 +91,15 @@ public abstract class AnimateBoss : ModNPC
 		}
 		
 		NPC.rotation = NPC.velocity.X * 0.05f;
+	}
+
+	public override bool CanHitPlayer(Player target, ref int cooldownSlot)
+	{
+		Rectangle customHitbox = NPC.Hitbox;
+		customHitbox.Inflate(-customHitbox.Width / 4, -customHitbox.Height / 4);
+		if (!customHitbox.Intersects(target.Hitbox)) return false;
+
+		return true;
 	}
 
 	public override void OnKill()

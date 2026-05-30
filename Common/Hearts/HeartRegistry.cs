@@ -28,4 +28,11 @@ public static class HeartRegistry
 	/// </summary>
 	public static int GetHp(string heartId) =>
 		_byId.TryGetValue(heartId, out ElementalHeartItem heart) ? heart.HpGain : 0;
+
+	/// <summary>
+	/// Tier of a consumed heart, or null for an unknown id (source mod disabled, etc.).
+	/// Used to drive the player-UI heart colour off the highest tier consumed.
+	/// </summary>
+	public static HeartTier? GetTier(string heartId) =>
+		_byId.TryGetValue(heartId, out ElementalHeartItem heart) ? heart.Tier : null;
 }

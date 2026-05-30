@@ -1,13 +1,22 @@
 using ElementalHearts.Common.Hearts;
 using ElementalHearts.Content.Items.LifeShards;
-using Terraria.ModLoader;
+using Terraria;
+using Terraria.DataStructures;
 using Terraria.ID;
+using Terraria.ModLoader;
 
 namespace ElementalHearts.Content.Items.Hearts.Vanilla.Uncommon.Herbs;
 
 public sealed class BlinkrootHeart : ElementalHeartItem
 {
 	public override HeartTier Tier => HeartTier.Uncommon;
+
+	public override void SetStaticDefaults()
+	{
+		base.SetStaticDefaults();
+
+		Main.RegisterItemAnimation(Item.type, new DrawAnimationVertical(6, 10));
+	}
 
 	public override void AddRecipes()
 	{

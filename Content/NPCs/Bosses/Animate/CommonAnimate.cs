@@ -75,9 +75,9 @@ public sealed class CommonAnimate : AnimateBoss
 		NPC.width = 22;
 		NPC.height = 22;
 		NPC.scale = 2.0f;
-		NPC.lifeMax = 1200;
-		NPC.damage = 50;
-		NPC.defense = 13;
+		NPC.lifeMax = 1080;
+		NPC.damage = 55;
+		NPC.defense = 12;
 		NPC.noGravity = false;
 		NPC.noTileCollide = false;
 		NPC.behindTiles = false; // Always visible
@@ -96,8 +96,31 @@ public sealed class CommonAnimate : AnimateBoss
 	{
 		if (currentPhaseTarget == -1 || Main.player[currentPhaseTarget].dead || !Main.player[currentPhaseTarget].active)
 		{
-			NPC.TargetClosest();
-			currentPhaseTarget = NPC.target;
+			if (Main.netMode != NetmodeID.SinglePlayer)
+			{
+				System.Collections.Generic.List<int> validTargets = new System.Collections.Generic.List<int>();
+				for (int i = 0; i < Main.maxPlayers; i++)
+				{
+					if (Main.player[i].active && !Main.player[i].dead)
+					{
+						validTargets.Add(i);
+					}
+				}
+				if (validTargets.Count > 0)
+				{
+					currentPhaseTarget = validTargets[Main.rand.Next(validTargets.Count)];
+				}
+				else
+				{
+					NPC.TargetClosest();
+					currentPhaseTarget = NPC.target;
+				}
+			}
+			else
+			{
+				NPC.TargetClosest();
+				currentPhaseTarget = NPC.target;
+			}
 		}
 		NPC.target = currentPhaseTarget;
 
@@ -171,6 +194,19 @@ public sealed class CommonAnimate : AnimateBoss
 		NPC.oldPos[0] = NPC.position;
 	}
 
+	public override bool CanHitPlayer(Player target, ref int cooldownSlot)
+	{
+		Rectangle customHitbox = NPC.Hitbox;
+		customHitbox.Inflate(-customHitbox.Width / 4, -customHitbox.Height / 4);
+		if (!customHitbox.Intersects(target.Hitbox)) return false;
+
+		if (CurrentState == State.Phase1_Roll && Math.Abs(NPC.localAI[1]) != 3f) return true; // Actively rolling
+		if (CurrentState == State.Phase3_Dash && NPC.localAI[0] == 2f) return true; // Actively dashing
+		if (CurrentState == State.Hiding && Timer >= 1000 && NPC.localAI[1] >= 90) return true; // Interrupt dash
+		
+		return false; // Disable accidental contact damage during spiraling/aiming
+	}
+
 	private void ManagePhases()
 	{
 		float healthPct = (float)NPC.life / NPC.lifeMax;
@@ -190,15 +226,18 @@ public sealed class CommonAnimate : AnimateBoss
 		{
 			if (Main.netMode != NetmodeID.SinglePlayer)
 			{
-				for (int i = 1; i < Main.maxPlayers; i++)
+				System.Collections.Generic.List<int> validTargets = new System.Collections.Generic.List<int>();
+				for (int i = 0; i < Main.maxPlayers; i++)
 				{
-					int nextPlayer = (currentPhaseTarget + i) % Main.maxPlayers;
-					if (Main.player[nextPlayer].active && !Main.player[nextPlayer].dead)
+					if (Main.player[i].active && !Main.player[i].dead)
 					{
-						currentPhaseTarget = nextPlayer;
-						NPC.target = currentPhaseTarget;
-						break;
+						validTargets.Add(i);
 					}
+				}
+				if (validTargets.Count > 0)
+				{
+					currentPhaseTarget = validTargets[Main.rand.Next(validTargets.Count)];
+					NPC.target = currentPhaseTarget;
 				}
 			}
 

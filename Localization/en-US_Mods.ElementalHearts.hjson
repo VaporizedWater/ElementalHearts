@@ -198,6 +198,9 @@ Configs: {
 		Headers: {
 			ResetActions: Reset Actions (one-shot)
 			Worldgen: Mini-Biome Generation
+			NightEvents: Night Events Header
+			Progression: Progression Header
+			Cheats: Cheats Header
 		}
 
 		ClearHeartRegistry: {
@@ -239,6 +242,31 @@ Configs: {
 		JungleBiomeCountMultiplier: {
 			Label: Jungle Biome Count Multiplier
 			Tooltip: Multiplies the jungle Vital Quartz biome count. 1 is the default (~3 on small, ~4 on medium, ~6 on large worlds). Set to 0 to disable jungle biomes only.
+		}
+
+		HeartShootingStarMaxPerNight: {
+			Tooltip: ""
+			Label: Heart Shooting Star Max Per Night
+		}
+
+		HeartShootingStarChance: {
+			Tooltip: ""
+			Label: Heart Shooting Star Chance
+		}
+
+		HeartShootingStarFrequency: {
+			Label: Heart Shooting Star Frequency
+			Tooltip: ""
+		}
+
+		SharedProgression: {
+			Label: Shared Progression
+			Tooltip: ""
+		}
+
+		AdminMode: {
+			Label: Admin Mode
+			Tooltip: ""
 		}
 	}
 
@@ -469,12 +497,22 @@ Configs: {
 			Tooltip: Chance an extractinated Life Fruit yields a Life Fruit Seed. Life Fruit extractination only produces seeds — a missed roll consumes the fruit for nothing.
 		}
 	}
+
+	ElementalHeartsClientConfig: {
+		DisplayName: Elemental Hearts Client Config
+		Headers.UI: U I Header
+
+		EnableHeartChecklist: {
+			Label: Enable Heart Checklist
+			Tooltip: ""
+		}
+	}
 }
 
 Conditions: {
 	LifeShardSystemEnabled: Life Shard System Enabled
 	UIUpgradeOnly: Life Shard UI
-	DownedLegendaryAnimate: All Legendary Hearts Animated
+	DownedLegendaryAnimate: Legendary Animate has been defeated
 	CurrentAnimateTier: Current Animate Tier
 	LifeShardSystemDisabled: Life Shard System Disabled
 }
@@ -2165,6 +2203,7 @@ Projectiles: {
 	RareShardProjectile.DisplayName: Rare Shard Projectile
 	LegendaryShardProjectile.DisplayName: Legendary Shard Projectile
 	EpicShardProjectile.DisplayName: Epic Shard Projectile
+	FallingHeartProjectile.DisplayName: Falling Heart Projectile
 }
 
 TrackNames: {
@@ -2237,3 +2276,5 @@ Biomes: {
 		DisplayName: Vital Canopy Biome
 	}
 }
+
+"Keybinds.Toggle Heart Checklist.DisplayName": Toggle  Heart  Checklist

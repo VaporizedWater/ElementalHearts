@@ -21,10 +21,13 @@ namespace ElementalHearts.Common.Systems;
 public sealed class HeartConsumptionWorld : ModSystem
 {
 	private static readonly HashSet<string> _consumed = new();
+	private static readonly HashSet<string> _unlocked = new();
 
 	public static IReadOnlyCollection<string> Consumed => _consumed;
+	public static IReadOnlyCollection<string> Unlocked => _unlocked;
 
 	public static bool IsConsumed(string heartId) => _consumed.Contains(heartId);
+	public static bool IsUnlocked(string heartId) => _unlocked.Contains(heartId);
 
 	/// <summary>
 	/// Attempts to consume <paramref name="heart"/> in the current world.
@@ -61,9 +64,13 @@ public sealed class HeartConsumptionWorld : ModSystem
 	internal static void Record(string heartId)
 	{
 		_consumed.Add(heartId);
+		_unlocked.Add(heartId);
 
-		if (Main.netMode != NetmodeID.Server)
+		if (Main.netMode != Terraria.ID.NetmodeID.Server)
+		{
 			Main.LocalPlayer?.GetModPlayer<HeartConsumptionPlayer>().ReconcileWorldHp();
+			UI.Checklist.HeartLogButtonUIState.HasUnseenContent = true;
+		}
 	}
 
 	/// <summary>
@@ -195,6 +202,7 @@ public sealed class HeartConsumptionWorld : ModSystem
 	private static void PerformClear()
 	{
 		_consumed.Clear();
+		_unlocked.Clear();
 		if (Main.netMode != NetmodeID.Server)
 			Main.LocalPlayer?.GetModPlayer<HeartConsumptionPlayer>().ClearWorldHp();
 	}
@@ -268,26 +276,41 @@ public sealed class HeartConsumptionWorld : ModSystem
 		heart.PlayConsumeEffect(consumer.Center);
 	}
 
-	public override void ClearWorld() => _consumed.Clear();
+	public override void ClearWorld()
+	{
+		_consumed.Clear();
+		_unlocked.Clear();
+	}
 
 	public override void SaveWorldData(TagCompound tag)
 	{
 		tag["ids"] = _consumed.ToList();
+		tag["unlocked"] = _unlocked.ToList();
 	}
 
 	public override void LoadWorldData(TagCompound tag)
 	{
 		_consumed.Clear();
-		// Older saves also stored a parallel "hp" list; it is intentionally ignored
-		// now that HP is always derived live from the heart definition.
+		_unlocked.Clear();
 		foreach (string id in tag.GetList<string>("ids"))
+		{
 			_consumed.Add(id);
+			_unlocked.Add(id);
+		}
+		foreach (string id in tag.GetList<string>("unlocked"))
+		{
+			_unlocked.Add(id);
+		}
 	}
 
 	public override void NetSend(BinaryWriter writer)
 	{
 		writer.Write(_consumed.Count);
 		foreach (string id in _consumed)
+			writer.Write(id);
+			
+		writer.Write(_unlocked.Count);
+		foreach (string id in _unlocked)
 			writer.Write(id);
 	}
 
@@ -297,6 +320,11 @@ public sealed class HeartConsumptionWorld : ModSystem
 		int count = reader.ReadInt32();
 		for (int i = 0; i < count; i++)
 			_consumed.Add(reader.ReadString());
+			
+		_unlocked.Clear();
+		int unlockCount = reader.ReadInt32();
+		for (int i = 0; i < unlockCount; i++)
+			_unlocked.Add(reader.ReadString());
 
 		Main.LocalPlayer?.GetModPlayer<HeartConsumptionPlayer>().ReconcileWorldHp();
 	}

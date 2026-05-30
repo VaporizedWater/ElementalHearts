@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using ElementalHearts.Common.Configs;
 using ElementalHearts.Common.Hearts;
 using ElementalHearts.Common.Systems;
+using ElementalHearts.Common.Players;
 using ElementalHearts.Content.Items.LifeShards;
 using Microsoft.Xna.Framework;
 using Terraria;
@@ -104,10 +105,24 @@ public abstract class PotionHeartItem : ElementalHeartItem
 		if (!IsToggleable)
 			return base.UseItem(player);
 
-		bool wasConsumed = HeartConsumptionWorld.IsConsumed(ConsumptionId);
-		bool ok = wasConsumed
-			? HeartConsumptionWorld.TryDeactivate(this)
-			: HeartConsumptionWorld.TryConsume(this);
+		bool shared = ElementalHeartsWorldConfig.Instance.SharedProgression;
+		bool wasConsumed = shared
+			? HeartConsumptionWorld.IsConsumed(ConsumptionId)
+			: player.GetModPlayer<HeartConsumptionPlayer>().IsConsumedLocally(ConsumptionId);
+
+		bool ok;
+		if (shared)
+		{
+			ok = wasConsumed
+				? HeartConsumptionWorld.TryDeactivate(this)
+				: HeartConsumptionWorld.TryConsume(this);
+		}
+		else
+		{
+			ok = wasConsumed
+				? player.GetModPlayer<HeartConsumptionPlayer>().TryDeactivateLocally(this)
+				: player.GetModPlayer<HeartConsumptionPlayer>().TryConsumeLocally(this);
+		}
 
 		// Same visual feedback either direction so the player gets clear confirmation
 		// that the toggle landed.
@@ -147,7 +162,11 @@ public abstract class PotionHeartItem : ElementalHeartItem
 		// number or symbol (e.g. "25% increased movement speed"). Greyed out once
 		// consumed so the player can tell the effect is currently live; a second gray
 		// line explains they can re-use the item to switch it back off.
-		bool consumed = HeartConsumptionWorld.IsConsumed(ConsumptionId);
+		bool shared = ElementalHeartsWorldConfig.Instance.SharedProgression;
+		bool consumed = shared
+			? HeartConsumptionWorld.IsConsumed(ConsumptionId)
+			: Main.LocalPlayer?.GetModPlayer<HeartConsumptionPlayer>().IsConsumedLocally(ConsumptionId) ?? false;
+			
 		var effectLine = new TooltipLine(Mod, "PotionHeartEffect", PermanentEffectText);
 		if (consumed)
 			effectLine.OverrideColor = Color.Gray;

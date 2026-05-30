@@ -1,8 +1,8 @@
 Elemental Hearts adds permanent stat-boosters. Find your materials, find your bench, get more HP. (Or fight a boss and harvest their organs.)
 
-Also includes 5 polished boss fights, a new mini-structure, and many other new features.
+Also includes 5 polished boss fights, a new mini-structure, fully integrated checklist, and many other new features.
 
-Designed to fit naturally into every madpack and make your experience more fun and rewarding.
+Designed to fit naturally into every modpack, and make your experience more fun and rewarding!
 
 -
 
@@ -32,8 +32,14 @@ But on May 8th, a user named Madog24 experienced an issue while trying to enter 
 
 Lite, sitting before the machine that had cost him his roof, in the quiet hum of a system newly born, he remembered. He remembered what it meant to be a developer. He remembered the lives he had touched. He remembered the countless children he had rescued from eternal boredom through the raw power-fantasy of crafting Elemental Hearts. And he knew, with a certainty as bright as a collapsing star, that the time had come to do what he was put on this earth to do. With his daughter begging for him to go on a walk with her. To spend time with his wife on Mothers Day, he had to make a choice: Sacrifice himself for his family, or sacrifice himself for the whole of the Terraria Community...
 
-He made the decision that any sane Terrarian would make.
+He made the decision that any sane Terrarian would make:
 
 I created Elemental Hearts.
 
-I built it to last this time.
+And I will continue building it until its perfect. New bosses, new hearts, new features, more polish. Elemental Hearts is now my never-ending labor of love.
+
+It will last this time.
+
+-
+
+Thanks to Seth for sprite work!

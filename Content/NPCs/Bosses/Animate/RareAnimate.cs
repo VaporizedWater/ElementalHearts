@@ -130,6 +130,10 @@ public sealed class RareAnimate : AnimateBoss
 
 	public override bool CanHitPlayer(Player target, ref int cooldownSlot)
 	{
+		Rectangle customHitbox = NPC.Hitbox;
+		customHitbox.Inflate(-customHitbox.Width / 4, -customHitbox.Height / 4);
+		if (!customHitbox.Intersects(target.Hitbox)) return false;
+
 		cooldownSlot = ImmunityCooldownID.Bosses;
 		// Throughout the entire fight, Blue only deals contact damage during his active dash in the Finale.
 		// In all other states (Intro, Phase 1, Phase 2, Phase 3, Hiding, Transitioning),
@@ -149,8 +153,31 @@ public sealed class RareAnimate : AnimateBoss
 		// Lock onto one player for the whole phase (rotated only at phase boundaries in MP).
 		if (_currentPhaseTarget < 0 || _currentPhaseTarget == 255 || !Main.player[_currentPhaseTarget].active || Main.player[_currentPhaseTarget].dead)
 		{
-			NPC.TargetClosest();
-			_currentPhaseTarget = NPC.target;
+			if (Main.netMode != NetmodeID.SinglePlayer)
+			{
+				System.Collections.Generic.List<int> validTargets = new System.Collections.Generic.List<int>();
+				for (int i = 0; i < Main.maxPlayers; i++)
+				{
+					if (Main.player[i].active && !Main.player[i].dead)
+					{
+						validTargets.Add(i);
+					}
+				}
+				if (validTargets.Count > 0)
+				{
+					_currentPhaseTarget = validTargets[Main.rand.Next(validTargets.Count)];
+				}
+				else
+				{
+					NPC.TargetClosest();
+					_currentPhaseTarget = NPC.target;
+				}
+			}
+			else
+			{
+				NPC.TargetClosest();
+				_currentPhaseTarget = NPC.target;
+			}
 		}
 		NPC.target = _currentPhaseTarget;
 		Player player = Main.player[NPC.target];
@@ -238,15 +265,18 @@ public sealed class RareAnimate : AnimateBoss
 	private void RotateTargetMP()
 	{
 		if (Main.netMode == NetmodeID.SinglePlayer) return;
-		for (int i = 1; i < Main.maxPlayers; i++)
+		System.Collections.Generic.List<int> validTargets = new System.Collections.Generic.List<int>();
+		for (int i = 0; i < Main.maxPlayers; i++)
 		{
-			int next = (_currentPhaseTarget + i) % Main.maxPlayers;
-			if (Main.player[next].active && !Main.player[next].dead)
+			if (Main.player[i].active && !Main.player[i].dead)
 			{
-				_currentPhaseTarget = next;
-				NPC.target = next;
-				break;
+				validTargets.Add(i);
 			}
+		}
+		if (validTargets.Count > 0)
+		{
+			_currentPhaseTarget = validTargets[Main.rand.Next(validTargets.Count)];
+			NPC.target = _currentPhaseTarget;
 		}
 	}
 

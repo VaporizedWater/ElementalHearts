@@ -7,6 +7,8 @@ using ElementalHearts.Content.Items.Potions;
 using Terraria;
 using Terraria.ModLoader;
 using Terraria.ModLoader.IO;
+using ElementalHearts.Common.Configs;
+using ElementalHearts.Content.Items.Hearts;
 
 namespace ElementalHearts.Common.Players;
 
@@ -24,11 +26,35 @@ public sealed class HeartConsumptionPlayer : ModPlayer
 	/// </summary>
 	public HashSet<string> WorldHpApplied { get; private set; } = new();
 
+	/// <summary>
+	/// Compound "worldGuid|heartId" entries this character has unlocked permanently.
+	/// Kept even if the HP effect is toggled off.
+	/// </summary>
+	public HashSet<string> WorldUnlocked { get; private set; } = new();
+
 	/// <summary>Cached sum of HP bonuses applicable in the current world.</summary>
 	private int _bonus;
 
+	/// <summary>
+	/// Highest <see cref="HeartTier"/> among the current world's hearts this character has
+	/// been granted, or null when none. Maintained alongside <see cref="_bonus"/> and read
+	/// by the life-bar overlay (<see cref="Common.UI.PlayerHeartOverlay"/>) to colour the
+	/// player's UI hearts. Only meaningful for the local player.
+	/// </summary>
+	public HeartTier? HighestTier { get; private set; }
+
+	/// <summary>Raises <see cref="HighestTier"/> if <paramref name="heartId"/> outranks it.</summary>
+	private void BumpHighestTier(string heartId)
+	{
+		if (HeartRegistry.GetTier(heartId) is HeartTier tier && (HighestTier is not HeartTier current || tier > current))
+			HighestTier = tier;
+	}
+
 	private static string WorldPrefix => $"{Main.ActiveWorldFileData.UniqueId:N}|";
 	private static string WorldKey(string heartId) => WorldPrefix + heartId;
+
+	public bool IsConsumedLocally(string heartId) => WorldHpApplied.Contains(WorldKey(heartId));
+	public bool IsUnlockedLocally(string heartId) => WorldUnlocked.Contains(WorldKey(heartId));
 
 	/// <summary>
 	/// Apply any hearts consumed in the current world that this character hasn't yet
@@ -40,7 +66,15 @@ public sealed class HeartConsumptionPlayer : ModPlayer
 		if (Player.whoAmI != Main.myPlayer)
 			return;
 
+		if (!ElementalHeartsWorldConfig.Instance.SharedProgression)
+			return;
+
 		int gained = 0;
+		foreach (string id in HeartConsumptionWorld.Unlocked)
+		{
+			WorldUnlocked.Add(WorldKey(id));
+		}
+
 		foreach (string id in HeartConsumptionWorld.Consumed)
 		{
 			if (WorldHpApplied.Add(WorldKey(id)))
@@ -48,6 +82,7 @@ public sealed class HeartConsumptionPlayer : ModPlayer
 				int hp = HeartRegistry.GetHp(id);
 				_bonus += hp;
 				gained += hp;
+				BumpHighestTier(id);
 			}
 		}
 
@@ -73,7 +108,9 @@ public sealed class HeartConsumptionPlayer : ModPlayer
 
 		string prefix = WorldPrefix;
 		WorldHpApplied.RemoveWhere(key => key.StartsWith(prefix));
+		WorldUnlocked.RemoveWhere(key => key.StartsWith(prefix));
 		_bonus = 0;
+		HighestTier = null;
 	}
 
 	/// <summary>
@@ -91,12 +128,44 @@ public sealed class HeartConsumptionPlayer : ModPlayer
 		if (!WorldHpApplied.Remove(key))
 			return;
 
-		// HpGain is live (config-dependent), so just re-derive — same cost as a single
-		// lookup, and it covers the edge case where the HP value changed between grant
-		// and deactivation.
-		int hp = HeartRegistry.GetHp(heartId);
-		if (hp > 0)
-			_bonus -= hp;
+		// Removing a grant can lower both the HP bonus and the highest tier, and HP is live
+		// (config-dependent), so re-derive both from the remaining current-world grants
+		// rather than trying to back out a single value.
+		RecomputeBonus();
+	}
+
+	public bool TryConsumeLocally(ElementalHeartItem heart)
+	{
+		if (Player.whoAmI != Main.myPlayer)
+			return false;
+
+		string id = heart.ConsumptionId;
+		WorldUnlocked.Add(WorldKey(id));
+		if (WorldHpApplied.Add(WorldKey(id)))
+		{
+			int hp = HeartRegistry.GetHp(id);
+			_bonus += hp;
+			Player.statLife += hp;
+			Player.HealEffect(hp, broadcast: false);
+			BumpHighestTier(id);
+			UI.Checklist.HeartLogButtonUIState.HasUnseenContent = true;
+			return true;
+		}
+
+		return false;
+	}
+
+	public bool TryDeactivateLocally(ElementalHeartItem heart)
+	{
+		if (Player.whoAmI != Main.myPlayer)
+			return false;
+
+		string key = WorldKey(heart.ConsumptionId);
+		if (!WorldHpApplied.Remove(key))
+			return false;
+
+		RecomputeBonus();
+		return true;
 	}
 
 	/// <summary>
@@ -110,6 +179,7 @@ public sealed class HeartConsumptionPlayer : ModPlayer
 			return;
 
 		_bonus = 0;
+		HighestTier = null;
 		string prefix = WorldPrefix;
 		foreach (string key in WorldHpApplied)
 		{
@@ -117,8 +187,11 @@ public sealed class HeartConsumptionPlayer : ModPlayer
 				continue;
 
 			string heartId = key[prefix.Length..];
-			if (HeartConsumptionWorld.IsConsumed(heartId))
-				_bonus += HeartRegistry.GetHp(heartId);
+			if (ElementalHeartsWorldConfig.Instance.SharedProgression && !HeartConsumptionWorld.IsConsumed(heartId))
+				continue;
+
+			_bonus += HeartRegistry.GetHp(heartId);
+			BumpHighestTier(heartId);
 		}
 	}
 
@@ -179,15 +252,26 @@ public sealed class HeartConsumptionPlayer : ModPlayer
 	{
 		if (WorldHpApplied.Count > 0)
 			tag["worldApplied"] = WorldHpApplied.ToList();
+		if (WorldUnlocked.Count > 0)
+			tag["worldUnlocked"] = WorldUnlocked.ToList();
 	}
 
 	public override void LoadData(TagCompound tag)
 	{
 		WorldHpApplied.Clear();
+		WorldUnlocked.Clear();
 		if (tag.ContainsKey("worldApplied"))
 		{
 			foreach (string id in tag.GetList<string>("worldApplied"))
+			{
 				WorldHpApplied.Add(id);
+				WorldUnlocked.Add(id); // Retroactive unlock for older saves
+			}
+		}
+		if (tag.ContainsKey("worldUnlocked"))
+		{
+			foreach (string id in tag.GetList<string>("worldUnlocked"))
+				WorldUnlocked.Add(id);
 		}
 		// _bonus is recomputed in OnEnterWorld once the active world is known.
 	}

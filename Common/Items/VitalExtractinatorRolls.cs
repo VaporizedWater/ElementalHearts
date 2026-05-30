@@ -20,11 +20,20 @@ public static class VitalExtractinatorRolls
 	/// </summary>
 	public static void RollVitalSoil(ref int resultType, ref int resultStack)
 	{
-		PrimaryShardRoll(ref resultType, ref resultStack);
+		if (LifeShardConfig.Instance.SystemEnabled && Main.rand.NextFloat() < 0.1f) // 1 in 10 for soil
+		{
+			resultStack = 1;
+			resultType = LifeShardTier.Common.GetItemType();
+		}
+		else
+		{
+			resultStack = 1;
+			resultType = ItemID.DirtBlock;
+		}
 
 		TrySpawnGem(5f);
 		TrySpawnFromPool(5f, _commonHerbSeeds);
-		TrySpawn(1f, ItemID.LifeCrystal, 1, 1);
+		TrySpawn(0.5f, ItemID.LifeCrystal, 1, 1);
 	}
 
 	/// <summary>
@@ -33,26 +42,29 @@ public static class VitalExtractinatorRolls
 	/// </summary>
 	public static void RollVitalQuartz(ref int resultType, ref int resultStack)
 	{
-		PrimaryShardRoll(ref resultType, ref resultStack);
+		if (LifeShardConfig.Instance.SystemEnabled && Main.rand.NextFloat() < (1f / 7f)) // 1 in 7 for quartz
+		{
+			resultStack = 1;
+			resultType = LifeShardTier.Common.GetItemType();
+		}
+		else
+		{
+			resultStack = 1;
+			resultType = ItemID.StoneBlock;
+		}
 
 		TrySpawnGem(5f);
 		TrySpawnFromPool(5f, _jungleHerbSeeds);
 		TrySpawnFromPool(3f, _vineMaterials);
+
+		// Add a very small chance for Life Crystal
+		TrySpawn(0.5f, ItemID.LifeCrystal, 1, 1);
 
 		// Life Fruit is hardmode-only in vanilla; matching that gate keeps progression intact.
 		if (Main.hardMode)
 			TrySpawn(2f, ItemID.LifeFruit, 1, 1);
 	}
 
-	private static void PrimaryShardRoll(ref int resultType, ref int resultStack)
-	{
-		LifeShardConfig cfg = LifeShardConfig.Instance;
-		if (!cfg.SystemEnabled)
-			return;
-
-		resultStack = RollStack(cfg.ExtractinatorCommonMin, cfg.ExtractinatorCommonMax);
-		resultType = resultStack > 0 ? LifeShardTier.Common.GetItemType() : 0;
-	}
 
 	private static readonly short[] _gems = new[]
 	{

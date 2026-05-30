@@ -129,9 +129,9 @@ public sealed class UncommonAnimate : AnimateBoss
 		NPC.width = 22;
 		NPC.height = 22;
 		NPC.scale = 2.0f;
-		NPC.lifeMax = 5000;
-		NPC.damage = 55; // contact — pre-Skeletron tier (Skeletron 30, Queen Bee 30; ours is the harder boss)
-		NPC.defense = 22;
+		NPC.lifeMax = 3750;
+		NPC.damage = 68; // contact — pre-Skeletron tier (Skeletron 30, Queen Bee 30; ours is the harder boss)
+		NPC.defense = 16;
 		NPC.noGravity = true;
 		NPC.noTileCollide = true;
 		NPC.behindTiles = false;
@@ -153,8 +153,31 @@ public sealed class UncommonAnimate : AnimateBoss
 		// so the boss can't be pulled apart between two players mid-attack.
 		if (_currentPhaseTarget < 0 || _currentPhaseTarget == 255 || !Main.player[_currentPhaseTarget].active || Main.player[_currentPhaseTarget].dead)
 		{
-			NPC.TargetClosest();
-			_currentPhaseTarget = NPC.target;
+			if (Main.netMode != NetmodeID.SinglePlayer)
+			{
+				System.Collections.Generic.List<int> validTargets = new System.Collections.Generic.List<int>();
+				for (int i = 0; i < Main.maxPlayers; i++)
+				{
+					if (Main.player[i].active && !Main.player[i].dead)
+					{
+						validTargets.Add(i);
+					}
+				}
+				if (validTargets.Count > 0)
+				{
+					_currentPhaseTarget = validTargets[Main.rand.Next(validTargets.Count)];
+				}
+				else
+				{
+					NPC.TargetClosest();
+					_currentPhaseTarget = NPC.target;
+				}
+			}
+			else
+			{
+				NPC.TargetClosest();
+				_currentPhaseTarget = NPC.target;
+			}
 		}
 		NPC.target = _currentPhaseTarget;
 
@@ -182,10 +205,10 @@ public sealed class UncommonAnimate : AnimateBoss
 		ManagePhases();
 
 		// Per-phase defense bump — slightly tougher in later phases to compensate for player gear scaling.
-		NPC.defense = 22 + CurrentState switch
+		NPC.defense = 16 + CurrentState switch
 		{
-			State.Phase2_CoopSpiral => 1,
-			State.Phase3_CoopDashes => 2,
+			State.Phase2_CoopSpiral => -2,
+			State.Phase3_CoopDashes => -6,
 			_ => 0,
 		};
 
@@ -248,15 +271,18 @@ public sealed class UncommonAnimate : AnimateBoss
 			// Rotate target at phase boundaries in MP so the boss doesn't fixate on one player.
 			if (Main.netMode != NetmodeID.SinglePlayer)
 			{
-				for (int i = 1; i < Main.maxPlayers; i++)
+				System.Collections.Generic.List<int> validTargets = new System.Collections.Generic.List<int>();
+				for (int i = 0; i < Main.maxPlayers; i++)
 				{
-					int nextPlayer = (_currentPhaseTarget + i) % Main.maxPlayers;
-					if (Main.player[nextPlayer].active && !Main.player[nextPlayer].dead)
+					if (Main.player[i].active && !Main.player[i].dead)
 					{
-						_currentPhaseTarget = nextPlayer;
-						NPC.target = _currentPhaseTarget;
-						break;
+						validTargets.Add(i);
 					}
+				}
+				if (validTargets.Count > 0)
+				{
+					_currentPhaseTarget = validTargets[Main.rand.Next(validTargets.Count)];
+					NPC.target = _currentPhaseTarget;
 				}
 			}
 
@@ -826,9 +852,10 @@ public sealed class UncommonAnimate : AnimateBoss
 
 			float hpPct = (float)NPC.life / NPC.lifeMax;
 			float progressiveMultiplier = MathHelper.Lerp(1.5f, 1.0f, hpPct); // Up to 1.5x faster at 0 HP
-			float baseHealRate = 2f * (20f * NPC.lifeMax / 1200f * phaseBonus) / 60f; // 2x as fast as Common Animate
+			float maxHealPerTick = (0.20f * NPC.lifeMax) / 600f;
+			float baseHealRate = maxHealPerTick / (1.30f * 1.5f);
 
-			SubTimer += baseHealRate * progressiveMultiplier;
+			SubTimer += baseHealRate * phaseBonus * progressiveMultiplier;
 			if (SubTimer >= 1f)
 			{
 				int heal = (int)SubTimer;
@@ -1769,8 +1796,12 @@ public sealed class UncommonAnimate : AnimateBoss
 	// i-frame coverage from the other.
 	public override bool CanHitPlayer(Player target, ref int cooldownSlot)
 	{
+		Rectangle customHitbox = NPC.Hitbox;
+		customHitbox.Inflate(-customHitbox.Width / 4, -customHitbox.Height / 4);
+		if (!customHitbox.Intersects(target.Hitbox)) return false;
+
 		cooldownSlot = ImmunityCooldownID.Bosses;
-		return true;
+		return CurrentState == State.Phase3_CoopDashes && SubMode == 3f;
 	}
 
 	public override void OnKill()

@@ -12,6 +12,14 @@ public sealed class ElementalHeartsWorldConfig : ModConfig
 	public override ConfigScope Mode => ConfigScope.ServerSide;
 	public static ElementalHeartsWorldConfig Instance => ModContent.GetInstance<ElementalHeartsWorldConfig>();
 
+	[Header("Progression")]
+	[DefaultValue(true)]
+	public bool SharedProgression { get; set; } = true;
+
+	[Header("Cheats")]
+	[DefaultValue(false)]
+	public bool AdminMode { get; set; } = false;
+
 	/// <summary>
 	/// Write-only trigger: enabling it wipes the world's consumed-heart registry and
 	/// refunds the max life those hearts granted, then immediately resets — so the
@@ -54,4 +62,15 @@ public sealed class ElementalHeartsWorldConfig : ModConfig
 
 	[DefaultValue(1)] [Range(0, 10)] [Increment(1)] [Slider]
 	public int JungleBiomeCountMultiplier;
+
+	// ── Night Events ──────────────────────────────────────────────────────────
+	[Header("NightEvents")]
+	[DefaultValue(7)] [Range(0, 100)] [Increment(1)] [Slider]
+	public int HeartShootingStarChance;
+
+	[DefaultValue(1)] [Range(1, 10)] [Increment(1)] [Slider]
+	public int HeartShootingStarMaxPerNight;
+
+	[DefaultValue(100)] [Range(1, 1000)] [Increment(5)] [Slider]
+	public int HeartShootingStarFrequency;
 }

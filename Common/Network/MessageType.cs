@@ -10,4 +10,11 @@ public enum MessageType : byte
 	/// resolved on each receiver.
 	/// </summary>
 	HeartDeactivated = 2,
+
+	/// <summary>
+	/// A boss heart was just dropped. Carries the heart's item type and drop position so
+	/// every client can play the cosmetic drop-moment effect (see
+	/// <see cref="Systems.BossHeartDropFx"/>). Server → clients only.
+	/// </summary>
+	BossHeartDropped = 3,
 }
