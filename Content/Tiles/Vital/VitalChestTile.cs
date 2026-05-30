@@ -1,5 +1,5 @@
 using ElementalHearts.Common.Configs;
-using ElementalHearts.Content.Items.Tiles;
+using ElementalHearts.Content.Items.Placeable;
 using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.Audio;

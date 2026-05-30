@@ -3,7 +3,7 @@ using Terraria;
 using Terraria.GameContent.UI.Elements;
 using Terraria.ModLoader;
 using Terraria.UI;
-using ElementalHearts.Content.Items.Hearts.Vanilla.Legendary.LunarBricks;
+using ElementalHearts.Content.Items.Vanilla.Legendary;
 
 namespace ElementalHearts.Common.UI.Checklist;
 
@@ -86,23 +86,23 @@ public class HeartLogButtonUIState : UIState
 			var player = Main.LocalPlayer.GetModPlayer<Common.Players.HeartConsumptionPlayer>();
 			Common.Hearts.HeartTier? currentTier = player.HighestTier;
 			
-			string outlineTexturePath = "ElementalHearts/Common/UI/HeartOutline";
+			string outlineTexturePath = "ElementalHearts/Assets/UI/HeartOutline";
 			if (currentTier.HasValue)
 			{
 				switch (currentTier.Value)
 				{
 					case Common.Hearts.HeartTier.Uncommon:
-						outlineTexturePath = "ElementalHearts/Common/UI/UncommonHeartOutline";
+						outlineTexturePath = "ElementalHearts/Assets/UI/UncommonHeartOutline";
 						break;
 					case Common.Hearts.HeartTier.Rare:
-						outlineTexturePath = "ElementalHearts/Common/UI/RareHeartOutline";
+						outlineTexturePath = "ElementalHearts/Assets/UI/RareHeartOutline";
 						break;
 					case Common.Hearts.HeartTier.Epic:
-						outlineTexturePath = "ElementalHearts/Common/UI/EpicHeartOutline";
+						outlineTexturePath = "ElementalHearts/Assets/UI/EpicHeartOutline";
 						break;
 					case Common.Hearts.HeartTier.Legendary:
 					case Common.Hearts.HeartTier.Mythic:
-						outlineTexturePath = "ElementalHearts/Common/UI/LegendaryHeartOutline";
+						outlineTexturePath = "ElementalHearts/Assets/UI/LegendaryHeartOutline";
 						break;
 				}
 			}
@@ -147,7 +147,7 @@ public class HeartLogButtonUIState : UIState
 			float floatOffset = (float)System.Math.Sin(Main.GlobalTimeWrappedHourly * 2.5f) * 2f;
 			float exScale = 1f + (float)System.Math.Sin(Main.GlobalTimeWrappedHourly * 5f) * 0.05f;
 			
-			Microsoft.Xna.Framework.Graphics.Texture2D tipTexture = ModContent.Request<Microsoft.Xna.Framework.Graphics.Texture2D>("ElementalHearts/Common/UI/TipLabel").Value;
+			Microsoft.Xna.Framework.Graphics.Texture2D tipTexture = ModContent.Request<Microsoft.Xna.Framework.Graphics.Texture2D>("ElementalHearts/Assets/UI/TipLabel").Value;
 			Vector2 tipPosition = new Vector2(position.X, position.Y - (texture.Height / 2f * finalScale) - 14f + floatOffset);
 
 			spriteBatch.Draw(

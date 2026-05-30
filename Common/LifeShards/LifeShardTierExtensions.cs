@@ -90,12 +90,12 @@ public static class LifeShardTierExtensions
 	/// </summary>
 	public static SoundStyle GetPickupSound(this LifeShardTier tier) => tier switch
 	{
-		LifeShardTier.Common    => new SoundStyle("ElementalHearts/Sounds/CommonCrystalPickup"),
-		LifeShardTier.Uncommon  => new SoundStyle("ElementalHearts/Sounds/UncommonCrystalPickup"),
-		LifeShardTier.Rare      => new SoundStyle("ElementalHearts/Sounds/RareCrystalPickup"),
-		LifeShardTier.Epic      => new SoundStyle("ElementalHearts/Sounds/EpicCrystalPickup"),
-		LifeShardTier.Legendary => new SoundStyle("ElementalHearts/Sounds/LegendaryCrystalPickup"),
-		_ => new SoundStyle("ElementalHearts/Sounds/CommonCrystalPickup"),
+		LifeShardTier.Common    => new SoundStyle("ElementalHearts/Assets/Sounds/CommonCrystalPickup"),
+		LifeShardTier.Uncommon  => new SoundStyle("ElementalHearts/Assets/Sounds/UncommonCrystalPickup"),
+		LifeShardTier.Rare      => new SoundStyle("ElementalHearts/Assets/Sounds/RareCrystalPickup"),
+		LifeShardTier.Epic      => new SoundStyle("ElementalHearts/Assets/Sounds/EpicCrystalPickup"),
+		LifeShardTier.Legendary => new SoundStyle("ElementalHearts/Assets/Sounds/LegendaryCrystalPickup"),
+		_ => new SoundStyle("ElementalHearts/Assets/Sounds/CommonCrystalPickup"),
 	};
 
 	/// <summary>

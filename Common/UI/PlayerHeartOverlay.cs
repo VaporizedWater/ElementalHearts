@@ -40,7 +40,7 @@ public sealed class PlayerHeartOverlay : ModResourceOverlay
 	}
 
 	private static Asset<Texture2D> Request(string name) =>
-		ModContent.Request<Texture2D>($"ElementalHearts/Content/PlayerHearts/{name}", AssetRequestMode.ImmediateLoad);
+		ModContent.Request<Texture2D>($"ElementalHearts/Assets/Textures/PlayerHearts/{name}", AssetRequestMode.ImmediateLoad);
 
 	public override bool PreDrawResource(ResourceOverlayDrawContext context)
 	{

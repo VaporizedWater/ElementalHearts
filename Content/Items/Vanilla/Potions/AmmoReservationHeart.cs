@@ -1,0 +1,15 @@
+using ElementalHearts.Common.Hearts;
+using Terraria.ID;
+
+using ElementalHearts.Content.Items.Hearts;
+namespace ElementalHearts.Content.Items.Vanilla.Potions;
+
+public sealed class AmmoReservationHeart : PotionHeartItem
+{
+	public override HeartTier Tier => HeartTier.Rare;
+	public override int BuffType => BuffID.AmmoReservation;
+	public override int PotionItemId => ItemID.AmmoReservationPotion;
+	public override string PermanentEffectText => "Permanently grants a 20% chance to not consume ammo";
+	public override int PotionsForTwoHours => 30;
+	public override int ShardCost => 2;
+}

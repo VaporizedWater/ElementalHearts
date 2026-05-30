@@ -460,7 +460,7 @@ public sealed class LifeShardPanel : ModSystem
 		// it sits in line with.
 		float pulse = 1f + (0.05f * (float)Math.Sin(Main.GlobalTimeWrappedHourly * 3f));
 
-		Texture2D label = ModContent.Request<Texture2D>("ElementalHearts/Common/UI/TipLabel",
+		Texture2D label = ModContent.Request<Texture2D>("ElementalHearts/Assets/UI/TipLabel",
 			AssetRequestMode.ImmediateLoad).Value;
 
 		Rectangle rect = new Rectangle((int)(center.X - (buttonSize / 2f)),

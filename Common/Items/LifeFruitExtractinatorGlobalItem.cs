@@ -63,7 +63,7 @@ public sealed class LifeFruitExtractinatorGlobalItem : GlobalItem
 
 		Player player = Main.LocalPlayer;
 		player.QuickSpawnItem(player.GetSource_Misc("LifeFruitSeedExtractinator"),
-			ModContent.ItemType<Content.Items.Tiles.LifeFruitSeedItem>(), 1);
+			ModContent.ItemType<Content.Items.Placeable.LifeFruitSeedItem>(), 1);
 	}
 
 	private static int RollStack(int a, int b)

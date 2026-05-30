@@ -99,7 +99,7 @@ public abstract class ElementalHeartItem : ModItem
 	/// (one recording per tier, Common through Mythic). Boss hearts pin the neutral chime in
 	/// <see cref="BossHeartItem"/> and layer their own signature on top instead.
 	/// </summary>
-	protected virtual SoundStyle ConsumeSound => new($"ElementalHearts/Sounds/{Tier}CrystalPickup");
+	protected virtual SoundStyle ConsumeSound => new($"ElementalHearts/Assets/Sounds/{Tier}CrystalPickup");
 
 	protected int RecipeCost(int baseAmount)
 	{

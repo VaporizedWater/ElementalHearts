@@ -1,11 +1,11 @@
 using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using ElementalHearts.Common.Configs;
-using ElementalHearts.Content.Items.Hearts.Vanilla.Common.Sand;
-using ElementalHearts.Content.Items.Hearts.Vanilla.Common.Stone;
-using ElementalHearts.Content.Items.Hearts.Vanilla.Common.Wood;
-using ElementalHearts.Content.Items.Hearts.Vanilla.Uncommon.Metals;
-using ElementalHearts.Content.Items.Hearts.Vanilla.Uncommon.Mushrooms;
+using ElementalHearts.Content.Items.Vanilla.Common;
+using ElementalHearts.Content.Items.Vanilla.Common;
+using ElementalHearts.Content.Items.Vanilla.Common;
+using ElementalHearts.Content.Items.Vanilla.Uncommon;
+using ElementalHearts.Content.Items.Vanilla.Uncommon;
 using ElementalHearts.Content.Tiles.Vital;
 using Terraria;
 using Terraria.GameContent.Generation;

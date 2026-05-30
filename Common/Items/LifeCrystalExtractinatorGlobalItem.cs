@@ -67,7 +67,7 @@ public sealed class LifeCrystalExtractinatorGlobalItem : GlobalItem
 
 		Player player = Main.LocalPlayer;
 		player.QuickSpawnItem(player.GetSource_Misc("LifeCrystalSeedExtractinator"),
-			ModContent.ItemType<Content.Items.Tiles.LifeCrystalSeedItem>(), 1);
+			ModContent.ItemType<Content.Items.Placeable.LifeCrystalSeedItem>(), 1);
 	}
 
 	private static int RollStack(int a, int b)

@@ -507,6 +507,97 @@ Configs: {
 			Tooltip: ""
 		}
 	}
+
+	ElementalHeartsCameraConfig: {
+		DisplayName: Elemental Hearts Camera Config
+
+		Headers: {
+			General: General Header
+			Strength: Strength Header
+			Feel: Feel Header
+			Behaviour: Behaviour Header
+		}
+
+		EnableCursorFocus: {
+			Label: Enable Cursor Focus
+			Tooltip: ""
+		}
+
+		MaxPanDistance: {
+			Label: Max Pan Distance
+			Tooltip: ""
+		}
+
+		HorizontalStrength: {
+			Label: Horizontal Strength
+			Tooltip: ""
+		}
+
+		VerticalStrength: {
+			Label: Vertical Strength
+			Tooltip: ""
+		}
+
+		Smoothing: {
+			Label: Smoothing
+			Tooltip: ""
+		}
+
+		Deadzone: {
+			Label: Deadzone
+			Tooltip: ""
+		}
+
+		ResponseCurve: {
+			Label: Response Curve
+			Tooltip: ""
+		}
+
+		OnlyWhileUsingItem: {
+			Label: Only While Using Item
+			Tooltip: ""
+		}
+
+		RecenterInMenus: {
+			Label: Recenter In Menus
+			Tooltip: ""
+		}
+
+		InvertHorizontal: {
+			Label: Invert Horizontal
+			Tooltip: ""
+		}
+
+		InvertVertical: {
+			Label: Invert Vertical
+			Tooltip: ""
+		}
+	}
+
+	ElementalHeartsIdleConfig: {
+		DisplayName: Elemental Hearts Idle Config
+		Headers.IdleGameSettings: Idle Game Settings Header
+
+		EnableIdleGame: {
+			Label: Enable Idle Game
+			Tooltip: If true, unlocked and consumed hearts will generate Life Shards over time.
+		}
+
+		BaseShardsPerHeartPerDay: {
+			Label: Base Shards Per Heart Per Day
+			Tooltip: The base amount of shards a common heart produces in a 24-hour real-time day. Stronger hearts produce a multiple of this value.
+		}
+
+		BaseCapacity: {
+			Label: Base Shard Capacity
+			Tooltip: The base maximum amount of unclaimed shards you can hold.
+		}
+
+		CapacityPerTier: {
+			Label: Capacity Per World Tier
+			Tooltip: The additional maximum amount of unclaimed shards you can hold per World Tier.
+		}
+	}
 }
 
 Conditions: {
@@ -2123,6 +2214,11 @@ Items: {
 
 	TitanHeart: {
 		DisplayName: Titan Heart
+		Tooltip: ""
+	}
+
+	MagnificationHeart: {
+		DisplayName: Magnification Heart
 		Tooltip: ""
 	}
 }

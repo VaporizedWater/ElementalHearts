@@ -1,0 +1,15 @@
+using ElementalHearts.Common.Hearts;
+using Terraria.ID;
+
+using ElementalHearts.Content.Items.Hearts;
+namespace ElementalHearts.Content.Items.Vanilla.Potions;
+
+public sealed class SummoningHeart : PotionHeartItem
+{
+	public override HeartTier Tier => HeartTier.Rare;
+	public override int BuffType => BuffID.Summoning;
+	public override int PotionItemId => ItemID.SummoningPotion;
+	public override string PermanentEffectText => "Permanently increases maximum number of minions by 1";
+	public override int PotionsForTwoHours => 15;
+	public override int ShardCost => 2;
+}

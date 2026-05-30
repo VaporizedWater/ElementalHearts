@@ -69,19 +69,19 @@ internal static class BossChecklistIntegration
 		// We do not strictly hardcode vanilla boss defeats into the crafting recipes,
 		// but these values place them in the correct Boss Checklist order.
 
-		LogAnimate<CommonAnimate, CommonMenacingHeart, Content.Items.Hearts.Vanilla.Exotic.Pacified.CommonPacifiedHeart>(
+		LogAnimate<CommonAnimate, CommonMenacingHeart, Content.Items.Vanilla.Exotic.CommonPacifiedHeart>(
 			mod, bossChecklist, tier: 0, progression: 1.5f);
 
-		LogAnimate<UncommonAnimate, UncommonMenacingHeart, Content.Items.Hearts.Vanilla.Exotic.Pacified.UncommonPacifiedHeart>(
+		LogAnimate<UncommonAnimate, UncommonMenacingHeart, Content.Items.Vanilla.Exotic.UncommonPacifiedHeart>(
 			mod, bossChecklist, tier: 1, progression: 4.5f);
 
-		LogAnimate<RareAnimate, RareMenacingHeart, Content.Items.Hearts.Vanilla.Exotic.Pacified.RarePacifiedHeart>(
+		LogAnimate<RareAnimate, RareMenacingHeart, Content.Items.Vanilla.Exotic.RarePacifiedHeart>(
 			mod, bossChecklist, tier: 2, progression: 6.5f);
 
-		LogAnimate<EpicAnimate, EpicMenacingHeart, Content.Items.Hearts.Vanilla.Exotic.Pacified.EpicPacifiedHeart>(
+		LogAnimate<EpicAnimate, EpicMenacingHeart, Content.Items.Vanilla.Exotic.EpicPacifiedHeart>(
 			mod, bossChecklist, tier: 3, progression: 12.5f);
 
-		LogAnimate<LegendaryAnimate, LegendaryMenacingHeart, Content.Items.Hearts.Vanilla.Exotic.Pacified.LegendaryPacifiedHeart>(
+		LogAnimate<LegendaryAnimate, LegendaryMenacingHeart, Content.Items.Vanilla.Exotic.LegendaryPacifiedHeart>(
 			mod, bossChecklist, tier: 4, progression: 18.5f);
 	}
 
