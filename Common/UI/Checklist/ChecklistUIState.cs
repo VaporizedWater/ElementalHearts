@@ -567,16 +567,6 @@ public class ChecklistUIState : UIState
 			ElementalHeartsIdleConfig.Instance.EnableIdleGame = val;
 			SaveConfig(ElementalHeartsIdleConfig.Instance);
 		});
-
-		AddConfigToggle("Enable Elemental HP (Bonus health from hearts)", () => ElementalHeartsHPConfig.Instance.EnableElementalHP, val => {
-			ElementalHeartsHPConfig.Instance.EnableElementalHP = val;
-			SaveConfig(ElementalHeartsHPConfig.Instance);
-		});
-		
-		AddConfigToggle("Elemental HP Active in Boss Fights", () => ElementalHeartsHPConfig.Instance.EnableInBossFights, val => {
-			ElementalHeartsHPConfig.Instance.EnableInBossFights = val;
-			SaveConfig(ElementalHeartsHPConfig.Instance);
-		});
 	}
 
 	private void AddConfigToggle(string label, System.Func<bool> getter, System.Action<bool> setter)
