@@ -9,7 +9,7 @@ namespace ElementalHearts.Content.Projectiles;
 
 public class UncommonShardProjectile : ModProjectile
 {
-	public override string Texture => "ElementalHearts/Content/Items/BossSpawns/UncommonMenacingHeart";
+	public override string Texture => "ElementalHearts/Content/Projectiles/UncommonSmallBossProjectile";
 
 	public override void SetStaticDefaults()
 	{
@@ -19,15 +19,17 @@ public class UncommonShardProjectile : ModProjectile
 
 	public override void SetDefaults()
 	{
-		Projectile.width = 16;
-		Projectile.height = 16;
+		Projectile.width = 20;
+		Projectile.height = 20;
 		Projectile.hostile = true;
 		Projectile.friendly = false;
 		Projectile.penetrate = -1;
 		Projectile.timeLeft = 300;
 		Projectile.ignoreWater = true;
 		Projectile.tileCollide = false;
-		Projectile.scale = 0.5f;
+		
+		// Set scale to 1.25f (25% larger for better visibility)
+		Projectile.scale = 1.25f;
 	}
 
 	public override void AI()

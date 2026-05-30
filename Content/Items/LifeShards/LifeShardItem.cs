@@ -4,6 +4,7 @@ using ElementalHearts.Common.LifeShards;
 using ElementalHearts.Common.Players;
 using ElementalHearts.Common.UI;
 using Terraria;
+using Terraria.GameContent.UI;
 using Terraria.ModLoader;
 
 namespace ElementalHearts.Content.Items.LifeShards;
@@ -70,7 +71,17 @@ public abstract class LifeShardItem : ModItem
 		// same frame collapse to a single sound (the last) instead of overlapping.
 		LifeShardSystem.QueuePickupSound(Tier);
 
-		return !player.GetModPlayer<LifeShardPlayer>().AbsorbShards(Item);
+		int stackBefore = Item.stack;
+		bool absorbedFully = player.GetModPlayer<LifeShardPlayer>().AbsorbShards(Item);
+		int absorbed = stackBefore - Item.stack;
+
+		// Vanilla's PickupItem spawns the floating "Item Name" popup near the player when
+		// an item lands in the inventory. Returning false here skips that path, so we
+		// reproduce it for the portion that was routed into the shard slot.
+		if (absorbed > 0)
+			PopupText.NewText(PopupTextContext.RegularItemPickup, Item, absorbed);
+
+		return !absorbedFully;
 	}
 
 	/// <summary>

@@ -1,16 +1,12 @@
-Elemental Hearts adds 538 consumable, single-use hearts crafted from every Terraria material. Each one permanently raises your maximum life. Find your blocks, find your bench, get more HP. (Or fight a boss and harvest their organs.)
+Elemental Hearts adds permanent stat-boosters. Find your materials, find your bench, get more HP. (Or fight a boss and harvest their organs.)
 
-NEW: Added compatibility with Munchies, Biome Titles, Display Music, and Boss Checklist
-NEW: POTION HEARTS (Perma-potions)
-NEW: Boss Fights that gate progression. Currently the first one is 90% finished with the rest coming soon. Uncommon Animate is 70% done.
-NEW: Life Shards are now required to craft each heart, with differing requirements and tiers for each. They can be obtained naturally by dealing damage, or by processing Life Crystals in the Extractinator. They have dedicated inventory slots similar to coins.
+Also includes 5 polished boss fights, a new mini-structure, and many other new features.
 
-+ Includes 57 Calamity hearts, 28 Thorium hearts, and 5 Consolaria hearts. 
+Designed to fit naturally into every madpack and make your experience more fun and rewarding.
 
----
+-
 
 After 6 years of slumber, Lite has risen from the dead to resurrect his begotten son. Today, we can experience Elemental Hearts as it was originally intended.
-
 
 Please listen to the Interstellar Theme while reading a brief history of Elemental Hearts:
 
@@ -36,28 +32,8 @@ But on May 8th, a user named Madog24 experienced an issue while trying to enter 
 
 Lite, sitting before the machine that had cost him his roof, in the quiet hum of a system newly born, he remembered. He remembered what it meant to be a developer. He remembered the lives he had touched. He remembered the countless children he had rescued from eternal boredom through the raw power-fantasy of crafting Elemental Hearts. And he knew, with a certainty as bright as a collapsing star, that the time had come to do what he was put on this earth to do. With his daughter begging for him to go on a walk with her. To spend time with his wife on Mothers Day, he had to make a choice: Sacrifice himself for his family, or sacrifice himself for the whole of the Terraria Community...
 
-He made the decision that any sane Terrarian would make:
+He made the decision that any sane Terrarian would make.
 
-He created Elemental Hearts Classic.
-
-
-
-Classic is the answer to "what should this have been all along?"
-
-  - One job. Hearts that increase max HP.
-
-  - Stable across worlds and characters. The per-world consumption ledger is keyed by world GUID, so the same heart name can grant HP independently across different worlds.
-
-  - Multiplayer-correct. Hearts are bound to the world. When one player consumes a Stone Heart, every player in that world receives the bonus, now and on every future visit.
-
-  - Plays nicely with everything else. The mod doesn't override vanilla item or NPC behavior, doesn't hook anything global, and doesn't depend on any third-party library. Other mods can sit on top of it without conflict, and the data-driven base class makes cross-mod heart packs trivial to add in the future.
-
-  - Seven tiers, instantly readable. Common (white), Uncommon (green), Rare (blue), Epic (purple), Legendary (orange), Exotic (cyan), and Mythic (gold).
-
-  - Extremely intuitive config system: To make it easier to incorporate Elemental Hearts into your Mod Pack, you can adjust pretty much everything in this mod from recipe difficulty, visuals, and stat-increases, etc.
-
-  - Cross-mod capabilities can be toggled through config settings if needed.
-
-  - Draggable UI so that you don't need to worry with cross-mod interactions.
+I created Elemental Hearts.
 
 I built it to last this time.

@@ -5,24 +5,8 @@ using Terraria.ModLoader;
 
 namespace ElementalHearts.Content.NPCs.Bosses.Animate;
 
-[AutoloadBossHead]
-public sealed class RareAnimate : AnimateBoss
-{
-	public override int ProgressionTier => 2;
-	public override LifeShardTier Tier => LifeShardTier.Rare;
-
-	public override string Texture => "ElementalHearts/Content/Items/BossSpawns/RareMenacingHeart";
-	public override string BossHeadTexture => "ElementalHearts/Content/Items/BossSpawns/RareMenacingHeart";
-
-	public override void SetDefaults()
-	{
-		base.SetDefaults();
-		if (!Main.dedServ)
-		{
-			Music = MusicLoader.GetMusicSlot(Mod, "Music/RareAnimateTheme");
-		}
-	}
-}
+// RareAnimate (tier 2) is the full multi-body "Blue + Red/Green Enforcers" encounter,
+// implemented in its own file (RareAnimate.cs). Epic and Legendary remain placeholders below.
 
 [AutoloadBossHead]
 public sealed class EpicAnimate : AnimateBoss
@@ -38,7 +22,11 @@ public sealed class EpicAnimate : AnimateBoss
 		base.SetDefaults();
 		if (!Main.dedServ)
 		{
-			Music = MusicLoader.GetMusicSlot(Mod, "Music/EpicAnimateTheme");
+			string musicPath = "Music/EpicAnimateTheme";
+			if (MusicLoader.MusicExists(Mod, musicPath))
+			{
+				Music = MusicLoader.GetMusicSlot(Mod, musicPath);
+			}
 		}
 	}
 }
@@ -57,7 +45,11 @@ public sealed class LegendaryAnimate : AnimateBoss
 		base.SetDefaults();
 		if (!Main.dedServ)
 		{
-			Music = MusicLoader.GetMusicSlot(Mod, "Music/LegendaryAnimateTheme");
+			string musicPath = "Music/LegendaryAnimateTheme";
+			if (MusicLoader.MusicExists(Mod, musicPath))
+			{
+				Music = MusicLoader.GetMusicSlot(Mod, musicPath);
+			}
 		}
 	}
 }

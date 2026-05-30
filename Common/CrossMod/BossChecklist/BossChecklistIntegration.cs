@@ -57,10 +57,18 @@ internal static class BossChecklistIntegration
 
 	private static void LogAnimateBosses(Mod mod, Mod bossChecklist)
 	{
-		// Progression values are placed near the vanilla bosses that drop hearts
-		// of an equivalent tier, so the boss log reads in roughly the order a
-		// player will encounter them. The ".5" suffix keeps each Animate boss
-		// between two vanilla entries without colliding with any documented value.
+		// DESIGN INTENT FOR ANIMATE BOSS PROGRESSION TIERS:
+		// These progression values ensure Boss Checklist understands exactly where
+		// the Animate bosses are intended to be fought in the vanilla progression:
+		//   - Common Animate: Pre-Boss (1.5f, before Eye of Cthulhu)
+		//   - Uncommon Animate: Pre-Skeletron (4.5f, before Skeletron)
+		//   - Rare Animate: Pre-Wall of Flesh (6.5f, before Wall of Flesh)
+		//   - Epic Animate: Pre-Plantera (12.5f, before Plantera)
+		//   - Legendary Animate: Pre-Moon Lord (18.5f, before Moon Lord)
+		//
+		// We do not strictly hardcode vanilla boss defeats into the crafting recipes,
+		// but these values place them in the correct Boss Checklist order.
+
 		LogAnimate<CommonAnimate, CommonMenacingHeart, Content.Items.Hearts.Vanilla.Exotic.Pacified.CommonPacifiedHeart>(
 			mod, bossChecklist, tier: 0, progression: 1.5f);
 

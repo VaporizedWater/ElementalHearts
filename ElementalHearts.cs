@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.IO;
+using ElementalHearts.Common.Biomes;
 using ElementalHearts.Common.CrossMod.BossChecklist;
 using ElementalHearts.Common.CrossMod.MusicDisplay;
 using ElementalHearts.Common.CrossMod.Munchies;
@@ -56,16 +57,13 @@ public sealed class ElementalHearts : Mod
 	}
 
 	// ── BiomeTitles integration (see Biomes.md) ──────────────────────────────
-	// Called every frame by the BiomeTitles mod if it's loaded; reads the flag
-	// VitalTilesPlayer already maintains so the per-frame cost is a single bool.
+	// Called every frame by the BiomeTitles mod if it's loaded; delegates to the
+	// VitalCanopyBiome's own activation check so the title follows the same rules
+	// as music, ambience, and spawn modifiers.
 
 	public string BTitlesHook_MiniBiomeChecker(Player player)
 	{
-		if (!player.ZoneJungle)
-			return "";
-
-		VitalTilesPlayer vitals = player.GetModPlayer<VitalTilesPlayer>();
-		if (vitals.VitalQuartzAuraActive)
+		if (player.InModBiome<VitalCanopyBiome>())
 			return "vital_canopy";
 
 		return "";

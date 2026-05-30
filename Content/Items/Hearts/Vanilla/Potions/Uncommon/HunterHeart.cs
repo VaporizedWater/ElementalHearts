@@ -1,4 +1,4 @@
-using ElementalHearts.Common.Hearts;
+﻿using ElementalHearts.Common.Hearts;
 using Terraria.ID;
 
 namespace ElementalHearts.Content.Items.Hearts.Vanilla.Potions.Uncommon;
@@ -9,4 +9,6 @@ public sealed class HunterHeart : PotionHeartItem
 	public override int BuffType => BuffID.Hunter;
 	public override int PotionItemId => ItemID.HunterPotion;
 	public override string PermanentEffectText => "Permanently highlights nearby enemies";
+	public override int PotionsForTwoHours => 24;
+	public override int ShardCost => 2;
 }

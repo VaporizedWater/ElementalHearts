@@ -138,7 +138,11 @@ public sealed class UncommonAnimate : AnimateBoss
 
 		if (!Main.dedServ)
 		{
-			Music = MusicLoader.GetMusicSlot(Mod, "Music/UncommonAnimateTheme");
+			string musicPath = "Music/UncommonAnimateTheme";
+			if (MusicLoader.MusicExists(Mod, musicPath))
+			{
+				Music = MusicLoader.GetMusicSlot(Mod, musicPath);
+			}
 		}
 	}
 

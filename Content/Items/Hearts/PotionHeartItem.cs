@@ -34,6 +34,23 @@ public abstract class PotionHeartItem : ElementalHeartItem
 	public abstract int PotionItemId { get; }
 
 	/// <summary>
+	/// Number of vanilla potions consumed by the recipe — sized so the equivalent
+	/// drinking-session would cover 2 in-game hours (7200 s) of the buff. Short-duration
+	/// buffs cost many potions; long-duration buffs cost few. Fed through
+	/// <see cref="ElementalHeartItem.RecipeCost"/> so the global difficulty multiplier
+	/// still applies.
+	/// </summary>
+	public abstract int PotionsForTwoHours { get; }
+
+	/// <summary>
+	/// Matching life shards consumed by the recipe. Bounded per heart tier by what
+	/// would otherwise be a "free upgrade" to the next shard tier:
+	/// Common 1–4, Uncommon 1–3, Rare 1–2, Epic 1, Legendary 1.
+	/// Higher values mean the buff is more meta-defining in vanilla play.
+	/// </summary>
+	public abstract int ShardCost { get; }
+
+	/// <summary>
 	/// Buff-granting hearts skip the HP grant while the world-wide effect is active.
 	/// Novelty hearts (BuffType == 0) always grant their tier HP. With the config
 	/// toggle off, every potion heart falls back to the standard tier HP.
@@ -61,8 +78,8 @@ public abstract class PotionHeartItem : ElementalHeartItem
 	public sealed override void AddRecipes()
 	{
 		CreateRecipe()
-			.AddIngredient(PotionItemId, RecipeCost(5))
-			.AddOptionalIngredient(MatchingLifeShard(), 1)
+			.AddIngredient(PotionItemId, RecipeCost(PotionsForTwoHours))
+			.AddOptionalIngredient(MatchingLifeShard(), ShardCost)
 			.AddTile(TileID.Bottles)
 			.Register();
 	}

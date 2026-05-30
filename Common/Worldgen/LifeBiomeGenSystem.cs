@@ -274,7 +274,7 @@ public sealed class LifeBiomeGenSystem : ModSystem
 			int sizeCategory = placed % 3;
 			
 			int minY = (int)Main.worldSurface + 40;
-			int maxY = Main.maxTilesY - 250;
+			int maxY = System.Math.Max(minY + 3, Main.maxTilesY - 250);
 			int depthTier = (maxY - minY) / 3;
 
 			int x = WorldGen.genRand.Next(300, Main.maxTilesX - 300);
@@ -326,11 +326,66 @@ public sealed class LifeBiomeGenSystem : ModSystem
 		}
 	}
 
+	private static bool BoundingBoxContainsChest(int originX, int originY, int width, int height)
+	{
+		// Chest top-left tile coords live in Main.chest[i].x/.y; chests are 2x2, so a chest
+		// at (cx, cy) covers (cx..cx+1, cy..cy+1). Treat any overlap with the heart bbox
+		// as a collision.
+		int x0 = originX;
+		int y0 = originY;
+		int x1 = originX + width - 1;
+		int y1 = originY + height - 1;
+
+		for (int i = 0; i < Main.maxChests; i++)
+		{
+			Chest chest = Main.chest[i];
+			if (chest == null)
+				continue;
+
+			int cx0 = chest.x;
+			int cy0 = chest.y;
+			int cx1 = cx0 + 1;
+			int cy1 = cy0 + 1;
+
+			if (cx1 >= x0 && cx0 <= x1 && cy1 >= y0 && cy0 <= y1)
+				return true;
+		}
+
+		return false;
+	}
+
 	private static bool IsInJungle(int x, int y)
 	{
-		// To ensure we are actually DEEP inside the jungle and not just hitting a random
-		// mud patch in the cavern layer, we scan a large area and require a substantial
-		// amount of jungle blocks. Step by 3 for optimization.
+		// Pre-scan a wider radius for biome contaminants we never want overlapping a
+		// heart placement: glowing mushroom biomes and the Lihzahrd Temple. The radius
+		// here is intentionally larger than the heart's worst-case footprint (size 2
+		// hearts can reach ~46 wide, so radius ~23) plus a buffer so the heart can't
+		// straddle the edge of a mushroom biome and end up with most of its candidate
+		// tiles being MushroomGrass — those aren't in the conversion whitelist, which
+		// previously caused canopies to spawn with too few Vital Quartz tiles to read
+		// as a biome. This pass deliberately runs to completion (no early-out) so a
+		// single contaminant anywhere in the scan window rejects the placement.
+		for (int dx = -45; dx <= 45; dx += 3)
+		{
+			for (int dy = -45; dy <= 45; dy += 3)
+			{
+				int nx = x + dx;
+				int ny = y + dy;
+				if (nx < 0 || nx >= Main.maxTilesX || ny < 0 || ny >= Main.maxTilesY)
+					continue;
+
+				Tile t = Main.tile[nx, ny];
+				if (!t.HasTile)
+					continue;
+
+				if (t.TileType == TileID.MushroomGrass || t.TileType == TileID.LihzahrdBrick)
+					return false;
+			}
+		}
+
+		// Then verify we're actually DEEP inside the jungle and not just hitting a
+		// random mud patch in the cavern layer. Step by 3 for optimization; early-out
+		// once we have enough hits.
 		int jungleBlocks = 0;
 		for (int dx = -30; dx <= 30; dx += 3)
 		{
@@ -344,9 +399,6 @@ public sealed class LifeBiomeGenSystem : ModSystem
 				Tile t = Main.tile[nx, ny];
 				if (!t.HasTile)
 					continue;
-
-				if (t.TileType == TileID.MushroomGrass || t.TileType == TileID.LihzahrdBrick)
-					return false; // Strongly reject glowing mushroom biomes and the Lihzahrd Temple
 
 				if (t.TileType == TileID.JungleGrass || t.TileType == TileID.Mud)
 				{
@@ -511,6 +563,13 @@ public sealed class LifeBiomeGenSystem : ModSystem
 		// Require at least 75% of the heart's exterior boundary to be touching solid ground.
 		// This guarantees it is fully embedded into the terrain and not hanging in an open cave.
 		if (edgeCount == 0 || (float)solidEdgeCount / edgeCount < 0.75f)
+			return false;
+
+		// Reject if a vanilla (or any other mod's) chest sits inside the heart's footprint.
+		// The interior carve + forced 2x2 clear for the Impossible Heart chest would otherwise
+		// stomp a pre-placed chest, destroying its loot. Bailing out here lets the placement
+		// loop pick a different spot instead.
+		if (BoundingBoxContainsChest(originX, originY, Width, Height))
 			return false;
 
 		// 2. Single-pass candidate gather: collect Stone/Mud/Dirt tiles inside the blob
@@ -761,6 +820,9 @@ public sealed class LifeBiomeGenSystem : ModSystem
 				int tx = originX + dx;
 				int ty = originY + dy;
 
+				if (tx < 1 || tx >= Main.maxTilesX - 2 || ty < 1 || ty >= Main.maxTilesY - 2)
+					continue;
+
 				Tile t1 = Main.tile[tx, ty];
 				Tile t2 = Main.tile[tx + 1, ty];
 				Tile t3 = Main.tile[tx, ty + 1];
@@ -878,6 +940,9 @@ public sealed class LifeBiomeGenSystem : ModSystem
 			// This makes it physically impossible to spawn floating in midair.
 			int cy = originY + floorY; 
 
+			if (cx < 0 || cx >= Main.maxTilesX - 1 || cy < 2 || cy >= Main.maxTilesY)
+				continue;
+
 			Tile t3 = Main.tile[cx, cy - 2];
 			Tile t4 = Main.tile[cx + 1, cy - 2];
 			Tile t1 = Main.tile[cx, cy - 1];
@@ -956,6 +1021,9 @@ public sealed class LifeBiomeGenSystem : ModSystem
 		int chestX = originX + width / 2;
 		int chestY = originY + floorY - 1; // Chest sits ON the floor
 
+		if (chestX < 0 || chestX >= Main.maxTilesX - 1 || chestY < 1 || chestY >= Main.maxTilesY)
+			return;
+
 		// Ensure 2x2 area is clear for the chest
 		for (int x = chestX; x < chestX + 2; x++)
 		{
@@ -967,8 +1035,10 @@ public sealed class LifeBiomeGenSystem : ModSystem
 			}
 		}
 
-		// Place Ivy Chest (TileID 21, Style 10)
-		int chestIndex = WorldGen.PlaceChest(chestX, chestY, 21, false, 10);
+		ushort chestTileType = (ushort)ModContent.TileType<VitalChestTile>();
+		int chestStyle = 0;
+
+		int chestIndex = WorldGen.PlaceChest(chestX, chestY, chestTileType, false, chestStyle);
 		if (chestIndex != -1)
 		{
 			Chest chest = Main.chest[chestIndex];

@@ -1,4 +1,4 @@
-using ElementalHearts.Common.Hearts;
+﻿using ElementalHearts.Common.Hearts;
 using Terraria.ID;
 
 namespace ElementalHearts.Content.Items.Hearts.Vanilla.Potions.Uncommon;
@@ -9,4 +9,6 @@ public sealed class GillsHeart : PotionHeartItem
 	public override int BuffType => BuffID.Gills;
 	public override int PotionItemId => ItemID.GillsPotion;
 	public override string PermanentEffectText => "Permanently allows you to breathe underwater";
+	public override int PotionsForTwoHours => 40;
+	public override int ShardCost => 1;
 }

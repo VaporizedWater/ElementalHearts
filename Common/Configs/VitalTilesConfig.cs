@@ -56,7 +56,7 @@ public sealed class VitalTilesConfig : ModConfig
 	[DefaultValue(25f)] [Range(0f, 100f)] [Increment(0.1f)] [Slider]
 	public float LifeCrystalSeedChance;
 
-	[DefaultValue(25f)] [Range(0f, 100f)] [Increment(0.1f)] [Slider]
+	[DefaultValue(33f)] [Range(0f, 100f)] [Increment(0.1f)] [Slider]
 	public float LifeFruitSeedChance;
 
 	/// <summary>Keep Life Fruit Extractinator acceptance in sync with the master toggle.</summary>

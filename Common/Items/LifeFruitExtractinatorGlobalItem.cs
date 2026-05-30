@@ -1,5 +1,7 @@
-using ElementalHearts.Common.Configs;
+using System;
 using System.Collections.Generic;
+using ElementalHearts.Common.Configs;
+using ElementalHearts.Common.LifeShards;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
@@ -8,9 +10,9 @@ namespace ElementalHearts.Common.Items;
 
 /// <summary>
 /// Makes vanilla Life Fruit accepted by the Extractinator while the Vital Tiles system is
-/// enabled, and rolls a chance to yield a Life Fruit Seed when one is crushed. Acceptance
-/// is wired in <see cref="VitalTilesSystem.SetLifeFruitExtractable"/> so the toggle stays
-/// in sync with the config.
+/// enabled. A Life Fruit is the hardmode counterpart to the Life Crystal recycle: it
+/// always yields Uncommon Life Shards as the primary result, rolls higher tiers as
+/// independent bonuses, and has an independent chance to also produce a Life Fruit Seed.
 /// </summary>
 public sealed class LifeFruitExtractinatorGlobalItem : GlobalItem
 {
@@ -20,7 +22,7 @@ public sealed class LifeFruitExtractinatorGlobalItem : GlobalItem
 			return;
 
 		tooltips.Add(new TooltipLine(Mod, "LifeFruitExtractinator",
-			"Can be crushed in the Extractinator for a chance at seeds"));
+			"Can be crushed in the Extractinator"));
 	}
 
 	public override void ExtractinatorUse(int extractType, int extractinatorBlockType, ref int resultType, ref int resultStack)
@@ -28,19 +30,61 @@ public sealed class LifeFruitExtractinatorGlobalItem : GlobalItem
 		if (extractType != ItemID.LifeFruit)
 			return;
 
-		VitalTilesConfig cfg = VitalTilesConfig.Instance;
-		if (!cfg.SystemEnabled)
+		VitalTilesConfig vitalCfg = VitalTilesConfig.Instance;
+		if (!vitalCfg.SystemEnabled)
 			return;
 
-		// Seed roll. Life Fruit extractination has no shard primary — if the seed roll
-		// misses, the player still consumes a Life Fruit and gets nothing, matching
-		// vanilla silt's "sometimes nothing" feel.
+		LifeShardConfig shardCfg = LifeShardConfig.Instance;
+		if (shardCfg.SystemEnabled)
+		{
+			// Guaranteed Uncommon shards form the primary Extractinator result —
+			// Life Fruit is the hardmode-tier recycle, one step above Life Crystal.
+			resultStack = RollStack(shardCfg.ExtractinatorUncommonMin, shardCfg.ExtractinatorUncommonMax);
+			resultType = resultStack > 0 ? LifeShardTier.Uncommon.GetItemType() : 0;
+
+			TrySpawnBonus(shardCfg.ExtractinatorRareChance, LifeShardTier.Rare, shardCfg.ExtractinatorRareMin, shardCfg.ExtractinatorRareMax);
+			TrySpawnBonus(shardCfg.ExtractinatorEpicChance, LifeShardTier.Epic, shardCfg.ExtractinatorEpicMin, shardCfg.ExtractinatorEpicMax);
+			TrySpawnBonus(shardCfg.ExtractinatorLegendaryChance, LifeShardTier.Legendary, shardCfg.ExtractinatorLegendaryMin, shardCfg.ExtractinatorLegendaryMax);
+		}
+
+		TrySpawnSeed(vitalCfg);
+	}
+
+	/// <summary>
+	/// Independent bonus: a Life Fruit Seed for replanting on Vital Soil. Spawned
+	/// alongside the shard yield rather than replacing it.
+	/// </summary>
+	private static void TrySpawnSeed(VitalTilesConfig cfg)
+	{
 		if (Main.netMode == NetmodeID.Server)
 			return;
 		if (Main.rand.NextFloat() >= cfg.LifeFruitSeedChance / 100f)
 			return;
 
-		resultType = ModContent.ItemType<Content.Items.Tiles.LifeFruitSeedItem>();
-		resultStack = 1;
+		Player player = Main.LocalPlayer;
+		player.QuickSpawnItem(player.GetSource_Misc("LifeFruitSeedExtractinator"),
+			ModContent.ItemType<Content.Items.Tiles.LifeFruitSeedItem>(), 1);
+	}
+
+	private static int RollStack(int a, int b)
+	{
+		int min = Math.Max(0, Math.Min(a, b));
+		int max = Math.Max(a, b);
+		return Main.rand.Next(min, max + 1);
+	}
+
+	private static void TrySpawnBonus(float chancePercent, LifeShardTier tier, int min, int max)
+	{
+		if (Main.netMode == NetmodeID.Server)
+			return;
+		if (Main.rand.NextFloat() >= chancePercent / 100f)
+			return;
+
+		int stack = RollStack(min, max);
+		if (stack <= 0)
+			return;
+
+		Player player = Main.LocalPlayer;
+		player.QuickSpawnItem(player.GetSource_Misc("LifeShardExtractinator"), tier.GetItemType(), stack);
 	}
 }

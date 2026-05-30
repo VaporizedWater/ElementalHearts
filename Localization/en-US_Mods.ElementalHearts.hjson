@@ -603,27 +603,27 @@ Items: {
 
 	UncommonLifeShard: {
 		Tooltip: ""
-		DisplayName: Uncommon Life Shard
+		DisplayName: Life Shard
 	}
 
 	RareLifeShard: {
 		Tooltip: ""
-		DisplayName: Rare Life Shard
+		DisplayName: Life Shard
 	}
 
 	LegendaryLifeShard: {
 		Tooltip: ""
-		DisplayName: Legendary Life Shard
+		DisplayName: Life Shard
 	}
 
 	EpicLifeShard: {
 		Tooltip: ""
-		DisplayName: Epic Life Shard
+		DisplayName: Life Shard
 	}
 
 	CommonLifeShard: {
 		Tooltip: ""
-		DisplayName: Common Life Shard
+		DisplayName: Life Shard
 	}
 
 	TungstenHeart: {
@@ -1878,6 +1878,11 @@ Items: {
 			'''
 	}
 
+	VitalChestItem: {
+		DisplayName: Vital Chest
+		Tooltip: ""
+	}
+
 	LifeFruitSeedItem: {
 		DisplayName: Life Fruit Seed
 		Tooltip: Plant on Vital Soil to grow a Life Fruit
@@ -2090,11 +2095,13 @@ Tiles: {
 	LifeFruitPlantTile.MapEntry: Life Fruit Plant
 	LifeCrystalPlantTile.MapEntry: Life Crystal Plant
 	CommonLifeShardTile.MapEntry: Common Life Shard Tile
+	VitalChestTile.MapEntry: Vital Chest
 }
 
 WorldGen: {
 	VitalSoilBiomes: Seeding Life Mini-Biomes
 	VitalQuartzBiomes: Growing the Jungle's Heart
+	VitalChests: Touching Hearts to Hidden Chests
 }
 
 Buffs: {
@@ -2146,11 +2153,18 @@ NPCs: {
 	EpicAnimate.DisplayName: Animate
 	LegendaryAnimate.DisplayName: Animate
 	RedAnimateMinion.DisplayName: Red Animate Minion
+	RareAnimateEnforcer.DisplayName: Animate Enforcer
 }
 
 Projectiles: {
 	AnimateShardProjectile.DisplayName: Animate Shard Projectile
 	UncommonShardProjectile.DisplayName: Uncommon Shard Projectile
+	HeartTrapProjectile.DisplayName: Heart Trap
+	CometProjectile.DisplayName: Heart Comet
+	RareDeathrayProjectile.DisplayName: Animate Deathray
+	RareShardProjectile.DisplayName: Rare Shard Projectile
+	LegendaryShardProjectile.DisplayName: Legendary Shard Projectile
+	EpicShardProjectile.DisplayName: Epic Shard Projectile
 }
 
 TrackNames: {
@@ -2180,6 +2194,11 @@ TrackNames: {
 		Name: Legendary Animate
 		Author: Vincent Jenei
 	}
+
+	VitalCanopy: {
+		Name: Vital Canopy
+		Author: Vincent Jenei
+	}
 }
 
 # BossChecklist integration — spawn / despawn strings shown on each Animate
@@ -2187,27 +2206,34 @@ TrackNames: {
 # icon inline; "{0}" in despawn messages is replaced with the NPC's full name.
 BossChecklist: {
 	CommonAnimate: {
-		SpawnInfo: Use a [i:ElementalHearts/CommonMenacingHeart] anywhere. Always craftable from a [i:LifeCrystal] at a [i:DemonAltar].
+		SpawnInfo: Use a [i:ElementalHearts/CommonMenacingHeart] anywhere. Always craftable from a [i:LifeCrystal] at a Demon Altar.
 		DespawnMessage: "{0} retreats into the dark, biding its time."
 	}
 
 	UncommonAnimate: {
-		SpawnInfo: Use an [i:ElementalHearts/UncommonMenacingHeart] anywhere. Crafted from a [i:LifeCrystal] at a [i:DemonAltar] only after Common Animate has been defeated.
+		SpawnInfo: Use an [i:ElementalHearts/UncommonMenacingHeart] anywhere. Crafted from a [i:LifeCrystal] at a Demon Altar only after Common Animate has been defeated.
 		DespawnMessage: "{0} fades from this world, its menace unanswered."
 	}
 
 	RareAnimate: {
-		SpawnInfo: Use a [i:ElementalHearts/RareMenacingHeart] anywhere. Crafted from a [i:LifeCrystal] at a [i:DemonAltar] only after Uncommon Animate has been defeated.
+		SpawnInfo: Use a [i:ElementalHearts/RareMenacingHeart] anywhere. Crafted from a [i:LifeCrystal] at a Demon Altar only after Uncommon Animate has been defeated.
 		DespawnMessage: "{0} fades from this world, its menace unanswered."
 	}
 
 	EpicAnimate: {
-		SpawnInfo: Use an [i:ElementalHearts/EpicMenacingHeart] anywhere. Crafted from a [i:LifeCrystal] at a [i:DemonAltar] only after Rare Animate has been defeated.
+		SpawnInfo: Use an [i:ElementalHearts/EpicMenacingHeart] anywhere. Crafted from a [i:LifeCrystal] at a Demon Altar only after Rare Animate has been defeated.
 		DespawnMessage: "{0} fades from this world, its menace unanswered."
 	}
 
 	LegendaryAnimate: {
-		SpawnInfo: Use a [i:ElementalHearts/LegendaryMenacingHeart] anywhere. Crafted from a [i:LifeCrystal] at a [i:DemonAltar] only after Epic Animate has been defeated.
+		SpawnInfo: Use a [i:ElementalHearts/LegendaryMenacingHeart] anywhere. Crafted from a [i:LifeCrystal] at a Demon Altar only after Epic Animate has been defeated.
 		DespawnMessage: "{0} fades from this world, its menace unanswered."
+	}
+}
+
+Biomes: {
+	VitalCanopyBiome: {
+		TownNPCDialogueName: the Vital Canopy Biome
+		DisplayName: Vital Canopy Biome
 	}
 }

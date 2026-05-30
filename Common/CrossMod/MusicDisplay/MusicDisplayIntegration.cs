@@ -31,6 +31,7 @@ internal static class MusicDisplayIntegration
 			AddTrack(elementalHearts, musicDisplay, "Music/RareAnimateTheme", "RareAnimate");
 			AddTrack(elementalHearts, musicDisplay, "Music/EpicAnimateTheme", "EpicAnimate");
 			AddTrack(elementalHearts, musicDisplay, "Music/LegendaryAnimateTheme", "LegendaryAnimate");
+			AddTrack(elementalHearts, musicDisplay, "Music/VitalCanopyTheme", "VitalCanopy");
 		}
 		catch (Exception e)
 		{
@@ -40,6 +41,9 @@ internal static class MusicDisplayIntegration
 
 	private static void AddTrack(Mod elementalHearts, Mod musicDisplay, string musicPath, string trackKey)
 	{
+		if (!MusicLoader.MusicExists(elementalHearts, musicPath))
+			return;
+
 		short slot = (short)MusicLoader.GetMusicSlot(elementalHearts, musicPath);
 		if (slot <= 0)
 			return;
