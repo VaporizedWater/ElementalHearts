@@ -3,7 +3,11 @@ using Terraria.Audio;
 using Terraria.ModLoader;
 
 using ElementalHearts.Content.Items.Hearts;
-namespace ElementalHearts.Content.Items.Vanilla.Exotic;
+
+// Category folder (like Potions/): a themed family that spans tiers Common→Legendary, so it
+// lives under a theme name rather than any single tier folder. Each class still declares its own
+// Tier; the consumed-heart identity is the class name, unaffected by this namespace.
+namespace ElementalHearts.Content.Items.Vanilla.Pacified;
 
 public sealed class CommonPacifiedHeart : BossHeartItem
 {

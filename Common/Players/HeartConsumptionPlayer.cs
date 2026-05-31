@@ -51,7 +51,28 @@ public sealed class HeartConsumptionPlayer : ModPlayer
 			HighestTier = tier;
 	}
 
-	private static string WorldPrefix => $"{Main.ActiveWorldFileData.UniqueId:N}|";
+	// WorldKey is hit on hot paths — every tooltip frame for a hovered heart (CanUseItem,
+	// ModifyTooltips) and once per stored grant in RecomputeBonus. Formatting the 32-char
+	// world GUID each time allocated a fresh string per call; memoize it and only reformat
+	// when the active world actually changes.
+	private static System.Guid _cachedWorldGuid;
+	private static string? _cachedWorldPrefix;
+
+	private static string WorldPrefix
+	{
+		get
+		{
+			System.Guid current = Main.ActiveWorldFileData.UniqueId;
+			if (_cachedWorldPrefix == null || current != _cachedWorldGuid)
+			{
+				_cachedWorldGuid = current;
+				_cachedWorldPrefix = $"{current:N}|";
+			}
+
+			return _cachedWorldPrefix;
+		}
+	}
+
 	private static string WorldKey(string heartId) => WorldPrefix + heartId;
 
 	public bool IsConsumedLocally(string heartId) => WorldHpApplied.Contains(WorldKey(heartId));

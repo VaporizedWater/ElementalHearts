@@ -52,6 +52,7 @@ public class ChecklistUIState : UIState
 	private UIPanel _statsPanel;
 	private UIText _elementalHpText;
 	private UIText _worldTierText;
+	private UIText _abilitiesActiveText;
 	private UIText _heartsActivatedText;
 	private UITextPanel<string> _claimBtn;
 	private BankBar _bankBar;
@@ -230,8 +231,13 @@ public class ChecklistUIState : UIState
 
 		_worldTierText = new UIText("", 0.9f);
 		_worldTierText.VAlign = 0.5f;
-		_worldTierText.HAlign = 0.5f;
+		_worldTierText.HAlign = 0.34f;
 		_statsPanel.Append(_worldTierText);
+
+		_abilitiesActiveText = new UIText("", 0.9f);
+		_abilitiesActiveText.VAlign = 0.5f;
+		_abilitiesActiveText.HAlign = 0.67f;
+		_statsPanel.Append(_abilitiesActiveText);
 
 		_heartsActivatedText = new UIText("", 0.9f);
 		_heartsActivatedText.VAlign = 0.5f;
@@ -792,6 +798,7 @@ public class ChecklistUIState : UIState
 						HoverablePanel gridSlot = new HoverablePanel();
 						gridSlot.HoverItem = (isUnlocked || isTierUnlocked || isBossHeart) ? heart.Item : null;
 						gridSlot.FallbackName = "???";
+						gridSlot.ShowGenerationRate = isUnlocked;
 						gridSlot.Width.Set(48, 0f);
 						gridSlot.Height.Set(48, 0f);
 						gridSlot.Left.Set(j * 56 + 10, 0f); // 56px spacing, 10px initial offset
@@ -894,6 +901,9 @@ public class ChecklistUIState : UIState
 		public Item HoverItem;
 		public string FallbackName;
 
+		/// <summary>When true, a hovered unlocked passive heart appends its "Generates N / day" idle yield line.</summary>
+		public bool ShowGenerationRate;
+
 		protected override void DrawSelf(Microsoft.Xna.Framework.Graphics.SpriteBatch spriteBatch)
 		{
 			base.DrawSelf(spriteBatch);
@@ -904,6 +914,7 @@ public class ChecklistUIState : UIState
 					Main.HoverItem = HoverItem.Clone();
 					Main.hoverItemName = HoverItem.Name;
 					ElementalHeartItem.HideConsumedTooltip = true;
+					ElementalHeartItem.ShowGenerationTooltip = ShowGenerationRate;
 				}
 				else if (FallbackName != null)
 				{
@@ -1017,22 +1028,28 @@ public class ChecklistUIState : UIState
 		
 		int activatedHearts = 0;
 		int totalHearts = 0;
+		int abilitiesActive = 0;
 		int elementalHP = player.ActiveHpBonus;
-		
+
 		var allHearts = ModContent.GetContent<ElementalHeartItem>().ToList();
 		foreach(var heart in allHearts) {
 			bool isUnlocked = shared ? HeartConsumptionWorld.IsUnlocked(heart.ConsumptionId) : player.IsUnlockedLocally(heart.ConsumptionId);
 			if (isUnlocked) activatedHearts++;
 
+			if (heart.IsActiveAbility && heart.IsAbilityEnabled) abilitiesActive++;
+
 			bool isPossible = IsHeartPossible(heart);
 			if (isPossible || isUnlocked) totalHearts++;
 		}
 		
-		var currentTier = player.HighestTier;
-		string tierStr = currentTier.HasValue ? currentTier.Value.ToString() : "None";
-		
+		// World tier is what Animate has unlocked, not the highest heart the player happens to have
+		// consumed — the latter is a HeartTier that can read "Exotic", which is a cross-mod heart
+		// rarity and never a world tier. See AnimateProgressionSystem.CurrentWorldTier.
+		string tierStr = AnimateProgressionSystem.CurrentWorldTier.ToString();
+
 		_elementalHpText.SetText($"Elemental HP: {elementalHP}");
 		_worldTierText.SetText($"World Tier: {tierStr}");
+		_abilitiesActiveText.SetText($"Abilities Active: {abilitiesActive}");
 		_heartsActivatedText.SetText($"Hearts Activated: {activatedHearts} / {totalHearts}");
 	}
 

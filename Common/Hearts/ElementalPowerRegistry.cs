@@ -137,6 +137,7 @@ internal static class ElementalPowerRegistry
 		["JackOLanternHeart"] = "all hallows",
 		["KingSlimeHeart"] = "monarch",
 		["LunaticCultistHeart"] = "sun",
+		["MagnificationHeart"] = "enhance",   // the CSI "zoom... enhance" — it literally magnifies
 		["MartianSaucerHeart"] = "alien",
 		["MoonLordHeart"] = "moon",
 		["MourningWoodHeart"] = "ember",
@@ -150,6 +151,15 @@ internal static class ElementalPowerRegistry
 
 		// ── Mythic ──────────────────────────────────────────────────────────────────
 		["ZenithHeart"] = "zenith",
+
+		// ── Pacified Hearts (the Animate bosses, talked down from a rampage) ───────────
+		// An anger-management arc that levels up with the tier: from first therapy session
+		// to full lotus-position enlightenment.
+		["CommonPacifiedHeart"]    = "deep breaths",
+		["UncommonPacifiedHeart"]  = "anger management",
+		["RarePacifiedHeart"]      = "inner peace",
+		["EpicPacifiedHeart"]      = "zen mode",
+		["LegendaryPacifiedHeart"] = "enlightenment",
 
 		// ── Cross-mod: Calamity ─────────────────────────────────────────────────────
 		["AbyssGravelHeart"] = "abyss",
@@ -286,4 +296,10 @@ internal static class ElementalPowerRegistry
 
 	public static string Get(string heartName) =>
 		Powers.TryGetValue(heartName, out string power) ? power : heartName.ToLowerInvariant();
+
+	/// <summary>
+	/// Whether <paramref name="heartName"/> has a curated power word (as opposed to falling
+	/// back to its lower-cased class name). Used by <see cref="HeartContentValidator"/>.
+	/// </summary>
+	internal static bool HasExplicit(string heartName) => Powers.ContainsKey(heartName);
 }

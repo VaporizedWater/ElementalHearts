@@ -3,9 +3,7 @@ using ElementalHearts.Content.Items.CrossModHearts.Calamity;
 using ElementalHearts.Content.Items.CrossModHearts.Consolaria;
 using ElementalHearts.Content.Items.CrossModHearts.Thorium;
 using ElementalHearts.Content.Items.Vanilla.Exotic;
-using ElementalHearts.Content.Items.Vanilla.Exotic;
-using ElementalHearts.Content.Items.Vanilla.Exotic;
-using ElementalHearts.Content.Items.Vanilla.Exotic;
+using ElementalHearts.Content.Items.Vanilla.Pacified;
 using Terraria.ID;
 using Terraria.ModLoader;
 

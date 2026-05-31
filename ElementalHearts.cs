@@ -35,6 +35,13 @@ public sealed class ElementalHearts : Mod
 		MunchiesIntegration.Register(this);
 		MusicDisplayIntegration.Register(this);
 		BossChecklistIntegration.Register(this);
+
+#if DEBUG
+		// Runs last, after every registry is built: warns about any heart shipping on a silent
+		// registry fallback (effect colour / power word) or breaking the "active hearts grant no
+		// HP" rule. Compiled out of release builds. See HeartContentValidator.
+		HeartContentValidator.Validate(this);
+#endif
 	}
 
 	public override void HandlePacket(BinaryReader reader, int whoAmI)

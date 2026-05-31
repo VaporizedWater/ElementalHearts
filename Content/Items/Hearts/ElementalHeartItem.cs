@@ -4,6 +4,7 @@ using ElementalHearts.Common.Configs;
 using ElementalHearts.Common.Hearts;
 using ElementalHearts.Common.Players;
 using ElementalHearts.Common.Systems;
+using ElementalHearts.Content.Items.LifeShards;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Terraria;
@@ -244,7 +245,7 @@ public abstract class ElementalHeartItem : ModItem
 
 		// A faint, fast, rarity-coloured wash over the screen — barely there on a Common heart,
 		// a touch more present on a Mythic one. ScreenFlashSystem eases it smoothly in and out.
-		ScreenFlashSystem.Flash(GetRarityColor(), (0.05f + (GetRarityScale() * 0.1f)) * strength, 4f, 14f, boomSlot, 0.45f);
+		ScreenFlashSystem.Flash(GetRarityColor(), (0.05f + (Tier.GetRarityScale() * 0.1f)) * strength, 4f, 14f, boomSlot, 0.45f);
 
 		// Tell the player exactly what they just earned. The number is the whole point of
 		// the heart, so float it up in the tier colour — dramatic (larger) for the top tiers.
@@ -372,30 +373,18 @@ public abstract class ElementalHeartItem : ModItem
 	// following flows from Tier, so every heart — vanilla or cross-mod — gets it for free.
 
 	/// <summary>
-	/// 0 (Common) … 1 (Mythic) ramp that drives how big and bold the idle glow is (size, alpha,
-	/// copy count and pulse speed), so rarity reads at a glance — barely-there on a Common heart,
-	/// unmistakable on a Mythic one. Mostly a smooth ladder, except Exotic is deliberately placed
-	/// between Rare and Epic rather than near the top so its (many) boss hearts stay calm.
+	/// Tier colour plus a smoothed 0..1 breathing value shared by the world and inventory glows.
+	/// The raw sine is run through a smoothstep (<c>t²(3−2t)</c>) so the glow eases in and out at
+	/// the bright and dim ends and drifts gently through the middle — it breathes, never throbs.
+	/// Consumers map this into their own narrow bands so the halo never blinks toward invisible.
 	/// </summary>
-	private float GetRarityScale() => Tier switch
-	{
-		HeartTier.Common    => 0f,
-		HeartTier.Uncommon  => 1f / 6f,
-		HeartTier.Rare      => 2f / 6f,
-		HeartTier.Exotic    => 0.42f, // intentionally between Rare and Epic
-		HeartTier.Epic      => 3f / 6f,
-		HeartTier.Legendary => 4f / 6f,
-		HeartTier.Mythic    => 1f,
-		_ => 0f,
-	};
-
-	/// <summary>Tier colour plus a 0..1 breathing value shared by the world and inventory glows.</summary>
 	private Color GetGlowPulse(out float pulse)
 	{
 		// Higher tiers breathe a touch faster so they feel more "alive", but only gently:
-		// 0.8 (Common) → 1.2 (Mythic), smoothly aligned across the tiers in between.
-		float speed = 0.8f + (GetRarityScale() * 0.4f);
-		pulse = 0.55f + (0.45f * (float)Math.Sin(Main.GlobalTimeWrappedHourly * speed));
+		// 0.55 (Common) → 0.85 (Mythic), smoothly aligned across the tiers in between.
+		float speed = 0.55f + (Tier.GetRarityScale() * 0.3f);
+		float wave = 0.5f + (0.5f * (float)Math.Sin(Main.GlobalTimeWrappedHourly * speed)); // 0..1
+		pulse = wave * wave * (3f - (2f * wave)); // smoothstep ease — soft turnarounds, no flicker
 		return Tier.GetEffectColor();
 	}
 
@@ -423,7 +412,7 @@ public abstract class ElementalHeartItem : ModItem
 		Rectangle? sourceRect, Vector2 origin, float rotation, float scale, float baseAlpha, float baseRadius,
 		float sizeDampen = 1f)
 	{
-		float rarityScale = GetRarityScale();          // 0 (Common) … 1 (Mythic)
+		float rarityScale = Tier.GetRarityScale();     // 0 (Common) … 1 (Mythic)
 		float sizeMult = 0.7f + (rarityScale * 0.7f);  // ~0.7× up to ~1.4×
 		float alphaMult = 0.7f + (rarityScale * 0.6f); // ~0.7× up to ~1.3×
 		int copies = 12 + (int)((rarityScale * 12f) + 0.5f); // 12 → 24 copies
@@ -439,12 +428,18 @@ public abstract class ElementalHeartItem : ModItem
 		// Rarity colour blended in firmly enough to read as the tier, while keeping the heart's
 		// own material tint underneath.
 		Color glow = AdditiveBlend(GetGlowPulse(out float pulse), GetRarityColor(), 0.5f);
-		float radius = (baseRadius + (pulse * 1.5f)) * sizeMult * sizeDampen;
-		glow *= baseAlpha * alphaMult * pulse;
 
+		// Brightness does the breathing, within a narrow band so the halo never blinks toward
+		// invisible; the size barely moves (≈0.5px) so the bloom feels alive but not pumping.
+		float alphaPulse = 0.78f + (0.22f * pulse);
+		float radius = (baseRadius + (pulse * 0.5f)) * sizeMult * sizeDampen;
+		glow *= baseAlpha * alphaMult * alphaPulse;
+
+		// A slow drift instead of a full spin — keeps the ring of copies from strobing.
+		float spin = Main.GlobalTimeWrappedHourly * 0.25f;
 		for (int i = 0; i < copies; i++)
 		{
-			Vector2 offset = ((MathHelper.TwoPi * i / copies) + Main.GlobalTimeWrappedHourly).ToRotationVector2() * radius;
+			Vector2 offset = ((MathHelper.TwoPi * i / copies) + spin).ToRotationVector2() * radius;
 			spriteBatch.Draw(texture, drawCenter + offset, sourceRect, glow, rotation, origin, scale, SpriteEffects.None, 0f);
 		}
 	}
@@ -457,8 +452,9 @@ public abstract class ElementalHeartItem : ModItem
 		int tierLevel = (int)Tier;
 		Color tierColor = GetGlowPulse(out float pulse);
 
-		// Real coloured light so the heart actually lights the ground around it.
-		Lighting.AddLight(Item.Center, tierColor.ToVector3() * pulse * (0.35f + (tierLevel * 0.12f)));
+		// Real coloured light so the heart actually lights the ground around it. Keep a floor so
+		// the cast light breathes gently rather than fading out at the trough.
+		Lighting.AddLight(Item.Center, tierColor.ToVector3() * (0.6f + (0.4f * pulse)) * (0.35f + (tierLevel * 0.12f)));
 
 		// Occasional rising mote — denser for the showier high tiers.
 		if (Main.rand.NextBool(tierLevel >= 4 ? 9 : 20))
@@ -482,19 +478,10 @@ public abstract class ElementalHeartItem : ModItem
 			? new Vector2(frame.Value.Width, frame.Value.Height) / 2f
 			: texture.Size() / 2f;
 
-		// Rein in the on-ground bloom for the showy top tiers so the pulsing doesn't balloon —
-		// the higher the tier, the more its maximum world size is pulled back. Inventory glow,
-		// where slots are small and fixed, is left at full size.
-		float worldSizeDampen = Tier switch
-		{
-			HeartTier.Legendary => 0.86f,
-			HeartTier.Exotic    => 0.92f,
-			HeartTier.Mythic    => 0.71f,
-			_ => 1f,
-		};
-
+		// Rein in the on-ground bloom for the showy top tiers so the pulsing doesn't balloon.
+		// Inventory glow, where slots are small and fixed, is left at full size (see below).
 		DrawTierGlow(spriteBatch, texture, Item.Center - Main.screenPosition, frame, origin,
-			rotation, scale, baseAlpha: 0.16f, baseRadius: 3f, sizeDampen: worldSizeDampen);
+			rotation, scale, baseAlpha: 0.16f, baseRadius: 3f, sizeDampen: Tier.GetWorldGlowDampen());
 		return true; // still draw the heart itself on top
 	}
 
@@ -506,6 +493,13 @@ public abstract class ElementalHeartItem : ModItem
 	}
 
 	public static bool HideConsumedTooltip;
+
+	/// <summary>
+	/// Set for a single tooltip pass by the Passive Collection grid so a hovered, unlocked
+	/// heart spells out its idle payoff ("Generates N [shard] / day"). Reset after every pass
+	/// so the line never leaks onto ordinary inventory tooltips.
+	/// </summary>
+	public static bool ShowGenerationTooltip;
 
 	public override void ModifyTooltips(List<TooltipLine> tooltips)
 	{
@@ -544,6 +538,20 @@ public abstract class ElementalHeartItem : ModItem
 			}
 		}
 
+		// Passive Collection screen: a hovered, unlocked passive heart advertises its daily
+		// idle yield with the shard icon inline so the payoff reads at a glance.
+		if (ShowGenerationTooltip && ElementalHeartsIdleConfig.Instance.EnableIdleGame
+			&& !IsActiveAbility && this is not PotionHeartItem)
+		{
+			int rate = IdleShardPlayer.GetShardYield(Tier);
+			tooltips.Add(new TooltipLine(Mod, "ElementalHeartGeneration",
+				$"Generates {rate} [i:{ModContent.ItemType<CommonLifeShard>()}] / day")
+			{
+				OverrideColor = new Color(150, 255, 150),
+			});
+		}
+
 		HideConsumedTooltip = false;
+		ShowGenerationTooltip = false;
 	}
 }

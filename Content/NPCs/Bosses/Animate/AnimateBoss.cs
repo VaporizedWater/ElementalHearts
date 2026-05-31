@@ -63,13 +63,9 @@ public abstract class AnimateBoss : ModNPC
 
 	public override void AI()
 	{
-		// Basic placeholder flying AI
-		NPC.TargetClosest(true);
-		if (NPC.target < 0 || NPC.target >= Main.maxPlayers || Main.player[NPC.target].dead || !Main.player[NPC.target].active)
-		{
-			NPC.TargetClosest(false);
-		}
-
+		// Basic placeholder flying AI: pick the closest player each frame and ease toward a
+		// point just above them.
+		NPC.TargetClosest();
 		Player player = Main.player[NPC.target];
 		if (player.dead)
 		{
@@ -78,18 +74,13 @@ public abstract class AnimateBoss : ModNPC
 			return;
 		}
 
-		// Simple floating towards player
-		Microsoft.Xna.Framework.Vector2 targetPosition = player.Center - new Microsoft.Xna.Framework.Vector2(0, 100);
-		Microsoft.Xna.Framework.Vector2 direction = targetPosition - NPC.Center;
-		float speed = 2f + ProgressionTier * 0.5f;
-		
-		if (direction.Length() > 50f)
+		Vector2 toTarget = (player.Center - new Vector2(0f, 100f)) - NPC.Center;
+		if (toTarget.Length() > 50f)
 		{
-			direction.Normalize();
-			direction *= speed;
-			NPC.velocity = (NPC.velocity * 40f + direction) / 41f;
+			Vector2 desired = Vector2.Normalize(toTarget) * (2f + (ProgressionTier * 0.5f));
+			NPC.velocity = ((NPC.velocity * 40f) + desired) / 41f;
 		}
-		
+
 		NPC.rotation = NPC.velocity.X * 0.05f;
 	}
 

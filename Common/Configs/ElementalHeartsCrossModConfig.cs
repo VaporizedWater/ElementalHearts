@@ -41,32 +41,51 @@ public sealed class ElementalHeartsCrossModConfig : ModConfig
 		["Consolaria"]  = nameof(EnableConsolariaHearts),
 	};
 
+	// The load gate fires once per cross-mod heart (~100 calls), but the config file is the
+	// same for all of them within a single mod load. Parse it exactly once and reuse the
+	// result; a config change is [ReloadRequired], which rebuilds the assembly and resets
+	// these statics, so no manual invalidation is needed.
+	private static bool _configParsed;
+	private static JObject? _configJson;
+
+	private static JObject? LoadConfigOnce()
+	{
+		if (_configParsed)
+			return _configJson;
+
+		_configParsed = true;
+		try
+		{
+			string path = Path.Combine(Main.SavePath, "ModConfigs",
+				$"{nameof(ElementalHearts)}_{nameof(ElementalHeartsCrossModConfig)}.json");
+
+			if (File.Exists(path))
+				_configJson = JObject.Parse(File.ReadAllText(path));
+		}
+		catch
+		{
+			_configJson = null;
+		}
+
+		return _configJson;
+	}
+
 	/// <summary>
 	/// True if hearts from <paramref name="sourceMod"/> should be loaded. Reads the
-	/// config file directly from disk because the heart load gate fires before the
-	/// config system is ready. Defaults to true on any error or missing entry so a
-	/// fresh install loads everything.
+	/// config file directly from disk (once, cached) because the heart load gate fires
+	/// before the config system is ready. Defaults to true on any error or missing entry
+	/// so a fresh install loads everything.
 	/// </summary>
 	public static bool ShouldLoadHeartsFor(string sourceMod)
 	{
 		if (!FieldBySourceMod.TryGetValue(sourceMod, out string fieldName))
 			return true;
 
-		try
-		{
-			string path = Path.Combine(Main.SavePath, "ModConfigs",
-				$"{nameof(ElementalHearts)}_{nameof(ElementalHeartsCrossModConfig)}.json");
-
-			if (!File.Exists(path))
-				return true;
-
-			JObject json = JObject.Parse(File.ReadAllText(path));
-			JToken token = json[fieldName];
-			return token == null || token.ToObject<bool>();
-		}
-		catch
-		{
+		JObject? json = LoadConfigOnce();
+		if (json == null)
 			return true;
-		}
+
+		JToken token = json[fieldName];
+		return token == null || token.ToObject<bool>();
 	}
 }
