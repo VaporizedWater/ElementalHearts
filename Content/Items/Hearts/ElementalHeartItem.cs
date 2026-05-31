@@ -428,6 +428,14 @@ public abstract class ElementalHeartItem : ModItem
 		float alphaMult = 0.7f + (rarityScale * 0.6f); // ~0.7× up to ~1.3×
 		int copies = 12 + (int)((rarityScale * 12f) + 0.5f); // 12 → 24 copies
 
+		if (Tier == HeartTier.Exotic)
+		{
+			// Smoother, softer, and more diffused glow for Exotic hearts
+			copies = 36;
+			alphaMult *= 0.6f;
+			sizeMult *= 1.15f;
+		}
+
 		// Rarity colour blended in firmly enough to read as the tier, while keeping the heart's
 		// own material tint underneath.
 		Color glow = AdditiveBlend(GetGlowPulse(out float pulse), GetRarityColor(), 0.5f);
@@ -497,6 +505,8 @@ public abstract class ElementalHeartItem : ModItem
 		return true; // still draw the icon on top
 	}
 
+	public static bool HideConsumedTooltip;
+
 	public override void ModifyTooltips(List<TooltipLine> tooltips)
 	{
 		// Hearts that opt out of HP entirely (buff-granting potion hearts while the
@@ -512,7 +522,7 @@ public abstract class ElementalHeartItem : ModItem
 			? HeartConsumptionWorld.IsConsumed(ConsumptionId)
 			: Main.LocalPlayer?.GetModPlayer<HeartConsumptionPlayer>().IsConsumedLocally(ConsumptionId) ?? false;
 
-		if (isConsumed)
+		if (isConsumed && !HideConsumedTooltip)
 		{
 			tooltips.Add(new TooltipLine(Mod, "ElementalHeartConsumed",
 				Language.GetTextValue("Mods.ElementalHearts.Common.ElementalPowerActivated", ElementalPowerMaterial))
@@ -520,5 +530,20 @@ public abstract class ElementalHeartItem : ModItem
 				OverrideColor = Color.Gray,
 			});
 		}
+
+		if (HideConsumedTooltip)
+		{
+			string tooltipKey = $"Mods.ElementalHearts.Items.{Name}.Tooltip";
+			if (Language.Exists(tooltipKey))
+			{
+				string baseTooltip = Language.GetTextValue(tooltipKey);
+				if (!string.IsNullOrEmpty(baseTooltip))
+				{
+					tooltips.Add(new TooltipLine(Mod, "BaseTooltip", baseTooltip));
+				}
+			}
+		}
+
+		HideConsumedTooltip = false;
 	}
 }

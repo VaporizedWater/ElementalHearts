@@ -32,7 +32,7 @@ public sealed class TreeLootGlobalTile : GlobalTile
 		// Acorn Heart: increases tree loot by 25% (represented here as a 25% chance to drop extra Acorns per tile)
 		// We drop Acorns rather than guessing the wood type because it's a safe generic tree drop.
 		// Also adds a chance to drop fruit.
-		if (heartPlayer.IsConsumedLocally("AcornHeart"))
+		if (heartPlayer.IsConsumedLocally("AcornHeart") && player.GetModPlayer<AcornHeartPlayer>().Enabled)
 		{
 			if (Main.rand.NextBool(4))
 			{
@@ -49,7 +49,7 @@ public sealed class TreeLootGlobalTile : GlobalTile
 		}
 
 		// Gemcorn Heart: allows harvesting gems from vanilla trees
-		if (heartPlayer.IsConsumedLocally("GemcornHeart"))
+		if (heartPlayer.IsConsumedLocally("GemcornHeart") && player.GetModPlayer<GemcornHeartPlayer>().Enabled)
 		{
 			// Moderate chance so that chopping a whole tree yields roughly 1-2 gems.
 			// A tree has about 10-20 blocks, so 1 in 15 is reasonable.

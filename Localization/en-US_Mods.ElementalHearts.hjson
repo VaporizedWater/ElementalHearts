@@ -922,7 +922,7 @@ Items: {
 	}
 
 	DiscordHeart: {
-		Tooltip: ""
+		Tooltip: Grants a hotkey to teleport to the cursor position at the cost of life
 		DisplayName: Discord Heart
 	}
 
@@ -1052,7 +1052,7 @@ Items: {
 	}
 
 	KingSlimeHeart: {
-		Tooltip: ""
+		Tooltip: Permanently bounce on enemies.
 		DisplayName: King Slime Heart
 	}
 
@@ -1067,7 +1067,7 @@ Items: {
 	}
 
 	EyeOfCthulhuHeart: {
-		Tooltip: Permanently enslave a servant of Cthulu
+		Tooltip: Summons a Servant of Cthulhu minion that scales with game progression
 		DisplayName: Eye Of Cthulhu Heart
 	}
 
@@ -2358,6 +2358,7 @@ Projectiles: {
 	EpicShardProjectile.DisplayName: Epic Shard Projectile
 	FallingHeartProjectile.DisplayName: Falling Heart Projectile
 	JackOLanternProjectile.DisplayName: Mini Jack-O'-Lantern
+	KingSlimeComboTextProjectile.DisplayName: King Slime Combo Text Projectile
 }
 
 TrackNames: {

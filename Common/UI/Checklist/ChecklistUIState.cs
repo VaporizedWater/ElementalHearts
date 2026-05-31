@@ -54,6 +54,7 @@ public class ChecklistUIState : UIState
 	private UIText _worldTierText;
 	private UIText _heartsActivatedText;
 	private UITextPanel<string> _claimBtn;
+	private BankBar _bankBar;
 
 	public override void OnInitialize()
 	{
@@ -306,17 +307,25 @@ public class ChecklistUIState : UIState
 		rightSection.SetPadding(0);
 		_idlePanel.Append(rightSection);
 
-		_bankText = new UIText("Bank: 0", 1.1f);
-		_bankText.Top.Set(10, 0f);
-		_bankText.Left.Set(20, 0f);
+		_bankText = new UIText("Bank", 0.85f);
+		_bankText.Top.Set(2, 0f);
+		_bankText.Left.Set(16, 0f);
 		_bankText.TextColor = new Color(255, 215, 0);
 		rightSection.Append(_bankText);
 
+		// A filled gauge reads pending/capacity at a glance: it eases blue→cyan as it fills and
+		// pulses gold the instant the bank is capped, so "go claim" carries across the screen.
+		_bankBar = new BankBar();
+		_bankBar.Left.Set(16, 0f);
+		_bankBar.Top.Set(24, 0f);
+		_bankBar.Width.Set(-150, 1f);
+		_bankBar.Height.Set(26, 0f);
+		rightSection.Append(_bankBar);
+
+		// Still created so the live-number path in UpdateIdleText stays valid, but the bar now
+		// shows the cap, so the standalone "Limit" line is intentionally left out of the layout.
 		_limitText = new UIText("Limit: 0", 0.9f);
-		_limitText.Top.Set(35, 0f);
-		_limitText.Left.Set(20, 0f);
 		_limitText.TextColor = new Color(180, 180, 180);
-		rightSection.Append(_limitText);
 
 		_claimBtn = new UITextPanel<string>("Claim", 0.9f);
 		_claimBtn.Width.Set(100, 0f);
@@ -623,7 +632,9 @@ public class ChecklistUIState : UIState
 						bool isTierUnlocked = unlockedTiers.Contains(heart.Tier);
 						bool isBossHeart = heart is BossHeartItem;
 
-						UIPanel heartRow = new UIPanel();
+						HoverablePanel heartRow = new HoverablePanel();
+						heartRow.HoverItem = (isUnlocked || isTierUnlocked || isBossHeart) ? heart.Item : null;
+						heartRow.FallbackName = "???";
 						heartRow.Width.Set(-10, 0.33f); // 33% width minus gap
 						heartRow.Height.Set(50, 0f);
 						heartRow.HAlign = j == 0 ? 0f : (j == 1 ? 0.5f : 1f);
@@ -646,7 +657,7 @@ public class ChecklistUIState : UIState
 									{
 										var idlePlayer = Main.LocalPlayer.GetModPlayer<IdleShardPlayer>();
 										idlePlayer.GetShardRates(out int gen, out int cons, out _);
-										int cost = IdleShardPlayer.GetShardYield(heart.Tier);
+										int cost = heart.ActiveAbilityDailyCost ?? IdleShardPlayer.GetShardYield(heart.Tier);
 										if (gen < cons + cost)
 										{
 											Terraria.Audio.SoundEngine.PlaySound(Terraria.ID.SoundID.MenuTick);
@@ -687,7 +698,7 @@ public class ChecklistUIState : UIState
 									{
 										var idlePlayer = Main.LocalPlayer.GetModPlayer<IdleShardPlayer>();
 										idlePlayer.GetShardRates(out int gen, out int cons, out _);
-										int cost = IdleShardPlayer.GetShardYield(heart.Tier);
+										int cost = heart.ActiveAbilityDailyCost ?? IdleShardPlayer.GetShardYield(heart.Tier);
 										if (gen < cons + cost)
 										{
 											Terraria.Audio.SoundEngine.PlaySound(Terraria.ID.SoundID.MenuTick);
@@ -739,6 +750,11 @@ public class ChecklistUIState : UIState
 						heartRow.Append(icon);
 
 						string displayName = isUnlocked || isTierUnlocked || isBossHeart ? heart.Item.Name : "???";
+						if (_tabMode == TabMode.Active && displayName.EndsWith(" Heart"))
+						{
+							displayName = displayName.Substring(0, displayName.Length - 6);
+						}
+						
 						UIText nameText = new UIText(displayName, isUnlocked ? 1f : 0.9f);
 						nameText.VAlign = 0.5f;
 						nameText.Left.Set(50, 0f);
@@ -749,13 +765,16 @@ public class ChecklistUIState : UIState
 						{
 							int rate = heart.ActiveAbilityDailyCost ?? IdleShardPlayer.GetShardYield(heart.Tier);
 							bool isAbility = heart is PotionHeartItem || heart.IsActiveAbility;
-							string prefix = isAbility ? "Cost: " : "";
-							UIText rateText = new UIText($"{prefix}{rate}[i:{ModContent.ItemType<CommonLifeShard>()}]/day", 0.9f);
+							string prefix = isAbility ? "-" : "+";
+							UIText rateText = new UIText($"{prefix}{rate} [i:{ModContent.ItemType<CommonLifeShard>()}] / day", 0.85f);
+							rateText.TextColor = isAbility ? new Color(255, 150, 150) : new Color(150, 255, 150);
 							rateText.VAlign = 0.5f;
 							rateText.HAlign = 1f;
-							rateText.Left.Set(-110, 0f); // Rigidly aligned for all
+							rateText.Left.Set(-100, 0f); // Rigidly aligned for all
 							heartRow.Append(rateText);
 						}
+
+						// Replaced by HoverablePanel logic
 
 						rowContainer.Append(heartRow);
 					}
@@ -770,7 +789,9 @@ public class ChecklistUIState : UIState
 						bool isTierUnlocked = unlockedTiers.Contains(heart.Tier);
 						bool isBossHeart = heart is BossHeartItem;
 
-						UIPanel gridSlot = new UIPanel();
+						HoverablePanel gridSlot = new HoverablePanel();
+						gridSlot.HoverItem = (isUnlocked || isTierUnlocked || isBossHeart) ? heart.Item : null;
+						gridSlot.FallbackName = "???";
 						gridSlot.Width.Set(48, 0f);
 						gridSlot.Height.Set(48, 0f);
 						gridSlot.Left.Set(j * 56 + 10, 0f); // 56px spacing, 10px initial offset
@@ -803,16 +824,7 @@ public class ChecklistUIState : UIState
 						icon.VAlign = 0.5f;
 						gridSlot.Append(icon);
 
-						gridSlot.OnUpdate += (element) => {
-							if (element.IsMouseHovering) {
-								if (isUnlocked || isTierUnlocked || isBossHeart) {
-									Main.HoverItem = heart.Item.Clone();
-									Main.hoverItemName = heart.Item.Name;
-								} else {
-									Main.hoverItemName = "???";
-								}
-							}
-						};
+						// Replaced by HoverablePanel logic
 
 						rowContainer.Append(gridSlot);
 					}
@@ -874,6 +886,93 @@ public class ChecklistUIState : UIState
 			Vector2 pos = dimensions.Position() + new Vector2(16, 16);
 			Color color = IsConsumed ? Color.White : Color.Black;
 			spriteBatch.Draw(texture, pos, frame, color, 0f, frame.Size() / 2f, scale, Microsoft.Xna.Framework.Graphics.SpriteEffects.None, 0f);
+		}
+	}
+
+	private class HoverablePanel : UIPanel
+	{
+		public Item HoverItem;
+		public string FallbackName;
+
+		protected override void DrawSelf(Microsoft.Xna.Framework.Graphics.SpriteBatch spriteBatch)
+		{
+			base.DrawSelf(spriteBatch);
+			if (IsMouseHovering)
+			{
+				if (HoverItem != null)
+				{
+					Main.HoverItem = HoverItem.Clone();
+					Main.hoverItemName = HoverItem.Name;
+					ElementalHeartItem.HideConsumedTooltip = true;
+				}
+				else if (FallbackName != null)
+				{
+					Main.hoverItemName = FallbackName;
+				}
+			}
+		}
+	}
+
+	/// <summary>
+	/// The idle-bank fill gauge. Reads live pending/capacity every frame and draws a flat track
+	/// with a coloured fill — blue while filling, shifting to a pulsing gold the instant the bank
+	/// is capped — with the running "have / cap" count centred on top. Hovering spells it out.
+	/// </summary>
+	private class BankBar : UIElement
+	{
+		protected override void DrawSelf(Microsoft.Xna.Framework.Graphics.SpriteBatch spriteBatch)
+		{
+			if (Main.LocalPlayer == null || !Main.LocalPlayer.active)
+				return;
+
+			var idle = Main.LocalPlayer.GetModPlayer<IdleShardPlayer>();
+			int pending = idle.GetPendingShards();
+			int capacity = idle.GetCapacity();
+			bool full = capacity > 0 && pending >= capacity;
+			float frac = capacity > 0 ? MathHelper.Clamp((float)pending / capacity, 0f, 1f) : 0f;
+
+			var pixel = Terraria.GameContent.TextureAssets.MagicPixel.Value;
+			Rectangle track = GetDimensions().ToRectangle();
+
+			// Recessed track.
+			spriteBatch.Draw(pixel, track, new Color(8, 11, 24) * 0.95f);
+
+			// Fill — width follows the fraction; colour eases blue→cyan as it climbs, then pulses
+			// gold once capped so a full bank is unmistakable from a distance.
+			int fillWidth = (int)(track.Width * frac);
+			if (fillWidth > 0)
+			{
+				Color fill = Color.Lerp(new Color(58, 104, 198), new Color(120, 196, 255), frac);
+				if (full)
+				{
+					float pulse = (float)(System.Math.Sin(Main.GlobalTimeWrappedHourly * 4f) + 1f) / 2f;
+					fill = Color.Lerp(new Color(218, 165, 32), new Color(255, 224, 96), pulse);
+				}
+				spriteBatch.Draw(pixel, new Rectangle(track.X, track.Y, fillWidth, track.Height), fill);
+
+				// A brighter leading edge gives the fill a sliver of depth.
+				spriteBatch.Draw(pixel, new Rectangle(track.X + fillWidth - 2, track.Y, 2, track.Height), Color.White * 0.5f);
+			}
+
+			// 2px border, white when capped to echo the Claim button's "ready" state.
+			Color border = full ? Color.White : new Color(89, 116, 213);
+			spriteBatch.Draw(pixel, new Rectangle(track.X, track.Y, track.Width, 2), border);
+			spriteBatch.Draw(pixel, new Rectangle(track.X, track.Bottom - 2, track.Width, 2), border);
+			spriteBatch.Draw(pixel, new Rectangle(track.X, track.Y, 2, track.Height), border);
+			spriteBatch.Draw(pixel, new Rectangle(track.Right - 2, track.Y, 2, track.Height), border);
+
+			// Centred "have / cap" count, drawn with a soft border so it stays legible over any fill.
+			string label = $"{pending} / {capacity}";
+			float scale = 0.85f;
+			Vector2 size = Terraria.GameContent.FontAssets.MouseText.Value.MeasureString(label) * scale;
+			Vector2 pos = new Vector2(track.X + ((track.Width - size.X) / 2f), track.Y + ((track.Height - size.Y) / 2f));
+			Utils.DrawBorderString(spriteBatch, label, pos, Color.White, scale);
+
+			if (IsMouseHovering)
+			{
+				int percent = (int)(frac * 100f);
+				Main.instance.MouseText($"{pending} / {capacity} Life Shards banked ({percent}% full)");
+			}
 		}
 	}
 
@@ -952,12 +1051,18 @@ public class ChecklistUIState : UIState
 			string icon = $"[i:{ModContent.ItemType<CommonLifeShard>()}]";
 			_generationText.SetText($"Generation: {generation} {icon} / day");
 			_consumptionText.SetText($"Consumption: {consumption} {icon} / day");
-			_profitText.SetText($"Profit: {profit} {icon} / day");
+			_profitText.SetText($"Profit: {(profit > 0 ? "+" : "")}{profit} {icon} / day");
 
-			string colorTag = (pending >= capacity && capacity > 0) ? "[c/32FF32:" : "";
-			string colorTagEnd = (pending >= capacity && capacity > 0) ? "]" : "";
-			_bankText.SetText($"Bank: {colorTag}{pending}{colorTagEnd} {icon}");
-			_limitText.SetText($"Limit: {capacity} {icon}");
+			// Profit reads green when you're net-positive and dims to grey at break-even, so the
+			// colour alone tells you whether the bank is actually filling.
+			_profitText.TextColor = profit > 0 ? new Color(150, 255, 150) : new Color(170, 170, 170);
+
+			// The bank's running count now lives inside the progress bar (see BankBar); the
+			// caption just flips green the moment you're capped and a claim is waiting.
+			_bankText.SetText("Bank");
+			_bankText.TextColor = (pending >= capacity && capacity > 0)
+				? new Color(120, 255, 120)
+				: new Color(255, 215, 0);
 		}
 	}
 

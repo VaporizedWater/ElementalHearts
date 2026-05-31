@@ -102,9 +102,24 @@ public class ServantOfCthulhuMinion : ModProjectile
 				float orbitRadius = Math.Min(closestDist, 120f); // Leash ensures he never strays too far
 				Vector2 targetPos = player.Center + new Vector2((float)Math.Cos(orbitAngle), (float)Math.Sin(orbitAngle)) * orbitRadius;
 				
-				// Move smoothly towards orbit position
+				// Move smoothly towards orbit position with a strict maximum speed
 				Vector2 direction = targetPos - Projectile.Center;
-				Projectile.velocity = Vector2.Lerp(Projectile.velocity, direction * 0.08f, 0.03f); // Slower, smoother
+				float distToTargetPos = direction.Length();
+				
+				if (distToTargetPos > 2000f)
+				{
+					Projectile.Center = player.Center; // Teleport if left far behind
+				}
+				else if (distToTargetPos > 5f)
+				{
+					direction.Normalize();
+					direction *= Math.Min(distToTargetPos * 0.05f, 10f); // Strict maximum speed limit of 10f
+					Projectile.velocity = Vector2.Lerp(Projectile.velocity, direction, 0.05f); // Smooth, intentional acceleration
+				}
+				else
+				{
+					Projectile.velocity *= 0.8f; // Decelerate smoothly when arrived
+				}
 
 				// Stare at the target with intent
 				if (target.Center != Projectile.Center)
@@ -226,6 +241,41 @@ public class ServantOfCthulhuMinion : ModProjectile
 		if (state != 2)
 		{
 			Projectile.rotation = Utils.AngleLerp(Projectile.rotation, targetRotation, 0.15f);
+		}
+	}
+
+	public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)
+	{
+		// Apply natural, physics-based bounce when colliding with an enemy
+		if (target.Center != Projectile.Center)
+		{
+			// The collision normal (pointing from the enemy center to the minion)
+			Vector2 normal = Projectile.Center - target.Center;
+			normal.Normalize();
+
+			// Calculate how much the minion's velocity is moving INTO the enemy
+			float dotProduct = Vector2.Dot(Projectile.velocity, normal);
+
+			// Only bounce if he is actually moving towards the target
+			if (dotProduct < 0)
+			{
+				// Standard physics reflection formula: V - 2 * (V dot N) * N
+				Projectile.velocity = Projectile.velocity - 2f * dotProduct * normal;
+				
+				// Apply restitution (elasticity) so he loses energy on impact
+				Projectile.velocity *= 0.4f; 
+			}
+			else
+			{
+				// Fallback nudge just in case
+				Projectile.velocity += normal * 5f;
+			}
+
+			// Strictly clamp the maximum knockback speed so he doesn't go flying too fast
+			if (Projectile.velocity.Length() > 12f)
+			{
+				Projectile.velocity = Vector2.Normalize(Projectile.velocity) * 12f;
+			}
 		}
 	}
 }

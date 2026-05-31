@@ -1,7 +1,10 @@
 using ElementalHearts.Common.Hearts;
+using ElementalHearts.Common.Players;
 using ElementalHearts.Content.Items.LifeShards;
 using Terraria.ModLoader;
 using Terraria.ID;
+using Terraria;
+using Terraria.DataStructures;
 
 using ElementalHearts.Content.Items.Hearts;
 namespace ElementalHearts.Content.Items.Vanilla.Common;
@@ -18,6 +21,20 @@ public sealed class GemcornHeart : ElementalHeartItem
 	public override HeartTier Tier => HeartTier.Common;
 
 	public override int HpGain => 0;
+
+	public override bool IsActiveAbility => true;
+
+	public override bool IsAbilityEnabled => Main.LocalPlayer.GetModPlayer<GemcornHeartPlayer>().Enabled;
+
+	public override void SetAbilityEnabled(bool enabled) => Main.LocalPlayer.GetModPlayer<GemcornHeartPlayer>().Enabled = enabled;
+
+	public override void SetStaticDefaults()
+	{
+		base.SetStaticDefaults();
+
+		// 6 frames
+		Main.RegisterItemAnimation(Item.type, new DrawAnimationVertical(6, 6));
+	}
 
 	// Themed on the vanilla gemcorns (acorn + gem): crafted from acorns, a wooden core, and
 	// one of each tree-plantable gem so the heart visibly "contains" every gem it can grow.

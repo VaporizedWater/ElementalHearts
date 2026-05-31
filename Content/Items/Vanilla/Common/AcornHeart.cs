@@ -1,5 +1,7 @@
 using ElementalHearts.Common.Hearts;
+using ElementalHearts.Common.Players;
 using ElementalHearts.Content.Items.LifeShards;
+using Terraria;
 using Terraria.ModLoader;
 using Terraria.ID;
 
@@ -18,6 +20,12 @@ public sealed class AcornHeart : ElementalHeartItem
 	public override HeartTier Tier => HeartTier.Common;
 
 	public override int HpGain => 0;
+
+	public override bool IsActiveAbility => true;
+
+	public override bool IsAbilityEnabled => Main.LocalPlayer.GetModPlayer<AcornHeartPlayer>().Enabled;
+
+	public override void SetAbilityEnabled(bool enabled) => Main.LocalPlayer.GetModPlayer<AcornHeartPlayer>().Enabled = enabled;
 
 	public override void AddRecipes() =>
 		CreateRecipe()
