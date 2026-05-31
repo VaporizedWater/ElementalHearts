@@ -34,6 +34,7 @@ public sealed class HeartConsumptionPlayer : ModPlayer
 
 	/// <summary>Cached sum of HP bonuses applicable in the current world.</summary>
 	private int _bonus;
+	public int ActiveHpBonus => _bonus;
 
 	/// <summary>
 	/// Highest <see cref="HeartTier"/> among the current world's hearts this character has
@@ -227,15 +228,16 @@ public sealed class HeartConsumptionPlayer : ModPlayer
 
 	public override void ModifyMaxStats(out StatModifier health, out StatModifier mana)
 	{
+		int appliedBonus = ElementalHeartsClientConfig.Instance.EnableElementalHP ? _bonus : 0;
 		// `Base` is a flat add before multipliers — exactly what life-crystal-style HP gain should do.
-		health = StatModifier.Default with { Base = _bonus };
+		health = StatModifier.Default with { Base = appliedBonus };
 
 		// An active Animating Potion raises overall max life, and — more strongly — the
 		// share of it that comes from elemental hearts (the live heart bonus, _bonus).
 		if (_animatingPotionTier >= 0)
 		{
 			var tier = (LifeShardTier)_animatingPotionTier;
-			health = health with { Base = health.Base + (_bonus * AnimatingPotion.GetElementalLifePercent(tier)) };
+			health = health with { Base = health.Base + (appliedBonus * AnimatingPotion.GetElementalLifePercent(tier)) };
 			health += AnimatingPotion.GetMaxLifePercent(tier);
 		}
 

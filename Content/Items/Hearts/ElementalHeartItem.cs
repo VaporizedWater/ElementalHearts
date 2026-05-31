@@ -72,6 +72,33 @@ public abstract class ElementalHeartItem : ModItem
 	public virtual int HpGain => Tier.GetHpGain();
 
 	/// <summary>
+	/// True for hearts that grant a toggleable *active ability* (the Magnification Heart's Cursor
+	/// Focus camera, the Jack-O'-Lantern Heart's dash burst) rather than a passive HP/buff grant.
+	/// The Heart Log lists these under the Active tab with an on/off switch — wired through
+	/// <see cref="IsAbilityEnabled"/> / <see cref="SetAbilityEnabled"/> — and the idle-shard economy
+	/// treats them as shard *consumers* while switched on. Defaults to false; an ability heart flips
+	/// it true and points the two accessors below at its own per-character toggle.
+	/// </summary>
+	public virtual bool IsActiveAbility => false;
+
+	/// <summary>
+	/// For an <see cref="IsActiveAbility"/> heart, whether its ability is switched on for the local
+	/// player. Each ability owns a tiny <see cref="ModPlayer"/> that stores the flag, so the base
+	/// only declares the contract. Meaningless for passive hearts.
+	/// </summary>
+	public virtual bool IsAbilityEnabled => false;
+
+	/// <summary>Switches this ability heart's on/off flag for the local player. Override together with
+	/// <see cref="IsAbilityEnabled"/>; no-op on passive hearts.</summary>
+	public virtual void SetAbilityEnabled(bool enabled) { }
+
+	/// <summary>
+	/// Optional override for the daily shard cost of an active ability. If null, falls back to the default
+	/// shard yield for the heart's tier.
+	/// </summary>
+	public virtual int? ActiveAbilityDailyCost => null;
+
+	/// <summary>
 	/// Munchies-checklist presentation for this heart. Each hook has a sensible default so
 	/// new hearts appear in the Munchies list with no extra work; only override when a
 	/// specific heart needs custom phrasing, difficulty, or availability gating.

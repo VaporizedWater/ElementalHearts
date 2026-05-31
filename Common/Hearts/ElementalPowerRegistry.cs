@@ -10,6 +10,7 @@ internal static class ElementalPowerRegistry
 	private static readonly Dictionary<string, string> Powers = new()
 	{
 		// ── Common ──────────────────────────────────────────────────────────────
+		["AcornHeart"] = "harvest",
 		["BubbleHeart"] = "bubble",
 		["BorealWoodHeart"] = "boreal",
 		["CactusHeart"] = "cactus",
@@ -25,6 +26,7 @@ internal static class ElementalPowerRegistry
 		["EbonwoodHeart"] = "shadowwood",
 		["FleshHeart"] = "flesh",
 		["FossilHeart"] = "fossil",
+		["GemcornHeart"] = "gemcorn",
 		["GlassHeart"] = "glass",
 		["GraniteHeart"] = "granite",
 		["HayHeart"] = "straw",
@@ -132,6 +134,7 @@ internal static class ElementalPowerRegistry
 		["EyeOfCthulhuHeart"] = "cthulhu",
 		["FlyingDutchmanHeart"] = "pirate",
 		["GolemHeart"] = "golem",
+		["JackOLanternHeart"] = "all hallows",
 		["KingSlimeHeart"] = "monarch",
 		["LunaticCultistHeart"] = "sun",
 		["MartianSaucerHeart"] = "alien",

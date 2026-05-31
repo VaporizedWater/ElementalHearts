@@ -63,6 +63,7 @@ public static class HeartEffectRegistry
 	private static readonly Dictionary<string, HeartEffect> Effects = new()
 	{
 		// ── Vanilla: Common ──────────────────────────────────────────────────────
+		["AcornHeart"]       = Eff(120, 92, 56, 95, 160, 75),     // acorn brown + leafy green
 		["BorealWoodHeart"]  = Eff(150, 175, 195),
 		["BubbleHeart"]      = Eff(130, 205, 240),
 		["CactusHeart"]      = Eff(95, 160, 75),
@@ -78,6 +79,7 @@ public static class HeartEffectRegistry
 		["EbonwoodHeart"]    = Eff(92, 82, 108),
 		["FleshHeart"]       = Eff(220, 120, 120),
 		["FossilHeart"]      = Eff(195, 145, 90),
+		["GemcornHeart"]     = Eff(96, 64, 40, 152, 92, 222, 62, 112, 212), // bark brown + amethyst + sapphire
 		["GlassHeart"]       = Eff(200, 235, 240),
 		["GraniteHeart"]     = Eff(72, 82, 112),
 		["HayHeart"]         = Eff(220, 190, 85),
@@ -189,6 +191,7 @@ public static class HeartEffectRegistry
 		["EyeOfCthulhuHeart"]   = Eff(202, 62, 62),
 		["FlyingDutchmanHeart"] = Eff(122, 112, 92),
 		["GolemHeart"]          = Eff(222, 142, 52),
+		["JackOLanternHeart"]   = Eff(235, 120, 30, 250, 205, 70, 70, 40, 20), // pumpkin orange + candle flame + charred dark
 		["KingSlimeHeart"]      = Eff(92, 142, 222),
 		["LunaticCultistHeart"] = Eff(232, 216, 132),
 		["MartianSaucerHeart"]  = Eff(122, 222, 162),

@@ -17,6 +17,16 @@ public sealed class ElementalHeartsHPConfig : ModConfig
 	public override ConfigScope Mode => ConfigScope.ServerSide;
 	public static ElementalHeartsHPConfig Instance => ModContent.GetInstance<ElementalHeartsHPConfig>();
 
+	/// <summary>
+	/// Hardcore mode: a character's max life starts at 1 and Life Crystals give only 5 (down
+	/// from 20), so hearts become the real route to a bigger health bar — and to compensate,
+	/// every heart grants double its configured HP. Read live in
+	/// <see cref="Hearts.HeartTierExtensions.GetHpGain"/> and <see cref="Players.ChallengeModePlayer"/>.
+	/// </summary>
+	[Header("Challenge")]
+	[DefaultValue(false)]
+	public bool ChallengeMode;
+
 	[Header("CraftableTiers")]
 	[DefaultValue(2)]  [Range(1, 20)]  [Increment(1)] [Slider] [SliderColor(255, 205, 218, 255)]
 	public int Common;

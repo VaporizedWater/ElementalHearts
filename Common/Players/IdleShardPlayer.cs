@@ -1,35 +1,70 @@
 using System;
 using System.Linq;
 using ElementalHearts.Common.Configs;
+using ElementalHearts.Common.Hearts;
 using ElementalHearts.Common.Systems;
 using ElementalHearts.Content.Items.Hearts;
 using ElementalHearts.Content.Items.LifeShards;
 using Terraria;
 using Terraria.ModLoader;
 using Terraria.ModLoader.IO;
+using ElementalHearts.Common.Network;
 
 namespace ElementalHearts.Common.Players;
 
 public class IdleShardPlayer : ModPlayer
 {
-	public long LastClaimTimeTicks;
+	// No longer tracks LastClaimTimeTicks per player.
 
-	public override void Initialize()
+	public static int GetShardYield(HeartTier tier)
 	{
-		LastClaimTimeTicks = DateTime.UtcNow.Ticks;
+		return tier switch
+		{
+			HeartTier.Common => 1,
+			HeartTier.Uncommon => 2,
+			HeartTier.Rare => 3,
+			HeartTier.Epic => 4,
+			HeartTier.Legendary => 5,
+			HeartTier.Exotic => 2,
+			HeartTier.Mythic => 10,
+			_ => 1
+		};
 	}
 
-	public override void SaveData(TagCompound tag)
+	public void GetShardRates(out int generation, out int consumption, out int profit)
 	{
-		tag["LastClaimTimeTicks"] = LastClaimTimeTicks;
-	}
+		generation = 0;
+		consumption = 0;
 
-	public override void LoadData(TagCompound tag)
-	{
-		if (tag.ContainsKey("LastClaimTimeTicks"))
-			LastClaimTimeTicks = tag.GetLong("LastClaimTimeTicks");
-		else
-			LastClaimTimeTicks = DateTime.UtcNow.Ticks;
+		bool shared = ElementalHeartsWorldConfig.Instance.SharedProgression;
+		var heartConsumptionPlayer = Player.GetModPlayer<HeartConsumptionPlayer>();
+
+		foreach (var heart in ModContent.GetContent<ElementalHeartItem>())
+		{
+			bool isUnlocked = shared ? HeartConsumptionWorld.IsUnlocked(heart.ConsumptionId) : heartConsumptionPlayer.IsUnlockedLocally(heart.ConsumptionId);
+			if (!isUnlocked) continue;
+
+			bool hasToggle = heart is PotionHeartItem || heart.IsActiveAbility;
+			if (hasToggle)
+			{
+				// Active-ability hearts (e.g. Magnification, Jack-O'-Lantern) track their "on" state in
+				// a dedicated per-character flag; potion hearts track theirs in the consumption ledger.
+				bool isConsumed = heart.IsActiveAbility
+					? heart.IsAbilityEnabled
+					: (shared ? HeartConsumptionWorld.IsConsumed(heart.ConsumptionId) : heartConsumptionPlayer.IsConsumedLocally(heart.ConsumptionId));
+
+				if (isConsumed)
+				{
+					consumption += heart.ActiveAbilityDailyCost ?? GetShardYield(heart.Tier);
+				}
+			}
+			else
+			{
+				generation += GetShardYield(heart.Tier);
+			}
+		}
+
+		profit = Math.Max(0, generation - consumption);
 	}
 
 	public int GetPendingShards()
@@ -37,26 +72,15 @@ public class IdleShardPlayer : ModPlayer
 		if (!ElementalHeartsIdleConfig.Instance.EnableIdleGame)
 			return 0;
 
-		TimeSpan elapsed = DateTime.UtcNow - new DateTime(LastClaimTimeTicks);
-		double elapsedDays = elapsed.TotalDays;
+		TimeSpan elapsed = DateTime.UtcNow - new DateTime(IdleShardWorld.LastClaimTimeTicks);
+		double elapsedTerrariaDays = elapsed.TotalMinutes / 24.0;
 
-		if (elapsedDays <= 0)
+		if (elapsedTerrariaDays <= 0)
 			return 0;
 
-		int totalWeight = 0;
-		bool shared = ElementalHeartsWorldConfig.Instance.SharedProgression;
-		var heartConsumptionPlayer = Player.GetModPlayer<HeartConsumptionPlayer>();
+		GetShardRates(out _, out _, out int profit);
 
-		foreach (var heart in ModContent.GetContent<ElementalHeartItem>())
-		{
-			bool isUnlocked = shared ? HeartConsumptionWorld.IsUnlocked(heart.ConsumptionId) : heartConsumptionPlayer.IsUnlockedLocally(heart.ConsumptionId);
-			if (isUnlocked)
-			{
-				totalWeight += (int)heart.Tier;
-			}
-		}
-
-		double shardsGenerated = elapsedDays * totalWeight * ElementalHeartsIdleConfig.Instance.BaseShardsPerHeartPerDay;
+		double shardsGenerated = elapsedTerrariaDays * profit;
 		
 		int pending = (int)Math.Floor(shardsGenerated);
 		int cap = GetCapacity();
@@ -72,6 +96,14 @@ public class IdleShardPlayer : ModPlayer
 
 	public void ClaimShards()
 	{
+		if (Main.netMode == Terraria.ID.NetmodeID.MultiplayerClient)
+		{
+			ModPacket packet = Mod.GetPacket();
+			packet.Write((byte)MessageType.ClaimIdleShards);
+			packet.Send();
+			return;
+		}
+
 		int pending = GetPendingShards();
 		if (pending <= 0)
 			return;
@@ -80,34 +112,50 @@ public class IdleShardPlayer : ModPlayer
 		shards.SetDefaults(ModContent.ItemType<CommonLifeShard>());
 		shards.stack = pending;
 
-		bool absorbedFully = Player.GetModPlayer<LifeShardPlayer>().AbsorbShards(shards);
-
-		int totalWeight = 0;
-		bool shared = ElementalHeartsWorldConfig.Instance.SharedProgression;
-		var heartConsumptionPlayer = Player.GetModPlayer<HeartConsumptionPlayer>();
-
-		foreach (var heart in ModContent.GetContent<ElementalHeartItem>())
+		bool absorbedFully = false;
+		if (Main.netMode == Terraria.ID.NetmodeID.SinglePlayer)
 		{
-			bool isUnlocked = shared ? HeartConsumptionWorld.IsUnlocked(heart.ConsumptionId) : heartConsumptionPlayer.IsUnlockedLocally(heart.ConsumptionId);
-			if (isUnlocked)
-			{
-				totalWeight += (int)heart.Tier;
-			}
+			absorbedFully = Player.GetModPlayer<LifeShardPlayer>().AbsorbShards(shards);
 		}
 
-		if (totalWeight > 0)
+		GetShardRates(out _, out _, out int profit);
+
+		if (profit > 0)
 		{
-			double ratePerDay = totalWeight * ElementalHeartsIdleConfig.Instance.BaseShardsPerHeartPerDay;
+			double ratePerTerrariaDay = profit;
 			int actuallyClaimed = pending - shards.stack;
 
 			if (actuallyClaimed > 0)
 			{
-				double daysConsumed = actuallyClaimed / ratePerDay;
-				LastClaimTimeTicks += TimeSpan.FromDays(daysConsumed).Ticks;
+				TimeSpan elapsed = DateTime.UtcNow - new DateTime(IdleShardWorld.LastClaimTimeTicks);
+				double elapsedTerrariaDays = elapsed.TotalMinutes / 24.0;
+				double shardsGenerated = elapsedTerrariaDays * ratePerTerrariaDay;
+				int cap = GetCapacity();
+
+				if (shardsGenerated > cap)
+				{
+					double excessShards = shardsGenerated - cap;
+					double excessDays = excessShards / ratePerTerrariaDay;
+					IdleShardWorld.LastClaimTimeTicks += TimeSpan.FromMinutes(excessDays * 24.0).Ticks;
+				}
+
+				double terrariaDaysConsumed = actuallyClaimed / ratePerTerrariaDay;
+				IdleShardWorld.LastClaimTimeTicks += TimeSpan.FromMinutes(terrariaDaysConsumed * 24.0).Ticks;
 				
 				if (!absorbedFully && shards.stack > 0)
 				{
-					Player.QuickSpawnItem(Player.GetSource_Misc("IdleClaim"), shards, shards.stack);
+					if (Main.netMode == Terraria.ID.NetmodeID.Server)
+						Item.NewItem(Player.GetSource_Misc("IdleClaim"), Player.Center, shards.type, shards.stack);
+					else
+						Player.QuickSpawnItem(Player.GetSource_Misc("IdleClaim"), shards, shards.stack);
+				}
+
+				if (Main.netMode == Terraria.ID.NetmodeID.Server)
+				{
+					ModPacket packet = Mod.GetPacket();
+					packet.Write((byte)MessageType.SyncIdleShardTime);
+					packet.Write(IdleShardWorld.LastClaimTimeTicks);
+					packet.Send();
 				}
 			}
 		}

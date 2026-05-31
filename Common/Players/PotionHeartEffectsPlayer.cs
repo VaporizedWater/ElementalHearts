@@ -22,7 +22,7 @@ public sealed class PotionHeartEffectsPlayer : ModPlayer
 	/// </summary>
 	private const int BuffRefreshTicks = 5;
 
-	public override void PostUpdateBuffs()
+	public override void PreUpdateBuffs()
 	{
 		// Server-side ModPlayer also ticks per connected player; buffs are managed
 		// client-side, so applying here from the server doubles up. Each client
@@ -42,6 +42,40 @@ public sealed class PotionHeartEffectsPlayer : ModPlayer
 			// hearts (Love, Stink); they only grant HP, never apply a buff.
 			if (PotionHeartRegistry.TryGetBuff(id, out int buffType) && buffType > 0)
 				Player.AddBuff(buffType, BuffRefreshTicks, quiet: true);
+		}
+	}
+
+	public override void PostUpdateBuffs()
+	{
+		if (Main.netMode == NetmodeID.Server)
+			return;
+
+		if (Player.whoAmI != Main.myPlayer)
+			return;
+
+		if (ElementalHeartsClientConfig.Instance.ShowPermanentBuffs)
+			return;
+
+		// Remove the buff from the UI if we're hiding permanent buffs.
+		// We iterate forwards and use DelBuff, which shifts elements down.
+		// We use <= 60 ticks (1 second) to account for other mods potentially modifying the buff time slightly
+		// and still ensure it doesn't delete legitimate, newly consumed potions (which have times > 3600).
+		for (int i = 0; i < Player.MaxBuffs; i++)
+		{
+			int buffType = Player.buffType[i];
+			if (buffType > 0 && Player.buffTime[i] <= 60)
+			{
+				// Check if this buff comes from a consumed heart
+				foreach (string id in HeartConsumptionWorld.Consumed)
+				{
+					if (PotionHeartRegistry.TryGetBuff(id, out int heartBuffType) && heartBuffType == buffType)
+					{
+						Player.DelBuff(i);
+						i--; // Re-check this index because a new buff shifted into it
+						break;
+					}
+				}
+			}
 		}
 	}
 }

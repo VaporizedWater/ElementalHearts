@@ -72,8 +72,19 @@ Configs: {
 		DisplayName: HP Settings
 
 		Headers: {
+			Challenge: Challenge Mode
 			CraftableTiers: Craftable Heart Tiers
 			BossTiers: Boss Heart Tiers
+		}
+
+		ChallengeMode: {
+			Label: Challenge Mode
+			Tooltip:
+				'''
+				Hardcore health rules. Your max life starts at 1 and Life Crystals give only 5 (down from 20),
+				so hearts become your real path to a bigger health bar. To compensate, every heart grants
+				double its configured HP. Disabled by default.
+				'''
 		}
 
 		Common: {
@@ -500,11 +511,40 @@ Configs: {
 
 	ElementalHeartsClientConfig: {
 		DisplayName: Elemental Hearts Client Config
-		Headers.UI: U I Header
+
+		Headers: {
+			UI: U I Header
+			Abilities: Abilities
+		}
 
 		EnableHeartChecklist: {
 			Label: Enable Heart Checklist
 			Tooltip: ""
+		}
+
+		ShowDetailedHeartStats: {
+			Label: Show Detailed Heart Stats
+			Tooltip: ""
+		}
+
+		EnableElementalHP: {
+			Label: Enable Elemental H P
+			Tooltip: ""
+		}
+
+		ShowPermanentBuffs: {
+			Label: Show Permanent Buffs
+			Tooltip: ""
+		}
+
+		HideImpossibleHearts: {
+			Label: Hide Impossible Hearts
+			Tooltip: ""
+		}
+
+		EnableJackOLanternDash: {
+			Label: Enable Jack-O'-Lantern Dash
+			Tooltip: Master switch for the Jack-O'-Lantern Heart's dash burst. The on/off toggle is in the Heart Log.
 		}
 	}
 
@@ -583,11 +623,6 @@ Configs: {
 			Tooltip: If true, unlocked and consumed hearts will generate Life Shards over time.
 		}
 
-		BaseShardsPerHeartPerDay: {
-			Label: Base Shards Per Heart Per Day
-			Tooltip: The base amount of shards a common heart produces in a 24-hour real-time day. Stronger hearts produce a multiple of this value.
-		}
-
 		BaseCapacity: {
 			Label: Base Shard Capacity
 			Tooltip: The base maximum amount of unclaimed shards you can hold.
@@ -610,6 +645,7 @@ Conditions: {
 
 UI: {
 	LifeShardPanel: Life
+	SearchHearts: Search Hearts...
 	Fuse: Fuse {0} {1} into a {2}
 	TierCommon: Common
 	TierUncommon: Uncommon
@@ -630,6 +666,16 @@ UI: {
 
 # Display-name overrides. Anything not listed auto-generates from the class name.
 Items: {
+	AcornHeart: {
+		DisplayName: Acorn Heart
+		Tooltip: Permanently increases tree loot by 25%
+	}
+
+	GemcornHeart: {
+		DisplayName: Gemcorn Heart
+		Tooltip: Permanently allows you to harvest gems from trees
+	}
+
 	CommonMenacingHeart: {
 		DisplayName: Menacing Heart
 		Tooltip: Summons Animate
@@ -1021,7 +1067,7 @@ Items: {
 	}
 
 	EyeOfCthulhuHeart: {
-		Tooltip: ""
+		Tooltip: Permanently enslave a servant of Cthulu
 		DisplayName: Eye Of Cthulhu Heart
 	}
 
@@ -2219,7 +2265,12 @@ Items: {
 
 	MagnificationHeart: {
 		DisplayName: Magnification Heart
-		Tooltip: ""
+		Tooltip: Permanently upgrades your camera
+	}
+
+	JackOLanternHeart: {
+		DisplayName: Jack-O'-Lantern Heart
+		Tooltip: Permanently upgrades your dash
 	}
 }
 
@@ -2239,6 +2290,11 @@ WorldGen: {
 }
 
 Buffs: {
+	ServantOfCthulhuBuff: {
+		DisplayName: Servant of Cthulhu
+		Description: The servant will fight for you
+	}
+
 	CommonAnimatingPotionBuff: {
 		DisplayName: Animating Potion
 		Description: +5% maximum life, +5% elemental life
@@ -2291,6 +2347,7 @@ NPCs: {
 }
 
 Projectiles: {
+	ServantOfCthulhuMinion.DisplayName: Servant of Cthulhu
 	AnimateShardProjectile.DisplayName: Animate Shard Projectile
 	UncommonShardProjectile.DisplayName: Uncommon Shard Projectile
 	HeartTrapProjectile.DisplayName: Heart Trap
@@ -2300,6 +2357,7 @@ Projectiles: {
 	LegendaryShardProjectile.DisplayName: Legendary Shard Projectile
 	EpicShardProjectile.DisplayName: Epic Shard Projectile
 	FallingHeartProjectile.DisplayName: Falling Heart Projectile
+	JackOLanternProjectile.DisplayName: Mini Jack-O'-Lantern
 }
 
 TrackNames: {
@@ -2373,4 +2431,7 @@ Biomes: {
 	}
 }
 
-"Keybinds.Toggle Heart Checklist.DisplayName": Toggle  Heart  Checklist
+Keybinds: {
+	"Toggle Heart Checklist.DisplayName": Toggle  Heart  Checklist
+	"Use Discord Ability.DisplayName": Use  Discord  Ability
+}

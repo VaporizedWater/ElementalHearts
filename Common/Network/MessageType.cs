@@ -17,4 +17,14 @@ public enum MessageType : byte
 	/// <see cref="Systems.BossHeartDropFx"/>). Server → clients only.
 	/// </summary>
 	BossHeartDropped = 3,
+
+	/// <summary>
+	/// Sent by a client to request claiming pending idle game shards.
+	/// </summary>
+	ClaimIdleShards = 4,
+
+	/// <summary>
+	/// Sent by the server to sync the LastClaimTimeTicks to all clients.
+	/// </summary>
+	SyncIdleShardTime = 5,
 }

@@ -126,7 +126,7 @@ public class HeartLogButtonUIState : UIState
 		if (_openButton.IsMouseHovering)
 		{
 			// Draw the tooltip centered above the button
-			string text = "Heart Log";
+			string text = "Hearts";
 			Vector2 stringSize = Terraria.GameContent.FontAssets.MouseText.Value.MeasureString(text);
 			Vector2 textPosition = new Vector2(position.X - stringSize.X / 2f, position.Y - (texture.Height / 2f * finalScale) - 26f);
 

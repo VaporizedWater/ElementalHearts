@@ -57,6 +57,14 @@ public sealed class ElementalHearts : Mod
 			case MessageType.BossHeartDropped:
 				BossHeartDropFx.Receive(reader);
 				break;
+
+			case MessageType.ClaimIdleShards:
+				Main.player[whoAmI].GetModPlayer<IdleShardPlayer>().ClaimShards();
+				break;
+
+			case MessageType.SyncIdleShardTime:
+				IdleShardWorld.LastClaimTimeTicks = reader.ReadInt64();
+				break;
 		}
 	}
 

@@ -19,14 +19,12 @@ namespace ElementalHearts.Common.Camera;
 [Autoload(Side = ModSide.Client)]
 public sealed class CursorFocusSystem : ModSystem
 {
-	/// <summary>The fully-smoothed offset (in world pixels) applied to the camera this frame.</summary>
-	internal static Vector2 SmoothedOffset;
 
 	private CursorFocusModifier _modifier;
 
 	public override void OnWorldLoad()
 	{
-		SmoothedOffset = Vector2.Zero;
+		TargetOffset = Vector2.Zero;
 		_modifier = new CursorFocusModifier();
 		Main.instance.CameraModifiers.Add(_modifier);
 	}
@@ -35,24 +33,16 @@ public sealed class CursorFocusSystem : ModSystem
 	{
 		_modifier?.Finish(); // the collection drops it once Finished
 		_modifier = null;
-		SmoothedOffset = Vector2.Zero;
+		TargetOffset = Vector2.Zero;
 	}
+
+	/// <summary>The raw offset (in world pixels) the camera wants to apply this frame.</summary>
+	internal static Vector2 TargetOffset;
 
 	public override void PostUpdateEverything()
 	{
 		ElementalHeartsCameraConfig cfg = ElementalHeartsCameraConfig.Instance;
-		Vector2 target = ShouldPan(cfg) ? ComputeTargetOffset(cfg) : Vector2.Zero;
-
-		// Per-tick easing factor: 0 smoothing snaps (factor 1); higher smoothing approaches a
-		// gentle floor. The power curve keeps the slider feeling linear to the eye.
-		float smooth01 = Math.Clamp(cfg.Smoothing / 100f, 0f, 1f);
-		float factor = 0.03f + (0.97f * MathF.Pow(1f - smooth01, 5f));
-
-		SmoothedOffset = Vector2.Lerp(SmoothedOffset, target, factor);
-
-		// Kill the last sub-pixel of drift once we're heading home, so the camera truly rests.
-		if (target == Vector2.Zero && SmoothedOffset.LengthSquared() < 0.01f)
-			SmoothedOffset = Vector2.Zero;
+		TargetOffset = ShouldPan(cfg) ? ComputeTargetOffset(cfg) : Vector2.Zero;
 	}
 
 	/// <summary>Whether the camera is allowed to pan this tick, considering the ability state and current UI context.</summary>

@@ -27,7 +27,7 @@ public static class HeartTierExtensions
 	public static int GetHpGain(this HeartTier tier)
 	{
 		var cfg = ElementalHeartsHPConfig.Instance;
-		return tier switch
+		int hp = tier switch
 		{
 			HeartTier.Common    => cfg.Common,
 			HeartTier.Uncommon  => cfg.Uncommon,
@@ -38,6 +38,9 @@ public static class HeartTierExtensions
 			HeartTier.Mythic    => cfg.Mythic,
 			_ => 0,
 		};
+
+		// Challenge mode guts every other HP source, so hearts pay double to stay worth chasing.
+		return cfg.ChallengeMode ? hp * 2 : hp;
 	}
 
 	public static int GetRarityType(this HeartTier tier) => tier switch

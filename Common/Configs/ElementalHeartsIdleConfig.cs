@@ -18,12 +18,6 @@ public class ElementalHeartsIdleConfig : ModConfig
 	[Tooltip("If true, unlocked and consumed hearts will generate Life Shards over time.")]
 	public bool EnableIdleGame { get; set; }
 
-	[DefaultValue(10)]
-	[Range(1, 100)]
-	[Label("Base Shards Per Heart Per Day")]
-	[Tooltip("The base amount of shards a common heart produces in a 24-hour real-time day. Stronger hearts produce a multiple of this value.")]
-	public int BaseShardsPerHeartPerDay { get; set; }
-
 	[DefaultValue(50)]
 	[Range(10, 1000)]
 	[Label("Base Shard Capacity")]
