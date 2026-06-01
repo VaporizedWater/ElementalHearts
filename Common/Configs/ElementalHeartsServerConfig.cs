@@ -30,9 +30,7 @@ public sealed class ElementalHeartsServerConfig : ModConfig
 	[SeparatePage]
 	public HPSettings HPScale = new HPSettings();
 
-	[Header("Potions")]
-	[SeparatePage]
-	public PotionSettings Potions = new PotionSettings();
+
 
 	[Header("Recipes")]
 	[SeparatePage]
@@ -65,89 +63,85 @@ public sealed class ElementalHeartsServerConfig : ModConfig
 public class BossSettings
 {
 	[DefaultValue(true)]
-	public bool BossHeartsGuaranteedOnFirstKill;
+	public bool BossHeartsGuaranteedOnFirstKill = true;
 
 	[DefaultValue(10)]
 	[Range(1, 100)]
 	[Increment(1)]
 	[Slider]
 	[SliderColor(255, 120, 110, 255)]
-	public int BossHeartDropChance;
+	public int BossHeartDropChance = 10;
 }
 
 public class CapacitySettings
 {
 	[DefaultValue(true)]
-	public bool EnableProgressionGates;
+	public bool EnableProgressionGates = true;
 
 	[DefaultValue(25)]  [Range(10, 500)]  [Increment(5)] [Slider] [SliderColor(255, 205, 218, 255)]
-	public int PreBossCapacity;
+	public int PreBossCapacity = 25;
 
 	[DefaultValue(50)]  [Range(10, 500)]  [Increment(5)] [Slider] [SliderColor(220, 225, 170, 255)]
-	public int PostSkeletronCapacity;
+	public int PostSkeletronCapacity = 50;
 
-	[DefaultValue(100)] [Range(10, 500)]  [Increment(5)] [Slider] [SliderColor(150, 230, 150, 255)]
-	public int PostWoFCapacity;
+	[DefaultValue(75)] [Range(10, 500)]  [Increment(5)] [Slider] [SliderColor(150, 230, 150, 255)]
+	public int PostWoFCapacity = 75;
 
-	[DefaultValue(115)] [Range(10, 500)]  [Increment(5)] [Slider] [SliderColor(140, 200, 255, 255)]
-	public int Post1MechCapacity;
+	[DefaultValue(90)] [Range(10, 500)]  [Increment(5)] [Slider] [SliderColor(140, 200, 255, 255)]
+	public int Post1MechCapacity = 90;
 
-	[DefaultValue(130)] [Range(10, 500)]  [Increment(5)] [Slider] [SliderColor(125, 185, 255, 255)]
-	public int Post2MechsCapacity;
+	[DefaultValue(105)] [Range(10, 500)]  [Increment(5)] [Slider] [SliderColor(125, 185, 255, 255)]
+	public int Post2MechsCapacity = 105;
 
-	[DefaultValue(150)] [Range(10, 500)]  [Increment(5)] [Slider] [SliderColor(110, 170, 255, 255)]
-	public int Post3MechsCapacity;
+	[DefaultValue(120)] [Range(10, 500)]  [Increment(5)] [Slider] [SliderColor(110, 170, 255, 255)]
+	public int Post3MechsCapacity = 120;
 
-	[DefaultValue(200)] [Range(10, 500)]  [Increment(5)] [Slider] [SliderColor(200, 130, 255, 255)]
-	public int PostPlanteraCapacity;
+	[DefaultValue(150)] [Range(10, 500)]  [Increment(5)] [Slider] [SliderColor(200, 130, 255, 255)]
+	public int PostPlanteraCapacity = 150;
 
-	[DefaultValue(250)] [Range(10, 500)]  [Increment(5)] [Slider] [SliderColor(220, 150, 255, 255)]
-	public int PostGolemCapacity;
+	[DefaultValue(175)] [Range(10, 500)]  [Increment(5)] [Slider] [SliderColor(220, 150, 255, 255)]
+	public int PostGolemCapacity = 175;
 
-	[DefaultValue(275)] [Range(10, 500)]  [Increment(5)] [Slider] [SliderColor(255, 200, 90, 255)]
-	public int PostCultistCapacity;
+	[DefaultValue(200)] [Range(10, 500)]  [Increment(5)] [Slider] [SliderColor(255, 200, 90, 255)]
+	public int PostCultistCapacity = 200;
 
-	[DefaultValue(300)] [Range(10, 1000)] [Increment(5)] [Slider] [SliderColor(255, 235, 150, 255)]
-	public int PostMoonLordCapacity;
+	[DefaultValue(200)] [Range(10, 1000)] [Increment(5)] [Slider] [SliderColor(255, 235, 150, 255)]
+	public int PostMoonLordCapacity = 200;
 
-	[DefaultValue(false)]
-	public bool UnlimitedPostMoonLord;
+	[DefaultValue(true)]
+	public bool UnlimitedPostMoonLord = true;
 }
 
 public class HPSettings
 {
 	[DefaultValue(false)]
-	public bool ChallengeMode;
+	public bool ChallengeMode = false;
 
 	[Header("CraftableTiers")]
 	[DefaultValue(2)]  [Range(1, 20)]  [Increment(1)] [Slider] [SliderColor(255, 205, 218, 255)]
-	public int Common;
+	public int Common = 2;
 
 	[DefaultValue(4)]  [Range(2, 40)]  [Increment(1)] [Slider] [SliderColor(150, 230, 150, 255)]
-	public int Uncommon;
+	public int Uncommon = 4;
 
 	[DefaultValue(6)]  [Range(3, 60)]  [Increment(1)] [Slider] [SliderColor(110, 170, 255, 255)]
-	public int Rare;
+	public int Rare = 6;
 
 	[DefaultValue(8)]  [Range(4, 80)]  [Increment(1)] [Slider] [SliderColor(200, 130, 255, 255)]
-	public int Epic;
+	public int Epic = 8;
 
 	[DefaultValue(10)] [Range(5, 100)] [Increment(1)] [Slider] [SliderColor(255, 200, 90, 255)]
-	public int Legendary;
+	public int Legendary = 10;
 
 	[Header("BossTiers")]
 	[DefaultValue(5)] [Range(1, 100)] [Increment(1)] [Slider] [SliderColor(255, 120, 110, 255)]
-	public int Exotic;
+	public int Exotic = 5;
 
 	[DefaultValue(50)] [Range(25, 500)] [Increment(1)] [Slider] [SliderColor(255, 235, 150, 255)]
-	public int Mythic;
+	public int Mythic = 50;
 }
 
-public class PotionSettings
-{
-	[DefaultValue(true)]
-	public bool WorldwidePotionEffectsEnabled;
-}
+
 
 public class RecipeSettings
 {
@@ -157,7 +151,7 @@ public class RecipeSettings
 	[Slider]
 	[SliderColor(255, 180, 120, 255)]
 	[ReloadRequired]
-	public int RecipeDifficulty;
+	public int RecipeDifficulty = 10;
 }
 
 public class WorldSettings
@@ -196,23 +190,26 @@ public class WorldSettings
 	[Header("Worldgen")]
 	[DefaultValue(true)]
 	[ReloadRequired]
-	public bool GenerateLifeBiomes;
+	public bool GenerateLifeBiomes = true;
 
-	[DefaultValue(1)] [Range(0, 10)] [Increment(1)] [Slider]
-	public int SurfaceBiomeCountMultiplier;
+	[DefaultValue(2)] [Range(0, 10)] [Increment(1)] [Slider]
+	public int SurfaceBiomeCountMultiplier = 2;
 
-	[DefaultValue(1)] [Range(0, 10)] [Increment(1)] [Slider]
-	public int JungleBiomeCountMultiplier;
+	[DefaultValue(2)] [Range(0, 10)] [Increment(1)] [Slider]
+	public int JungleBiomeCountMultiplier = 2;
 
 	[Header("NightEvents")]
 	[DefaultValue(7)] [Range(0, 100)] [Increment(1)] [Slider]
-	public int HeartShootingStarChance;
+	public int HeartShootingStarChance = 7;
 
-	[DefaultValue(1)] [Range(1, 10)] [Increment(1)] [Slider]
-	public int HeartShootingStarMaxPerNight;
+	[DefaultValue(3)] [Range(1, 10)] [Increment(1)] [Slider]
+	public int HeartShootingStarMaxPerNight = 3;
+
+	[DefaultValue(0.5f)] [Range(0.1f, 1f)] [Increment(0.1f)] [Slider]
+	public float HeartShootingStarFalloffMultiplier = 0.5f;
 
 	[DefaultValue(100)] [Range(1, 1000)] [Increment(5)] [Slider]
-	public int HeartShootingStarFrequency;
+	public int HeartShootingStarFrequency = 100;
 }
 
 public class LifeShardSettings
@@ -220,104 +217,104 @@ public class LifeShardSettings
 	[Header("General")]
 	[DefaultValue(true)]
 	[ReloadRequired]
-	public bool SystemEnabled;
+	public bool SystemEnabled = true;
 
 	[Header("DropChances")]
-	[DefaultValue(2f)] [Range(0f, 100f)] [Increment(0.1f)] [Slider] [SliderColor(255, 205, 218, 255)]
-	public float CommonDropChance;
+	[DefaultValue(1f)] [Range(0f, 100f)] [Increment(0.1f)] [Slider] [SliderColor(255, 205, 218, 255)]
+	public float CommonDropChance = 1f;
 
-	[DefaultValue(2f)] [Range(0f, 100f)] [Increment(0.1f)] [Slider] [SliderColor(150, 230, 150, 255)]
-	public float UncommonDropChance;
+	[DefaultValue(1f)] [Range(0f, 100f)] [Increment(0.1f)] [Slider] [SliderColor(150, 230, 150, 255)]
+	public float UncommonDropChance = 1f;
 
-	[DefaultValue(2f)] [Range(0f, 100f)] [Increment(0.1f)] [Slider] [SliderColor(110, 170, 255, 255)]
-	public float RareDropChance;
+	[DefaultValue(1f)] [Range(0f, 100f)] [Increment(0.1f)] [Slider] [SliderColor(110, 170, 255, 255)]
+	public float RareDropChance = 1f;
 
-	[DefaultValue(2f)] [Range(0f, 100f)] [Increment(0.1f)] [Slider] [SliderColor(200, 130, 255, 255)]
-	public float EpicDropChance;
+	[DefaultValue(1f)] [Range(0f, 100f)] [Increment(0.1f)] [Slider] [SliderColor(200, 130, 255, 255)]
+	public float EpicDropChance = 1f;
 
-	[DefaultValue(2f)] [Range(0f, 100f)] [Increment(0.1f)] [Slider] [SliderColor(255, 200, 90, 255)]
-	public float LegendaryDropChance;
+	[DefaultValue(1f)] [Range(0f, 100f)] [Increment(0.1f)] [Slider] [SliderColor(255, 200, 90, 255)]
+	public float LegendaryDropChance = 1f;
 
 	[Header("DamageThresholds")]
 	[DefaultValue(50)] [Range(1, 10_000_000)] [Increment(10)]
-	public int CommonDamageThreshold;
+	public int CommonDamageThreshold = 50;
 
 	[DefaultValue(250)] [Range(1, 10_000_000)] [Increment(10)]
-	public int UncommonDamageThreshold;
+	public int UncommonDamageThreshold = 250;
 
 	[DefaultValue(2000)] [Range(1, 10_000_000)] [Increment(10)]
-	public int RareDamageThreshold;
+	public int RareDamageThreshold = 2000;
 
 	[DefaultValue(7000)] [Range(1, 10_000_000)] [Increment(10)]
-	public int EpicDamageThreshold;
+	public int EpicDamageThreshold = 7000;
 
 	[DefaultValue(30000)] [Range(1, 10_000_000)] [Increment(10)]
-	public int LegendaryDamageThreshold;
+	public int LegendaryDamageThreshold = 30000;
 
 	[Header("Extractinator")]
 	[DefaultValue(1)] [Range(0, 100)] [Increment(1)] [Slider] [SliderColor(255, 205, 218, 255)]
-	public int ExtractinatorCommonMin;
+	public int ExtractinatorCommonMin = 1;
 
 	[DefaultValue(3)] [Range(0, 100)] [Increment(1)] [Slider] [SliderColor(255, 205, 218, 255)]
-	public int ExtractinatorCommonMax;
+	public int ExtractinatorCommonMax = 3;
 
 	[DefaultValue(10f)] [Range(0f, 100f)] [Increment(0.1f)] [Slider] [SliderColor(150, 230, 150, 255)]
-	public float ExtractinatorUncommonChance;
+	public float ExtractinatorUncommonChance = 10f;
 
 	[DefaultValue(1)] [Range(0, 100)] [Increment(1)] [Slider] [SliderColor(150, 230, 150, 255)]
-	public int ExtractinatorUncommonMin;
+	public int ExtractinatorUncommonMin = 1;
 
 	[DefaultValue(1)] [Range(0, 100)] [Increment(1)] [Slider] [SliderColor(150, 230, 150, 255)]
-	public int ExtractinatorUncommonMax;
+	public int ExtractinatorUncommonMax = 1;
 
 	[DefaultValue(10f)] [Range(0f, 100f)] [Increment(0.1f)] [Slider] [SliderColor(110, 170, 255, 255)]
-	public float ExtractinatorRareChance;
+	public float ExtractinatorRareChance = 10f;
 
 	[DefaultValue(1)] [Range(0, 100)] [Increment(1)] [Slider] [SliderColor(110, 170, 255, 255)]
-	public int ExtractinatorRareMin;
+	public int ExtractinatorRareMin = 1;
 
 	[DefaultValue(1)] [Range(0, 100)] [Increment(1)] [Slider] [SliderColor(110, 170, 255, 255)]
-	public int ExtractinatorRareMax;
+	public int ExtractinatorRareMax = 1;
 
 	[DefaultValue(1f)] [Range(0f, 100f)] [Increment(0.1f)] [Slider] [SliderColor(200, 130, 255, 255)]
-	public float ExtractinatorEpicChance;
+	public float ExtractinatorEpicChance = 1f;
 
 	[DefaultValue(1)] [Range(0, 100)] [Increment(1)] [Slider] [SliderColor(200, 130, 255, 255)]
-	public int ExtractinatorEpicMin;
+	public int ExtractinatorEpicMin = 1;
 
 	[DefaultValue(1)] [Range(0, 100)] [Increment(1)] [Slider] [SliderColor(200, 130, 255, 255)]
-	public int ExtractinatorEpicMax;
+	public int ExtractinatorEpicMax = 1;
 
 	[DefaultValue(0.1f)] [Range(0f, 100f)] [Increment(0.1f)] [Slider] [SliderColor(255, 200, 90, 255)]
-	public float ExtractinatorLegendaryChance;
+	public float ExtractinatorLegendaryChance = 0.1f;
 
 	[DefaultValue(1)] [Range(0, 100)] [Increment(1)] [Slider] [SliderColor(255, 200, 90, 255)]
-	public int ExtractinatorLegendaryMin;
+	public int ExtractinatorLegendaryMin = 1;
 
 	[DefaultValue(1)] [Range(0, 100)] [Increment(1)] [Slider] [SliderColor(255, 200, 90, 255)]
-	public int ExtractinatorLegendaryMax;
+	public int ExtractinatorLegendaryMax = 1;
 
 	[Header("Consumable")]
-	[DefaultValue(true)]
-	public bool ShardsAreConsumable;
+	[DefaultValue(false)]
+	public bool ShardsAreConsumable = false;
 
 	[DefaultValue(30)] [Range(1, 600)] [Increment(1)]
-	public int ShardSicknessSeconds;
+	public int ShardSicknessSeconds = 30;
 
 	[DefaultValue(10)] [Range(1, 10_000)] [Increment(1)] [SliderColor(255, 205, 218, 255)]
-	public int CommonHealAmount;
+	public int CommonHealAmount = 10;
 
 	[DefaultValue(25)] [Range(1, 10_000)] [Increment(1)] [SliderColor(150, 230, 150, 255)]
-	public int UncommonHealAmount;
+	public int UncommonHealAmount = 25;
 
 	[DefaultValue(50)] [Range(1, 10_000)] [Increment(1)] [SliderColor(110, 170, 255, 255)]
-	public int RareHealAmount;
+	public int RareHealAmount = 50;
 
 	[DefaultValue(75)] [Range(1, 10_000)] [Increment(1)] [SliderColor(200, 130, 255, 255)]
-	public int EpicHealAmount;
+	public int EpicHealAmount = 75;
 
 	[DefaultValue(100)] [Range(1, 10_000)] [Increment(1)] [SliderColor(255, 200, 90, 255)]
-	public int LegendaryHealAmount;
+	public int LegendaryHealAmount = 100;
 }
 
 public class VitalTileSettings
@@ -325,32 +322,32 @@ public class VitalTileSettings
 	[Header("General")]
 	[DefaultValue(true)]
 	[ReloadRequired]
-	public bool SystemEnabled;
+	public bool SystemEnabled = true;
 
 	[Header("Spread")]
-	[DefaultValue(0.005f)] [Range(0f, 1f)] [Increment(0.001f)] [Slider]
-	public float VitalSoilSpreadChance;
+	[DefaultValue(0.001f)] [Range(0f, 1f)] [Increment(0.001f)] [Slider]
+	public float VitalSoilSpreadChance = 0.001f;
 
-	[DefaultValue(0.005f)] [Range(0f, 1f)] [Increment(0.001f)] [Slider]
-	public float VitalQuartzSpreadChance;
+	[DefaultValue(0.001f)] [Range(0f, 1f)] [Increment(0.001f)] [Slider]
+	public float VitalQuartzSpreadChance = 0.001f;
 
 	[Header("Buffs")]
 	[DefaultValue(10)] [Range(0, 100)] [Increment(1)] [Slider]
-	public int VitalSoilRegenPercent;
+	public int VitalSoilRegenPercent = 10;
 
 	[DefaultValue(5)] [Range(0, 100)] [Increment(1)] [Slider]
-	public int VitalQuartzMaxHpPercent;
+	public int VitalQuartzMaxHpPercent = 5;
 
 	[DefaultValue(40)] [Range(1, 200)] [Increment(1)] [Slider]
-	public int VitalQuartzVerticalRange;
+	public int VitalQuartzVerticalRange = 40;
 
 	[DefaultValue(20)] [Range(1, 200)] [Increment(1)] [Slider]
-	public int VitalQuartzHorizontalRange;
+	public int VitalQuartzHorizontalRange = 20;
 
 	[Header("Seeds")]
 	[DefaultValue(25f)] [Range(0f, 100f)] [Increment(0.1f)] [Slider]
-	public float LifeCrystalSeedChance;
+	public float LifeCrystalSeedChance = 25f;
 
 	[DefaultValue(33f)] [Range(0f, 100f)] [Increment(0.1f)] [Slider]
-	public float LifeFruitSeedChance;
+	public float LifeFruitSeedChance = 33f;
 }

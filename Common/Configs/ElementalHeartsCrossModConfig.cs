@@ -23,15 +23,15 @@ public sealed class ElementalHeartsCrossModConfig : ModConfig
 	[Header("SupportedMods")]
 	[DefaultValue(true)]
 	[ReloadRequired]
-	public bool EnableCalamityHearts;
+	public bool EnableCalamityHearts = true;
 
 	[DefaultValue(true)]
 	[ReloadRequired]
-	public bool EnableThoriumHearts;
+	public bool EnableThoriumHearts = true;
 
 	[DefaultValue(true)]
 	[ReloadRequired]
-	public bool EnableConsolariaHearts;
+	public bool EnableConsolariaHearts = true;
 
 	/// <summary>Internal-mod-name → config-field-name. Single source of truth for the mapping.</summary>
 	private static readonly Dictionary<string, string> FieldBySourceMod = new()

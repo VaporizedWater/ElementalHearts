@@ -33,15 +33,14 @@ public sealed class PotionHeartEffectsPlayer : ModPlayer
 		if (Player.whoAmI != Main.myPlayer)
 			return;
 
-		if (!ElementalHeartsServerConfig.Instance.Potions.WorldwidePotionEffectsEnabled)
-			return;
-
-		foreach (string id in HeartConsumptionWorld.Consumed)
+		var consumptionPlayer = Player.GetModPlayer<HeartConsumptionPlayer>();
+		foreach (string id in PotionHeartRegistry.RegisteredHearts)
 		{
-			// buffType == 0 is the explicit "no effect" sentinel used by novelty potion
-			// hearts (Love, Stink); they only grant HP, never apply a buff.
-			if (PotionHeartRegistry.TryGetBuff(id, out int buffType) && buffType > 0)
-				Player.AddBuff(buffType, BuffRefreshTicks, quiet: true);
+			if (consumptionPlayer.IsConsumedLocally(id))
+			{
+				if (PotionHeartRegistry.TryGetBuff(id, out int buffType) && buffType > 0)
+					Player.AddBuff(buffType, BuffRefreshTicks, quiet: true);
+			}
 		}
 	}
 
@@ -66,13 +65,17 @@ public sealed class PotionHeartEffectsPlayer : ModPlayer
 			if (buffType > 0 && Player.buffTime[i] <= 60)
 			{
 				// Check if this buff comes from a consumed heart
-				foreach (string id in HeartConsumptionWorld.Consumed)
+				var consumptionPlayer = Player.GetModPlayer<HeartConsumptionPlayer>();
+				foreach (string id in PotionHeartRegistry.RegisteredHearts)
 				{
-					if (PotionHeartRegistry.TryGetBuff(id, out int heartBuffType) && heartBuffType == buffType)
+					if (consumptionPlayer.IsConsumedLocally(id))
 					{
-						Player.DelBuff(i);
-						i--; // Re-check this index because a new buff shifted into it
-						break;
+						if (PotionHeartRegistry.TryGetBuff(id, out int heartBuffType) && heartBuffType == buffType)
+						{
+							Player.DelBuff(i);
+							i--; // Re-check this index because a new buff shifted into it
+							break;
+						}
 					}
 				}
 			}

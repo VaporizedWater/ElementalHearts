@@ -69,7 +69,7 @@ public class IdleShardPlayer : ModPlayer
 
 	public int GetPendingShards()
 	{
-		if (!ElementalHeartsClientConfig.Instance.Idle.EnableIdleGame)
+		if (!ElementalHeartsServerConfig.Instance.LifeShards.SystemEnabled)
 			return 0;
 
 		TimeSpan elapsed = DateTime.UtcNow - new DateTime(IdleShardWorld.LastClaimTimeTicks);

@@ -834,7 +834,7 @@ public class ChecklistUIState : UIState
 						if (!isUnlocked) nameText.TextColor = Color.Gray;
 						heartRow.Append(nameText);
 
-						if (ElementalHeartsClientConfig.Instance.Idle.EnableIdleGame && isUnlocked)
+						if (ElementalHeartsServerConfig.Instance.LifeShards.SystemEnabled && isUnlocked)
 						{
 							int rate = heart.ActiveAbilityDailyCost ?? IdleShardPlayer.GetShardYield(heart.Tier);
 							bool isAbility = heart is PotionHeartItem || heart.IsActiveAbility;

@@ -63,9 +63,7 @@ public abstract class PotionHeartItem : ElementalHeartItem
 			if (BuffType <= 0)
 				return base.HpGain;
 
-			return ElementalHeartsServerConfig.Instance.Potions.WorldwidePotionEffectsEnabled
-				? 0
-				: base.HpGain;
+			return 0;
 		}
 	}
 
@@ -144,13 +142,10 @@ public abstract class PotionHeartItem : ElementalHeartItem
 
 	public override void ModifyTooltips(List<TooltipLine> tooltips)
 	{
-		bool effectsEnabled = ElementalHeartsServerConfig.Instance.Potions.WorldwidePotionEffectsEnabled;
 		bool isBuffHeart = BuffType > 0;
 
-		// Novelty hearts (Love, Stink) always behave as standard HP hearts, and any
-		// buff heart with the world-wide effect disabled also reverts to standard HP
-		// behaviour — both go through the base implementation unchanged.
-		if (!isBuffHeart || !effectsEnabled)
+		// Novelty hearts (Love, Stink) always behave as standard HP hearts.
+		if (!isBuffHeart)
 		{
 			base.ModifyTooltips(tooltips);
 			return;

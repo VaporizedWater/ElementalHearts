@@ -23,4 +23,6 @@ public static class PotionHeartRegistry
 
 	public static bool TryGetBuff(string heartId, out int buffType)
 		=> _buffByHeartId.TryGetValue(heartId, out buffType);
+
+	public static IEnumerable<string> RegisteredHearts => _buffByHeartId.Keys;
 }

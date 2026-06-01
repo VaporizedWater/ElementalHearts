@@ -42,9 +42,6 @@ internal static class DashUpgrade
 	/// </summary>
 	public static bool IsActive()
 	{
-		if (!ElementalHeartsClientConfig.Instance.Abilities.EnableJackOLanternDash)
-			return false;
-
 		if (Main.LocalPlayer is not { active: true } player)
 			return false;
 

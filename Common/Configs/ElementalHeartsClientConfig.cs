@@ -33,10 +33,6 @@ public sealed class ElementalHeartsClientConfig : ModConfig
 	[Header("Visuals")]
 	[SeparatePage]
 	public VisualSettings Visuals = new VisualSettings();
-
-	[Header("Abilities")]
-	[SeparatePage]
-	public AbilitySettings Abilities = new AbilitySettings();
 }
 
 public class UISettings
@@ -57,26 +53,17 @@ public class UISettings
 	public bool HideImpossibleHearts { get; set; } = true;
 
 	[DefaultValue(false)]
-	public bool DraggableUI;
+	public bool DraggableUI = false;
 
 	[DefaultValue(typeof(Vector2), "0, 0")]
 	[Range(0f, 3840f)]
 	[Increment(1f)]
-	public Vector2 UIPosition;
+	public Vector2 UIPosition = new Vector2(0, 0);
 }
 
-public class AbilitySettings
-{
-	[DefaultValue(true)]
-	public bool EnableJackOLanternDash { get; set; } = true;
-}
 
 public class CameraSettings
 {
-	[Header("General")]
-	[DefaultValue(true)]
-	public bool EnableCursorFocus;
-
 	[Header("Strength")]
 	[Range(0, 600)]
 	[Increment(10)]
@@ -84,21 +71,21 @@ public class CameraSettings
 	[DrawTicks]
 	[SliderColor(120, 200, 255, 255)]
 	[DefaultValue(160)]
-	public int MaxPanDistance;
+	public int MaxPanDistance = 160;
 
 	[Range(0, 200)]
 	[Increment(5)]
 	[Slider]
 	[SliderColor(120, 200, 255, 255)]
 	[DefaultValue(100)]
-	public int HorizontalStrength;
+	public int HorizontalStrength = 100;
 
 	[Range(0, 200)]
 	[Increment(5)]
 	[Slider]
 	[SliderColor(120, 200, 255, 255)]
 	[DefaultValue(100)]
-	public int VerticalStrength;
+	public int VerticalStrength = 100;
 
 	[Header("Feel")]
 	[Range(0, 100)]
@@ -107,42 +94,39 @@ public class CameraSettings
 	[DrawTicks]
 	[SliderColor(170, 150, 255, 255)]
 	[DefaultValue(35)]
-	public int Smoothing;
+	public int Smoothing = 35;
 
 	[Range(0, 90)]
 	[Increment(5)]
 	[Slider]
 	[SliderColor(170, 150, 255, 255)]
 	[DefaultValue(10)]
-	public int Deadzone;
+	public int Deadzone = 10;
 
 	[Range(1f, 3f)]
 	[Increment(0.1f)]
 	[Slider]
 	[SliderColor(170, 150, 255, 255)]
 	[DefaultValue(1.5f)]
-	public float ResponseCurve;
+	public float ResponseCurve = 1.5f;
 
 	[Header("Behaviour")]
 	[DefaultValue(false)]
-	public bool OnlyWhileUsingItem;
+	public bool OnlyWhileUsingItem = false;
 
 	[DefaultValue(true)]
-	public bool RecenterInMenus;
+	public bool RecenterInMenus = true;
 
 	[DefaultValue(false)]
-	public bool InvertHorizontal;
+	public bool InvertHorizontal = false;
 
 	[DefaultValue(false)]
-	public bool InvertVertical;
+	public bool InvertVertical = false;
 }
 
 public class IdleSettings
 {
 	[Header("IdleGameSettings")]
-	[DefaultValue(true)]
-	public bool EnableIdleGame { get; set; } = true;
-
 	[DefaultValue(50)] [Range(10, 1000)] [Increment(10)] [Slider] [SliderColor(150, 230, 150, 255)]
 	public int BaseCapacity { get; set; } = 50;
 
@@ -166,5 +150,5 @@ public class VisualSettings
 	[Slider]
 	[DrawTicks]
 	[SliderColor(255, 130, 160, 255)]
-	public int ConsumptionEffectStrength;
+	public int ConsumptionEffectStrength = 3;
 }

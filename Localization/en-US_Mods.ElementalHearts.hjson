@@ -21,7 +21,6 @@ Configs: {
 			Boss: Boss Drops
 			Capacity: Capacity
 			HP: HP Scaling
-			Potions: Potions
 			Recipes: Recipes
 			World: World
 			LifeShards: Life Shards
@@ -40,11 +39,6 @@ Configs: {
 
 		HPScale: {
 			Label: HP Scaling Settings
-			Tooltip: ""
-		}
-
-		Potions: {
-			Label: Potion Heart Settings
 			Tooltip: ""
 		}
 
@@ -262,23 +256,6 @@ Configs: {
 		Tooltip: ""
 	}
 
-	PotionSettings: {
-		DisplayName: Potion Heart Settings
-		Headers.PotionHearts: Potion Hearts
-
-		WorldwidePotionEffectsEnabled: {
-			Label: Enable World-Wide Potion Effects
-			Tooltip:
-				'''
-				When on, consuming a Potion Heart keeps that potion's buff permanently active
-				on every player in the world. When off, Potion Hearts only grant their HP boost
-				and behave like any other elemental heart.
-				'''
-		}
-
-		Tooltip: ""
-	}
-
 	TipSettings: {
 		DisplayName: Tips Settings
 		Headers.Tips: In-Game Tips
@@ -382,6 +359,11 @@ Configs: {
 		}
 
 		Tooltip: ""
+
+		HeartShootingStarFalloffMultiplier: {
+			Tooltip: ""
+			Label: Heart Shooting Star Falloff Multiplier
+		}
 	}
 
 	LifeShardSettings: {

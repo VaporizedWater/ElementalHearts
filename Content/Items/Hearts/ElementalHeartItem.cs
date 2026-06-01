@@ -558,7 +558,7 @@ public abstract class ElementalHeartItem : ModItem
 
 		// Passive Collection screen: a hovered, unlocked passive heart advertises its daily
 		// idle yield with the shard icon inline so the payoff reads at a glance.
-		if (ShowGenerationTooltip && ElementalHeartsClientConfig.Instance.Idle.EnableIdleGame
+		if (ShowGenerationTooltip && ElementalHeartsServerConfig.Instance.LifeShards.SystemEnabled
 			&& !IsActiveAbility && this is not PotionHeartItem)
 		{
 			int rate = IdleShardPlayer.GetShardYield(Tier);

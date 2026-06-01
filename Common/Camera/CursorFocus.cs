@@ -47,9 +47,6 @@ internal static class CursorFocus
 	/// </summary>
 	public static bool IsActive()
 	{
-		if (!ElementalHeartsClientConfig.Instance.Camera.EnableCursorFocus)
-			return false;
-
 		if (Main.LocalPlayer is not { active: true } player)
 			return false;
 
