@@ -36,7 +36,7 @@ internal static class CursorFocus
 		if (player is null)
 			return false;
 
-		return ElementalHeartsWorldConfig.Instance.SharedProgression
+		return ElementalHeartsServerConfig.Instance.WorldGen.SharedProgression
 			? HeartConsumptionWorld.IsUnlocked(HeartId)
 			: player.GetModPlayer<HeartConsumptionPlayer>().IsUnlockedLocally(HeartId);
 	}
@@ -47,7 +47,7 @@ internal static class CursorFocus
 	/// </summary>
 	public static bool IsActive()
 	{
-		if (!ElementalHeartsCameraConfig.Instance.EnableCursorFocus)
+		if (!ElementalHeartsClientConfig.Instance.Camera.EnableCursorFocus)
 			return false;
 
 		if (Main.LocalPlayer is not { active: true } player)

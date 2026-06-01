@@ -118,7 +118,7 @@ public sealed class LifeShardPanel : ModSystem
 
 		if (!Main.playerInventory || Main.LocalPlayer == null)
 			return;
-		if (!LifeShardConfig.Instance.SystemEnabled)
+		if (!ElementalHeartsServerConfig.Instance.LifeShards.SystemEnabled)
 			return;
 
 		LifeShardPlayer shardPlayer = Main.LocalPlayer.GetModPlayer<LifeShardPlayer>();
@@ -141,10 +141,10 @@ public sealed class LifeShardPanel : ModSystem
 		float firstSlotY = OriginY + (FirstSlotRow * gridPitch);
 		Vector2 mouse = UiMouse();
 
-		if (ElementalHeartsVisualConfig.Instance.DraggableUI && ElementalHeartsVisualConfig.Instance.UIPosition != Vector2.Zero)
+		if (ElementalHeartsClientConfig.Instance.UI.DraggableUI && ElementalHeartsClientConfig.Instance.UI.UIPosition != Vector2.Zero)
 		{
-			columnX = ElementalHeartsVisualConfig.Instance.UIPosition.X;
-			firstSlotY = ElementalHeartsVisualConfig.Instance.UIPosition.Y;
+			columnX = ElementalHeartsClientConfig.Instance.UI.UIPosition.X;
+			firstSlotY = ElementalHeartsClientConfig.Instance.UI.UIPosition.Y;
 
 			// Enforce safe zone on load to prevent spawning in the top left
 			if (columnX < 300f && firstSlotY < 300f)
@@ -175,7 +175,7 @@ public sealed class LifeShardPanel : ModSystem
 				columnX = Math.Clamp(columnX, 0f, Main.screenWidth - slotSize);
 				firstSlotY = Math.Clamp(firstSlotY, 0f, Main.screenHeight - slotSize);
 
-				ElementalHeartsVisualConfig.Instance.UIPosition = new Vector2(columnX, firstSlotY);
+				ElementalHeartsClientConfig.Instance.UI.UIPosition = new Vector2(columnX, firstSlotY);
 			}
 			else
 			{
@@ -183,7 +183,7 @@ public sealed class LifeShardPanel : ModSystem
 				var saveMethod = typeof(Terraria.ModLoader.Config.ConfigManager).GetMethod("Save", System.Reflection.BindingFlags.Static | System.Reflection.BindingFlags.NonPublic);
 				if (saveMethod != null)
 				{
-					saveMethod.Invoke(null, new object[] { ElementalHeartsVisualConfig.Instance });
+					saveMethod.Invoke(null, new object[] { ElementalHeartsClientConfig.Instance.Visuals });
 				}
 			}
 		}
@@ -246,7 +246,7 @@ public sealed class LifeShardPanel : ModSystem
 
 		Main.LocalPlayer.mouseInterface = true;
 		
-		if (ElementalHeartsVisualConfig.Instance.DraggableUI)
+		if (ElementalHeartsClientConfig.Instance.UI.DraggableUI)
 		{
 			if (Main.mouseLeft && Main.mouseLeftRelease && !_dragging)
 			{
@@ -429,7 +429,7 @@ public sealed class LifeShardPanel : ModSystem
 		float columnX, float firstSlotY, float slotSize, float slotPitch, List<int> visible,
 		Vector2 mouse)
 	{
-		if (!ElementalHeartsTipsConfig.Instance.EnableTips)
+		if (!ElementalHeartsClientConfig.Instance.Tips.EnableTips)
 			return;
 
 		// Slot whose upgrade is currently locked by Animate progression — the lowest target

@@ -33,7 +33,7 @@ public sealed class LifeCrystalExtractinatorGlobalItem : GlobalItem
 		if (extractType != ItemID.LifeCrystal)
 			return;
 
-		LifeShardConfig config = LifeShardConfig.Instance;
+		LifeShardSettings config = ElementalHeartsServerConfig.Instance.LifeShards;
 		if (!config.SystemEnabled)
 			return;
 
@@ -57,7 +57,7 @@ public sealed class LifeCrystalExtractinatorGlobalItem : GlobalItem
 	/// </summary>
 	private static void TrySpawnSeed()
 	{
-		VitalTilesConfig vitalCfg = VitalTilesConfig.Instance;
+		VitalTileSettings vitalCfg = ElementalHeartsServerConfig.Instance.VitalTiles;
 		if (!vitalCfg.SystemEnabled)
 			return;
 		if (Main.netMode == NetmodeID.Server)

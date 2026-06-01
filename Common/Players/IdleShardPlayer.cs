@@ -36,7 +36,7 @@ public class IdleShardPlayer : ModPlayer
 		generation = 0;
 		consumption = 0;
 
-		bool shared = ElementalHeartsWorldConfig.Instance.SharedProgression;
+		bool shared = ElementalHeartsServerConfig.Instance.WorldGen.SharedProgression;
 		var heartConsumptionPlayer = Player.GetModPlayer<HeartConsumptionPlayer>();
 
 		foreach (var heart in ModContent.GetContent<ElementalHeartItem>())
@@ -69,7 +69,7 @@ public class IdleShardPlayer : ModPlayer
 
 	public int GetPendingShards()
 	{
-		if (!ElementalHeartsIdleConfig.Instance.EnableIdleGame)
+		if (!ElementalHeartsClientConfig.Instance.Idle.EnableIdleGame)
 			return 0;
 
 		TimeSpan elapsed = DateTime.UtcNow - new DateTime(IdleShardWorld.LastClaimTimeTicks);
@@ -91,7 +91,7 @@ public class IdleShardPlayer : ModPlayer
 	public int GetCapacity()
 	{
 		int tier = AnimateProgressionSystem.UnlockedTier;
-		return ElementalHeartsIdleConfig.Instance.BaseCapacity + (tier * ElementalHeartsIdleConfig.Instance.CapacityPerTier);
+		return ElementalHeartsClientConfig.Instance.Idle.BaseCapacity + (tier * ElementalHeartsClientConfig.Instance.Idle.CapacityPerTier);
 	}
 
 	public void ClaimShards()

@@ -30,7 +30,7 @@ public class HeartFallingStarSystem : ModSystem
 			droppedThisNight = 0;
 			eventActiveThisNight = false;
 
-			if (Main.rand.Next(100) < ElementalHeartsWorldConfig.Instance.HeartShootingStarChance)
+			if (Main.rand.Next(100) < ElementalHeartsServerConfig.Instance.WorldGen.HeartShootingStarChance)
 			{
 				eventActiveThisNight = true;
 			}
@@ -39,10 +39,10 @@ public class HeartFallingStarSystem : ModSystem
 		wasDayTime = isDay;
 
 		// During night
-		if (!isDay && eventActiveThisNight && droppedThisNight < ElementalHeartsWorldConfig.Instance.HeartShootingStarMaxPerNight)
+		if (!isDay && eventActiveThisNight && droppedThisNight < ElementalHeartsServerConfig.Instance.WorldGen.HeartShootingStarMaxPerNight)
 		{
 			// Try spawn based on frequency
-			float chancePerTick = (1f / 10000f) * (ElementalHeartsWorldConfig.Instance.HeartShootingStarFrequency / 100f);
+			float chancePerTick = (1f / 10000f) * (ElementalHeartsServerConfig.Instance.WorldGen.HeartShootingStarFrequency / 100f);
 			
 			if (Main.rand.NextFloat() < chancePerTick)
 			{

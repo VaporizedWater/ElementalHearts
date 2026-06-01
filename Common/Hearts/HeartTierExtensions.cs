@@ -26,7 +26,7 @@ public static class HeartTierExtensions
 
 	public static int GetHpGain(this HeartTier tier)
 	{
-		var cfg = ElementalHeartsHPConfig.Instance;
+		var cfg = ElementalHeartsServerConfig.Instance.HPScale;
 		int hp = tier switch
 		{
 			HeartTier.Common    => cfg.Common,

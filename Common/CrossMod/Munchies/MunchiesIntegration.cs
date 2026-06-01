@@ -145,7 +145,7 @@ internal static class MunchiesIntegration
 			CallApiVersion,
 			heart,
 			CategoryPlayer,
-			(Func<bool>)(() => ElementalHeartsWorldConfig.Instance.SharedProgression 
+			(Func<bool>)(() => ElementalHeartsServerConfig.Instance.WorldGen.SharedProgression 
 				? HeartConsumptionWorld.IsConsumed(id) 
 				: Terraria.Main.LocalPlayer?.GetModPlayer<HeartConsumptionPlayer>().IsConsumedLocally(id) ?? false),
 			(Color?)heart.MunchiesTextColor,

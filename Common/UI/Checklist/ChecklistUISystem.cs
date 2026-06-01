@@ -44,7 +44,7 @@ public class ChecklistUISystem : ModSystem
 
 	public static void ToggleUI()
 	{
-		if (!ElementalHeartsClientConfig.Instance.EnableHeartChecklist)
+		if (!ElementalHeartsClientConfig.Instance.UI.EnableHeartChecklist)
 		{
 			// Force hide if disabled
 			var system = ModContent.GetInstance<ChecklistUISystem>();
@@ -67,7 +67,7 @@ public class ChecklistUISystem : ModSystem
 	{
 		if (ChecklistInterface?.CurrentState != null)
 		{
-			if (!ElementalHeartsClientConfig.Instance.EnableHeartChecklist)
+			if (!ElementalHeartsClientConfig.Instance.UI.EnableHeartChecklist)
 			{
 				ChecklistInterface.SetState(null); // Auto-close if disabled in config while open
 			}
@@ -81,7 +81,7 @@ public class ChecklistUISystem : ModSystem
 			}
 		}
 
-		if (Main.playerInventory && ElementalHeartsClientConfig.Instance.EnableHeartChecklist)
+		if (Main.playerInventory && ElementalHeartsClientConfig.Instance.UI.EnableHeartChecklist)
 		{
 			ButtonInterface?.Update(gameTime);
 		}
@@ -107,7 +107,7 @@ public class ChecklistUISystem : ModSystem
 				"ElementalHearts: Heart Log Button",
 				delegate
 				{
-					if (Main.playerInventory && ElementalHeartsClientConfig.Instance.EnableHeartChecklist)
+					if (Main.playerInventory && ElementalHeartsClientConfig.Instance.UI.EnableHeartChecklist)
 						ButtonInterface?.Draw(Main.spriteBatch, new GameTime());
 					return true;
 				},

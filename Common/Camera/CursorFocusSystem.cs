@@ -40,7 +40,7 @@ public sealed class CursorFocusSystem : ModSystem
 
 	public override void PostUpdateEverything()
 	{
-		ElementalHeartsCameraConfig cfg = ElementalHeartsCameraConfig.Instance;
+		CameraSettings cfg = ElementalHeartsClientConfig.Instance.Camera;
 		TargetOffset = ShouldPan(cfg) ? ComputeTargetOffset(cfg) : Vector2.Zero;
 	}
 
@@ -53,7 +53,7 @@ public sealed class CursorFocusSystem : ModSystem
 		}
 
 		// Calculate smoothing factor based on config
-		float smooth01 = System.Math.Clamp(ElementalHeartsCameraConfig.Instance.Smoothing / 100f, 0f, 1f);
+		float smooth01 = System.Math.Clamp(ElementalHeartsClientConfig.Instance.Camera.Smoothing / 100f, 0f, 1f);
 		float factor = 0.03f + (0.97f * System.MathF.Pow(1f - smooth01, 5f));
 
 		_actualCameraOffset = Vector2.Lerp(_actualCameraOffset, TargetOffset, factor);
@@ -66,7 +66,7 @@ public sealed class CursorFocusSystem : ModSystem
 	}
 
 	/// <summary>Whether the camera is allowed to pan this tick, considering the ability state and current UI context.</summary>
-	private static bool ShouldPan(ElementalHeartsCameraConfig cfg)
+	private static bool ShouldPan(CameraSettings cfg)
 	{
 		if (!CursorFocus.IsActive())
 			return false;
@@ -96,7 +96,7 @@ public sealed class CursorFocusSystem : ModSystem
 	}
 
 	/// <summary>Maps the cursor's distance from screen centre into a camera offset, with deadzone, curve and per-axis scaling.</summary>
-	private static Vector2 ComputeTargetOffset(ElementalHeartsCameraConfig cfg)
+	private static Vector2 ComputeTargetOffset(CameraSettings cfg)
 	{
 		float halfW = Main.screenWidth / 2f;
 		float halfH = Main.screenHeight / 2f;

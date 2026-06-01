@@ -24,8 +24,8 @@ public sealed class LifeBiomeGenSystem : ModSystem
 {
 	public override void ModifyWorldGenTasks(List<GenPass> tasks, ref double totalWeight)
 	{
-		ElementalHeartsWorldConfig worldCfg = ElementalHeartsWorldConfig.Instance;
-		VitalTilesConfig vitalCfg = VitalTilesConfig.Instance;
+		WorldSettings worldCfg = ElementalHeartsServerConfig.Instance.WorldGen;
+		VitalTileSettings vitalCfg = ElementalHeartsServerConfig.Instance.VitalTiles;
 
 		// Both gates are honoured: the world toggle disables this independently of the
 		// tile system, and disabling the tile system disables the biome too (placing
@@ -52,7 +52,7 @@ public sealed class LifeBiomeGenSystem : ModSystem
 	{
 		progress.Message = Language.GetTextValue("Mods.ElementalHearts.WorldGen.VitalSoilBiomes");
 
-		int multiplier = ElementalHeartsWorldConfig.Instance.SurfaceBiomeCountMultiplier;
+		int multiplier = ElementalHeartsServerConfig.Instance.WorldGen.SurfaceBiomeCountMultiplier;
 		if (multiplier <= 0)
 			return;
 
@@ -247,7 +247,7 @@ public sealed class LifeBiomeGenSystem : ModSystem
 		progress.Message = Language.GetTextValue("Mods.ElementalHearts.WorldGen.VitalQuartzBiomes");
 		InitializeImpossibleHearts();
 
-		int multiplier = ElementalHeartsWorldConfig.Instance.JungleBiomeCountMultiplier;
+		int multiplier = ElementalHeartsServerConfig.Instance.WorldGen.JungleBiomeCountMultiplier;
 		if (multiplier <= 0)
 			return;
 

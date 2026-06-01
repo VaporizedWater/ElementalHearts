@@ -23,7 +23,7 @@ public sealed class LifeShardQuickHealPlayer : ModPlayer
 		if (!triggersSet.QuickHeal)
 			return;
 
-		LifeShardConfig cfg = LifeShardConfig.Instance;
+		LifeShardSettings cfg = ElementalHeartsServerConfig.Instance.LifeShards;
 		if (!cfg.SystemEnabled || !cfg.ShardsAreConsumable)
 			return;
 

@@ -14,7 +14,7 @@ namespace ElementalHearts.Content.Items.Hearts;
 
 /// <summary>
 /// Heart themed around a vanilla buff potion. Buff-granting hearts trade the usual HP
-/// gain for a permanent world-wide buff: while <see cref="ElementalHeartsPotionEffectConfig"/>
+/// gain for a permanent world-wide buff: while <see cref="PotionSettings"/>
 /// has the feature enabled, <see cref="HpGain"/> returns 0 and the buff is applied each
 /// tick by <see cref="Common.Players.PotionHeartEffectsPlayer"/>. When the feature is
 /// disabled the heart reverts to a plain HP grant — fulfilling the original spec that
@@ -63,7 +63,7 @@ public abstract class PotionHeartItem : ElementalHeartItem
 			if (BuffType <= 0)
 				return base.HpGain;
 
-			return ElementalHeartsPotionEffectConfig.Instance.WorldwidePotionEffectsEnabled
+			return ElementalHeartsServerConfig.Instance.Potions.WorldwidePotionEffectsEnabled
 				? 0
 				: base.HpGain;
 		}
@@ -105,7 +105,7 @@ public abstract class PotionHeartItem : ElementalHeartItem
 		if (!IsToggleable)
 			return base.UseItem(player);
 
-		bool shared = ElementalHeartsWorldConfig.Instance.SharedProgression;
+		bool shared = ElementalHeartsServerConfig.Instance.WorldGen.SharedProgression;
 		bool wasConsumed = shared
 			? HeartConsumptionWorld.IsConsumed(ConsumptionId)
 			: player.GetModPlayer<HeartConsumptionPlayer>().IsConsumedLocally(ConsumptionId);
@@ -144,7 +144,7 @@ public abstract class PotionHeartItem : ElementalHeartItem
 
 	public override void ModifyTooltips(List<TooltipLine> tooltips)
 	{
-		bool effectsEnabled = ElementalHeartsPotionEffectConfig.Instance.WorldwidePotionEffectsEnabled;
+		bool effectsEnabled = ElementalHeartsServerConfig.Instance.Potions.WorldwidePotionEffectsEnabled;
 		bool isBuffHeart = BuffType > 0;
 
 		// Novelty hearts (Love, Stink) always behave as standard HP hearts, and any
@@ -162,7 +162,7 @@ public abstract class PotionHeartItem : ElementalHeartItem
 		// number or symbol (e.g. "25% increased movement speed"). Greyed out once
 		// consumed so the player can tell the effect is currently live; a second gray
 		// line explains they can re-use the item to switch it back off.
-		bool shared = ElementalHeartsWorldConfig.Instance.SharedProgression;
+		bool shared = ElementalHeartsServerConfig.Instance.WorldGen.SharedProgression;
 		bool consumed = shared
 			? HeartConsumptionWorld.IsConsumed(ConsumptionId)
 			: Main.LocalPlayer?.GetModPlayer<HeartConsumptionPlayer>().IsConsumedLocally(ConsumptionId) ?? false;

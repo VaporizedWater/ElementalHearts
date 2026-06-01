@@ -31,7 +31,7 @@ internal static class DashUpgrade
 		if (player is null)
 			return false;
 
-		return ElementalHeartsWorldConfig.Instance.SharedProgression
+		return ElementalHeartsServerConfig.Instance.WorldGen.SharedProgression
 			? HeartConsumptionWorld.IsUnlocked(HeartId)
 			: player.GetModPlayer<HeartConsumptionPlayer>().IsUnlockedLocally(HeartId);
 	}
@@ -42,7 +42,7 @@ internal static class DashUpgrade
 	/// </summary>
 	public static bool IsActive()
 	{
-		if (!ElementalHeartsClientConfig.Instance.EnableJackOLanternDash)
+		if (!ElementalHeartsClientConfig.Instance.Abilities.EnableJackOLanternDash)
 			return false;
 
 		if (Main.LocalPlayer is not { active: true } player)

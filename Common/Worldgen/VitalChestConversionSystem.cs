@@ -24,7 +24,7 @@ public sealed class VitalChestConversionSystem : ModSystem
 	public override void ModifyWorldGenTasks(List<GenPass> tasks, ref double totalWeight)
 	{
 		// Worldgen tiles only exist if the tile system is enabled.
-		if (!VitalTilesConfig.Instance.SystemEnabled)
+		if (!ElementalHeartsServerConfig.Instance.VitalTiles.SystemEnabled)
 			return;
 
 		// "Buried Chests" is vanilla's main chest placement pass. We slot in just after the

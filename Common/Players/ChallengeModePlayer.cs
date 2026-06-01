@@ -5,7 +5,7 @@ using Terraria.ModLoader;
 namespace ElementalHearts.Common.Players;
 
 /// <summary>
-/// Enforces the hardcore "Challenge Mode" health rules (<see cref="ElementalHeartsHPConfig.ChallengeMode"/>):
+/// Enforces the hardcore "Challenge Mode" health rules (<see cref="HPSettings.ChallengeMode"/>):
 /// a character's base max life drops from the vanilla 100 to 1, and each consumed Life Crystal
 /// grants 5 instead of 20. Hearts are deliberately left untouched here — they double up in
 /// <see cref="Hearts.HeartTierExtensions.GetHpGain"/> — so consuming hearts becomes the real way
@@ -25,7 +25,7 @@ public sealed class ChallengeModePlayer : ModPlayer
 		health = StatModifier.Default;
 		mana = StatModifier.Default;
 
-		if (!ElementalHeartsHPConfig.Instance.ChallengeMode)
+		if (!ElementalHeartsServerConfig.Instance.HPScale.ChallengeMode)
 			return;
 
 		// `Player.statLifeMax` already bakes in the vanilla base (100) and +20 per crystal, so we

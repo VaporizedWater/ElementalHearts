@@ -16,7 +16,7 @@ public sealed class HeartCapacitySystem : ModSystem
 	/// </summary>
 	public static int? GetMaxCapacity()
 	{
-		var config = ElementalHeartsCapacityConfig.Instance;
+		var config = ElementalHeartsServerConfig.Instance.CapacityLimits;
 		if (!config.EnableProgressionGates)
 			return null;
 

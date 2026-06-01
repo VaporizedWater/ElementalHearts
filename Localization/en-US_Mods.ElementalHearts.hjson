@@ -14,7 +14,105 @@ Common: {
 }
 
 Configs: {
-	ElementalHeartsBossConfig: {
+	ElementalHeartsServerConfig: {
+		DisplayName: Server Settings
+
+		Headers: {
+			Boss: Boss Drops
+			Capacity: Capacity
+			HP: HP Scaling
+			Potions: Potions
+			Recipes: Recipes
+			World: World
+			LifeShards: Life Shards
+			VitalTiles: Vital Tiles
+		}
+
+		BossDrops: {
+			Label: Boss Drop Settings
+			Tooltip: ""
+		}
+
+		CapacityLimits: {
+			Label: Capacity Settings
+			Tooltip: ""
+		}
+
+		HPScale: {
+			Label: HP Scaling Settings
+			Tooltip: ""
+		}
+
+		Potions: {
+			Label: Potion Heart Settings
+			Tooltip: ""
+		}
+
+		Recipes: {
+			Label: Recipe Settings
+			Tooltip: ""
+		}
+
+		WorldGen: {
+			Label: World Settings
+			Tooltip: ""
+		}
+
+		LifeShards: {
+			Label: Life Shard Settings
+			Tooltip: ""
+		}
+
+		VitalTiles: {
+			Label: Vital Tile Settings
+			Tooltip: ""
+		}
+	}
+
+	ElementalHeartsClientConfig: {
+		DisplayName: Interface Settings
+
+		Headers: {
+			UI: Heart Log & HUD
+			Camera: Camera
+			Idle: Idle Game
+			Tips: Tips
+			Visuals: Visuals
+			Abilities: Abilities
+		}
+
+		UI: {
+			Label: UI Settings
+			Tooltip: ""
+		}
+
+		Camera: {
+			Label: Camera Settings
+			Tooltip: ""
+		}
+
+		Idle: {
+			Label: Idle Game Settings
+			Tooltip: ""
+		}
+
+		Tips: {
+			Label: Tips Settings
+			Tooltip: ""
+		}
+
+		Visuals: {
+			Label: Visual Settings
+			Tooltip: ""
+		}
+
+		Abilities: {
+			Label: Ability Settings
+			Tooltip: ""
+		}
+	}
+
+	BossSettings: {
 		DisplayName: Boss Drop Settings
 		Headers.Drops: Boss Heart Drops
 
@@ -31,6 +129,8 @@ Configs: {
 			Label: Boss Heart Drop Chance (%)
 			Tooltip: Percentage chance for a boss to drop its themed heart on each kill after the first.
 		}
+
+		Tooltip: ""
 	}
 
 	ElementalHeartsCrossModConfig: {
@@ -68,7 +168,7 @@ Configs: {
 		}
 	}
 
-	ElementalHeartsHPConfig: {
+	HPSettings: {
 		DisplayName: HP Settings
 
 		Headers: {
@@ -121,9 +221,11 @@ Configs: {
 			Label: Mythic Heart HP
 			Tooltip: Maximum life each Mythic-tier (Animate final-boss) heart grants when consumed. Default 50.
 		}
+
+		Tooltip: ""
 	}
 
-	ElementalHeartsRecipeConfig: {
+	RecipeSettings: {
 		DisplayName: Recipe Settings
 		Headers.Crafting: Crafting Difficulty
 
@@ -136,9 +238,11 @@ Configs: {
 				Requires a reload.
 				'''
 		}
+
+		Tooltip: ""
 	}
 
-	ElementalHeartsVisualConfig: {
+	VisualSettings: {
 		DisplayName: Visual Settings
 
 		Headers: {
@@ -155,26 +259,10 @@ Configs: {
 				'''
 		}
 
-		DraggableUI: {
-			Label: Draggable Life Shard UI
-			Tooltip:
-				'''
-				When enabled, the Life Shard panel can be clicked and dragged to any screen position.
-				The new position is saved automatically to UI Position below.
-				'''
-		}
-
-		UIPosition: {
-			Label: Life Shard UI Position
-			Tooltip:
-				'''
-				Saved screen coordinates of the Life Shard panel. Only used while Draggable UI is enabled.
-				Set both to 0 to fall back to the default location.
-				'''
-		}
+		Tooltip: ""
 	}
 
-	ElementalHeartsPotionEffectConfig: {
+	PotionSettings: {
 		DisplayName: Potion Heart Settings
 		Headers.PotionHearts: Potion Hearts
 
@@ -187,9 +275,11 @@ Configs: {
 				and behave like any other elemental heart.
 				'''
 		}
+
+		Tooltip: ""
 	}
 
-	ElementalHeartsTipsConfig: {
+	TipSettings: {
 		DisplayName: Tips Settings
 		Headers.Tips: In-Game Tips
 
@@ -201,9 +291,11 @@ Configs: {
 				progression hint). Turn off to hide all tip badges.
 				'''
 		}
+
+		Tooltip: ""
 	}
 
-	ElementalHeartsWorldConfig: {
+	WorldSettings: {
 		DisplayName: World Settings
 
 		Headers: {
@@ -288,9 +380,11 @@ Configs: {
 				spectating. Does not change what can actually be consumed.
 				'''
 		}
+
+		Tooltip: ""
 	}
 
-	LifeShardConfig: {
+	LifeShardSettings: {
 		DisplayName: Life Shard Settings
 
 		Headers: {
@@ -460,9 +554,11 @@ Configs: {
 			Label: Legendary Shard Heal Amount
 			Tooltip: Hit points restored when a Legendary Life Shard is consumed via quick-heal.
 		}
+
+		Tooltip: ""
 	}
 
-	VitalTilesConfig: {
+	VitalTileSettings: {
 		DisplayName: Vital Tiles Settings
 
 		Headers: {
@@ -516,9 +612,11 @@ Configs: {
 			Label: Life Fruit Seed Chance (%)
 			Tooltip: Chance an extractinated Life Fruit yields a Life Fruit Seed. Life Fruit extractination only produces seeds — a missed roll consumes the fruit for nothing.
 		}
+
+		Tooltip: ""
 	}
 
-	ElementalHeartsClientConfig: {
+	UISettings: {
 		DisplayName: Interface Settings
 
 		Headers: {
@@ -559,17 +657,28 @@ Configs: {
 				'''
 		}
 
-		EnableJackOLanternDash: {
-			Label: Enable Jack-O'-Lantern Dash
+		DraggableUI: {
+			Label: Draggable Life Shard UI
 			Tooltip:
 				'''
-				Master switch for the Jack-O'-Lantern Heart's dash burst.
-				The everyday on/off toggle lives in the Heart Log.
+				When enabled, the Life Shard panel can be clicked and dragged to any screen position.
+				The new position is saved automatically to UI Position below.
 				'''
 		}
+
+		UIPosition: {
+			Label: Life Shard UI Position
+			Tooltip:
+				'''
+				Saved screen coordinates of the Life Shard panel. Only used while Draggable UI is enabled.
+				Set both to 0 to fall back to the default location.
+				'''
+		}
+
+		Tooltip: ""
 	}
 
-	ElementalHeartsCameraConfig: {
+	CameraSettings: {
 		DisplayName: Camera Settings
 
 		Headers: {
@@ -641,9 +750,11 @@ Configs: {
 			Label: Invert Vertical
 			Tooltip: Flip the vertical pan direction.
 		}
+
+		Tooltip: ""
 	}
 
-	ElementalHeartsIdleConfig: {
+	IdleSettings: {
 		DisplayName: Idle Game Settings
 		Headers.IdleGameSettings: Idle Shard Generation
 
@@ -661,9 +772,11 @@ Configs: {
 			Label: Capacity Per World Tier
 			Tooltip: Extra unclaimed-shard capacity granted for each World Tier you've reached.
 		}
+
+		Tooltip: ""
 	}
 
-	ElementalHeartsCapacityConfig: {
+	CapacitySettings: {
 		DisplayName: Capacity Settings
 		Headers.ProgressionGates: HP Capacity Gates
 
@@ -731,6 +844,21 @@ Configs: {
 			Label: Uncap After Moon Lord
 			Tooltip: When on, the capacity gate is removed entirely once Moon Lord is defeated.
 		}
+
+		Tooltip: ""
+	}
+
+	AbilitySettings: {
+		EnableJackOLanternDash: {
+			Label: Enable Jack-O'-Lantern Dash
+			Tooltip:
+				'''
+				Master switch for the Jack-O'-Lantern Heart's dash burst.
+				The everyday on/off toggle lives in the Heart Log.
+				'''
+		}
+
+		Tooltip: ""
 	}
 }
 

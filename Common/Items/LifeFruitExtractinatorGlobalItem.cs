@@ -18,7 +18,7 @@ public sealed class LifeFruitExtractinatorGlobalItem : GlobalItem
 {
 	public override void ModifyTooltips(Item item, List<TooltipLine> tooltips)
 	{
-		if (item.type != ItemID.LifeFruit || !VitalTilesConfig.Instance.SystemEnabled)
+		if (item.type != ItemID.LifeFruit || !ElementalHeartsServerConfig.Instance.VitalTiles.SystemEnabled)
 			return;
 
 		tooltips.Add(new TooltipLine(Mod, "LifeFruitExtractinator",
@@ -30,11 +30,11 @@ public sealed class LifeFruitExtractinatorGlobalItem : GlobalItem
 		if (extractType != ItemID.LifeFruit)
 			return;
 
-		VitalTilesConfig vitalCfg = VitalTilesConfig.Instance;
+		VitalTileSettings vitalCfg = ElementalHeartsServerConfig.Instance.VitalTiles;
 		if (!vitalCfg.SystemEnabled)
 			return;
 
-		LifeShardConfig shardCfg = LifeShardConfig.Instance;
+		LifeShardSettings shardCfg = ElementalHeartsServerConfig.Instance.LifeShards;
 		if (shardCfg.SystemEnabled)
 		{
 			// Guaranteed Uncommon shards form the primary Extractinator result —
@@ -54,7 +54,7 @@ public sealed class LifeFruitExtractinatorGlobalItem : GlobalItem
 	/// Independent bonus: a Life Fruit Seed for replanting on Vital Soil. Spawned
 	/// alongside the shard yield rather than replacing it.
 	/// </summary>
-	private static void TrySpawnSeed(VitalTilesConfig cfg)
+	private static void TrySpawnSeed(VitalTileSettings cfg)
 	{
 		if (Main.netMode == NetmodeID.Server)
 			return;

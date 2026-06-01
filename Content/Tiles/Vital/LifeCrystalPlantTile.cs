@@ -16,7 +16,7 @@ namespace ElementalHearts.Content.Tiles.Vital;
 /// </summary>
 public sealed class LifeCrystalPlantTile : ModTile
 {
-	public override bool IsLoadingEnabled(Mod mod) => VitalTilesConfig.Instance.SystemEnabled;
+	public override bool IsLoadingEnabled(Mod mod) => ElementalHeartsServerConfig.Instance.VitalTiles.SystemEnabled;
 
 	public override void SetStaticDefaults()
 	{

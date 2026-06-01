@@ -37,7 +37,7 @@ public sealed class LifeShardDropGlobalNPC : GlobalNPC
 		if (damageDone <= 0)
 			return;
 
-		LifeShardConfig config = LifeShardConfig.Instance;
+		LifeShardSettings config = ElementalHeartsServerConfig.Instance.LifeShards;
 		if (!config.SystemEnabled)
 			return;
 
@@ -52,7 +52,7 @@ public sealed class LifeShardDropGlobalNPC : GlobalNPC
 		data.RollThresholds(npc, config);
 	}
 
-	private void RollThresholds(NPC npc, LifeShardConfig config)
+	private void RollThresholds(NPC npc, LifeShardSettings config)
 	{
 		bool isBoss = npc.boss || NPCID.Sets.ShouldBeCountedAsBoss[npc.type];
 

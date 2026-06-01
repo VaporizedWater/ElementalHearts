@@ -12,7 +12,7 @@ namespace ElementalHearts.Common.Systems;
 public sealed class VitalTilesSystem : ModSystem
 {
 	public override void PostSetupContent()
-		=> SetLifeFruitExtractable(VitalTilesConfig.Instance.SystemEnabled);
+		=> SetLifeFruitExtractable(ElementalHeartsServerConfig.Instance.VitalTiles.SystemEnabled);
 
 	/// <summary>
 	/// Toggles whether vanilla Life Fruit is accepted by the Extractinator. Disabling

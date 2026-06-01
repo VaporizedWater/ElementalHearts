@@ -22,7 +22,7 @@ public abstract class LifeShardItem : ModItem
 {
 	public abstract LifeShardTier Tier { get; }
 
-	public override bool IsLoadingEnabled(Mod mod) => LifeShardConfig.Instance.SystemEnabled;
+	public override bool IsLoadingEnabled(Mod mod) => ElementalHeartsServerConfig.Instance.LifeShards.SystemEnabled;
 
 	public override void SetStaticDefaults()
 	{
@@ -64,7 +64,7 @@ public abstract class LifeShardItem : ModItem
 	/// </summary>
 	public override bool OnPickup(Player player)
 	{
-		if (!LifeShardConfig.Instance.SystemEnabled)
+		if (!ElementalHeartsServerConfig.Instance.LifeShards.SystemEnabled)
 			return true;
 
 		// Queue the tier's cue rather than playing it now: several shards grabbed on the

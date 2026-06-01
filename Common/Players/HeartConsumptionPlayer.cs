@@ -96,7 +96,7 @@ public sealed class HeartConsumptionPlayer : ModPlayer
 		if (Player.whoAmI != Main.myPlayer)
 			return;
 
-		if (!ElementalHeartsWorldConfig.Instance.SharedProgression)
+		if (!ElementalHeartsServerConfig.Instance.WorldGen.SharedProgression)
 			return;
 
 		int currentApplied = System.Math.Min(_bonus, HeartCapacitySystem.GetMaxCapacity() ?? int.MaxValue);
@@ -258,7 +258,7 @@ public sealed class HeartConsumptionPlayer : ModPlayer
 				continue;
 
 			string heartId = key[prefix.Length..];
-			if (ElementalHeartsWorldConfig.Instance.SharedProgression && !HeartConsumptionWorld.IsConsumed(heartId))
+			if (ElementalHeartsServerConfig.Instance.WorldGen.SharedProgression && !HeartConsumptionWorld.IsConsumed(heartId))
 				continue;
 
 			_bonus += HeartRegistry.GetHp(heartId);
@@ -299,7 +299,7 @@ public sealed class HeartConsumptionPlayer : ModPlayer
 	public override void ModifyMaxStats(out StatModifier health, out StatModifier mana)
 	{
 		int maxCapacity = HeartCapacitySystem.GetMaxCapacity() ?? int.MaxValue;
-		int appliedBonus = ElementalHeartsClientConfig.Instance.EnableElementalHP ? System.Math.Min(_bonus, maxCapacity) : 0;
+		int appliedBonus = ElementalHeartsClientConfig.Instance.UI.EnableElementalHP ? System.Math.Min(_bonus, maxCapacity) : 0;
 		// `Base` is a flat add before multipliers — exactly what life-crystal-style HP gain should do.
 		health = StatModifier.Default with { Base = appliedBonus };
 

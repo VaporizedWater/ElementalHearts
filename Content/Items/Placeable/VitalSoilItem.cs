@@ -13,7 +13,7 @@ namespace ElementalHearts.Content.Items.Placeable;
 /// </summary>
 public sealed class VitalSoilItem : ModItem
 {
-	public override bool IsLoadingEnabled(Mod mod) => VitalTilesConfig.Instance.SystemEnabled;
+	public override bool IsLoadingEnabled(Mod mod) => ElementalHeartsServerConfig.Instance.VitalTiles.SystemEnabled;
 
 	public override void SetStaticDefaults()
 	{

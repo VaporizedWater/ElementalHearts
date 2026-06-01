@@ -13,7 +13,7 @@ namespace ElementalHearts.Content.Tiles.Vital;
 /// </summary>
 public sealed class VitalQuartzTile : ModTile
 {
-	public override bool IsLoadingEnabled(Mod mod) => VitalTilesConfig.Instance.SystemEnabled;
+	public override bool IsLoadingEnabled(Mod mod) => ElementalHeartsServerConfig.Instance.VitalTiles.SystemEnabled;
 
 	public override void SetStaticDefaults()
 	{
@@ -106,7 +106,7 @@ public sealed class VitalQuartzTile : ModTile
 			}
 		}
 
-		float spreadChance = VitalTilesConfig.Instance.VitalQuartzSpreadChance;
+		float spreadChance = ElementalHeartsServerConfig.Instance.VitalTiles.VitalQuartzSpreadChance;
 		if (spreadChance > 0f && Main.rand.NextFloat() < spreadChance)
 		{
 			int s_dx = 0, s_dy = 0;

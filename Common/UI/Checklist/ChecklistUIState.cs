@@ -412,7 +412,7 @@ public class ChecklistUIState : UIState
 		btnActivateAll.OnLeftClick += (evt, element) => {
 			Terraria.Audio.SoundEngine.PlaySound(Terraria.ID.SoundID.MenuTick);
 			var player = Main.LocalPlayer.GetModPlayer<HeartConsumptionPlayer>();
-			bool shared = ElementalHeartsWorldConfig.Instance.SharedProgression;
+			bool shared = ElementalHeartsServerConfig.Instance.WorldGen.SharedProgression;
 			foreach (var heart in ModContent.GetContent<ElementalHeartItem>()) {
 				if (shared) HeartConsumptionWorld.TryConsume(heart);
 				else player.TryConsumeLocally(heart);
@@ -487,7 +487,7 @@ public class ChecklistUIState : UIState
 
 	public void Rebuild()
 	{
-		bool showStats = ElementalHeartsClientConfig.Instance.ShowDetailedHeartStats;
+		bool showStats = ElementalHeartsClientConfig.Instance.UI.ShowDetailedHeartStats;
 		if (showStats)
 		{
 			if (_statsPanel.Parent == null) _mainPanel.Append(_statsPanel);
@@ -500,7 +500,7 @@ public class ChecklistUIState : UIState
 		float listTopOffset = showStats ? 140f : 95f;
 		float baseHeightOffset = showStats ? -215f : -170f;
 
-		if (ElementalHeartsWorldConfig.Instance.AdminMode)
+		if (ElementalHeartsServerConfig.Instance.WorldGen.AdminMode)
 		{
 			_mainPanel.BorderColor = new Color(255, 215, 0); // Gold border
 			_adminText.SetText("- ADMIN MODE ACTIVE -");
@@ -570,7 +570,7 @@ public class ChecklistUIState : UIState
 		}
 
 		var allHearts = ModContent.GetContent<ElementalHeartItem>().ToList();
-		bool shared = ElementalHeartsWorldConfig.Instance.SharedProgression;
+		bool shared = ElementalHeartsServerConfig.Instance.WorldGen.SharedProgression;
 		var player = Main.LocalPlayer.GetModPlayer<HeartConsumptionPlayer>();
 
 		var unlockedTiers = new System.Collections.Generic.HashSet<HeartTier>();
@@ -602,7 +602,7 @@ public class ChecklistUIState : UIState
 					return false;
 			}
 			
-			if (ElementalHeartsClientConfig.Instance.HideImpossibleHearts && !isUnlocked)
+			if (ElementalHeartsClientConfig.Instance.UI.HideImpossibleHearts && !isUnlocked)
 			{
 				if (!IsHeartPossible(heart)) return false;
 			}
@@ -802,7 +802,7 @@ public class ChecklistUIState : UIState
 							heartRow.BackgroundColor = new Color(10, 10, 10) * 0.6f;
 							heartRow.BorderColor = new Color(40, 40, 40);
 
-							if (ElementalHeartsWorldConfig.Instance.AdminMode)
+							if (ElementalHeartsServerConfig.Instance.WorldGen.AdminMode)
 							{
 								heartRow.OnLeftClick += (evt, element) => {
 									Terraria.Audio.SoundEngine.PlaySound(Terraria.ID.SoundID.Item4, Main.LocalPlayer.Center);
@@ -834,7 +834,7 @@ public class ChecklistUIState : UIState
 						if (!isUnlocked) nameText.TextColor = Color.Gray;
 						heartRow.Append(nameText);
 
-						if (ElementalHeartsIdleConfig.Instance.EnableIdleGame && isUnlocked)
+						if (ElementalHeartsClientConfig.Instance.Idle.EnableIdleGame && isUnlocked)
 						{
 							int rate = heart.ActiveAbilityDailyCost ?? IdleShardPlayer.GetShardYield(heart.Tier);
 							bool isAbility = heart is PotionHeartItem || heart.IsActiveAbility;
@@ -880,7 +880,7 @@ public class ChecklistUIState : UIState
 						{
 							gridSlot.BackgroundColor = new Color(10, 10, 10) * 0.6f;
 							gridSlot.BorderColor = new Color(40, 40, 40);
-							if (ElementalHeartsWorldConfig.Instance.AdminMode)
+							if (ElementalHeartsServerConfig.Instance.WorldGen.AdminMode)
 							{
 								gridSlot.OnLeftClick += (evt, element) => {
 									Terraria.Audio.SoundEngine.PlaySound(Terraria.ID.SoundID.Item4, Main.LocalPlayer.Center);
@@ -1088,10 +1088,10 @@ public class ChecklistUIState : UIState
 
 	private void UpdateDetailedStatsText()
 	{
-		if (_elementalHpText == null || !ElementalHeartsClientConfig.Instance.ShowDetailedHeartStats) return;
+		if (_elementalHpText == null || !ElementalHeartsClientConfig.Instance.UI.ShowDetailedHeartStats) return;
 		
 		var player = Main.LocalPlayer.GetModPlayer<HeartConsumptionPlayer>();
-		bool shared = ElementalHeartsWorldConfig.Instance.SharedProgression;
+		bool shared = ElementalHeartsServerConfig.Instance.WorldGen.SharedProgression;
 		
 		int activatedHearts = 0;
 		int totalHearts = 0;
@@ -1163,23 +1163,23 @@ public class ChecklistUIState : UIState
 		header.TextColor = Color.Gold;
 		_settingsList.Add(header);
 
-		AddConfigToggle("Show Detailed Stats Bar", () => ElementalHeartsClientConfig.Instance.ShowDetailedHeartStats, val => {
-			ElementalHeartsClientConfig.Instance.ShowDetailedHeartStats = val;
+		AddConfigToggle("Show Detailed Stats Bar", () => ElementalHeartsClientConfig.Instance.UI.ShowDetailedHeartStats, val => {
+			ElementalHeartsClientConfig.Instance.UI.ShowDetailedHeartStats = val;
 			SaveConfig(ElementalHeartsClientConfig.Instance);
 		});
 
-		AddConfigToggle("Enable Elemental HP", () => ElementalHeartsClientConfig.Instance.EnableElementalHP, val => {
-			ElementalHeartsClientConfig.Instance.EnableElementalHP = val;
+		AddConfigToggle("Enable Elemental HP", () => ElementalHeartsClientConfig.Instance.UI.EnableElementalHP, val => {
+			ElementalHeartsClientConfig.Instance.UI.EnableElementalHP = val;
 			SaveConfig(ElementalHeartsClientConfig.Instance);
 		});
 
-		AddConfigToggle("Show Permanent Buffs", () => ElementalHeartsClientConfig.Instance.ShowPermanentBuffs, val => {
-			ElementalHeartsClientConfig.Instance.ShowPermanentBuffs = val;
+		AddConfigToggle("Show Permanent Buffs", () => ElementalHeartsClientConfig.Instance.UI.ShowPermanentBuffs, val => {
+			ElementalHeartsClientConfig.Instance.UI.ShowPermanentBuffs = val;
 			SaveConfig(ElementalHeartsClientConfig.Instance);
 		});
 
-		AddConfigToggle("Hide Impossible Hearts", () => ElementalHeartsClientConfig.Instance.HideImpossibleHearts, val => {
-			ElementalHeartsClientConfig.Instance.HideImpossibleHearts = val;
+		AddConfigToggle("Hide Impossible Hearts", () => ElementalHeartsClientConfig.Instance.UI.HideImpossibleHearts, val => {
+			ElementalHeartsClientConfig.Instance.UI.HideImpossibleHearts = val;
 			SaveConfig(ElementalHeartsClientConfig.Instance);
 		});
 	}

@@ -25,7 +25,7 @@ public sealed class VitalTilesPlayer : ModPlayer
 
 	public override void PreUpdate()
 	{
-		if (!VitalTilesConfig.Instance.SystemEnabled)
+		if (!ElementalHeartsServerConfig.Instance.VitalTiles.SystemEnabled)
 			return;
 
 		if (IsStandingOnVitalSoil())
@@ -61,7 +61,7 @@ public sealed class VitalTilesPlayer : ModPlayer
 
 	private bool IsNearVitalQuartz()
 	{
-		VitalTilesConfig cfg = VitalTilesConfig.Instance;
+		VitalTileSettings cfg = ElementalHeartsServerConfig.Instance.VitalTiles;
 		int quartzType = ModContent.TileType<VitalQuartzTile>();
 
 		int centerX = (int)(Player.Center.X / 16f);
@@ -95,7 +95,7 @@ public sealed class VitalTilesPlayer : ModPlayer
 		if (!VitalSoilRegenActive)
 			return;
 
-		int percent = VitalTilesConfig.Instance.VitalSoilRegenPercent;
+		int percent = ElementalHeartsServerConfig.Instance.VitalTiles.VitalSoilRegenPercent;
 		if (percent <= 0)
 			return;
 
@@ -114,7 +114,7 @@ public sealed class VitalTilesPlayer : ModPlayer
 		if (!VitalQuartzAuraActive)
 			return;
 
-		int percent = VitalTilesConfig.Instance.VitalQuartzMaxHpPercent;
+		int percent = ElementalHeartsServerConfig.Instance.VitalTiles.VitalQuartzMaxHpPercent;
 		if (percent <= 0)
 			return;
 

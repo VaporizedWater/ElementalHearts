@@ -7,7 +7,7 @@ using Terraria.GameContent.ItemDropRules;
 namespace ElementalHearts.Common.NPCs;
 
 /// <summary>
-/// Custom drop rule for Boss Hearts. Evaluates drop chances based on <see cref="ElementalHeartsBossConfig"/>
+/// Custom drop rule for Boss Hearts. Evaluates drop chances based on <see cref="BossSettings"/>
 /// and the <see cref="BossFirstKillWorld"/> state, and spawns the <see cref="BossHeartDropFx"/> on success.
 /// </summary>
 public class BossHeartDropRule : IItemDropRule
@@ -27,8 +27,8 @@ public class BossHeartDropRule : IItemDropRule
 	public ItemDropAttemptResult TryDroppingItem(DropAttemptInfo info)
 	{
 		bool isFirstKill = BossFirstKillWorld.IsFirstKill(NpcType);
-		bool guaranteed = isFirstKill && ElementalHeartsBossConfig.Instance.BossHeartsGuaranteedOnFirstKill;
-		float dropChance = ElementalHeartsBossConfig.Instance.BossHeartDropChance / 100f;
+		bool guaranteed = isFirstKill && ElementalHeartsServerConfig.Instance.BossDrops.BossHeartsGuaranteedOnFirstKill;
+		float dropChance = ElementalHeartsServerConfig.Instance.BossDrops.BossHeartDropChance / 100f;
 
 		bool rolled = info.rng.NextFloat() < dropChance;
 
@@ -47,7 +47,7 @@ public class BossHeartDropRule : IItemDropRule
 
 	public void ReportDroprates(List<DropRateInfo> drops, DropRateInfoChainFeed ratesInfo)
 	{
-		float dropChance = ElementalHeartsBossConfig.Instance.BossHeartDropChance / 100f;
+		float dropChance = ElementalHeartsServerConfig.Instance.BossDrops.BossHeartDropChance / 100f;
 		float chance = dropChance * ratesInfo.parentDroprateChance;
 		
 		drops.Add(new DropRateInfo(HeartItemType, 1, 1, chance, ratesInfo.conditions));

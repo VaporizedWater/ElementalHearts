@@ -20,7 +20,7 @@ public static class VitalExtractinatorRolls
 	/// </summary>
 	public static void RollVitalSoil(ref int resultType, ref int resultStack)
 	{
-		if (LifeShardConfig.Instance.SystemEnabled && Main.rand.NextFloat() < 0.1f) // 1 in 10 for soil
+		if (ElementalHeartsServerConfig.Instance.LifeShards.SystemEnabled && Main.rand.NextFloat() < 0.1f) // 1 in 10 for soil
 		{
 			resultStack = 1;
 			resultType = LifeShardTier.Common.GetItemType();
@@ -42,7 +42,7 @@ public static class VitalExtractinatorRolls
 	/// </summary>
 	public static void RollVitalQuartz(ref int resultType, ref int resultStack)
 	{
-		if (LifeShardConfig.Instance.SystemEnabled && Main.rand.NextFloat() < (1f / 7f)) // 1 in 7 for quartz
+		if (ElementalHeartsServerConfig.Instance.LifeShards.SystemEnabled && Main.rand.NextFloat() < (1f / 7f)) // 1 in 7 for quartz
 		{
 			resultStack = 1;
 			resultType = LifeShardTier.Common.GetItemType();

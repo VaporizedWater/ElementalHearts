@@ -10,7 +10,7 @@ namespace ElementalHearts.Common.Players;
 /// <summary>
 /// Keeps the buff for every consumed potion heart continuously active on the local player.
 /// Each tick we re-apply the matching BuffID for a few frames, so the buff effectively
-/// behaves as permanent. Gated by <see cref="ElementalHeartsPotionEffectConfig"/> — when
+/// behaves as permanent. Gated by <see cref="PotionSettings"/> — when
 /// the toggle is off this hook returns early and Potion Hearts revert to plain HP grants.
 /// </summary>
 public sealed class PotionHeartEffectsPlayer : ModPlayer
@@ -33,7 +33,7 @@ public sealed class PotionHeartEffectsPlayer : ModPlayer
 		if (Player.whoAmI != Main.myPlayer)
 			return;
 
-		if (!ElementalHeartsPotionEffectConfig.Instance.WorldwidePotionEffectsEnabled)
+		if (!ElementalHeartsServerConfig.Instance.Potions.WorldwidePotionEffectsEnabled)
 			return;
 
 		foreach (string id in HeartConsumptionWorld.Consumed)
@@ -53,7 +53,7 @@ public sealed class PotionHeartEffectsPlayer : ModPlayer
 		if (Player.whoAmI != Main.myPlayer)
 			return;
 
-		if (ElementalHeartsClientConfig.Instance.ShowPermanentBuffs)
+		if (ElementalHeartsClientConfig.Instance.UI.ShowPermanentBuffs)
 			return;
 
 		// Remove the buff from the UI if we're hiding permanent buffs.

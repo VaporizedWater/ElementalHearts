@@ -14,7 +14,7 @@ namespace ElementalHearts.Content.Tiles.Vital;
 /// </summary>
 public sealed class VitalSoilTile : ModTile
 {
-	public override bool IsLoadingEnabled(Mod mod) => VitalTilesConfig.Instance.SystemEnabled;
+	public override bool IsLoadingEnabled(Mod mod) => ElementalHeartsServerConfig.Instance.VitalTiles.SystemEnabled;
 
 	public override void SetStaticDefaults()
 	{
@@ -107,7 +107,7 @@ public sealed class VitalSoilTile : ModTile
 
 		// Chlorophyte-style spread: a rare roll picks one cardinal neighbour and converts
 		// it if it's a valid soft-soil tile. Mud, Dirt, and Silt are the eligible targets.
-		float spreadChance = VitalTilesConfig.Instance.VitalSoilSpreadChance;
+		float spreadChance = ElementalHeartsServerConfig.Instance.VitalTiles.VitalSoilSpreadChance;
 		if (spreadChance <= 0f || Main.rand.NextFloat() >= spreadChance)
 			return;
 

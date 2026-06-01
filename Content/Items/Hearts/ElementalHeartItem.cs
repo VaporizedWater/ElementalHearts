@@ -131,7 +131,7 @@ public abstract class ElementalHeartItem : ModItem
 
 	protected int RecipeCost(int baseAmount)
 	{
-		float multiplier = ElementalHeartsRecipeConfig.Instance.RecipeDifficulty / 10f;
+		float multiplier = ElementalHeartsServerConfig.Instance.Recipes.RecipeDifficulty / 10f;
 		int raw = (int)Math.Round(baseAmount * multiplier);
 
 		if (raw <= 5)
@@ -180,7 +180,7 @@ public abstract class ElementalHeartItem : ModItem
 
 	public override bool CanUseItem(Player player)
 	{
-		bool isConsumed = ElementalHeartsWorldConfig.Instance.SharedProgression
+		bool isConsumed = ElementalHeartsServerConfig.Instance.WorldGen.SharedProgression
 			? HeartConsumptionWorld.IsConsumed(ConsumptionId)
 			: player.GetModPlayer<HeartConsumptionPlayer>().IsConsumedLocally(ConsumptionId);
 
@@ -211,7 +211,7 @@ public abstract class ElementalHeartItem : ModItem
 		if (player.whoAmI != Main.myPlayer)
 			return false;
 
-		bool consumed = ElementalHeartsWorldConfig.Instance.SharedProgression
+		bool consumed = ElementalHeartsServerConfig.Instance.WorldGen.SharedProgression
 			? HeartConsumptionWorld.TryConsume(this)
 			: player.GetModPlayer<HeartConsumptionPlayer>().TryConsumeLocally(this);
 
@@ -228,7 +228,7 @@ public abstract class ElementalHeartItem : ModItem
 	/// </summary>
 	public virtual void PlayConsumeEffect(Vector2 center)
 	{
-		float strength = ElementalHeartsVisualConfig.Instance.ConsumptionEffectStrength / 3f;
+		float strength = ElementalHeartsClientConfig.Instance.Visuals.ConsumptionEffectStrength / 3f;
 		HeartEffect effect = HeartEffectRegistry.Get(ConsumptionId);
 		Color tierColor = Tier.GetEffectColor();
 
@@ -520,7 +520,7 @@ public abstract class ElementalHeartItem : ModItem
 				Language.GetTextValue("Mods.ElementalHearts.Common.HpGain", HpGain)));
 		}
 
-		bool isConsumed = ElementalHeartsWorldConfig.Instance.SharedProgression
+		bool isConsumed = ElementalHeartsServerConfig.Instance.WorldGen.SharedProgression
 			? HeartConsumptionWorld.IsConsumed(ConsumptionId)
 			: Main.LocalPlayer?.GetModPlayer<HeartConsumptionPlayer>().IsConsumedLocally(ConsumptionId) ?? false;
 
@@ -558,7 +558,7 @@ public abstract class ElementalHeartItem : ModItem
 
 		// Passive Collection screen: a hovered, unlocked passive heart advertises its daily
 		// idle yield with the shard icon inline so the payoff reads at a glance.
-		if (ShowGenerationTooltip && ElementalHeartsIdleConfig.Instance.EnableIdleGame
+		if (ShowGenerationTooltip && ElementalHeartsClientConfig.Instance.Idle.EnableIdleGame
 			&& !IsActiveAbility && this is not PotionHeartItem)
 		{
 			int rate = IdleShardPlayer.GetShardYield(Tier);

@@ -29,7 +29,7 @@ public sealed class LifeShardSystem : ModSystem
 			() => false);
 
 	public override void PostSetupContent()
-		=> SetLifeCrystalExtractable(LifeShardConfig.Instance.SystemEnabled);
+		=> SetLifeCrystalExtractable(ElementalHeartsServerConfig.Instance.LifeShards.SystemEnabled);
 
 
 
@@ -59,7 +59,7 @@ public sealed class LifeShardSystem : ModSystem
 	/// is enabled, so disabling it can never consume a crystal for nothing.
 	/// </summary>
 	/// <remarks>
-	/// Takes the toggle as an argument rather than reading <see cref="LifeShardConfig.Instance"/>:
+	/// Takes the toggle as an argument rather than reading <see cref="ElementalHeartsServerConfig.Instance.LifeShards"/>:
 	/// the config's <c>OnChanged</c> fires while the config is still being registered, before
 	/// <see cref="ModContent.GetInstance{T}"/> can resolve it.
 	/// </remarks>

@@ -99,12 +99,12 @@ public static class LifeShardTierExtensions
 	};
 
 	/// <summary>
-	/// Quick-heal value for one shard of this tier, sourced from <see cref="LifeShardConfig"/>
+	/// Quick-heal value for one shard of this tier, sourced from <see cref="LifeShardSettings"/>
 	/// so the consumable feature can be retuned without recompiling.
 	/// </summary>
 	public static int GetHealAmount(this LifeShardTier tier)
 	{
-		LifeShardConfig cfg = LifeShardConfig.Instance;
+		LifeShardSettings cfg = ElementalHeartsServerConfig.Instance.LifeShards;
 		return tier switch
 		{
 			LifeShardTier.Common    => cfg.CommonHealAmount,
