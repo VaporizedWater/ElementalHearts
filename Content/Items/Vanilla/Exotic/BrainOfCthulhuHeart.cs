@@ -9,6 +9,7 @@ public sealed class BrainOfCthulhuHeart : BossHeartItem
 	public override void SetStaticDefaults()
 	{
 		base.SetStaticDefaults();
-		Main.RegisterItemAnimation(Item.type, new DrawAnimationVertical(10, 4));
+		Main.RegisterItemAnimation(Item.type, new DrawAnimationVertical(20, 4));
 	}
 }
+

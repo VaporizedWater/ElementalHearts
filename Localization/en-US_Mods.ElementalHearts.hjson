@@ -207,11 +207,11 @@ Configs: {
 		DisplayName: World Settings
 
 		Headers: {
+			Progression: Progression
+			Cheats: Cheats
 			ResetActions: Reset Actions (one-shot)
 			Worldgen: Mini-Biome Generation
-			NightEvents: Night Events Header
-			Progression: Progression Header
-			Cheats: Cheats Header
+			NightEvents: Night Events
 		}
 
 		ClearHeartRegistry: {
@@ -255,29 +255,38 @@ Configs: {
 			Tooltip: Multiplies the jungle Vital Quartz biome count. 1 is the default (~3 on small, ~4 on medium, ~6 on large worlds). Set to 0 to disable jungle biomes only.
 		}
 
-		HeartShootingStarMaxPerNight: {
-			Tooltip: ""
-			Label: Heart Shooting Star Max Per Night
+		HeartShootingStarChance: {
+			Label: Heart Shooting Star Chance (%)
+			Tooltip: Percent chance, on each eligible night, that heart shooting stars fall at all.
 		}
 
-		HeartShootingStarChance: {
-			Tooltip: ""
-			Label: Heart Shooting Star Chance
+		HeartShootingStarMaxPerNight: {
+			Label: Heart Shooting Stars Per Night
+			Tooltip: The most heart shooting stars that can fall during a single night.
 		}
 
 		HeartShootingStarFrequency: {
 			Label: Heart Shooting Star Frequency
-			Tooltip: ""
+			Tooltip: How often stars attempt to fall once a night is active. Higher falls more often.
 		}
 
 		SharedProgression: {
 			Label: Shared Progression
-			Tooltip: ""
+			Tooltip:
+				'''
+				When on, consuming a heart marks it used for the whole world — every player draws
+				from one shared collection and each heart can only ever be consumed once.
+				When off, every character keeps their own independent progress.
+				'''
 		}
 
 		AdminMode: {
 			Label: Admin Mode
-			Tooltip: ""
+			Tooltip:
+				'''
+				Reveals every heart in the Heart Log regardless of progression, for testing or
+				spectating. Does not change what can actually be consumed.
+				'''
 		}
 	}
 
@@ -510,127 +519,217 @@ Configs: {
 	}
 
 	ElementalHeartsClientConfig: {
-		DisplayName: Elemental Hearts Client Config
+		DisplayName: Interface Settings
 
 		Headers: {
-			UI: U I Header
+			UI: Heart Log & HUD
 			Abilities: Abilities
 		}
 
 		EnableHeartChecklist: {
-			Label: Enable Heart Checklist
-			Tooltip: ""
+			Label: Enable Heart Log
+			Tooltip: Show the Heart Log checklist button and panel that tracks every heart you can find or craft.
 		}
 
 		ShowDetailedHeartStats: {
-			Label: Show Detailed Heart Stats
-			Tooltip: ""
+			Label: Show Detailed Stats Bar
+			Tooltip: Show the detailed stats bar (totals and per-tier counts) at the bottom of the Heart Log.
 		}
 
 		EnableElementalHP: {
-			Label: Enable Elemental H P
-			Tooltip: ""
+			Label: Enable Elemental HP Bar
+			Tooltip:
+				'''
+				Recolour your life-bar hearts to match the highest tier you've consumed.
+				Turn off to keep the vanilla red hearts.
+				'''
 		}
 
 		ShowPermanentBuffs: {
-			Label: Show Permanent Buffs
-			Tooltip: ""
+			Label: Show Permanent Buff Icons
+			Tooltip: Show buff icons for the permanent effects granted by consumed Potion Hearts.
 		}
 
 		HideImpossibleHearts: {
-			Label: Hide Impossible Hearts
-			Tooltip: ""
+			Label: Hide Unobtainable Hearts
+			Tooltip:
+				'''
+				Hide hearts you can't currently obtain (their source mod is disabled or absent)
+				from the Heart Log, instead of greying them out.
+				'''
 		}
 
 		EnableJackOLanternDash: {
 			Label: Enable Jack-O'-Lantern Dash
-			Tooltip: Master switch for the Jack-O'-Lantern Heart's dash burst. The on/off toggle is in the Heart Log.
+			Tooltip:
+				'''
+				Master switch for the Jack-O'-Lantern Heart's dash burst.
+				The everyday on/off toggle lives in the Heart Log.
+				'''
 		}
 	}
 
 	ElementalHeartsCameraConfig: {
-		DisplayName: Elemental Hearts Camera Config
+		DisplayName: Camera Settings
 
 		Headers: {
-			General: General Header
-			Strength: Strength Header
-			Feel: Feel Header
-			Behaviour: Behaviour Header
+			General: General
+			Strength: Pan Strength
+			Feel: Feel
+			Behaviour: Behaviour
 		}
 
 		EnableCursorFocus: {
 			Label: Enable Cursor Focus
-			Tooltip: ""
+			Tooltip:
+				'''
+				Global kill-switch for the Magnification Heart's camera pan. When off the camera
+				never follows the cursor, regardless of the per-character Heart Log toggle.
+				'''
 		}
 
 		MaxPanDistance: {
-			Label: Max Pan Distance
-			Tooltip: ""
+			Label: Max Pan Distance (px)
+			Tooltip: How far, in pixels, the camera shifts when the cursor is pushed all the way to a screen edge.
 		}
 
 		HorizontalStrength: {
-			Label: Horizontal Strength
-			Tooltip: ""
+			Label: Horizontal Strength (%)
+			Tooltip: Multiplier on the horizontal pan. 100 is full strength; 0 disables horizontal panning.
 		}
 
 		VerticalStrength: {
-			Label: Vertical Strength
-			Tooltip: ""
+			Label: Vertical Strength (%)
+			Tooltip: Multiplier on the vertical pan. 100 is full strength; 0 disables vertical panning.
 		}
 
 		Smoothing: {
 			Label: Smoothing
-			Tooltip: ""
+			Tooltip: How floaty the follow feels. 0 snaps instantly to the cursor; 100 drifts in lazily.
 		}
 
 		Deadzone: {
-			Label: Deadzone
-			Tooltip: ""
+			Label: Deadzone (%)
+			Tooltip: Central area, as a percent of the half-screen, the cursor can sit in before the camera reacts.
 		}
 
 		ResponseCurve: {
 			Label: Response Curve
-			Tooltip: ""
+			Tooltip:
+				'''
+				Easing of the pan. 1 is linear; higher values keep the camera calmer near the
+				centre and only ramp up as the cursor nears the edge.
+				'''
 		}
 
 		OnlyWhileUsingItem: {
-			Label: Only While Using Item
-			Tooltip: ""
+			Label: Only While Using An Item
+			Tooltip: When on, the camera only pans while you are actively swinging or aiming an item.
 		}
 
 		RecenterInMenus: {
 			Label: Recenter In Menus
-			Tooltip: ""
+			Tooltip: When on, opening the inventory or any mod menu glides the camera back to centre.
 		}
 
 		InvertHorizontal: {
 			Label: Invert Horizontal
-			Tooltip: ""
+			Tooltip: Flip the horizontal pan direction.
 		}
 
 		InvertVertical: {
 			Label: Invert Vertical
-			Tooltip: ""
+			Tooltip: Flip the vertical pan direction.
 		}
 	}
 
 	ElementalHeartsIdleConfig: {
-		DisplayName: Elemental Hearts Idle Config
-		Headers.IdleGameSettings: Idle Game Settings Header
+		DisplayName: Idle Game Settings
+		Headers.IdleGameSettings: Idle Shard Generation
 
 		EnableIdleGame: {
 			Label: Enable Idle Game
-			Tooltip: If true, unlocked and consumed hearts will generate Life Shards over time.
+			Tooltip: When on, unlocked and consumed hearts slowly generate Life Shards over time for you to claim.
 		}
 
 		BaseCapacity: {
 			Label: Base Shard Capacity
-			Tooltip: The base maximum amount of unclaimed shards you can hold.
+			Tooltip: The base maximum number of unclaimed shards you can bank before generation pauses.
 		}
 
 		CapacityPerTier: {
 			Label: Capacity Per World Tier
-			Tooltip: The additional maximum amount of unclaimed shards you can hold per World Tier.
+			Tooltip: Extra unclaimed-shard capacity granted for each World Tier you've reached.
+		}
+	}
+
+	ElementalHeartsCapacityConfig: {
+		DisplayName: Capacity Settings
+		Headers.ProgressionGates: HP Capacity Gates
+
+		EnableProgressionGates: {
+			Label: Enable Capacity Gates
+			Tooltip:
+				'''
+				When on, the total max-life bonus you can bank from hearts is capped at each
+				stage of boss progression, so your health can't outrun the world.
+				Turn off to consume hearts freely.
+				'''
+		}
+
+		PreBossCapacity: {
+			Label: Cap — Pre-Boss
+			Tooltip: Maximum heart HP bonus allowed before any boss is defeated.
+		}
+
+		PostSkeletronCapacity: {
+			Label: Cap — After Skeletron
+			Tooltip: Maximum heart HP bonus allowed after Skeletron is defeated.
+		}
+
+		PostWoFCapacity: {
+			Label: Cap — After Wall of Flesh
+			Tooltip: Maximum heart HP bonus allowed after the Wall of Flesh (entering Hardmode).
+		}
+
+		Post1MechCapacity: {
+			Label: Cap — After 1 Mech Boss
+			Tooltip: Maximum heart HP bonus allowed after defeating one Mechanical Boss.
+		}
+
+		Post2MechsCapacity: {
+			Label: Cap — After 2 Mech Bosses
+			Tooltip: Maximum heart HP bonus allowed after defeating two Mechanical Bosses.
+		}
+
+		Post3MechsCapacity: {
+			Label: Cap — After 3 Mech Bosses
+			Tooltip: Maximum heart HP bonus allowed after defeating all three Mechanical Bosses.
+		}
+
+		PostPlanteraCapacity: {
+			Label: Cap — After Plantera
+			Tooltip: Maximum heart HP bonus allowed after Plantera is defeated.
+		}
+
+		PostGolemCapacity: {
+			Label: Cap — After Golem
+			Tooltip: Maximum heart HP bonus allowed after Golem is defeated.
+		}
+
+		PostCultistCapacity: {
+			Label: Cap — After Lunatic Cultist
+			Tooltip: Maximum heart HP bonus allowed after the Lunatic Cultist is defeated.
+		}
+
+		PostMoonLordCapacity: {
+			Label: Cap — After Moon Lord
+			Tooltip: Maximum heart HP bonus allowed after Moon Lord is defeated.
+		}
+
+		UnlimitedPostMoonLord: {
+			Label: Uncap After Moon Lord
+			Tooltip: When on, the capacity gate is removed entirely once Moon Lord is defeated.
 		}
 	}
 }
@@ -934,6 +1033,11 @@ Items: {
 	EncumberingHeart: {
 		Tooltip: Permanently unlocks ground pounding. Press down in midair to perform a ground pound.
 		DisplayName: Encumbering Heart
+	}
+
+	TreasureHeart: {
+		Tooltip: Permanently increases item pickup range.
+		DisplayName: Treasure Heart
 	}
 
 	DiamondHeart: {
@@ -2281,6 +2385,16 @@ Items: {
 	JackOLanternHeart: {
 		DisplayName: Jack-O'-Lantern Heart
 		Tooltip: Permanently upgrades your dash
+	}
+
+	LuckHeart: {
+		Tooltip: ""
+		DisplayName: Luck Heart
+	}
+
+	InvisibilityHeart: {
+		Tooltip: ""
+		DisplayName: Invisibility Heart
 	}
 }
 

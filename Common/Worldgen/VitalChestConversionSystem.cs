@@ -1,16 +1,6 @@
 using System.Collections.Generic;
 using ElementalHearts.Common.Configs;
 using ElementalHearts.Content.Items.Vanilla.Common;
-using ElementalHearts.Content.Items.Vanilla.Common;
-using ElementalHearts.Content.Items.Vanilla.Common;
-using ElementalHearts.Content.Items.Vanilla.Common;
-using ElementalHearts.Content.Items.Vanilla.Common;
-using ElementalHearts.Content.Items.Vanilla.Common;
-using ElementalHearts.Content.Items.Vanilla.Common;
-using ElementalHearts.Content.Items.Vanilla.Uncommon;
-using ElementalHearts.Content.Items.Vanilla.Uncommon;
-using ElementalHearts.Content.Items.Vanilla.Uncommon;
-using ElementalHearts.Content.Items.Vanilla.Uncommon;
 using ElementalHearts.Content.Items.Vanilla.Uncommon;
 using ElementalHearts.Content.Tiles.Vital;
 using Terraria;

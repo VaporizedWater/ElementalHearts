@@ -32,6 +32,11 @@ public sealed class HeartConsumptionPlayer : ModPlayer
 	/// </summary>
 	public HashSet<string> WorldUnlocked { get; private set; } = new();
 
+	/// <summary>
+	/// Compound "worldGuid|milestoneId" entries this character has claimed rewards for.
+	/// </summary>
+	public HashSet<string> ClaimedMilestones { get; private set; } = new();
+
 	/// <summary>Cached sum of HP bonuses applicable in the current world.</summary>
 	private int _bonus;
 	public int ActiveHpBonus => _bonus;
@@ -77,6 +82,9 @@ public sealed class HeartConsumptionPlayer : ModPlayer
 
 	public bool IsConsumedLocally(string heartId) => WorldHpApplied.Contains(WorldKey(heartId));
 	public bool IsUnlockedLocally(string heartId) => WorldUnlocked.Contains(WorldKey(heartId));
+	
+	public bool IsMilestoneClaimedLocally(string milestoneId) => ClaimedMilestones.Contains(WorldKey(milestoneId));
+	public void ClaimMilestoneLocally(string milestoneId) => ClaimedMilestones.Add(WorldKey(milestoneId));
 
 	/// <summary>
 	/// Apply any hearts consumed in the current world that this character hasn't yet
@@ -91,7 +99,7 @@ public sealed class HeartConsumptionPlayer : ModPlayer
 		if (!ElementalHeartsWorldConfig.Instance.SharedProgression)
 			return;
 
-		int gained = 0;
+		int currentApplied = System.Math.Min(_bonus, HeartCapacitySystem.GetMaxCapacity() ?? int.MaxValue);
 		int oldBonus = _bonus;
 		foreach (string id in HeartConsumptionWorld.Unlocked)
 		{
@@ -104,18 +112,20 @@ public sealed class HeartConsumptionPlayer : ModPlayer
 			{
 				int hp = HeartRegistry.GetHp(id);
 				_bonus += hp;
-				gained += hp;
 				BumpHighestTier(id);
 			}
 		}
 
-		if (gained <= 0)
+		int newApplied = System.Math.Min(_bonus, HeartCapacitySystem.GetMaxCapacity() ?? int.MaxValue);
+		int effectiveGained = newApplied - currentApplied;
+
+		if (effectiveGained <= 0)
 			return;
 
-		Player.statLife += gained;
+		Player.statLife += effectiveGained;
 		// broadcast: false — every client independently reconciles, so a broadcast
 		// from each one would N²-multiply the popup across players.
-		Player.HealEffect(gained, broadcast: false);
+		Player.HealEffect(effectiveGained, broadcast: false);
 
 		if ((oldBonus / 100) < (_bonus / 100))
 		{
@@ -137,6 +147,7 @@ public sealed class HeartConsumptionPlayer : ModPlayer
 		string prefix = WorldPrefix;
 		WorldHpApplied.RemoveWhere(key => key.StartsWith(prefix));
 		WorldUnlocked.RemoveWhere(key => key.StartsWith(prefix));
+		ClaimedMilestones.RemoveWhere(key => key.StartsWith(prefix));
 		_bonus = 0;
 		HighestTier = null;
 	}
@@ -171,11 +182,19 @@ public sealed class HeartConsumptionPlayer : ModPlayer
 		WorldUnlocked.Add(WorldKey(id));
 		if (WorldHpApplied.Add(WorldKey(id)))
 		{
+			int currentApplied = System.Math.Min(_bonus, HeartCapacitySystem.GetMaxCapacity() ?? int.MaxValue);
 			int oldBonus = _bonus;
 			int hp = HeartRegistry.GetHp(id);
 			_bonus += hp;
-			Player.statLife += hp;
-			Player.HealEffect(hp, broadcast: false);
+			
+			int newApplied = System.Math.Min(_bonus, HeartCapacitySystem.GetMaxCapacity() ?? int.MaxValue);
+			int effectiveHp = newApplied - currentApplied;
+			
+			if (effectiveHp > 0)
+			{
+				Player.statLife += effectiveHp;
+				Player.HealEffect(effectiveHp, broadcast: false);
+			}
 			BumpHighestTier(id);
 			UI.Checklist.HeartLogButtonUIState.HasUnseenContent = true;
 
@@ -279,7 +298,8 @@ public sealed class HeartConsumptionPlayer : ModPlayer
 
 	public override void ModifyMaxStats(out StatModifier health, out StatModifier mana)
 	{
-		int appliedBonus = ElementalHeartsClientConfig.Instance.EnableElementalHP ? _bonus : 0;
+		int maxCapacity = HeartCapacitySystem.GetMaxCapacity() ?? int.MaxValue;
+		int appliedBonus = ElementalHeartsClientConfig.Instance.EnableElementalHP ? System.Math.Min(_bonus, maxCapacity) : 0;
 		// `Base` is a flat add before multipliers — exactly what life-crystal-style HP gain should do.
 		health = StatModifier.Default with { Base = appliedBonus };
 
@@ -307,12 +327,15 @@ public sealed class HeartConsumptionPlayer : ModPlayer
 			tag["worldApplied"] = WorldHpApplied.ToList();
 		if (WorldUnlocked.Count > 0)
 			tag["worldUnlocked"] = WorldUnlocked.ToList();
+		if (ClaimedMilestones.Count > 0)
+			tag["claimedMilestones"] = ClaimedMilestones.ToList();
 	}
 
 	public override void LoadData(TagCompound tag)
 	{
 		WorldHpApplied.Clear();
 		WorldUnlocked.Clear();
+		ClaimedMilestones.Clear();
 		if (tag.ContainsKey("worldApplied"))
 		{
 			foreach (string id in tag.GetList<string>("worldApplied"))
@@ -325,6 +348,11 @@ public sealed class HeartConsumptionPlayer : ModPlayer
 		{
 			foreach (string id in tag.GetList<string>("worldUnlocked"))
 				WorldUnlocked.Add(id);
+		}
+		if (tag.ContainsKey("claimedMilestones"))
+		{
+			foreach (string id in tag.GetList<string>("claimedMilestones"))
+				ClaimedMilestones.Add(id);
 		}
 		// _bonus is recomputed in OnEnterWorld once the active world is known.
 	}

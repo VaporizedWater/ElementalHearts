@@ -221,6 +221,19 @@ public class KingSlimeAbilityPlayer : ModPlayer
 							Player.immuneTime = requiredImmunity;
 						}
 
+						// Screen shake for impact
+						float punchMagnitude = 2f + comboLevel * 1.5f;
+						if (wasGroundPounding) punchMagnitude *= 1.5f;
+						Vector2 punchDir = new Vector2(0f, 1f).RotatedByRandom(0.2f);
+						Main.instance.CameraModifiers.Add(new Terraria.Graphics.CameraModifiers.PunchCameraModifier(
+							Player.Center,
+							punchDir,
+							punchMagnitude,
+							2.5f, // vibrations per second (lower is smoother)
+							15, // duration in frames
+							1200f, // distance falloff
+							"KingSlimeBounce"));
+
 						break; // Only bounce on one enemy per frame
 					}
 					else
@@ -251,7 +264,7 @@ public class KingSlimeAbilityPlayer : ModPlayer
 			_bounceCombo = 0;
 			_comboLockout = true;
 			_failedBounceTimer = 0;
-			SoundEngine.PlaySound(new SoundStyle("ElementalHearts/Assets/Sounds/PlayerBounceFail"), Player.Center);
+			SoundEngine.PlaySound(new SoundStyle("ElementalHearts/Assets/Sounds/PlayerBounceFail") { PitchVariance = 0.2f }, Player.Center);
 		}
 	}
 

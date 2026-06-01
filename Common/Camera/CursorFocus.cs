@@ -5,7 +5,6 @@ using ElementalHearts.Content.Items.Hearts;
 
 using Terraria;
 using ElementalHearts.Content.Items.Vanilla.Exotic;
-using ElementalHearts.Content.Items.Vanilla.Exotic;
 using Terraria.ModLoader;
 
 namespace ElementalHearts.Common.Camera;
@@ -13,7 +12,7 @@ namespace ElementalHearts.Common.Camera;
 /// <summary>
 /// Shared facts about the Cursor Focus camera ability: which heart grants it and whether it is
 /// currently available/active for the local player. The actual panning lives in
-/// <see cref="CursorFocusSystem"/> / <see cref="CursorFocusModifier"/>; this is the small piece
+/// <see cref="CursorFocusSystem"/>; this is the small piece
 /// both that system and the Heart Log UI need to agree on.
 /// </summary>
 internal static class CursorFocus

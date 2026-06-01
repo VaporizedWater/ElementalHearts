@@ -73,6 +73,17 @@ public static class BossHeartDropFx
 		}
 
 		Lighting.AddLight(center, color.ToVector3() * 2.4f);
-		SoundEngine.PlaySound(SoundID.Item4.WithPitchOffset(0.35f).WithVolumeScale(0.7f), center);
+		SoundEngine.PlaySound(SoundID.Item4.WithPitchOffset(Main.rand.NextFloat(0.2f, 0.5f)).WithVolumeScale(0.7f), center);
+
+		// Add a tactile screen shake when the boss heart drops
+		Vector2 punchDir = new Vector2(0f, -1f).RotatedByRandom(MathHelper.TwoPi);
+		Main.instance.CameraModifiers.Add(new Terraria.Graphics.CameraModifiers.PunchCameraModifier(
+			center,
+			punchDir,
+			5f, // magnitude
+			2f, // vibrations per second (lower is smoother)
+			20, // duration in frames (slightly longer to let it settle)
+			1200f, // distance falloff
+			"BossHeartDrop"));
 	}
 }

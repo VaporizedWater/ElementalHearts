@@ -9,6 +9,7 @@ public sealed class EaterOfWorldsHeart : BossHeartItem
 	public override void SetStaticDefaults()
 	{
 		base.SetStaticDefaults();
-		Main.RegisterItemAnimation(Item.type, new DrawAnimationVertical(10, 9));
+		Main.RegisterItemAnimation(Item.type, new DrawAnimationVertical(20, 9));
 	}
 }
+

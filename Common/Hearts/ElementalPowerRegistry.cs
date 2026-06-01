@@ -109,6 +109,7 @@ internal static class ElementalPowerRegistry
 		["CopperHeart"] = "tarnished",
 		["EmeraldHeart"] = "emerald city",
 		["EncumberingHeart"] = "heavy burden",
+		["TreasureHeart"] = "finders keepers",
 		["GoldHeart"] = "gold rush",
 		["IronHeart"] = "pump iron",
 		["LeadHeart"] = "heavy metal",
@@ -177,6 +178,7 @@ internal static class ElementalPowerRegistry
 		["DeerclopsHeart"] = "oh deer",
 		["DestroyerHeart"] = "demolition",
 		["DukeFishronHeart"] = "something's fishy",
+		["EaterOfWorldsHeart"] = "worm food",
 		["ElfHeart"] = "on the shelf",
 		["EmpressOfLightHeart"] = "blinding",
 		["EyeOfCthulhuHeart"] = "eye see you",
@@ -318,6 +320,8 @@ internal static class ElementalPowerRegistry
 		["WarmthHeart"]           = "warm and fuzzy",
 		["WaterWalkingHeart"]     = "walk on water",
 		["WrathHeart"]            = "grapes of wrath",
+		["InvisibilityHeart"]     = "now you don't",
+		["LuckHeart"]             = "lucky break",
 
 		// ── Cross-mod: Thorium ────────────────────────────────────────────────────
 		["AbyssalHeart"] = "abyssal gaze",

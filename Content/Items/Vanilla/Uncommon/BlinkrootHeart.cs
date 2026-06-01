@@ -16,7 +16,7 @@ public sealed class BlinkrootHeart : ElementalHeartItem
 	{
 		base.SetStaticDefaults();
 
-		Main.RegisterItemAnimation(Item.type, new DrawAnimationVertical(10, 10));
+		Main.RegisterItemAnimation(Item.type, new DrawAnimationVertical(20, 10));
 	}
 
 	public override void AddRecipes()
@@ -28,4 +28,5 @@ public sealed class BlinkrootHeart : ElementalHeartItem
 			.Register();
 	}
 }
+
 

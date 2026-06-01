@@ -131,7 +131,8 @@ public static class HeartEffectRegistry
 		["DragonFruitHeart"] = Eff(225, 40, 110, 250, 110, 160, 90, 180, 90),    // blank sprite — fruit colours; needs art
 		["ElderberryHeart"]  = Eff(90, 50, 110, 50, 30, 70, 25, 15, 35),         // blank sprite — fruit colours; needs art
 		["EmeraldHeart"]     = Eff(0, 208, 96, 96, 224, 144, 0, 128, 64),
-		["EncumberingHeart"] = Eff(240, 112, 176, 176, 16, 96, 224, 16, 112), // Placeholder using DiscordHeart colors
+		["EncumberingHeart"] = Eff(64, 80, 80, 48, 48, 64, 96, 96, 112),   // heavy slate-grey weight + cold steel sheen
+		["TreasureHeart"]    = Eff(192, 160, 80, 240, 192, 96, 144, 112, 64), // treasure magnet colors
 		["EnchantedHeart"]   = Eff(64, 96, 240, 128, 160, 240, 32, 16, 80),
 		["FireblossomHeart"] = Eff(240, 80, 0, 255, 140, 40, 192, 48, 16),
 		["GoldHeart"]        = Eff(240, 208, 72, 255, 240, 160, 192, 160, 16),
@@ -225,6 +226,7 @@ public static class HeartEffectRegistry
 		["DeerclopsHeart"]      = Eff(176, 224, 224, 112, 192, 224, 80, 96, 128),
 		["DestroyerHeart"]      = Eff(96, 96, 96, 160, 160, 160, 48, 48, 48),
 		["DukeFishronHeart"]    = Eff(96, 96, 224, 144, 192, 255, 48, 16, 96),
+		["EaterOfWorldsHeart"]  = Eff(48, 32, 16, 48, 32, 32, 64, 48, 48),
 		["ElfHeart"]            = Eff(216, 40, 40, 60, 170, 80, 224, 224, 224),  // santa red + green + white
 		["EmpressOfLightHeart"] = HeartEffect.Prismatic,
 		["EyeOfCthulhuHeart"]   = Eff(192, 48, 48, 64, 64, 208, 224, 224, 224),
@@ -381,6 +383,8 @@ public static class HeartEffectRegistry
 		["WarmthHeart"]           = Eff(255, 192, 0, 240, 144, 0, 255, 224, 64),
 		["WaterWalkingHeart"]     = Eff(16, 96, 224, 96, 160, 255, 16, 64, 128),
 		["WrathHeart"]            = Eff(192, 42, 52, 240, 128, 112, 128, 32, 32),
+		["InvisibilityHeart"]     = Eff(200, 150, 255, 160, 100, 200, 220, 200, 255), // invisibility potion
+		["LuckHeart"]             = Eff(255, 192, 200, 255, 128, 160, 255, 224, 224), // greater luck potion
 
 		// ── Pacified Hearts ──────────────────────────────────────────────────────
 		["CommonPacifiedHeart"]    = Eff(255, 60, 60, 255, 105, 180, 144, 16, 64),

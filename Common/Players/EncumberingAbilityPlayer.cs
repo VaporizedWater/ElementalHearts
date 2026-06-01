@@ -159,12 +159,24 @@ public class EncumberingAbilityPlayer : ModPlayer
 				// Impact sound
 				if (groundPoundDuration < 45)
 				{
-					Terraria.Audio.SoundEngine.PlaySound(new Terraria.Audio.SoundStyle("ElementalHearts/Assets/Sounds/PlayerGroundPoundLandClean"), Player.Center);
+					Terraria.Audio.SoundEngine.PlaySound(new Terraria.Audio.SoundStyle("ElementalHearts/Assets/Sounds/PlayerGroundPoundLandClean") { PitchVariance = 0.1f }, Player.Center);
 				}
 				else
 				{
 					Terraria.Audio.SoundEngine.PlaySound(GroundPoundLandSound, Player.Center);
 				}
+
+				// Screen shake for heavy landing
+				float magnitude = Math.Min(12f, 4f + groundPoundDuration * 0.2f);
+				Vector2 punchDir = new Vector2(0f, 1f);
+				Main.instance.CameraModifiers.Add(new Terraria.Graphics.CameraModifiers.PunchCameraModifier(
+					Player.Center,
+					punchDir,
+					magnitude,
+					2.5f, // vibrations per second (lower is smoother)
+					20, // duration in frames (slightly longer to let it settle)
+					1200f, // distance falloff
+					"EncumberingLand"));
 				
 				// Clear rotation
 				Player.fullRotation = 0f;

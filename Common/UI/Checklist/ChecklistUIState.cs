@@ -15,9 +15,11 @@ using ElementalHearts.Common.UI;
 
 namespace ElementalHearts.Common.UI.Checklist;
 
+#pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor.
+
 public class ChecklistUIState : UIState
 {
-	public enum TabMode { Active, Passive }
+	public enum TabMode { Active, Passive, Milestones }
 	public enum SortMode { Tier, Alphabetical }
 	public enum FilterMode { All, Unlocked, Locked, Potions, Calamity, Thorium, Consolaria, Vanilla, Zenith }
 
@@ -40,6 +42,7 @@ public class ChecklistUIState : UIState
 
 	private UITextPanel<string> _activeTabBtn;
 	private UITextPanel<string> _passiveTabBtn;
+	private UITextPanel<string> _milestonesTabBtn;
 	private UITextPanel<string> _settingsButton;
 	private bool _isSettingsMode = false;
 	private UIList _settingsList;
@@ -84,28 +87,26 @@ public class ChecklistUIState : UIState
 
 		_searchBarContainer = new UIPanel();
 		_searchBarContainer.Width.Set(200, 0f);
-		_searchBarContainer.Height.Set(35, 0f);
+		_searchBarContainer.Height.Set(30, 0f);
 		_searchBarContainer.HAlign = 1f;
-		_searchBarContainer.Top.Set(5, 0f);
+		_searchBarContainer.Top.Set(40, 0f);
 		_searchBarContainer.Left.Set(-40, 0f);
-		_searchBarContainer.BackgroundColor = new Color(63, 82, 151) * 0.7f;
-		_searchBarContainer.BorderColor = new Color(89, 116, 213);
+		_searchBarContainer.BackgroundColor = new Color(30, 38, 70) * 0.8f;
+		_searchBarContainer.BorderColor = new Color(50, 60, 90);
 		_searchBarContainer.SetPadding(0);
+		_searchBarContainer.OnMouseOver += (evt, element) => {
+			_searchBarContainer.BorderColor = new Color(89, 116, 213);
+		};
 		_mainPanel.Append(_searchBarContainer);
 
 		_searchBar = new UISearchBar(Terraria.Localization.Language.GetText(""), 0.8f);
-		_searchBar.Width.Set(-40, 1f);
+		_searchBar.Width.Set(-20, 1f);
 		_searchBar.Height.Set(0, 1f);
-		_searchBar.HAlign = 1f;
+		_searchBar.HAlign = 0.5f;
 		_searchBar.VAlign = 0.5f;
-		_searchBar.Left.Set(-10, 0f);
+		_searchBar.Left.Set(0, 0f);
 		_searchBar.Top.Set(0, 0f);
 		
-		UIImage searchIcon = new UIImage(Main.Assets.Request<Microsoft.Xna.Framework.Graphics.Texture2D>("Images/UI/Bestiary/Button_Search"));
-		searchIcon.VAlign = 0.5f;
-		searchIcon.Left.Set(8, 0f);
-		searchIcon.ImageScale = 0.8f;
-		_searchBarContainer.Append(searchIcon);
 		_searchBar.OnContentsChanged += (contents) => {
 			_searchQuery = contents;
 			Rebuild();
@@ -115,6 +116,14 @@ public class ChecklistUIState : UIState
 			{
 				_searchBarHasInitializedText = true;
 				_searchBar.SetContents("");
+			}
+			if (_searchBar.IsWritingText)
+			{
+				_searchBarContainer.BorderColor = new Color(89, 116, 213);
+			}
+			else if (!_searchBarContainer.IsMouseHovering)
+			{
+				_searchBarContainer.BorderColor = new Color(50, 60, 90);
 			}
 		};
 		_searchBar.OnLeftClick += (evt, element) => {
@@ -133,9 +142,10 @@ public class ChecklistUIState : UIState
 		};
 		_searchBarContainer.Append(_searchBar);
 
-		_activeTabBtn = new UITextPanel<string>("Active Buffs", 0.9f);
-		_activeTabBtn.Width.Set(150, 0f);
-		_activeTabBtn.Top.Set(5, 0f);
+		_activeTabBtn = new UITextPanel<string>("Active", 0.8f);
+		_activeTabBtn.Width.Set(80, 0f);
+		_activeTabBtn.Height.Set(30, 0f);
+		_activeTabBtn.Top.Set(40, 0f);
 		_activeTabBtn.Left.Set(10, 0f);
 		_activeTabBtn.BackgroundColor = new Color(73, 94, 171); // Active by default
 		_activeTabBtn.BorderColor = new Color(89, 116, 213);
@@ -146,10 +156,11 @@ public class ChecklistUIState : UIState
 		};
 		_mainPanel.Append(_activeTabBtn);
 
-		_passiveTabBtn = new UITextPanel<string>("Passive Collection", 0.9f);
-		_passiveTabBtn.Width.Set(200, 0f);
-		_passiveTabBtn.Top.Set(5, 0f);
-		_passiveTabBtn.Left.Set(170, 0f);
+		_passiveTabBtn = new UITextPanel<string>("Passive", 0.8f);
+		_passiveTabBtn.Width.Set(90, 0f);
+		_passiveTabBtn.Height.Set(30, 0f);
+		_passiveTabBtn.Top.Set(40, 0f);
+		_passiveTabBtn.Left.Set(100, 0f);
 		_passiveTabBtn.BackgroundColor = new Color(63, 82, 151) * 0.7f;
 		_passiveTabBtn.BorderColor = new Color(89, 116, 213);
 		_passiveTabBtn.OnLeftClick += (evt, element) => {
@@ -159,10 +170,25 @@ public class ChecklistUIState : UIState
 		};
 		_mainPanel.Append(_passiveTabBtn);
 
-		_settingsButton = new UITextPanel<string>("⚙ Settings", 0.8f);
-		_settingsButton.Width.Set(120, 0f);
-		_settingsButton.Top.Set(5, 0f);
-		_settingsButton.Left.Set(380, 0f);
+		_milestonesTabBtn = new UITextPanel<string>("Milestones", 0.8f);
+		_milestonesTabBtn.Width.Set(110, 0f);
+		_milestonesTabBtn.Height.Set(30, 0f);
+		_milestonesTabBtn.Top.Set(40, 0f);
+		_milestonesTabBtn.Left.Set(200, 0f);
+		_milestonesTabBtn.BackgroundColor = new Color(63, 82, 151) * 0.7f;
+		_milestonesTabBtn.BorderColor = new Color(89, 116, 213);
+		_milestonesTabBtn.OnLeftClick += (evt, element) => {
+			Terraria.Audio.SoundEngine.PlaySound(Terraria.ID.SoundID.MenuTick);
+			_tabMode = TabMode.Milestones;
+			Rebuild();
+		};
+		_mainPanel.Append(_milestonesTabBtn);
+
+		_settingsButton = new UITextPanel<string>("⚙", 0.8f);
+		_settingsButton.Width.Set(36, 0f);
+		_settingsButton.Height.Set(30, 0f);
+		_settingsButton.Top.Set(40, 0f);
+		_settingsButton.Left.Set(320, 0f);
 		_settingsButton.BackgroundColor = new Color(63, 82, 151) * 0.7f;
 		_settingsButton.BorderColor = new Color(89, 116, 213);
 		_settingsButton.OnLeftClick += (evt, element) => {
@@ -175,7 +201,8 @@ public class ChecklistUIState : UIState
 
 		_sortButton = new UITextPanel<string>($"Sort: {_sortMode}", 0.8f);
 		_sortButton.Width.Set(120, 0f);
-		_sortButton.Top.Set(5, 0f);
+		_sortButton.Height.Set(30, 0f);
+		_sortButton.Top.Set(40, 0f);
 		_sortButton.HAlign = 1f;
 		_sortButton.Left.Set(-390, 0f);
 		_sortButton.BackgroundColor = new Color(63, 82, 151) * 0.7f;
@@ -190,7 +217,8 @@ public class ChecklistUIState : UIState
 
 		_filterButton = new UITextPanel<string>($"Filter: {_filterMode}", 0.8f);
 		_filterButton.Width.Set(120, 0f);
-		_filterButton.Top.Set(5, 0f);
+		_filterButton.Height.Set(30, 0f);
+		_filterButton.Top.Set(40, 0f);
 		_filterButton.HAlign = 1f;
 		_filterButton.Left.Set(-260, 0f);
 		_filterButton.BackgroundColor = new Color(63, 82, 151) * 0.7f;
@@ -205,22 +233,33 @@ public class ChecklistUIState : UIState
 		};
 		_mainPanel.Append(_filterButton);
 
-		_adminText = new UIText("", 0.9f);
+		// Light the toolbar up on hover so it reads as clickable, the way the admin/claim buttons do.
+		// Each call keeps the button's resting colour in sync with whether it's the selected tab/mode.
+		AddNavHover(_activeTabBtn, () => _tabMode == TabMode.Active);
+		AddNavHover(_passiveTabBtn, () => _tabMode == TabMode.Passive);
+		AddNavHover(_milestonesTabBtn, () => _tabMode == TabMode.Milestones);
+		AddNavHover(_settingsButton, () => _isSettingsMode);
+		AddNavHover(_sortButton, () => false);
+		AddNavHover(_filterButton, () => false);
+
+		// Sits centred on the toolbar row's free gap (between the Settings button and the Sort button)
+		// so it no longer collides with the title now that the title has the top row to itself.
+		_adminText = new UIText("", 0.8f);
 		_adminText.HAlign = 0.5f;
-		_adminText.Top.Set(28, 0f);
+		_adminText.Top.Set(48, 0f);
 		_adminText.TextColor = Color.Red;
 		_mainPanel.Append(_adminText);
 
 		UIHorizontalSeparator separator = new UIHorizontalSeparator();
 		separator.Width.Set(0, 1f);
-		separator.Top.Set(45, 0f);
+		separator.Top.Set(80, 0f);
 		separator.Color = new Color(89, 116, 213) * 0.7f;
 		_mainPanel.Append(separator);
 
 		_statsPanel = new UIPanel();
 		_statsPanel.Width.Set(0, 1f);
 		_statsPanel.Height.Set(40, 0f);
-		_statsPanel.Top.Set(55, 0f);
+		_statsPanel.Top.Set(90, 0f);
 		_statsPanel.BackgroundColor = new Color(30, 38, 70) * 0.8f;
 		_statsPanel.BorderColor = new Color(89, 116, 213);
 		
@@ -247,21 +286,21 @@ public class ChecklistUIState : UIState
 
 		_heartList = new UIList();
 		_heartList.Width.Set(-25, 1f);
-		_heartList.Height.Set(-135, 1f);
-		_heartList.Top.Set(60, 0f);
+		_heartList.Height.Set(-170, 1f);
+		_heartList.Top.Set(95, 0f);
 		_heartList.ListPadding = 8f;
 		_mainPanel.Append(_heartList);
 
 		_settingsList = new UIList();
 		_settingsList.Width.Set(-25, 1f);
-		_settingsList.Height.Set(-135, 1f);
-		_settingsList.Top.Set(60, 0f);
+		_settingsList.Height.Set(-170, 1f);
+		_settingsList.Top.Set(95, 0f);
 		_settingsList.ListPadding = 12f;
 
 		_scrollbar = new UIScrollbar();
 		_scrollbar.SetView(100f, 1000f);
-		_scrollbar.Height.Set(-135, 1f);
-		_scrollbar.Top.Set(60, 0f);
+		_scrollbar.Height.Set(-170, 1f);
+		_scrollbar.Top.Set(95, 0f);
 		_scrollbar.HAlign = 1f;
 		_mainPanel.Append(_scrollbar);
 		_heartList.SetScrollbar(_scrollbar);
@@ -408,6 +447,25 @@ public class ChecklistUIState : UIState
 		_adminButtonsContainer.Append(btnAdvanceTier);
 	}
 
+	// Resting and hover tints shared by the nav toolbar; the "active" tab/mode keeps the brighter
+	// selected fill, so hover only lifts buttons that aren't already lit.
+	private static readonly Color NavRest = new Color(63, 82, 151) * 0.7f;
+	private static readonly Color NavSelected = new Color(73, 94, 171);
+	private static readonly Color NavHover = new Color(93, 114, 191);
+
+	/// <summary>Gives a toolbar button a hover lift that respects its selected state: brightens on
+	/// mouse-over only when <paramref name="isSelected"/> is false, and restores to the right
+	/// resting colour (selected fill vs. base) on mouse-out.</summary>
+	private void AddNavHover(UITextPanel<string> btn, System.Func<bool> isSelected)
+	{
+		btn.OnMouseOver += (evt, element) => {
+			if (!isSelected()) btn.BackgroundColor = NavHover;
+		};
+		btn.OnMouseOut += (evt, element) => {
+			btn.BackgroundColor = isSelected() ? NavSelected : NavRest;
+		};
+	}
+
 	private UITextPanel<string> CreateAdminButton(string text, float hAlign)
 	{
 		var btn = new UITextPanel<string>(text, 0.7f);
@@ -439,8 +497,8 @@ public class ChecklistUIState : UIState
 			if (_statsPanel.Parent != null) _mainPanel.RemoveChild(_statsPanel);
 		}
 		
-		float listTopOffset = showStats ? 105f : 60f;
-		float baseHeightOffset = showStats ? -180f : -135f;
+		float listTopOffset = showStats ? 140f : 95f;
+		float baseHeightOffset = showStats ? -215f : -170f;
 
 		if (ElementalHeartsWorldConfig.Instance.AdminMode)
 		{
@@ -475,6 +533,7 @@ public class ChecklistUIState : UIState
 
 		_activeTabBtn.BackgroundColor = _tabMode == TabMode.Active ? new Color(73, 94, 171) : new Color(63, 82, 151) * 0.7f;
 		_passiveTabBtn.BackgroundColor = _tabMode == TabMode.Passive ? new Color(73, 94, 171) : new Color(63, 82, 151) * 0.7f;
+		_milestonesTabBtn.BackgroundColor = _tabMode == TabMode.Milestones ? new Color(73, 94, 171) : new Color(63, 82, 151) * 0.7f;
 
 		if (_isSettingsMode)
 		{
@@ -485,6 +544,7 @@ public class ChecklistUIState : UIState
 			if (_searchBarContainer.Parent != null) _mainPanel.RemoveChild(_searchBarContainer);
 			if (_activeTabBtn.Parent != null) _mainPanel.RemoveChild(_activeTabBtn);
 			if (_passiveTabBtn.Parent != null) _mainPanel.RemoveChild(_passiveTabBtn);
+			if (_milestonesTabBtn.Parent != null) _mainPanel.RemoveChild(_milestonesTabBtn);
 			
 			RebuildSettingsList();
 			return;
@@ -498,9 +558,16 @@ public class ChecklistUIState : UIState
 			if (_searchBarContainer.Parent == null) _mainPanel.Append(_searchBarContainer);
 			if (_activeTabBtn.Parent == null) _mainPanel.Append(_activeTabBtn);
 			if (_passiveTabBtn.Parent == null) _mainPanel.Append(_passiveTabBtn);
+			if (_milestonesTabBtn.Parent == null) _mainPanel.Append(_milestonesTabBtn);
 		}
 
 		_heartList.Clear();
+
+		if (_tabMode == TabMode.Milestones)
+		{
+			MilestonesUI.RebuildMilestonesList(_heartList, Rebuild);
+			return;
+		}
 
 		var allHearts = ModContent.GetContent<ElementalHeartItem>().ToList();
 		bool shared = ElementalHeartsWorldConfig.Instance.SharedProgression;
@@ -1047,7 +1114,10 @@ public class ChecklistUIState : UIState
 		// rarity and never a world tier. See AnimateProgressionSystem.CurrentWorldTier.
 		string tierStr = AnimateProgressionSystem.CurrentWorldTier.ToString();
 
-		_elementalHpText.SetText($"Elemental HP: {elementalHP}");
+		int maxCapacity = HeartCapacitySystem.GetMaxCapacity() ?? int.MaxValue;
+		int appliedHp = System.Math.Min(elementalHP, maxCapacity);
+		string capacityStr = maxCapacity == int.MaxValue ? "∞" : maxCapacity.ToString();
+		_elementalHpText.SetText($"Elemental HP: {appliedHp} / {capacityStr}");
 		_worldTierText.SetText($"World Tier: {tierStr}");
 		_abilitiesActiveText.SetText($"Abilities Active: {abilitiesActive}");
 		_heartsActivatedText.SetText($"Hearts Activated: {activatedHearts} / {totalHearts}");
@@ -1092,6 +1162,11 @@ public class ChecklistUIState : UIState
 		header.MarginBottom = 20f;
 		header.TextColor = Color.Gold;
 		_settingsList.Add(header);
+
+		AddConfigToggle("Show Detailed Stats Bar", () => ElementalHeartsClientConfig.Instance.ShowDetailedHeartStats, val => {
+			ElementalHeartsClientConfig.Instance.ShowDetailedHeartStats = val;
+			SaveConfig(ElementalHeartsClientConfig.Instance);
+		});
 
 		AddConfigToggle("Enable Elemental HP", () => ElementalHeartsClientConfig.Instance.EnableElementalHP, val => {
 			ElementalHeartsClientConfig.Instance.EnableElementalHP = val;

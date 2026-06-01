@@ -54,11 +54,30 @@ public sealed class JackOLanternDashPlayer : ModPlayer
 
 		// Launch flourish — owning-client only (this whole method runs solely for Main.myPlayer).
 		SoundEngine.PlaySound(SoundID.DD2_BetsyFireballShot.WithVolumeScale(0.4f).WithPitchOffset(0.35f), Player.Center);
+		
+		// Tactile dash punch
+		Main.instance.CameraModifiers.Add(new Terraria.Graphics.CameraModifiers.PunchCameraModifier(
+			Player.Center,
+			new Vector2(dashDir, 0f),
+			5f, // magnitude
+			1f, // vibrations per second (a single smooth forward lunge)
+			12, // duration in frames
+			1000f, // distance falloff
+			"JackOLanternDash"));
+
 		for (int i = 0; i < 8; i++)
 		{
 			Dust ember = Dust.NewDustPerfect(Player.Center, DustID.Torch,
 				velocity.RotatedByRandom(0.5f) * Main.rand.NextFloat(0.15f, 0.55f), 100, default, 1.1f);
 			ember.noGravity = true;
+		}
+		
+		// Extra smoke burst for juice
+		for (int i = 0; i < 5; i++)
+		{
+			Dust smoke = Dust.NewDustPerfect(Player.Center, DustID.Smoke,
+				velocity.RotatedByRandom(0.3f) * Main.rand.NextFloat(0.1f, 0.4f), 150, Color.DarkGray, 1.3f);
+			smoke.noGravity = true;
 		}
 
 		Projectile.NewProjectile(

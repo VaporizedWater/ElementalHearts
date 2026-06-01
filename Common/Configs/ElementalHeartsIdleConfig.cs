@@ -1,32 +1,27 @@
 using System.ComponentModel;
+using Terraria.ModLoader;
 using Terraria.ModLoader.Config;
 
-using ElementalHearts.Content.Items.Hearts;
 namespace ElementalHearts.Common.Configs;
 
-[BackgroundColor(15, 20, 35)]
-public class ElementalHeartsIdleConfig : ModConfig
+/// <summary>
+/// Server-side tuning for the idle Life Shard generator: the master toggle and how
+/// large the unclaimed-shard reservoir grows, both as a flat base and per World Tier.
+/// Labels and tooltips live in the localization file like every other config.
+/// </summary>
+[BackgroundColor(40, 40, 40, 220)]
+public sealed class ElementalHeartsIdleConfig : ModConfig
 {
 	public override ConfigScope Mode => ConfigScope.ServerSide;
-
-	public static ElementalHeartsIdleConfig Instance;
+	public static ElementalHeartsIdleConfig Instance => ModContent.GetInstance<ElementalHeartsIdleConfig>();
 
 	[Header("IdleGameSettings")]
-	
 	[DefaultValue(true)]
-	[Label("Enable Idle Game")]
-	[Tooltip("If true, unlocked and consumed hearts will generate Life Shards over time.")]
 	public bool EnableIdleGame { get; set; }
 
-	[DefaultValue(50)]
-	[Range(10, 1000)]
-	[Label("Base Shard Capacity")]
-	[Tooltip("The base maximum amount of unclaimed shards you can hold.")]
+	[DefaultValue(50)] [Range(10, 1000)] [Increment(10)] [Slider] [SliderColor(150, 230, 150, 255)]
 	public int BaseCapacity { get; set; }
 
-	[DefaultValue(50)]
-	[Range(10, 500)]
-	[Label("Capacity Per World Tier")]
-	[Tooltip("The additional maximum amount of unclaimed shards you can hold per World Tier.")]
+	[DefaultValue(50)] [Range(10, 500)] [Increment(10)] [Slider] [SliderColor(150, 230, 150, 255)]
 	public int CapacityPerTier { get; set; }
 }

@@ -299,7 +299,7 @@ public abstract class ElementalHeartItem : ModItem
 
 	protected virtual void PlayConsumeSound(Vector2 center)
 	{
-		SoundEngine.PlaySound(ConsumeSound, center);
+		SoundEngine.PlaySound(ConsumeSound.WithPitchOffset(Main.rand.NextFloat(-0.1f, 0.1f)), center);
 	}
 
 	/// <summary>

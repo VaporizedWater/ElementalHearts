@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using ElementalHearts.Content.Items.Hearts;
 using Terraria;
+using Terraria.ID;
 using Terraria.ModLoader;
 
 namespace ElementalHearts.Common.Systems;
@@ -37,7 +38,7 @@ public sealed class CraftableHeartSellValueSystem : ModSystem
 			long total = 0;
 			foreach (Item ingredient in recipe.requiredItem)
 			{
-				if (ingredient == null || ingredient.type <= 0 || ingredient.stack <= 0)
+				if (ingredient == null || ingredient.type <= ItemID.None || ingredient.stack <= 0)
 					continue;
 
 				// A fresh Item gives us the canonical Item.value for the type, which is

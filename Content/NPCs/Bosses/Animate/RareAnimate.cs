@@ -72,7 +72,6 @@ public sealed class RareAnimate : AnimateBoss
 	private int _currentPhaseTarget = -1;
 	private int _lastHidingHpThreshold;
 	private bool _inFinale;
-	private bool _vanished;          // Phase 2: hitbox disabled while artillery-hidden
 	private bool _justWokeFromHide;
 	private State _previousState;     // for the hide-and-heal phase bonus
 	private int _seqFiring = -1;      // Phase 2 sequential firing: -1 = none, 0 = red, 1 = green
@@ -200,7 +199,6 @@ public sealed class RareAnimate : AnimateBoss
 
 		Lighting.AddLight(NPC.Center, 0.25f, 0.45f, 0.95f);
 
-		_vanished = false; // re-asserted each tick by Phase 2 when it hides Blue
 		ManagePhases();
 
 		// Anti-despawn safety warp
@@ -622,7 +620,6 @@ public sealed class RareAnimate : AnimateBoss
 	private void DoPhase2(Player player)
 	{
 		NPC.alpha = 0;
-		_vanished = false;            // Blue never disappears in this phase anymore
 		NPC.dontTakeDamage = false;
 		NPC.noGravity = true;
 		NPC.noTileCollide = true;
@@ -982,7 +979,6 @@ public sealed class RareAnimate : AnimateBoss
 		CurrentState = State.Finale;
 		ResetStepCounters();
 		KillDeathray();
-		_vanished = false;
 		NPC.dontTakeDamage = false;
 		EnsureEnforcers(NPC.Center + new Vector2(-200f, -120f), NPC.Center + new Vector2(200f, -120f));
 		if (TryGetRed(out var r)) r.Cmd_Frenzy();

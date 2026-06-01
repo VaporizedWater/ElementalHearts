@@ -2,7 +2,6 @@ using System.ComponentModel;
 using Terraria.ModLoader;
 using Terraria.ModLoader.Config;
 
-using ElementalHearts.Content.Items.Hearts;
 namespace ElementalHearts.Common.Configs;
 
 /// <summary>

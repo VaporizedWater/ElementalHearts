@@ -36,7 +36,7 @@ public sealed class JackOLanternHeart : ElementalHeartItem
         base.SetStaticDefaults();
 
         // 3-frame animated sprite.
-        Main.RegisterItemAnimation(Item.type, new DrawAnimationVertical(10, 3));
+        Main.RegisterItemAnimation(Item.type, new DrawAnimationVertical(20, 3));
     }
 
     public override void AddRecipes() =>
@@ -46,3 +46,4 @@ public sealed class JackOLanternHeart : ElementalHeartItem
             .AddTile(TileID.Sawmill)
             .Register();
 }
+

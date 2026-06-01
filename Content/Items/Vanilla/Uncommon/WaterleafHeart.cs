@@ -16,7 +16,7 @@ public sealed class WaterleafHeart : ElementalHeartItem
 	{
 		base.SetStaticDefaults();
 
-		Main.RegisterItemAnimation(Item.type, new DrawAnimationVertical(10, 8));
+		Main.RegisterItemAnimation(Item.type, new DrawAnimationVertical(20, 8));
 	}
 
 	public override void AddRecipes()
@@ -28,4 +28,5 @@ public sealed class WaterleafHeart : ElementalHeartItem
 			.Register();
 	}
 }
+
 

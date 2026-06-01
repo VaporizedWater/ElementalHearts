@@ -9,31 +9,30 @@ using ElementalHearts.Content.Items.Hearts;
 namespace ElementalHearts.Common.Camera;
 
 /// <summary>
-/// Drives the Cursor Focus camera ability. Each game tick (a fixed 60 Hz, so the easing is
-/// frame-rate independent however high the user's FPS) it works out where the camera should sit
-/// relative to the cursor and eases <see cref="SmoothedOffset"/> toward it. The lightweight
-/// <see cref="CursorFocusModifier"/> just reads that value during the draw loop and applies it.
-/// When the ability is switched off, locked, or a menu is up, the target becomes zero and the
-/// camera glides smoothly back to centre rather than snapping.
+/// Drives the Cursor Focus camera ability. Each frame <see cref="PostUpdateEverything"/> works out
+/// where the camera should sit relative to the cursor (<see cref="TargetOffset"/>), then
+/// <see cref="ModifyScreenPosition"/> eases the live offset toward that target and applies it.
+/// Applying it through <c>ModifyScreenPosition</c> (rather than a camera modifier) keeps tile-selection
+/// hitboxes in lockstep with the view, so the world never visually desyncs from the mouse. When the
+/// ability is switched off, locked, or a menu is up the target becomes zero and the camera glides
+/// smoothly back to centre rather than snapping.
 /// </summary>
 [Autoload(Side = ModSide.Client)]
 public sealed class CursorFocusSystem : ModSystem
 {
 
-	private CursorFocusModifier _modifier;
+	private static Vector2 _actualCameraOffset;
 
 	public override void OnWorldLoad()
 	{
 		TargetOffset = Vector2.Zero;
-		_modifier = new CursorFocusModifier();
-		Main.instance.CameraModifiers.Add(_modifier);
+		_actualCameraOffset = Vector2.Zero;
 	}
 
 	public override void OnWorldUnload()
 	{
-		_modifier?.Finish(); // the collection drops it once Finished
-		_modifier = null;
 		TargetOffset = Vector2.Zero;
+		_actualCameraOffset = Vector2.Zero;
 	}
 
 	/// <summary>The raw offset (in world pixels) the camera wants to apply this frame.</summary>
@@ -43,6 +42,27 @@ public sealed class CursorFocusSystem : ModSystem
 	{
 		ElementalHeartsCameraConfig cfg = ElementalHeartsCameraConfig.Instance;
 		TargetOffset = ShouldPan(cfg) ? ComputeTargetOffset(cfg) : Vector2.Zero;
+	}
+
+	public override void ModifyScreenPosition()
+	{
+		if (!CursorFocus.IsActive())
+		{
+			_actualCameraOffset = Vector2.Zero;
+			return;
+		}
+
+		// Calculate smoothing factor based on config
+		float smooth01 = System.Math.Clamp(ElementalHeartsCameraConfig.Instance.Smoothing / 100f, 0f, 1f);
+		float factor = 0.03f + (0.97f * System.MathF.Pow(1f - smooth01, 5f));
+
+		_actualCameraOffset = Vector2.Lerp(_actualCameraOffset, TargetOffset, factor);
+		
+		// Sub-pixel snapping
+		if (Vector2.DistanceSquared(_actualCameraOffset, TargetOffset) < 0.01f)
+			_actualCameraOffset = TargetOffset;
+
+		Main.screenPosition += _actualCameraOffset;
 	}
 
 	/// <summary>Whether the camera is allowed to pan this tick, considering the ability state and current UI context.</summary>

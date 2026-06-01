@@ -17,7 +17,7 @@ public sealed class SoulOfSightHeart : ElementalHeartItem
 		base.SetStaticDefaults();
 
 		// 4 frames
-		Main.RegisterItemAnimation(Item.type, new DrawAnimationVertical(10, 4));
+		Main.RegisterItemAnimation(Item.type, new DrawAnimationVertical(20, 4));
 	}
 
 	public override void AddRecipes()
@@ -29,4 +29,5 @@ public sealed class SoulOfSightHeart : ElementalHeartItem
 			.Register();
 	}
 }
+
 

@@ -31,8 +31,8 @@ function Ensure-HeartTextures {
         (Join-Path $PSScriptRoot 'Content\Items\Vanilla'),
         (Join-Path $PSScriptRoot 'Content\Items\CrossModHearts')
     )
-    # A valid 1x1 fully-transparent PNG (decoded from base64 — no image library needed).
-    $blankPng = [Convert]::FromBase64String('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg==')
+    $fallbackTexture = Join-Path $PSScriptRoot 'Content\Items\LifeShards\CommonLifeShard.png'
+    $blankPng = [IO.File]::ReadAllBytes($fallbackTexture)
     $created = New-Object System.Collections.Generic.List[string]
 
     foreach ($root in $roots) {
