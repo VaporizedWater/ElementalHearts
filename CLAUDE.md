@@ -16,7 +16,7 @@ This principle produces eight concrete rules. When you add code, check each one:
 6. **Config-driven, never hardcoded gameplay constants.** Recipe amounts go through `RecipeCost()`; HP and FX strength come from config. No magic numbers for balance in a concrete heart.
 7. **Multiplayer-safe by construction.** Guard client-only visual code with an early `if (Main.netMode == NetmodeID.Server) return;`. Run consumption only for `Main.myPlayer`. The server re-derives HP and never trusts the client.
 8. **Comments explain *intent and game-feel*, not mechanics.** Every non-trivial base member gets an XML `<summary>` with `<see cref>` links, and inline comments say *why* ("a dull thud reads as 'nope'"; "kept exclusive so it never stops feeling rare"). Use expression-bodied members for one-liners.
-9. **ONLY passive hearts give HP.** Active ability hearts are not passive and MUST override `HpGain` to return `0`.
+9. **ONLY passive hearts give HP.** Active ability hearts are not passive and MUST override `HpGain` to return `0`. *(Note: Active ability hearts still require entries in `ElementalPowerRegistry` and `HeartEffectRegistry` just like passive ones).*
 
 ## Hard rules (C# / tML)
 
@@ -83,4 +83,4 @@ public sealed class AstralHeart : CalamityHeartItem
 
 ## Cross-mod targets
 
-Calamity, Thorium, ElementsAwoken, Fargo's Souls, Laugicality, Ancients Awakened, Confection Rebaked, Consolaria. Toggles live in `ElementalHeartsCrossModConfig`.
+Calamity, Thorium, Consolaria. Toggles live in `ElementalHeartsCrossModConfig`.

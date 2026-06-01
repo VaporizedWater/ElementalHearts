@@ -478,9 +478,17 @@ public abstract class ElementalHeartItem : ModItem
 			? new Vector2(frame.Value.Width, frame.Value.Height) / 2f
 			: texture.Size() / 2f;
 
+		// Terraria draws world items aligned to the bottom of their hitbox, not the center.
+		// Calculate the true visual center of the sprite to keep the glow perfectly aligned.
+		Rectangle actualFrame = frame ?? texture.Bounds;
+		Vector2 drawCenter = new Vector2(
+			Item.position.X - Main.screenPosition.X + Item.width / 2f,
+			Item.position.Y - Main.screenPosition.Y + Item.height - actualFrame.Height / 2f + 2f
+		);
+
 		// Rein in the on-ground bloom for the showy top tiers so the pulsing doesn't balloon.
 		// Inventory glow, where slots are small and fixed, is left at full size (see below).
-		DrawTierGlow(spriteBatch, texture, Item.Center - Main.screenPosition, frame, origin,
+		DrawTierGlow(spriteBatch, texture, drawCenter, frame, origin,
 			rotation, scale, baseAlpha: 0.16f, baseRadius: 3f, sizeDampen: Tier.GetWorldGlowDampen());
 		return true; // still draw the heart itself on top
 	}
@@ -535,6 +543,16 @@ public abstract class ElementalHeartItem : ModItem
 				{
 					tooltips.Add(new TooltipLine(Mod, "BaseTooltip", baseTooltip));
 				}
+			}
+
+			var synergies = SynergySystem.GetSynergies(Type);
+			foreach (int synergyType in synergies)
+			{
+				string otherName = Lang.GetItemNameValue(synergyType);
+				tooltips.Add(new TooltipLine(Mod, "SynergyTooltip", $"Synergizes with the {otherName}")
+				{
+					OverrideColor = new Color(255, 215, 0) // Gold
+				});
 			}
 		}
 

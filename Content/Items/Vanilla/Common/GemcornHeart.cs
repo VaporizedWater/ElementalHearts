@@ -33,7 +33,7 @@ public sealed class GemcornHeart : ElementalHeartItem
 		base.SetStaticDefaults();
 
 		// 6 frames
-		Main.RegisterItemAnimation(Item.type, new DrawAnimationVertical(6, 6));
+		Main.RegisterItemAnimation(Item.type, new DrawAnimationVertical(10, 6));
 	}
 
 	// Themed on the vanilla gemcorns (acorn + gem): crafted from acorns, a wooden core, and

@@ -131,6 +131,7 @@ public static class HeartEffectRegistry
 		["DragonFruitHeart"] = Eff(225, 40, 110, 250, 110, 160, 90, 180, 90),    // blank sprite — fruit colours; needs art
 		["ElderberryHeart"]  = Eff(90, 50, 110, 50, 30, 70, 25, 15, 35),         // blank sprite — fruit colours; needs art
 		["EmeraldHeart"]     = Eff(0, 208, 96, 96, 224, 144, 0, 128, 64),
+		["EncumberingHeart"] = Eff(240, 112, 176, 176, 16, 96, 224, 16, 112), // Placeholder using DiscordHeart colors
 		["EnchantedHeart"]   = Eff(64, 96, 240, 128, 160, 240, 32, 16, 80),
 		["FireblossomHeart"] = Eff(240, 80, 0, 255, 140, 40, 192, 48, 16),
 		["GoldHeart"]        = Eff(240, 208, 72, 255, 240, 160, 192, 160, 16),

@@ -666,6 +666,11 @@ UI: {
 
 # Display-name overrides. Anything not listed auto-generates from the class name.
 Items: {
+	EaterOfWorldsHeart: {
+		DisplayName: Eater of World's Heart
+		Tooltip: ""
+	}
+
 	AcornHeart: {
 		DisplayName: Acorn Heart
 		Tooltip: Permanently increases tree loot by 25%
@@ -924,6 +929,11 @@ Items: {
 	DiscordHeart: {
 		Tooltip: Grants a hotkey to teleport to the cursor position at the cost of life
 		DisplayName: Discord Heart
+	}
+
+	EncumberingHeart: {
+		Tooltip: Permanently unlocks ground pounding. Press down in midair to perform a ground pound.
+		DisplayName: Encumbering Heart
 	}
 
 	DiamondHeart: {

@@ -30,7 +30,9 @@ public class KingSlimeComboTextProjectile : ModProjectile
 	public override void OnSpawn(IEntitySource source)
 	{
 		int combo = (int)Projectile.ai[0];
-		bool killed = Projectile.ai[1] > 0.5f;
+		int flags = (int)Projectile.ai[1];
+		bool killed = (flags & 1) != 0;
+		bool wasGroundPounding = (flags & 2) != 0;
 
 		SoundStyle baseSound = killed 
 			? new SoundStyle("ElementalHearts/Assets/Sounds/PlayerBounceKill")
@@ -40,7 +42,7 @@ public class KingSlimeComboTextProjectile : ModProjectile
 
 		// Random attack overlay sound (1 through 4)
 		int randomAttack = Main.rand.Next(1, 5);
-		SoundStyle attackOverlay = new SoundStyle($"ElementalHearts/Assets/Sounds/PlayerBounceAttack{randomAttack}");
+		SoundStyle attackOverlay = new SoundStyle($"ElementalHearts/Assets/Sounds/PlayerBounceAttack_{randomAttack}");
 		SoundEngine.PlaySound(attackOverlay, Projectile.Center);
 
 		string comboSoundPath = combo switch
@@ -53,6 +55,11 @@ public class KingSlimeComboTextProjectile : ModProjectile
 			6 => "ElementalHearts/Assets/Sounds/PlayerBounceWonderful",
 			_ => "ElementalHearts/Assets/Sounds/PlayerBounceExcellent"
 		};
+
+		if (wasGroundPounding)
+		{
+			comboSoundPath = "ElementalHearts/Assets/Sounds/PlayerGroundPoundLandClean";
+		}
 
 		SoundStyle comboSound = new SoundStyle(comboSoundPath);
 		SoundEngine.PlaySound(comboSound, Projectile.Center);

@@ -19,6 +19,8 @@ public class KingSlimeAbilityPlayer : ModPlayer
 	private int _jumpJustPressedTimer;
 	private bool _oldControlJump;
 	private bool _comboLockout;
+	private int _failedBounceTimer;
+	private bool _isPowerBounceHurt;
 
 	public override void SaveData(TagCompound tag)
 	{
@@ -40,13 +42,18 @@ public class KingSlimeAbilityPlayer : ModPlayer
 
 		_oldControlJump = Player.controlJump;
 
+		if (_failedBounceTimer > 0)
+			_failedBounceTimer--;
+
 		CheckPowerBounceCollision();
 	}
 
 	public override void PostUpdateMiscEffects()
 	{
+		bool frozenInMidair = Player.GetModPlayer<EncumberingAbilityPlayer>().isGroundPounding && !Player.GetModPlayer<EncumberingAbilityPlayer>().fastFalling;
+
 		// Reset combo when hitting the ground (ensure they are landing, not at the apex of a jump)
-		if (Player.velocity.Y == 0 && Player.oldVelocity.Y >= 0)
+		if (Player.velocity.Y == 0 && Player.oldVelocity.Y >= 0 && !frozenInMidair)
 		{
 			_bounceCombo = 0;
 			_comboLockout = false;
@@ -92,6 +99,7 @@ public class KingSlimeAbilityPlayer : ModPlayer
 				// while the offset playerHitbox (predicted next frame) intersects the enemy.
 				if (Player.Bottom.Y <= npc.position.Y + npc.height * 0.8f && playerHitbox.Intersects(npc.Hitbox))
 				{
+					bool wasGroundPounding = Player.GetModPlayer<EncumberingAbilityPlayer>().isGroundPounding && Player.GetModPlayer<EncumberingAbilityPlayer>().fastFalling;
 					bool timingSuccess = false;
 
 					if (_bounceCombo == 0)
@@ -101,6 +109,8 @@ public class KingSlimeAbilityPlayer : ModPlayer
 					else
 					{
 						int allowedFrames = GetAllowedFrames(_bounceCombo);
+						if (wasGroundPounding) allowedFrames = (int)(allowedFrames * 0.8f);
+
 						if (_jumpJustPressedTimer <= allowedFrames)
 						{
 							timingSuccess = true;
@@ -117,12 +127,36 @@ public class KingSlimeAbilityPlayer : ModPlayer
 						float heightMultiplier = 0.8f + ((comboLevel - 1) * (0.35f / 6f));
 						Player.velocity.Y = -12f * heightMultiplier;
 
+						if (wasGroundPounding)
+						{
+							Player.velocity.Y *= 1.1f; // 10% jump height increase
+
+							// Cancel ground pound
+							Player.GetModPlayer<EncumberingAbilityPlayer>().isGroundPounding = false;
+							Player.GetModPlayer<EncumberingAbilityPlayer>().fastFalling = false;
+
+							// Smaller explosion effect
+							for (int k = 0; k < 8; k++)
+							{
+								Dust dust = Dust.NewDustDirect(Player.BottomLeft - new Vector2(16, 16), Player.width + 32, 32, DustID.Smoke, 0f, -2f, 100, default, 1.1f);
+								dust.velocity.X *= 1.5f;
+								dust.velocity.Y = -Main.rand.NextFloat(1f, 2.5f);
+							}
+							for (int k = 0; k < 6; k++)
+							{
+								Dust dust = Dust.NewDustDirect(Player.BottomLeft - new Vector2(16, 16), Player.width + 32, 32, DustID.Stone, 0f, -2f, 100, default, 0.9f);
+								dust.velocity.X *= 1.2f;
+								dust.velocity.Y = -Main.rand.NextFloat(1f, 2.5f);
+							}
+						}
+
 						// Damage DEALT increases by 10% each step, capping at Excellent
 						int bounceDamageToEnemy;
 						if (npc.friendly || npc.type == NPCID.TargetDummy || npc.damage == 0)
 						{
 							// Friendly NPCs, Dummies, and 0-damage entities take exactly 1-7 damage based on the combo streak
 							bounceDamageToEnemy = comboLevel;
+							if (wasGroundPounding) bounceDamageToEnemy *= 2;
 						}
 						else
 						{
@@ -131,6 +165,8 @@ public class KingSlimeAbilityPlayer : ModPlayer
 							bounceDamageToEnemy = (int)((npc.damage / 2f) * damageMult);
 							if (bounceDamageToEnemy < 1)
 								bounceDamageToEnemy = 1;
+								
+							if (wasGroundPounding) bounceDamageToEnemy *= 2; // 2x damage for super ground pound bounce
 						}
 
 						// Knockback scales from 2f (Nice) to 3f (Excellent)
@@ -150,7 +186,7 @@ public class KingSlimeAbilityPlayer : ModPlayer
 						}
 
 						bool killed = !npc.active || npc.life <= 0;
-						SpawnComboText(npc, _bounceCombo, killed);
+						SpawnComboText(npc, _bounceCombo, killed, wasGroundPounding);
 
 						// Handle damage to player (only if they aren't already immune)
 						// We explicitly do not take damage from friendly NPCs, critters, or Target Dummies.
@@ -171,15 +207,18 @@ public class KingSlimeAbilityPlayer : ModPlayer
 								Dodgeable = true
 							};
 							
+							_isPowerBounceHurt = true;
 							Player.Hurt(hurt);
+							_isPowerBounceHurt = false;
 						}
 
 						// Always grant at least a tiny bit of immunity after a successful bounce
 						// to ensure vanilla collision doesn't double-hit them on the same frame.
-						if (Player.immuneTime < 2)
+						int requiredImmunity = wasGroundPounding ? 15 : 2;
+						if (Player.immuneTime < requiredImmunity)
 						{
 							Player.immune = true;
-							Player.immuneTime = 2;
+							Player.immuneTime = requiredImmunity;
 						}
 
 						break; // Only bounce on one enemy per frame
@@ -187,6 +226,10 @@ public class KingSlimeAbilityPlayer : ModPlayer
 					else
 					{
 						// Failed timing -> reset combo and lock out the ability until they touch the ground
+						if (_bounceCombo > 0)
+						{
+							_failedBounceTimer = 2; // Allow OnHurt to catch this in the next frame or so
+						}
 						_bounceCombo = 0;
 						_comboLockout = true;
 						
@@ -195,6 +238,20 @@ public class KingSlimeAbilityPlayer : ModPlayer
 					}
 				}
 			}
+		}
+	}
+
+	public override void OnHurt(Player.HurtInfo info)
+	{
+		if (_isPowerBounceHurt)
+			return;
+
+		if (Enabled && (_bounceCombo > 0 || _failedBounceTimer > 0))
+		{
+			_bounceCombo = 0;
+			_comboLockout = true;
+			_failedBounceTimer = 0;
+			SoundEngine.PlaySound(new SoundStyle("ElementalHearts/Assets/Sounds/PlayerBounceFail"), Player.Center);
 		}
 	}
 
@@ -212,9 +269,11 @@ public class KingSlimeAbilityPlayer : ModPlayer
 		};
 	}
 
-	private void SpawnComboText(NPC npc, int combo, bool killed)
+	private void SpawnComboText(NPC npc, int combo, bool killed, bool wasGroundPounding = false)
 	{
 		if (Main.myPlayer != Player.whoAmI) return; // Only owner spawns the projectile to avoid dupes
+
+		float ai1 = (killed ? 1f : 0f) + (wasGroundPounding ? 2f : 0f);
 
 		// Determine the color and text based on combo
 		Projectile.NewProjectile(
@@ -222,6 +281,6 @@ public class KingSlimeAbilityPlayer : ModPlayer
 			npc.Top + new Vector2(0, -16f), // spawn slightly above the enemy
 			new Vector2(0, -2f), // Float upwards
 			ModContent.ProjectileType<KingSlimeComboTextProjectile>(),
-			0, 0, Player.whoAmI, combo, killed ? 1f : 0f);
+			0, 0, Player.whoAmI, combo, ai1);
 	}
 }

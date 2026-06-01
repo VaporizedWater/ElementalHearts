@@ -92,6 +92,7 @@ public sealed class HeartConsumptionPlayer : ModPlayer
 			return;
 
 		int gained = 0;
+		int oldBonus = _bonus;
 		foreach (string id in HeartConsumptionWorld.Unlocked)
 		{
 			WorldUnlocked.Add(WorldKey(id));
@@ -115,6 +116,11 @@ public sealed class HeartConsumptionPlayer : ModPlayer
 		// broadcast: false — every client independently reconciles, so a broadcast
 		// from each one would N²-multiply the popup across players.
 		Player.HealEffect(gained, broadcast: false);
+
+		if ((oldBonus / 100) < (_bonus / 100))
+		{
+			PlayMilestoneFlourish();
+		}
 	}
 
 	/// <summary>
@@ -165,16 +171,40 @@ public sealed class HeartConsumptionPlayer : ModPlayer
 		WorldUnlocked.Add(WorldKey(id));
 		if (WorldHpApplied.Add(WorldKey(id)))
 		{
+			int oldBonus = _bonus;
 			int hp = HeartRegistry.GetHp(id);
 			_bonus += hp;
 			Player.statLife += hp;
 			Player.HealEffect(hp, broadcast: false);
 			BumpHighestTier(id);
 			UI.Checklist.HeartLogButtonUIState.HasUnseenContent = true;
+
+			if ((oldBonus / 100) < (_bonus / 100))
+			{
+				PlayMilestoneFlourish();
+			}
+
 			return true;
 		}
 
 		return false;
+	}
+
+	private void PlayMilestoneFlourish()
+	{
+		Terraria.Audio.SoundEngine.PlaySound(Terraria.ID.SoundID.Item92.WithVolumeScale(0.8f).WithPitchOffset(0.2f), Player.Center);
+		ScreenFlashSystem.Flash(Microsoft.Xna.Framework.Color.Gold, 0.4f, 6f, 20f, default, 0.45f);
+
+		for (int i = 0; i < 40; i++)
+		{
+			Dust dust = Dust.NewDustPerfect(
+				Player.Center,
+				Terraria.ID.DustID.GoldCoin,
+				Main.rand.NextVector2Circular(6f, 6f),
+				0, Microsoft.Xna.Framework.Color.White, 1.5f);
+			dust.noGravity = true;
+			dust.velocity *= 1.5f;
+		}
 	}
 
 	public bool TryDeactivateLocally(ElementalHeartItem heart)

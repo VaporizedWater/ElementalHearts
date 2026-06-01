@@ -41,6 +41,7 @@ public static class BossHeartDropRegistry
 		Add<EyeOfCthulhuHeart>(NPCID.EyeofCthulhu);
 		Add<KingSlimeHeart>(NPCID.KingSlime);
 		Add<BrainOfCthulhuHeart>(NPCID.BrainofCthulhu);
+		Add<EaterOfWorldsHeart>(NPCID.EaterofWorldsHead);
 		Add<QueenBeeHeart>(NPCID.QueenBee);
 		Add<SkeletronHeart>(NPCID.SkeletronHead);
 		Add<WallOfFleshHeart>(NPCID.WallofFlesh);
