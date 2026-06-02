@@ -2,7 +2,6 @@ using ElementalHearts.Common.Hearts;
 using ElementalHearts.Common.Players;
 using ElementalHearts.Content.Items.Hearts;
 using Terraria;
-using Terraria.DataStructures;
 using Terraria.ID;
 using Terraria.ModLoader;
 
@@ -24,20 +23,14 @@ public sealed class JackOLanternHeart : ElementalHeartItem
 
     /// <summary>Costs 5 shards/day to keep the dash burst running — pricier than the Exotic tier
     /// default (2) because a free-firing projectile on every dash earns its keep.</summary>
-    public override int? ActiveAbilityDailyCost => 5;
+
 
     public override bool IsAbilityEnabled => Main.LocalPlayer.GetModPlayer<JackOLanternDashPlayer>().Enabled;
 
     public override void SetAbilityEnabled(bool enabled) =>
         Main.LocalPlayer.GetModPlayer<JackOLanternDashPlayer>().Enabled = enabled;
 
-    public override void SetStaticDefaults()
-    {
-        base.SetStaticDefaults();
-
-        // 3-frame animated sprite.
-        Main.RegisterItemAnimation(Item.type, new DrawAnimationVertical(20, 3));
-    }
+    protected override int AnimationFrameCount => 3;
 
     public override void AddRecipes() =>
         CreateRecipe()

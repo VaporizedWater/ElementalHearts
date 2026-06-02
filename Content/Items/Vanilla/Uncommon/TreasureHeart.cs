@@ -16,7 +16,7 @@ public sealed class TreasureHeart : ElementalHeartItem
 
 	public override bool IsActiveAbility => true;
 
-	public override int? ActiveAbilityDailyCost => 3;
+
 
 	public override bool IsAbilityEnabled => Main.LocalPlayer.GetModPlayer<TreasureAbilityPlayer>().Enabled;
 

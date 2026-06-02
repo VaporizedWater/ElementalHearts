@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using ElementalHearts.Common.Configs;
 using ElementalHearts.Common.LifeShards;
@@ -38,7 +37,7 @@ public sealed class LifeCrystalExtractinatorGlobalItem : GlobalItem
 			return;
 
 		// Guaranteed Common shards form the primary Extractinator result.
-		resultStack = RollStack(config.ExtractinatorCommonMin, config.ExtractinatorCommonMax);
+		resultStack = VitalExtractinatorRolls.RollStack(config.ExtractinatorCommonMin, config.ExtractinatorCommonMax);
 		resultType = resultStack > 0 ? LifeShardTier.Common.GetItemType() : 0;
 
 		// Higher tiers are independent bonus rolls spawned straight onto the player.
@@ -70,26 +69,6 @@ public sealed class LifeCrystalExtractinatorGlobalItem : GlobalItem
 			ModContent.ItemType<Content.Items.Placeable.LifeCrystalSeedItem>(), 1);
 	}
 
-	private static int RollStack(int a, int b)
-	{
-		int min = Math.Max(0, Math.Min(a, b));
-		int max = Math.Max(a, b);
-		return Main.rand.Next(min, max + 1);
-	}
-
 	private static void TrySpawnBonus(float chancePercent, LifeShardTier tier, int min, int max)
-	{
-		// The Extractinator is operated client-side; bonus shards go to the local player.
-		if (Main.netMode == NetmodeID.Server)
-			return;
-		if (Main.rand.NextFloat() >= chancePercent / 100f)
-			return;
-
-		int stack = RollStack(min, max);
-		if (stack <= 0)
-			return;
-
-		Player player = Main.LocalPlayer;
-		player.QuickSpawnItem(player.GetSource_Misc("LifeShardExtractinator"), tier.GetItemType(), stack);
-	}
+		=> VitalExtractinatorRolls.TrySpawn(chancePercent, tier.GetItemType(), min, max, "LifeShardExtractinator");
 }

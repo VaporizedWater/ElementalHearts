@@ -5,31 +5,12 @@ using Terraria;
 using Terraria.DataStructures;
 using Terraria.ID;
 using Terraria.ModLoader;
-using Terraria.ModLoader.IO;
 using Terraria.GameInput;
 
 namespace ElementalHearts.Common.Players;
 
-public class DiscordAbilityPlayer : ModPlayer
+public class DiscordAbilityPlayer : ToggleAbilityPlayer
 {
-	public bool Enabled { get; set; }
-
-	public override void ResetEffects()
-	{
-		if (!Enabled) return;
-	}
-
-	public override void SaveData(TagCompound tag)
-	{
-		if (Enabled)
-			tag["Enabled"] = true;
-	}
-
-	public override void LoadData(TagCompound tag)
-	{
-		Enabled = tag.ContainsKey("Enabled");
-	}
-
 	public override void ProcessTriggers(TriggersSet triggersSet)
 	{
 		if (!Enabled)

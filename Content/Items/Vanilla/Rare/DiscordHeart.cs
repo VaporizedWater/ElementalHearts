@@ -17,7 +17,7 @@ public sealed class DiscordHeart : ElementalHeartItem
 
 	public override bool IsActiveAbility => true;
 
-	public override int? ActiveAbilityDailyCost => 10;
+
 
 	public override bool IsAbilityEnabled => Main.LocalPlayer.GetModPlayer<DiscordAbilityPlayer>().Enabled;
 

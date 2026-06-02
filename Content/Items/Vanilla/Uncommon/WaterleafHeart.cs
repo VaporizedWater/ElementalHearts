@@ -1,7 +1,5 @@
 using ElementalHearts.Common.Hearts;
 using ElementalHearts.Content.Items.LifeShards;
-using Terraria;
-using Terraria.DataStructures;
 using Terraria.ID;
 using Terraria.ModLoader;
 
@@ -12,12 +10,7 @@ public sealed class WaterleafHeart : ElementalHeartItem
 {
 	public override HeartTier Tier => HeartTier.Uncommon;
 
-	public override void SetStaticDefaults()
-	{
-		base.SetStaticDefaults();
-
-		Main.RegisterItemAnimation(Item.type, new DrawAnimationVertical(20, 8));
-	}
+	protected override int AnimationFrameCount => 8;
 
 	public override void AddRecipes()
 	{

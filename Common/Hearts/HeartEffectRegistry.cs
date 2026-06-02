@@ -224,10 +224,13 @@ public static class HeartEffectRegistry
 		["BetsyHeart"]          = Eff(192, 64, 64, 255, 208, 96, 255, 144, 64),
 		["BrainOfCthulhuHeart"] = Eff(144, 192, 80, 96, 128, 48, 32, 96, 112),  // sprite reads green/teal
 		["DeerclopsHeart"]      = Eff(176, 224, 224, 112, 192, 224, 80, 96, 128),
-		["DestroyerHeart"]      = Eff(96, 96, 96, 160, 160, 160, 48, 48, 48),
+		["TheDestroyerHeart"]   = Eff(96, 96, 96, 160, 160, 160, 48, 48, 48),
 		["DukeFishronHeart"]    = Eff(96, 96, 224, 144, 192, 255, 48, 16, 96),
 		["EaterOfWorldsHeart"]  = Eff(48, 32, 16, 48, 32, 32, 64, 48, 48),
 		["ElfHeart"]            = Eff(216, 40, 40, 60, 170, 80, 224, 224, 224),  // santa red + green + white
+		["ClayHeart"]           = Eff(192, 112, 80, 160, 80, 48, 128, 64, 32),
+		["SkeletronPrimeHeart"] = Eff(160, 160, 168, 224, 48, 48, 80, 80, 80),
+		["TheTwinsHeart"]       = Eff(160, 160, 168, 255, 32, 32, 64, 255, 64),
 		["EmpressOfLightHeart"] = HeartEffect.Prismatic,
 		["EyeOfCthulhuHeart"]   = Eff(192, 48, 48, 64, 64, 208, 224, 224, 224),
 		["FlyingDutchmanHeart"] = Eff(128, 80, 64, 192, 40, 16, 80, 80, 64),

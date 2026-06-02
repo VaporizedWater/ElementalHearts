@@ -94,10 +94,9 @@ public abstract class ElementalHeartItem : ModItem
 	public virtual void SetAbilityEnabled(bool enabled) { }
 
 	/// <summary>
-	/// Optional override for the daily shard cost of an active ability. If null, falls back to the default
-	/// shard yield for the heart's tier.
+	/// The daily shard cost of an active ability. Defaults to the tier's active ability cost.
 	/// </summary>
-	public virtual int? ActiveAbilityDailyCost => null;
+	public virtual int ActiveAbilityDailyCost => (IsActiveAbility || this is PotionHeartItem) ? Tier.GetActiveAbilityDailyCost() : 0;
 
 	/// <summary>
 	/// Munchies-checklist presentation for this heart. Each hook has a sensible default so
@@ -129,6 +128,13 @@ public abstract class ElementalHeartItem : ModItem
 	/// </summary>
 	protected virtual SoundStyle ConsumeSound => new($"ElementalHearts/Assets/Sounds/{Tier}CrystalPickup");
 
+	/// <summary>
+	/// Number of vertical frames in the item sprite. A heart whose <c>.png</c> is an animated
+	/// strip just declares its frame count; the base registers the spinning animation. Default
+	/// <c>1</c> means a static single-frame sprite (the common case) and registers nothing.
+	/// </summary>
+	protected virtual int AnimationFrameCount => 1;
+
 	protected int RecipeCost(int baseAmount)
 	{
 		float multiplier = ElementalHeartsServerConfig.Instance.Recipes.RecipeDifficulty / 10f;
@@ -153,6 +159,11 @@ public abstract class ElementalHeartItem : ModItem
 	{
 		Item.ResearchUnlockCount = 1;
 		ItemID.Sets.ItemNoGravity[Type] = true;
+
+		// A heart with an animated sprite strip declares its frame count via AnimationFrameCount;
+		// the spin always runs at a uniform 20-tick cadence so the whole set animates in lockstep.
+		if (AnimationFrameCount > 1)
+			Main.RegisterItemAnimation(Item.type, new DrawAnimationVertical(16, AnimationFrameCount));
 	}
 
 	public override void SetDefaults()
@@ -561,7 +572,7 @@ public abstract class ElementalHeartItem : ModItem
 		if (ShowGenerationTooltip && ElementalHeartsServerConfig.Instance.LifeShards.SystemEnabled
 			&& !IsActiveAbility && this is not PotionHeartItem)
 		{
-			int rate = IdleShardPlayer.GetShardYield(Tier);
+			int rate = Tier.GetShardYield();
 			tooltips.Add(new TooltipLine(Mod, "ElementalHeartGeneration",
 				$"Generates {rate} [i:{ModContent.ItemType<CommonLifeShard>()}] / day")
 			{

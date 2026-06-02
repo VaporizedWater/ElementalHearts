@@ -12,6 +12,9 @@ using ElementalHearts.Common.Players;
 using ElementalHearts.Common.Hearts;
 using ElementalHearts.Content.Items.LifeShards;
 using ElementalHearts.Common.UI;
+using ElementalHearts.Common.UI.Elements;
+using ElementalHearts.Common.UI.Effects;
+using System;
 
 namespace ElementalHearts.Common.UI.Checklist;
 
@@ -19,6 +22,10 @@ namespace ElementalHearts.Common.UI.Checklist;
 
 public class ChecklistUIState : UIState
 {
+	public static ChecklistUIState Instance;
+	public UIHeartHoverCard HoverCard;
+	public bool IsHoveringHeart;
+
 	public enum TabMode { Active, Passive, Milestones }
 	public enum SortMode { Tier, Alphabetical }
 	public enum FilterMode { All, Unlocked, Locked, Potions, Calamity, Thorium, Consolaria, Vanilla, Zenith }
@@ -30,20 +37,21 @@ public class ChecklistUIState : UIState
 	private bool _searchBarHasInitializedText = false;
 
 	private UIPanel _mainPanel;
-	private UIList _heartList;
-	private UIScrollbar _scrollbar;
+	private UITabControl _tabControl;
+	private UIList _activeHeartList;
+	private UIList _passiveHeartList;
+	private UIList _milestonesHeartList;
+	private UISmoothScrollbar _scrollbar;
 	private UIText _adminText;
 	private UIPanel _adminButtonsContainer;
 
-	private UITextPanel<string> _sortButton;
-	private UITextPanel<string> _filterButton;
+	private UIHorizontalList _leftToolbar;
+	private UIHorizontalList _rightToolbar;
+	private UIDropdown _sortDropdown;
+	private UIDropdown _filterDropdown;
 	private UISearchBar _searchBar;
 	private UIPanel _searchBarContainer;
 
-	private UITextPanel<string> _activeTabBtn;
-	private UITextPanel<string> _passiveTabBtn;
-	private UITextPanel<string> _milestonesTabBtn;
-	private UITextPanel<string> _settingsButton;
 	private bool _isSettingsMode = false;
 	private UIList _settingsList;
 	private UIPanel _idlePanel;
@@ -62,8 +70,10 @@ public class ChecklistUIState : UIState
 
 	public override void OnInitialize()
 	{
+		Instance = this;
+
 		_mainPanel = new UIPanel();
-		_mainPanel.Width.Set(1300, 0f); // Restored width (+20%)
+		_mainPanel.Width.Set(1300, 0f); // Restore correct width
 		_mainPanel.Height.Set(780, 0f); // Increased by 30%
 		_mainPanel.HAlign = 0.5f;
 		_mainPanel.VAlign = 0.5f;
@@ -142,108 +152,82 @@ public class ChecklistUIState : UIState
 		};
 		_searchBarContainer.Append(_searchBar);
 
-		_activeTabBtn = new UITextPanel<string>("Active", 0.8f);
-		_activeTabBtn.Width.Set(80, 0f);
-		_activeTabBtn.Height.Set(30, 0f);
-		_activeTabBtn.Top.Set(40, 0f);
-		_activeTabBtn.Left.Set(10, 0f);
-		_activeTabBtn.BackgroundColor = new Color(73, 94, 171); // Active by default
-		_activeTabBtn.BorderColor = new Color(89, 116, 213);
-		_activeTabBtn.OnLeftClick += (evt, element) => {
-			Terraria.Audio.SoundEngine.PlaySound(Terraria.ID.SoundID.MenuTick);
+		_leftToolbar = new UIHorizontalList();
+		_leftToolbar.Width.Set(0, 0.5f);
+		_leftToolbar.Height.Set(30, 0f);
+		_leftToolbar.Top.Set(40, 0f);
+		_leftToolbar.Left.Set(10, 0f);
+		_leftToolbar.ListPadding = 10f;
+		_mainPanel.Append(_leftToolbar);
+
+		_rightToolbar = new UIHorizontalList();
+		_rightToolbar.Width.Set(0, 0.5f);
+		_rightToolbar.Height.Set(30, 0f);
+		_rightToolbar.Top.Set(40, 0f);
+		_rightToolbar.Left.Set(-10, 0f);
+		_rightToolbar.HAlign = 1f;
+		_rightToolbar.RightAligned = true;
+		_rightToolbar.ListPadding = 10f;
+		_mainPanel.Append(_rightToolbar);
+
+		_tabControl = new UITabControl(_leftToolbar);
+		_tabControl.Width.Set(0, 1f);
+		_tabControl.Height.Set(-185, 1f);
+		_tabControl.Top.Set(95, 0f);
+		_mainPanel.Append(_tabControl);
+		
+		_activeHeartList = new UIList();
+		_activeHeartList.ListPadding = 8f;
+		
+		_passiveHeartList = new UIList();
+		_passiveHeartList.ListPadding = 8f;
+		
+		_milestonesHeartList = new UIList();
+		_milestonesHeartList.ListPadding = 8f;
+		
+		_settingsList = new UIList();
+		_settingsList.ListPadding = 12f;
+		
+		_sortDropdown = new UIDropdown("Sort", new List<string> { "Tier", "Alphabetical" }, _sortMode.ToString(), _mainPanel, (selected) => {
+			_sortMode = Enum.Parse<SortMode>(selected);
+			RebuildHeartLists();
+		});
+
+		var filterOptions = new List<string> { "All", "Unlocked", "Locked", "Potions", "Calamity", "Thorium", "Consolaria", "Vanilla", "Zenith" };
+		_filterDropdown = new UIDropdown("Filter", filterOptions, _filterMode.ToString(), _mainPanel, (selected) => {
+			_filterMode = Enum.Parse<FilterMode>(selected);
+			RebuildHeartLists();
+		});
+
+		_tabControl.AddTab("Active", _activeHeartList, () => {
 			_tabMode = TabMode.Active;
-			Rebuild();
-		};
-		_mainPanel.Append(_activeTabBtn);
-
-		_passiveTabBtn = new UITextPanel<string>("Passive", 0.8f);
-		_passiveTabBtn.Width.Set(90, 0f);
-		_passiveTabBtn.Height.Set(30, 0f);
-		_passiveTabBtn.Top.Set(40, 0f);
-		_passiveTabBtn.Left.Set(100, 0f);
-		_passiveTabBtn.BackgroundColor = new Color(63, 82, 151) * 0.7f;
-		_passiveTabBtn.BorderColor = new Color(89, 116, 213);
-		_passiveTabBtn.OnLeftClick += (evt, element) => {
-			Terraria.Audio.SoundEngine.PlaySound(Terraria.ID.SoundID.MenuTick);
+			_isSettingsMode = false;
+			RebuildToolbars();
+			RebuildHeartLists();
+		});
+		
+		_tabControl.AddTab("Passive", _passiveHeartList, () => {
 			_tabMode = TabMode.Passive;
-			Rebuild();
-		};
-		_mainPanel.Append(_passiveTabBtn);
-
-		_milestonesTabBtn = new UITextPanel<string>("Milestones", 0.8f);
-		_milestonesTabBtn.Width.Set(110, 0f);
-		_milestonesTabBtn.Height.Set(30, 0f);
-		_milestonesTabBtn.Top.Set(40, 0f);
-		_milestonesTabBtn.Left.Set(200, 0f);
-		_milestonesTabBtn.BackgroundColor = new Color(63, 82, 151) * 0.7f;
-		_milestonesTabBtn.BorderColor = new Color(89, 116, 213);
-		_milestonesTabBtn.OnLeftClick += (evt, element) => {
-			Terraria.Audio.SoundEngine.PlaySound(Terraria.ID.SoundID.MenuTick);
+			_isSettingsMode = false;
+			RebuildToolbars();
+			RebuildHeartLists();
+		});
+		
+		_tabControl.AddTab("Milestones", _milestonesHeartList, () => {
 			_tabMode = TabMode.Milestones;
-			Rebuild();
-		};
-		_mainPanel.Append(_milestonesTabBtn);
+			_isSettingsMode = false;
+			RebuildToolbars();
+			RebuildHeartLists();
+		});
+		
+		_tabControl.AddTab("⚙", _settingsList, () => {
+			_isSettingsMode = true;
+			RebuildToolbars();
+			RebuildSettingsList();
+		});
 
-		_settingsButton = new UITextPanel<string>("⚙", 0.8f);
-		_settingsButton.Width.Set(36, 0f);
-		_settingsButton.Height.Set(30, 0f);
-		_settingsButton.Top.Set(40, 0f);
-		_settingsButton.Left.Set(320, 0f);
-		_settingsButton.BackgroundColor = new Color(63, 82, 151) * 0.7f;
-		_settingsButton.BorderColor = new Color(89, 116, 213);
-		_settingsButton.OnLeftClick += (evt, element) => {
-			Terraria.Audio.SoundEngine.PlaySound(Terraria.ID.SoundID.MenuTick);
-			_isSettingsMode = !_isSettingsMode;
-			_settingsButton.BackgroundColor = _isSettingsMode ? new Color(73, 94, 171) : new Color(63, 82, 151) * 0.7f;
-			Rebuild();
-		};
-		_mainPanel.Append(_settingsButton);
+		RebuildToolbars();
 
-		_sortButton = new UITextPanel<string>($"Sort: {_sortMode}", 0.8f);
-		_sortButton.Width.Set(120, 0f);
-		_sortButton.Height.Set(30, 0f);
-		_sortButton.Top.Set(40, 0f);
-		_sortButton.HAlign = 1f;
-		_sortButton.Left.Set(-390, 0f);
-		_sortButton.BackgroundColor = new Color(63, 82, 151) * 0.7f;
-		_sortButton.BorderColor = new Color(89, 116, 213);
-		_sortButton.OnLeftClick += (evt, element) => {
-			Terraria.Audio.SoundEngine.PlaySound(Terraria.ID.SoundID.MenuTick);
-			_sortMode = (SortMode)(((int)_sortMode + 1) % 2);
-			_sortButton.SetText($"Sort: {_sortMode}");
-			Rebuild();
-		};
-		_mainPanel.Append(_sortButton);
-
-		_filterButton = new UITextPanel<string>($"Filter: {_filterMode}", 0.8f);
-		_filterButton.Width.Set(120, 0f);
-		_filterButton.Height.Set(30, 0f);
-		_filterButton.Top.Set(40, 0f);
-		_filterButton.HAlign = 1f;
-		_filterButton.Left.Set(-260, 0f);
-		_filterButton.BackgroundColor = new Color(63, 82, 151) * 0.7f;
-		_filterButton.BorderColor = new Color(89, 116, 213);
-		_filterButton.OnLeftClick += (evt, element) => {
-			Terraria.Audio.SoundEngine.PlaySound(Terraria.ID.SoundID.MenuTick);
-			int nextMode = (int)_filterMode + 1;
-			if (nextMode > (int)FilterMode.Zenith) nextMode = 0;
-			_filterMode = (FilterMode)nextMode;
-			_filterButton.SetText($"Filter: {_filterMode}");
-			Rebuild();
-		};
-		_mainPanel.Append(_filterButton);
-
-		// Light the toolbar up on hover so it reads as clickable, the way the admin/claim buttons do.
-		// Each call keeps the button's resting colour in sync with whether it's the selected tab/mode.
-		AddNavHover(_activeTabBtn, () => _tabMode == TabMode.Active);
-		AddNavHover(_passiveTabBtn, () => _tabMode == TabMode.Passive);
-		AddNavHover(_milestonesTabBtn, () => _tabMode == TabMode.Milestones);
-		AddNavHover(_settingsButton, () => _isSettingsMode);
-		AddNavHover(_sortButton, () => false);
-		AddNavHover(_filterButton, () => false);
-
-		// Sits centred on the toolbar row's free gap (between the Settings button and the Sort button)
-		// so it no longer collides with the title now that the title has the top row to itself.
 		_adminText = new UIText("", 0.8f);
 		_adminText.HAlign = 0.5f;
 		_adminText.Top.Set(48, 0f);
@@ -284,26 +268,16 @@ public class ChecklistUIState : UIState
 		_heartsActivatedText.Left.Set(-20, 0f);
 		_statsPanel.Append(_heartsActivatedText);
 
-		_heartList = new UIList();
-		_heartList.Width.Set(-25, 1f);
-		_heartList.Height.Set(-170, 1f);
-		_heartList.Top.Set(95, 0f);
-		_heartList.ListPadding = 8f;
-		_mainPanel.Append(_heartList);
-
-		_settingsList = new UIList();
-		_settingsList.Width.Set(-25, 1f);
-		_settingsList.Height.Set(-170, 1f);
-		_settingsList.Top.Set(95, 0f);
-		_settingsList.ListPadding = 12f;
-
-		_scrollbar = new UIScrollbar();
+		_scrollbar = new UISmoothScrollbar();
 		_scrollbar.SetView(100f, 1000f);
 		_scrollbar.Height.Set(-170, 1f);
 		_scrollbar.Top.Set(95, 0f);
 		_scrollbar.HAlign = 1f;
 		_mainPanel.Append(_scrollbar);
-		_heartList.SetScrollbar(_scrollbar);
+		
+		_activeHeartList.SetScrollbar(_scrollbar);
+		_passiveHeartList.SetScrollbar(_scrollbar);
+		_milestonesHeartList.SetScrollbar(_scrollbar);
 		_settingsList.SetScrollbar(_scrollbar);
 
 		_idlePanel = new UIPanel();
@@ -312,6 +286,7 @@ public class ChecklistUIState : UIState
 		_idlePanel.VAlign = 1f;
 		_idlePanel.BackgroundColor = new Color(30, 38, 70) * 0.8f;
 		_idlePanel.BorderColor = new Color(89, 116, 213);
+		_idlePanel.SetPadding(0);
 		_mainPanel.Append(_idlePanel);
 
 		UIPanel leftSection = new UIPanel();
@@ -445,6 +420,10 @@ public class ChecklistUIState : UIState
 			Rebuild();
 		};
 		_adminButtonsContainer.Append(btnAdvanceTier);
+
+		HoverCard = new UIHeartHoverCard();
+		HoverCard.Left.Set(-2000, 0f);
+		Append(HoverCard);
 	}
 
 	// Resting and hover tints shared by the nav toolbar; the "active" tab/mode keeps the brighter
@@ -507,8 +486,7 @@ public class ChecklistUIState : UIState
 			_mainPanel.Append(_adminButtonsContainer);
 			_idlePanel.Top.Set(-50, 0f);
 			
-			_heartList.Height.Set(baseHeightOffset - 50f, 1f);
-			_settingsList.Height.Set(baseHeightOffset - 50f, 1f);
+			_tabControl.Height.Set(baseHeightOffset - 50f, 1f);
 			_scrollbar.Height.Set(baseHeightOffset - 50f, 1f);
 		}
 		else
@@ -519,55 +497,50 @@ public class ChecklistUIState : UIState
 				_adminButtonsContainer.Remove();
 			_idlePanel.Top.Set(0, 0f);
 			
-			_heartList.Height.Set(baseHeightOffset, 1f);
-			_settingsList.Height.Set(baseHeightOffset, 1f);
+			_tabControl.Height.Set(baseHeightOffset, 1f);
 			_scrollbar.Height.Set(baseHeightOffset, 1f);
 		}
 
-		_heartList.Top.Set(listTopOffset, 0f);
-		_settingsList.Top.Set(listTopOffset, 0f);
+		_tabControl.Top.Set(listTopOffset, 0f);
 		_scrollbar.Top.Set(listTopOffset, 0f);
 
 		UpdateIdleText();
 		UpdateDetailedStatsText();
+		RebuildHeartLists();
+	}
 
-		_activeTabBtn.BackgroundColor = _tabMode == TabMode.Active ? new Color(73, 94, 171) : new Color(63, 82, 151) * 0.7f;
-		_passiveTabBtn.BackgroundColor = _tabMode == TabMode.Passive ? new Color(73, 94, 171) : new Color(63, 82, 151) * 0.7f;
-		_milestonesTabBtn.BackgroundColor = _tabMode == TabMode.Milestones ? new Color(73, 94, 171) : new Color(63, 82, 151) * 0.7f;
-
+	private void RebuildToolbars()
+	{
 		if (_isSettingsMode)
 		{
-			if (_heartList.Parent != null) _mainPanel.RemoveChild(_heartList);
-			if (_settingsList.Parent == null) _mainPanel.Append(_settingsList);
-			if (_sortButton.Parent != null) _mainPanel.RemoveChild(_sortButton);
-			if (_filterButton.Parent != null) _mainPanel.RemoveChild(_filterButton);
-			if (_searchBarContainer.Parent != null) _mainPanel.RemoveChild(_searchBarContainer);
-			if (_activeTabBtn.Parent != null) _mainPanel.RemoveChild(_activeTabBtn);
-			if (_passiveTabBtn.Parent != null) _mainPanel.RemoveChild(_passiveTabBtn);
-			if (_milestonesTabBtn.Parent != null) _mainPanel.RemoveChild(_milestonesTabBtn);
-			
-			RebuildSettingsList();
-			return;
+			if (_sortDropdown.Parent != null) _sortDropdown.Remove();
+			if (_filterDropdown.Parent != null) _filterDropdown.Remove();
+			if (_searchBarContainer.Parent != null) _searchBarContainer.Remove();
 		}
 		else
 		{
-			if (_settingsList.Parent != null) _mainPanel.RemoveChild(_settingsList);
-			if (_heartList.Parent == null) _mainPanel.Append(_heartList);
-			if (_sortButton.Parent == null) _mainPanel.Append(_sortButton);
-			if (_filterButton.Parent == null) _mainPanel.Append(_filterButton);
-			if (_searchBarContainer.Parent == null) _mainPanel.Append(_searchBarContainer);
-			if (_activeTabBtn.Parent == null) _mainPanel.Append(_activeTabBtn);
-			if (_passiveTabBtn.Parent == null) _mainPanel.Append(_passiveTabBtn);
-			if (_milestonesTabBtn.Parent == null) _mainPanel.Append(_milestonesTabBtn);
+			if (_searchBarContainer.Parent == null) _rightToolbar.Append(_searchBarContainer);
+			if (_filterDropdown.Parent == null) _rightToolbar.Append(_filterDropdown);
+			if (_sortDropdown.Parent == null) _rightToolbar.Append(_sortDropdown);
 		}
+	}
 
-		_heartList.Clear();
+	public void RebuildHeartLists()
+	{
+		_activeHeartList.Clear();
+		_passiveHeartList.Clear();
+		_milestonesHeartList.Clear();
+
+		if (Main.LocalPlayer == null || !Main.LocalPlayer.active || Main.gameMenu)
+			return;
 
 		if (_tabMode == TabMode.Milestones)
 		{
-			MilestonesUI.RebuildMilestonesList(_heartList, Rebuild);
+			MilestonesUI.RebuildMilestonesList(_milestonesHeartList, RebuildHeartLists);
 			return;
 		}
+
+		UIList currentList = _tabMode == TabMode.Active ? _activeHeartList : _passiveHeartList;
 
 		var allHearts = ModContent.GetContent<ElementalHeartItem>().ToList();
 		bool shared = ElementalHeartsServerConfig.Instance.WorldGen.SharedProgression;
@@ -644,7 +617,7 @@ public class ChecklistUIState : UIState
 			trackerText.MarginTop = 15f;
 			trackerText.MarginBottom = 15f;
 			trackerText.TextColor = new Color(200, 200, 200);
-			_heartList.Add(trackerText);
+			currentList.Add(trackerText);
 		}
 
 		List<object> layoutItems = new List<object>();
@@ -682,7 +655,7 @@ public class ChecklistUIState : UIState
 				header.MarginTop = 15f;
 				header.MarginBottom = 10f;
 				header.TextColor = Color.Gold;
-				_heartList.Add(header);
+				currentList.Add(header);
 			}
 			else if (item is List<ElementalHeartItem> rowHearts)
 			{
@@ -730,7 +703,7 @@ public class ChecklistUIState : UIState
 									{
 										var idlePlayer = Main.LocalPlayer.GetModPlayer<IdleShardPlayer>();
 										idlePlayer.GetShardRates(out int gen, out int cons, out _);
-										int cost = heart.ActiveAbilityDailyCost ?? IdleShardPlayer.GetShardYield(heart.Tier);
+										int cost = heart.ActiveAbilityDailyCost > 0 ? heart.ActiveAbilityDailyCost : heart.Tier.GetShardYield();
 										if (gen < cons + cost)
 										{
 											Terraria.Audio.SoundEngine.PlaySound(Terraria.ID.SoundID.MenuTick);
@@ -771,7 +744,7 @@ public class ChecklistUIState : UIState
 									{
 										var idlePlayer = Main.LocalPlayer.GetModPlayer<IdleShardPlayer>();
 										idlePlayer.GetShardRates(out int gen, out int cons, out _);
-										int cost = heart.ActiveAbilityDailyCost ?? IdleShardPlayer.GetShardYield(heart.Tier);
+										int cost = heart.ActiveAbilityDailyCost > 0 ? heart.ActiveAbilityDailyCost : heart.Tier.GetShardYield();
 										if (gen < cons + cost)
 										{
 											Terraria.Audio.SoundEngine.PlaySound(Terraria.ID.SoundID.MenuTick);
@@ -836,14 +809,15 @@ public class ChecklistUIState : UIState
 
 						if (ElementalHeartsServerConfig.Instance.LifeShards.SystemEnabled && isUnlocked)
 						{
-							int rate = heart.ActiveAbilityDailyCost ?? IdleShardPlayer.GetShardYield(heart.Tier);
+							int rate = heart.ActiveAbilityDailyCost > 0 ? heart.ActiveAbilityDailyCost : heart.Tier.GetShardYield();
 							bool isAbility = heart is PotionHeartItem || heart.IsActiveAbility;
 							string prefix = isAbility ? "-" : "+";
 							UIText rateText = new UIText($"{prefix}{rate} [i:{ModContent.ItemType<CommonLifeShard>()}] / day", 0.85f);
 							rateText.TextColor = isAbility ? new Color(255, 150, 150) : new Color(150, 255, 150);
 							rateText.VAlign = 0.5f;
 							rateText.HAlign = 1f;
-							rateText.Left.Set(-100, 0f); // Rigidly aligned for all
+							float offset = isAbility ? -70f : -10f;
+							rateText.Left.Set(offset, 0f);
 							heartRow.Append(rateText);
 						}
 
@@ -904,7 +878,7 @@ public class ChecklistUIState : UIState
 					}
 				}
 
-				_heartList.Add(rowContainer);
+				currentList.Add(rowContainer);
 			}
 		}
 	}
@@ -931,7 +905,7 @@ public class ChecklistUIState : UIState
 		return true;
 	}
 
-	private class HeartIconElement : UIElement
+	public class HeartIconElement : UIElement
 	{
 		public Item Item;
 		public bool IsConsumed;
@@ -953,11 +927,17 @@ public class ChecklistUIState : UIState
 			var anim = Main.itemAnimations[Item.type];
 			if (anim != null) frame = anim.GetFrame(texture);
 
+			float targetSize = System.Math.Min(dimensions.Width, dimensions.Height);
 			float scale = 1f;
-			if (frame.Width > 32 || frame.Height > 32)
-				scale = 32f / System.Math.Max(frame.Width, frame.Height);
+			if (frame.Width > targetSize || frame.Height > targetSize)
+				scale = targetSize / System.Math.Max(frame.Width, frame.Height);
+			else
+				scale = targetSize / System.Math.Max(frame.Width, frame.Height); // Force scale up if it's smaller, or maybe just 1f. Let's just scale to fit!
+			
+			// Actually, just scale to exactly fit the target box:
+			scale = targetSize / System.Math.Max(frame.Width, frame.Height);
 
-			Vector2 pos = dimensions.Position() + new Vector2(16, 16);
+			Vector2 pos = dimensions.Center();
 			Color color = IsConsumed ? Color.White : Color.Black;
 			spriteBatch.Draw(texture, pos, frame, color, 0f, frame.Size() / 2f, scale, Microsoft.Xna.Framework.Graphics.SpriteEffects.None, 0f);
 		}
@@ -971,22 +951,49 @@ public class ChecklistUIState : UIState
 		/// <summary>When true, a hovered unlocked passive heart appends its "Generates N / day" idle yield line.</summary>
 		public bool ShowGenerationRate;
 
+		public override void Update(GameTime gameTime)
+		{
+			base.Update(gameTime);
+			if (IsMouseHovering && HoverItem != null)
+			{
+				if (HoverItem.ModItem is ElementalHeartItem heartItem && ChecklistUIState.Instance != null)
+				{
+					ChecklistUIState.Instance.IsHoveringHeart = true;
+					ChecklistUIState.Instance.HoverCard.SetHeart(heartItem);
+				}
+			}
+		}
+
 		protected override void DrawSelf(Microsoft.Xna.Framework.Graphics.SpriteBatch spriteBatch)
 		{
-			base.DrawSelf(spriteBatch);
-			if (IsMouseHovering)
+			try
 			{
-				if (HoverItem != null)
+				base.DrawSelf(spriteBatch);
+				if (IsMouseHovering)
 				{
-					Main.HoverItem = HoverItem.Clone();
-					Main.hoverItemName = HoverItem.Name;
-					ElementalHeartItem.HideConsumedTooltip = true;
-					ElementalHeartItem.ShowGenerationTooltip = ShowGenerationRate;
+					if (HoverItem != null)
+					{
+						if (HoverItem.ModItem is ElementalHeartItem heartItem && ChecklistUIState.Instance != null)
+						{
+							// Custom HoverCard handles everything; do NOT set Main.HoverItem to avoid vanilla tooltip overlap
+						}
+						else
+						{
+							Main.HoverItem = HoverItem.Clone();
+							Main.hoverItemName = HoverItem.Name;
+							ElementalHeartItem.HideConsumedTooltip = true;
+							ElementalHeartItem.ShowGenerationTooltip = ShowGenerationRate;
+						}
+					}
+					else if (FallbackName != null)
+					{
+						Main.hoverItemName = FallbackName;
+					}
 				}
-				else if (FallbackName != null)
-				{
-					Main.hoverItemName = FallbackName;
-				}
+			}
+			catch (System.Exception e)
+			{
+				Main.NewTextMultiline(e.ToString(), c: Color.Red);
 			}
 		}
 	}
@@ -1009,35 +1016,26 @@ public class ChecklistUIState : UIState
 			bool full = capacity > 0 && pending >= capacity;
 			float frac = capacity > 0 ? MathHelper.Clamp((float)pending / capacity, 0f, 1f) : 0f;
 
-			var pixel = Terraria.GameContent.TextureAssets.MagicPixel.Value;
 			Rectangle track = GetDimensions().ToRectangle();
 
-			// Recessed track.
-			spriteBatch.Draw(pixel, track, new Color(8, 11, 24) * 0.95f);
+			Color bgColor = new Color(8, 11, 24) * 0.95f;
+			Color borderColor = full ? Color.White : new Color(89, 116, 213);
+			Color fill1 = new Color(58, 104, 198);
+			Color fill2 = new Color(120, 196, 255);
+			Color pulseColor = new Color(255, 215, 0);
 
-			// Fill — width follows the fraction; colour eases blue→cyan as it climbs, then pulses
-			// gold once capped so a full bank is unmistakable from a distance.
-			int fillWidth = (int)(track.Width * frac);
-			if (fillWidth > 0)
-			{
-				Color fill = Color.Lerp(new Color(58, 104, 198), new Color(120, 196, 255), frac);
-				if (full)
-				{
-					float pulse = (float)(System.Math.Sin(Main.GlobalTimeWrappedHourly * 4f) + 1f) / 2f;
-					fill = Color.Lerp(new Color(218, 165, 32), new Color(255, 224, 96), pulse);
-				}
-				spriteBatch.Draw(pixel, new Rectangle(track.X, track.Y, fillWidth, track.Height), fill);
-
-				// A brighter leading edge gives the fill a sliver of depth.
-				spriteBatch.Draw(pixel, new Rectangle(track.X + fillWidth - 2, track.Y, 2, track.Height), Color.White * 0.5f);
-			}
-
-			// 2px border, white when capped to echo the Claim button's "ready" state.
-			Color border = full ? Color.White : new Color(89, 116, 213);
-			spriteBatch.Draw(pixel, new Rectangle(track.X, track.Y, track.Width, 2), border);
-			spriteBatch.Draw(pixel, new Rectangle(track.X, track.Bottom - 2, track.Width, 2), border);
-			spriteBatch.Draw(pixel, new Rectangle(track.X, track.Y, 2, track.Height), border);
-			spriteBatch.Draw(pixel, new Rectangle(track.Right - 2, track.Y, 2, track.Height), border);
+			PremiumProgressBarEffectSystem.Draw(
+				spriteBatch, 
+				track, 
+				frac, 
+				2f, 
+				bgColor, 
+				borderColor, 
+				fill1, 
+				fill2, 
+				pulseColor, 
+				full
+			);
 
 			// Centred "have / cap" count, drawn with a soft border so it stays legible over any fill.
 			string label = $"{pending} / {capacity}";
@@ -1056,7 +1054,14 @@ public class ChecklistUIState : UIState
 
 	public override void Update(GameTime gameTime)
 	{
+		IsHoveringHeart = false;
 		base.Update(gameTime);
+		
+		if (!IsHoveringHeart && HoverCard != null)
+		{
+			HoverCard.Left.Set(-2000, 0f);
+		}
+
 		if (Main.LocalPlayer != null && Main.LocalPlayer.active && _claimBtn != null)
 		{
 			var idlePlayer = Main.LocalPlayer.GetModPlayer<IdleShardPlayer>();

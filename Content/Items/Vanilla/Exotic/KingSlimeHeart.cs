@@ -8,7 +8,7 @@ public sealed class KingSlimeHeart : BossHeartItem
 {
 	public override bool IsActiveAbility => true;
 
-	public override int? ActiveAbilityDailyCost => 3;
+
 
 	public override int HpGain => 0;
 

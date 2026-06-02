@@ -1,6 +1,6 @@
 # ElementalHearts — Project Rules
 
-A Terraria **tModLoader 1.4+** mod (C#). Adds consumable "hearts" that permanently raise max HP, themed on materials/bosses, with deep cross-mod support.
+A Terraria **tModLoader 1.4+** mod (C#). Adds consumable "hearts" that permanently raise stats or grant special abilities.
 
 ## The core principle (obey this above all else)
 
@@ -8,24 +8,23 @@ A Terraria **tModLoader 1.4+** mod (C#). Adds consumable "hearts" that permanent
 
 This principle produces eight concrete rules. When you add code, check each one:
 
-1. **Tier is the single source of truth.** HP, rarity, effect color, sell value, sound pitch, dust counts, camera shake, glow size — *all* derive from `HeartTier` via `HeartTierExtensions` / switch expressions. Never hand-tune look or feel per heart. A new heart picks a tier and inherits a coherent identity for free. **Every *pure* per-tier constant lives in `HeartTierExtensions` as an extension method** (`GetEffectColor`, `GetRarityType`, `GetRarityScale`, `GetWorldGlowDampen`, …) — the item class consumes them, never defines its own per-tier `switch`. If you add a tier-keyed look/feel value, add it there so the ladder stays in one file.
+1. **Tier is the default source of truth.** HP, rarity, effect color, sell value, sound pitch, dust counts, camera shake, glow size, shard generation, shard cost — *all* default to `HeartTier` via `HeartTierExtensions` / switch expressions. Note that *shard yield* (shards generated on consume) and *shard cost* (cost for active abilities) are completely separate and oppose each other, but both still default to the tier. Never hand-tune look or feel per heart. A new heart picks a tier and inherits a coherent identity for free. **Every *pure* per-tier constant lives in `HeartTierExtensions` as an extension method** (`GetEffectColor`, `GetRarityType`, `GetRarityScale`, `GetWorldGlowDampen`, …) — the item class consumes them, never defines its own per-tier `switch`. If you add a tier-keyed look/feel value, add it there so the ladder stays in one file.
 2. **Declaration-only subclasses.** A vanilla heart overrides exactly `Tier` + `AddRecipes()`. A cross-mod family declares only `SourceMod`. If a concrete heart needs to override `SetDefaults`, `UseItem`, or FX, **stop** — add a documented `virtual` hook to the base instead and override that. The exception lives in the base; the leaf stays a declaration.
 3. **Virtual hooks with sensible defaults, never required overrides.** New content must appear everywhere correctly (Munchies, sound, tooltip, HP) with zero extra work. Give every new base hook a default; overriding is the rare, documented exception (e.g. `PotionHeartItem` returns `HpGain = 0`).
 4. **`abstract` base, `sealed` concrete.** Every leaf heart is `sealed`; every shared base is `abstract`. Keep the hierarchy shallow: `ElementalHeartItem → {BossHeartItem, CrossModHeartItem} → per-mod family → concrete`.
 5. **Namespace mirrors folder path exactly, and organization MUST reflect rarity.** File-scoped namespace, always; folder taxonomy is Source → Tier → Category and the namespace matches it character-for-character. The folder is a heart's rarity made physical, so **a tier-named folder (`Common/` … `Mythic/`) contains *only* hearts of that tier** — a heart must never sit in a folder that claims a rarity it isn't. **If a heart's `Tier` changes, its physical location and namespace change with it** (move the `.cs` *and* its `.png`, update the namespace). A themed family that deliberately spans tiers lives in a **category folder named for the theme, never a tier** — `Potions/` and `Pacified/` are the sanctioned examples; each class still declares its own `Tier`. Cross-mod hearts are organized by source mod (`CrossModHearts/<Mod>/`). Identity is the class name (not the namespace), so these moves are always save-safe.
-6. **Config-driven, never hardcoded gameplay constants.** Recipe amounts go through `RecipeCost()`; HP and FX strength come from config. No magic numbers for balance in a concrete heart.
+6. **Config-driven, never hardcoded gameplay constants.** Recipe amounts go through `RecipeCost()`; HP, FX strength, and active ability daily costs come from config (or `HeartTierExtensions`). No magic numbers for balance in a concrete heart.
 7. **Multiplayer-safe by construction.** Guard client-only visual code with an early `if (Main.netMode == NetmodeID.Server) return;`. Run consumption only for `Main.myPlayer`. The server re-derives HP and never trusts the client.
 8. **Comments explain *intent and game-feel*, not mechanics.** Every non-trivial base member gets an XML `<summary>` with `<see cref>` links, and inline comments say *why* ("a dull thud reads as 'nope'"; "kept exclusive so it never stops feeling rare"). Use expression-bodied members for one-liners.
-9. **ONLY passive hearts give HP.** Active ability hearts are not passive and MUST override `HpGain` to return `0`. *(Note: Active ability hearts still require entries in `ElementalPowerRegistry` and `HeartEffectRegistry` just like passive ones).*
+9. **ONLY passive hearts give HP.** If a heart is not a passive heart, it is NEVER allowed to have `HpGain`. Active ability hearts are not passive and MUST override `HpGain` to return `0`. To support this without violating Rule 2 (declaration-only), Active Ability hearts are explicitly allowed to override ability-specific hooks like `IsActiveAbility`, `IsAbilityEnabled`, and `SetAbilityEnabled()`. *(Note: Active ability hearts still require entries in `ElementalPowerRegistry` and `HeartEffectRegistry` just like passive ones).*
 
 ## Hard rules (C# / tML)
 
-- **Always inherit from TML classes** — `ModItem`, `ModPlayer`, `ModProjectile`, `ModSystem`, `GlobalNPC`, `ModConfig`, etc. Never write raw XNA/MonoGame update or draw logic without going through a tML hook.
 - **PascalCase** for public types, properties, and methods. `camelCase` for locals/params. Match the casing of surrounding code.
-- `Nullable`, `ImplicitUsings`, and `LangVersion latest` are **enabled** (see `.csproj`) — don't re-import the usings ImplicitUsings already provides, and respect nullable annotations.
-- **Exactly one `ModPlayer` for the consumption ledger** (`HeartConsumptionPlayer`). A duplicate ModPlayer previously crashed with Calamity — never add a second one.
+- **Exactly one `ModPlayer` for the consumption ledger** (`HeartConsumptionPlayer`). A duplicate ModPlayer previously crashed with Calamity — never add a second one. (Note: It is perfectly fine, and expected, for each *active ability* to have its own separate `ModPlayer` for handling gameplay logic and toggle states, as long as the consumption ledger stays safely in one place).
 - **Never store HP on the player.** HP is read live from the heart definition via `HeartRegistry.GetHp` so HP-config changes apply retroactively. The MP packet carries `(int itemType, int consumerWhoAmI)`; the **server re-derives HP** from the registered singleton and never trusts client-sent values.
 - **Load gates run once *per heart*; hot paths run every frame.** `IsLoadingEnabled` / `ShouldLoadHeartsFor` fire ~once per cross-mod heart during load — never do per-call disk I/O or JSON parsing there; read the file once and cache it for the load (a config change is `[ReloadRequired]`, which resets statics for you). Likewise, code on per-frame paths (`ModifyTooltips`, `PreDrawInWorld`/`InInventory`, `ModPlayer.PreUpdate`, projectile/NPC `AI`) must not allocate per call — memoize world-derived values (e.g. the world-GUID key prefix in `HeartConsumptionPlayer`) and cache `ModContent.*Type<T>()` lookups, fully-qualify nothing the `using`s already cover, and early-out cheaply.
+- **Do not automatically test unless ABSOLUTELY REQUIRED.** You ARE allowed (and expected) to run build commands (e.g. `dotnet build`) to verify that the code compiles successfully IF you think it might be necessary, but that's about it.
 
 ## Adding a new heart
 
@@ -72,15 +71,3 @@ public sealed class AstralHeart : CalamityHeartItem
 - `Mod.PostSetupContent` builds the runtime registries in order — `HeartRegistry.Build()`, `PotionHeartRegistry.Build()`, `BossHeartDropRegistry.Build()` — then registers the cross-mod integrations. `HeartContentValidator.Validate` runs last (DEBUG-only, compiled out of release). `HeartEffectRegistry` / `ElementalPowerRegistry` are static lookup tables, not built. (Boss drops are centralized in `BossHeartDropRegistry`.)
 - `notes/` — dev scratch (design docs, material/sprite lists, a reference copy of Munchies' `CenteredUIImage`). Excluded from the packaged mod via `build.txt` (`notes\*`) and from compilation via the csproj (`<Compile Remove="notes\**\*.cs" />`). Never put compiled source here, and keep non-mod files out of the project root.
 - `tools/` — dev-only PowerShell helpers (e.g. `Get-HeartPalette.ps1`, the sprite→hex palette extractor for the color-palette rule). No compiled source here; `*.ps1` is buildIgnored.
-- `build.ps1` — CLI compile-check that filters CS1705 noise (close tModLoader first; see Gotchas). Before compiling it runs `Ensure-HeartTextures`: the *texture half* of the heart validator, which creates a 1×1 transparent placeholder for any concrete heart missing its `.png` and lists what still needs art. The *content half* (effect/power/HP rules) is the DEBUG-only `HeartContentValidator`.
-
-## Gotchas (from changelog — don't repeat)
-
-- Don't auto-place hostile boss spawners in worldgen (Menacing Statue griefing).
-- Avoid heavy 3rd-party mod dependencies (WebmilioCommons was removed).
-- **Building from the CLI:** run `./build.ps1`. `dotnet build` emits **CS1705** errors that are environment-only (the script filters them); and tML returns **TML003** while tModLoader is open, so close it or disable the mod first. The in-game tML build is the final word.
-- **Repo hygiene:** keep non-mod files out of the source root — a loose `.cs` there is compiled straight into the assembly (an old `test.cs` shipped a `Program.Main`; a copied `CenteredUIImage.cs` baked a foreign `Munchies.UIElements` type in). Dev scratch lives in `notes/`. Never commit `.claude/worktrees/` or `.claude/settings.local.json` — a stray agent worktree was once committed and doubled the repo's file count; both are now gitignored.
-
-## Cross-mod targets
-
-Calamity, Thorium, Consolaria. Toggles live in `ElementalHeartsCrossModConfig`.

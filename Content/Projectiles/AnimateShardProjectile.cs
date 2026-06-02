@@ -1,69 +1,17 @@
-using Terraria;
-using Terraria.ModLoader;
-using Terraria.ID;
 using Microsoft.Xna.Framework;
-using ElementalHearts.Content.Items.BossSpawns;
-using Microsoft.Xna.Framework.Graphics;
-using Terraria.GameContent;
+using Terraria.ID;
 
 namespace ElementalHearts.Content.Projectiles;
 
-public class AnimateShardProjectile : ModProjectile
+public sealed class AnimateShardProjectile : SmallBossShardProjectile
 {
 	public override string Texture => "ElementalHearts/Content/Projectiles/CommonSmallBossProjectile";
 
-	public override void SetStaticDefaults()
-	{
-		ProjectileID.Sets.TrailCacheLength[Projectile.type] = 6;
-		ProjectileID.Sets.TrailingMode[Projectile.type] = 0;
-	}
+	protected override Vector3 LightColor => new(0.8f, 0.2f, 0.5f);
 
-	public override void SetDefaults()
-	{
-		Projectile.width = 20;
-		Projectile.height = 20;
-		Projectile.hostile = true;
-		Projectile.friendly = false;
-		Projectile.penetrate = -1;
-		Projectile.timeLeft = 300;
-		Projectile.ignoreWater = true;
-		Projectile.tileCollide = false; // We want it to be predictable bullet hell, so ignore tiles
-		
-		// Set scale to 1.25f (25% larger for better visibility)
-		Projectile.scale = 1.25f;
-	}
+	protected override int TrailDust => DustID.PinkCrystalShard;
 
-	public override void AI()
-	{
-		Projectile.rotation += 0.1f * (Projectile.velocity.X > 0 ? 1f : -1f);
-		
-		Lighting.AddLight(Projectile.Center, 0.8f, 0.2f, 0.5f);
-		
-		// Add some dust trail
-		if (Main.rand.NextBool(3))
-		{
-			Dust.NewDust(Projectile.position, Projectile.width, Projectile.height, DustID.PinkCrystalShard);
-		}
-	}
-
-	public override Color? GetAlpha(Color lightColor)
-	{
-		return Color.White; // Draw fullbright
-	}
-
-	public override bool PreDraw(ref Color lightColor)
-	{
-		Texture2D texture = TextureAssets.Projectile[Projectile.type].Value;
-		Vector2 origin = texture.Size() / 2f;
-
-		for (int i = 1; i < Projectile.oldPos.Length; i++)
-		{
-			Vector2 drawPos = Projectile.oldPos[i] + Projectile.Size / 2f - Main.screenPosition + new Vector2(0f, Projectile.gfxOffY);
-			Color color = Projectile.GetAlpha(lightColor) * ((Projectile.oldPos.Length - i) / (float)Projectile.oldPos.Length) * 0.5f;
-			Main.EntitySpriteDraw(texture, drawPos, null, color, Projectile.rotation, origin, Projectile.scale, SpriteEffects.None, 0);
-		}
-
-		Main.EntitySpriteDraw(texture, Projectile.Center - Main.screenPosition + new Vector2(0f, Projectile.gfxOffY), null, Projectile.GetAlpha(lightColor), Projectile.rotation, origin, Projectile.scale, SpriteEffects.None, 0);
-		return false;
-	}
+	// 25% larger for better visibility.
+	protected override int HitboxSize => 20;
+	protected override float DrawScale => 1.25f;
 }

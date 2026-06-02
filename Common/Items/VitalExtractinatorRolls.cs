@@ -101,7 +101,12 @@ public static class VitalExtractinatorRolls
 		TrySpawn(chancePercent, type, 1, 1);
 	}
 
-	private static void TrySpawn(float chancePercent, int itemType, int min, int max)
+	/// <summary>
+	/// Shared bonus-roll spawn for every Extractinator integration: client-only, chance-gated,
+	/// quantity rolled via <see cref="RollStack"/>, then dropped onto the local player. The
+	/// <paramref name="sourceTag"/> distinguishes the loot source (Vital tiles vs Life Crystal/Fruit).
+	/// </summary>
+	internal static void TrySpawn(float chancePercent, int itemType, int min, int max, string sourceTag = "VitalExtractinator")
 	{
 		if (Main.netMode == NetmodeID.Server)
 			return;
@@ -115,10 +120,11 @@ public static class VitalExtractinatorRolls
 			return;
 
 		Player player = Main.LocalPlayer;
-		player.QuickSpawnItem(player.GetSource_Misc("VitalExtractinator"), itemType, stack);
+		player.QuickSpawnItem(player.GetSource_Misc(sourceTag), itemType, stack);
 	}
 
-	private static int RollStack(int a, int b)
+	/// <summary>Rolls an inclusive <c>[min, max]</c> stack count, clamped non-negative and order-agnostic.</summary>
+	internal static int RollStack(int a, int b)
 	{
 		int min = Math.Max(0, Math.Min(a, b));
 		int max = Math.Max(a, b);

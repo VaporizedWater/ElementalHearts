@@ -6,14 +6,11 @@ using Terraria.Audio;
 using Terraria.DataStructures;
 using Terraria.ID;
 using Terraria.ModLoader;
-using Terraria.ModLoader.IO;
 
 namespace ElementalHearts.Common.Players;
 
-public class KingSlimeAbilityPlayer : ModPlayer
+public class KingSlimeAbilityPlayer : ToggleAbilityPlayer
 {
-	public bool Enabled { get; set; }
-
 	// Combo mechanics
 	private int _bounceCombo;
 	private int _jumpJustPressedTimer;
@@ -21,17 +18,6 @@ public class KingSlimeAbilityPlayer : ModPlayer
 	private bool _comboLockout;
 	private int _failedBounceTimer;
 	private bool _isPowerBounceHurt;
-
-	public override void SaveData(TagCompound tag)
-	{
-		if (Enabled)
-			tag["Enabled"] = true;
-	}
-
-	public override void LoadData(TagCompound tag)
-	{
-		Enabled = tag.ContainsKey("Enabled");
-	}
 
 	public override void PreUpdate()
 	{
@@ -63,6 +49,7 @@ public class KingSlimeAbilityPlayer : ModPlayer
 		{
 			// Disable midair flight and dashes during the combo AND after a failed combo, until touching ground
 			Player.wingTime = 0;
+			Player.wingsLogic = 0;
 			Player.rocketTime = 0;
 			Player.carpetTime = 0;
 			Player.dashType = 0;
@@ -135,18 +122,21 @@ public class KingSlimeAbilityPlayer : ModPlayer
 							Player.GetModPlayer<EncumberingAbilityPlayer>().isGroundPounding = false;
 							Player.GetModPlayer<EncumberingAbilityPlayer>().fastFalling = false;
 
-							// Smaller explosion effect
-							for (int k = 0; k < 8; k++)
+							// Play ground pound landing sound for impact
+							SoundEngine.PlaySound(EncumberingAbilityPlayer.GroundPoundLandSound, Player.Center);
+
+							// Larger explosion effect
+							for (int k = 0; k < 20; k++)
 							{
-								Dust dust = Dust.NewDustDirect(Player.BottomLeft - new Vector2(16, 16), Player.width + 32, 32, DustID.Smoke, 0f, -2f, 100, default, 1.1f);
-								dust.velocity.X *= 1.5f;
-								dust.velocity.Y = -Main.rand.NextFloat(1f, 2.5f);
+								Dust dust = Dust.NewDustDirect(Player.BottomLeft - new Vector2(16, 16), Player.width + 32, 32, DustID.Smoke, 0f, -2f, 100, default, 1.5f);
+								dust.velocity.X *= 2f;
+								dust.velocity.Y = -Main.rand.NextFloat(1f, 3.5f);
 							}
-							for (int k = 0; k < 6; k++)
+							for (int k = 0; k < 15; k++)
 							{
-								Dust dust = Dust.NewDustDirect(Player.BottomLeft - new Vector2(16, 16), Player.width + 32, 32, DustID.Stone, 0f, -2f, 100, default, 0.9f);
-								dust.velocity.X *= 1.2f;
-								dust.velocity.Y = -Main.rand.NextFloat(1f, 2.5f);
+								Dust dust = Dust.NewDustDirect(Player.BottomLeft - new Vector2(16, 16), Player.width + 32, 32, DustID.Stone, 0f, -2f, 100, default, 1.2f);
+								dust.velocity.X *= 1.8f;
+								dust.velocity.Y = -Main.rand.NextFloat(1f, 3.5f);
 							}
 						}
 
@@ -188,6 +178,31 @@ public class KingSlimeAbilityPlayer : ModPlayer
 						bool killed = !npc.active || npc.life <= 0;
 						SpawnComboText(npc, _bounceCombo, killed, wasGroundPounding);
 
+						if (wasGroundPounding)
+						{
+							// Deal AoE damage to nearby enemies like a nice ground pound
+							float aoeRadius = 160f;
+							for (int j = 0; j < Main.maxNPCs; j++)
+							{
+								if (j == i) continue;
+								NPC aoeNpc = Main.npc[j];
+								if (aoeNpc.active && !aoeNpc.friendly && aoeNpc.type != NPCID.TargetDummy && aoeNpc.Distance(Player.Bottom) < aoeRadius)
+								{
+									NPC.HitInfo aoeHitInfo = new NPC.HitInfo
+									{
+										Damage = bounceDamageToEnemy,
+										Knockback = knockbackValue,
+										HitDirection = Math.Sign(aoeNpc.Center.X - Player.Center.X)
+									};
+									aoeNpc.StrikeNPC(aoeHitInfo);
+									if (Main.netMode != NetmodeID.SinglePlayer)
+									{
+										NetMessage.SendStrikeNPC(aoeNpc, aoeHitInfo);
+									}
+								}
+							}
+						}
+
 						// Handle damage to player (only if they aren't already immune)
 						// We explicitly do not take damage from friendly NPCs, critters, or Target Dummies.
 						if (!Player.immune && npc.damage > 0 && !npc.friendly && npc.type != NPCID.TargetDummy)
@@ -220,6 +235,10 @@ public class KingSlimeAbilityPlayer : ModPlayer
 							Player.immune = true;
 							Player.immuneTime = requiredImmunity;
 						}
+
+						// Grant an extra 0.5s (30 frames) of i-frames compared to normal
+						Player.immune = true;
+						Player.immuneTime += 30;
 
 						// Screen shake for impact
 						float punchMagnitude = 2f + comboLevel * 1.5f;

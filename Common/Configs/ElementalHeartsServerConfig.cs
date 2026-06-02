@@ -315,6 +315,50 @@ public class LifeShardSettings
 
 	[DefaultValue(100)] [Range(1, 10_000)] [Increment(1)] [SliderColor(255, 200, 90, 255)]
 	public int LegendaryHealAmount = 100;
+
+	[Header("PassiveAbilityYields")]
+	[DefaultValue(1)] [Range(1, 10_000)] [Increment(1)] [SliderColor(255, 205, 218, 255)]
+	public int CommonPassiveYield = 1;
+
+	[DefaultValue(2)] [Range(1, 10_000)] [Increment(1)] [SliderColor(150, 230, 150, 255)]
+	public int UncommonPassiveYield = 2;
+
+	[DefaultValue(3)] [Range(1, 10_000)] [Increment(1)] [SliderColor(110, 170, 255, 255)]
+	public int RarePassiveYield = 3;
+
+	[DefaultValue(4)] [Range(1, 10_000)] [Increment(1)] [SliderColor(200, 130, 255, 255)]
+	public int EpicPassiveYield = 4;
+
+	[DefaultValue(5)] [Range(1, 10_000)] [Increment(1)] [SliderColor(255, 200, 90, 255)]
+	public int LegendaryPassiveYield = 5;
+
+	[DefaultValue(2)] [Range(1, 10_000)] [Increment(1)] [SliderColor(255, 120, 110, 255)]
+	public int ExoticPassiveYield = 2;
+
+	[DefaultValue(10)] [Range(1, 10_000)] [Increment(1)] [SliderColor(255, 235, 150, 255)]
+	public int MythicPassiveYield = 10;
+
+	[Header("ActiveAbilityCosts")]
+	[DefaultValue(1)] [Range(1, 10_000)] [Increment(1)] [SliderColor(255, 205, 218, 255)]
+	public int CommonAbilityCost = 1;
+
+	[DefaultValue(3)] [Range(1, 10_000)] [Increment(1)] [SliderColor(150, 230, 150, 255)]
+	public int UncommonAbilityCost = 3;
+
+	[DefaultValue(10)] [Range(1, 10_000)] [Increment(1)] [SliderColor(110, 170, 255, 255)]
+	public int RareAbilityCost = 10;
+
+	[DefaultValue(15)] [Range(1, 10_000)] [Increment(1)] [SliderColor(200, 130, 255, 255)]
+	public int EpicAbilityCost = 15;
+
+	[DefaultValue(20)] [Range(1, 10_000)] [Increment(1)] [SliderColor(255, 200, 90, 255)]
+	public int LegendaryAbilityCost = 20;
+
+	[DefaultValue(5)] [Range(1, 10_000)] [Increment(1)] [SliderColor(255, 120, 110, 255)]
+	public int ExoticAbilityCost = 5;
+
+	[DefaultValue(30)] [Range(1, 10_000)] [Increment(1)] [SliderColor(255, 235, 150, 255)]
+	public int MythicAbilityCost = 30;
 }
 
 public class VitalTileSettings

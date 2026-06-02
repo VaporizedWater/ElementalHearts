@@ -8,7 +8,7 @@ public sealed class EyeOfCthulhuHeart : BossHeartItem
 {
 	public override bool IsActiveAbility => true;
 
-	public override int? ActiveAbilityDailyCost => 5;
+
 
 	public override int HpGain => 0;
 

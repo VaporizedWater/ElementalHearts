@@ -46,7 +46,7 @@ public static class BossHeartDropRegistry
 		Add<SkeletronHeart>(NPCID.SkeletronHead);
 		Add<WallOfFleshHeart>(NPCID.WallofFlesh);
 		Add<QueenSlimeHeart>(NPCID.QueenSlimeBoss);
-		Add<DestroyerHeart>(NPCID.TheDestroyer);
+		Add<TheDestroyerHeart>(NPCID.TheDestroyer);
 		Add<PlanteraHeart>(NPCID.Plantera);
 		Add<GolemHeart>(NPCID.Golem);
 		Add<DukeFishronHeart>(NPCID.DukeFishron);

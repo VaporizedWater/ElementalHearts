@@ -1,0 +1,153 @@
+    MenacingHeartItem: {
+        Lore: "A pulsating core radiating an intimidating aura, forged in the depths of adversity. It beats with the unyielding strength of a true warrior."
+    }
+    CrossModHeartItem: {
+        Lore: "An anomalous crystal formed where different realities intersect. It thrums with the combined energies of foreign realms."
+    }
+    AbyssGravelHeart: {
+        Lore: "Compressed beneath crushing oceanic pressure, this heart whispers of unseen horrors in the deep Abyss. It is cold to the touch and seemingly devoid of light."
+    }
+    AerialiteHeart: {
+        Lore: "Light as a feather and crackling with static electricity. It contains the boundless freedom of the high skies."
+    }
+    AfflictedHeart: {
+        Lore: "Tainted by a dreadful curse, this sorrowful remnant beats with agonizing irregularity. Its sickly glow warns of the toxic mutation within."
+    }
+    AmbergrisHeart: {
+        Lore: "A strange, aromatic clump harvested from a colossal deep-sea leviathan. It holds the enduring vitality of the ocean's greatest predators."
+    }
+    AquaticHeart: {
+        Lore: "A crystalline organ that constantly weeps fresh, pure water. Holding it makes one feel an undeniable connection to the vast seas."
+    }
+    ArmoredHeart: {
+        Lore: "Encased in an impenetrable, metallic shell, it survived crushing blows that would shatter normal cores. Its rhythmic thud is like a hammer striking an anvil."
+    }
+    AstralBossHeart: {
+        Lore: "A majestic core salvaged from a fallen starborn entity. It burns with the unfathomable, cold fire of the astral infection."
+    }
+    AstralClayHeart: {
+        Lore: "Molded from the alien soil of a fallen star, this heart feels strangely pliable yet eternally durable. It echoes with the silent whispers of the cosmos."
+    }
+    AstralDirtHeart: {
+        Lore: "Infused with the extraterrestrial energy of a localized meteor strike. Stardust constantly falls from its steadily beating surface."
+    }
+    AstralHeart: {
+        Lore: "A crystallized fragment of cosmic power, pulsing with the eerie purple glow of the astral blight. It carries the weight of a thousand dying stars."
+    }
+    AstralIceHeart: {
+        Lore: "Frozen solid by the absolute zero temperatures of deep space. It emanates a chilling aura that slows the blood of those who draw near."
+    }
+    AstralMonolithHeart: {
+        Lore: "A heavy, monolithic stone heart that acts as a beacon for the astral infection. It throbs with a slow, terrifying, and ancient rhythm."
+    }
+    AstralSandHeart: {
+        Lore: "Composed of shifting, crystalline grains from a star-blasted desert. It flows endlessly yet somehow maintains its vital form."
+    }
+    AstralSandstoneHeart: {
+        Lore: "Hardened by cosmic radiation and the passage of eons, it contains the compressed fury of a shooting star. It shines with a blinding, starry luster."
+    }
+    AstralSnowHeart: {
+        Lore: "A delicate, frozen core formed from the chilling fallout of an astral collision. It hums a silent melody of the frozen void."
+    }
+    AstralStoneHeart: {
+        Lore: "Hewn from the bedrock of the cosmos itself, unyielding and eternal. Its heavy beats reverberate through the ground beneath you."
+    }
+    AuricHeart: {
+        Lore: "A divine core shimmering with unimaginable golden power. It embodies the very essence of a god's boundless lifeforce."
+    }
+    BlazingHeart: {
+        Lore: "A searing core of pure, concentrated fire that threatens to melt anything it touches. It roars with the eternal fury of the underworld."
+    }
+    BloodyWormHeart: {
+        Lore: "A grotesque, fleshy lump torn from a massive sanguine annelid. It squirms slightly in your hand, desperate to consume."
+    }
+    BrimstoneSlagHeart: {
+        Lore: "Forged in the ruined, fiery crags of the Brimstone Crags. It radiates a hellish heat and smells of sulfur and ash."
+    }
+    CalamitousHeart: {
+        Lore: "A volatile, terrifying artifact born of pure destruction and catastrophic energy. Merely holding it brings visions of the world's end."
+    }
+    CalamityBossHeartItem: {
+        Lore: "A triumphant trophy claimed from a supreme entity of destruction. Its immense power threatens to overwhelm the weak of mind."
+    }
+    CalamityHeartItem: {
+        Lore: "An ominous remnant overflowing with malevolent energy. It beats to the chaotic rhythm of an approaching disaster."
+    }
+    CelestialRemainsHeart: {
+        Lore: "A solemn relic left behind by the pillars of the lunar apocalypse. It echoes with the eerie silence of the cosmos."
+    }
+    CinderplateHeart: {
+        Lore: "A jagged, metallic heart seared by volcanic heat and ash. It crunches like hot coals with every slow beat."
+    }
+    CorpusHeart: {
+        Lore: "A horrifying amalgamation of bloody tissue and sinew, pulsing with morbid vitality. It serves as a grim reminder of the crimson's unstoppable growth."
+    }
+    CosmiliteHeart: {
+        Lore: "A sleek, indestructible core forged from a god-devouring alloy. It hums with an intimidating, high-frequency resonance."
+    }
+    CryogenHeart: {
+        Lore: "A jagged, biting crystal of absolute frost that once imprisoned a great power. Its icy beats send shivers down your spine."
+    }
+    CryonicHeart: {
+        Lore: "Encased in unmelting, magical ice harvested from the tundra's depths. It possesses a freezing serenity that calms the soul."
+    }
+    CrystallizedToxicHeart: {
+        Lore: "A brittle, radioactive organ glowing with a sickening green light. It throbs with the concentrated malice of a corrosive wasteland."
+    }
+    DarkPlasmicHeart: {
+        Lore: "A volatile orb of dark energy that bends the light around it. It writhes with chaotic, shadowy forces eager to be unleashed."
+    }
+    DraconicHeart: {
+        Lore: "A massive, scaly heart taken from the remains of a mythical wyrm. It surges with the ancient, unyielding might of dragons."
+    }
+    DynamoStemHeart: {
+        Lore: "A mechanized, botanical core humming with electrical life. It bridges the gap between nature's resilience and technological progress."
+    }
+    EutrophicSandHeart: {
+        Lore: "A bright, crystal-infused heart found hidden in the depths of the Sunken Sea. It beats with a soothing, aquatic tranquility."
+    }
+    ExodiumClusterHeart: {
+        Lore: "A jagged clump of space-faring ores that miraculously pulses with life. It draws in ambient energy like a dying black hole."
+    }
+    FungalHeart: {
+        Lore: "A spongy, glowing mass heavily infected by the glowing mushroom biome. It scatters a cloud of luminescent spores with every beat."
+    }
+    GehennaHeart: {
+        Lore: "A sinister, burning relic dredged from the darkest pits of the underworld. It screams silently with the agony of damned souls."
+    }
+    GravistarHeart: {
+        Lore: "A dense, gravity-warping core that pulls everything towards it. It beats to the relentless rhythm of a dying star."
+    }
+    HardenedAstralSandHeart: {
+        Lore: "A petrified, cosmic relic forged in the intense heat of an astral impact. It feels heavy with the secrets of the universe."
+    }
+    MutatedHeart: {
+        Lore: "A grotesque, irregularly beating organ warped by unnatural forces. It constantly shifts and changes form, resisting all natural laws."
+    }
+    NavystoneHeart: {
+        Lore: "A smooth, oceanic artifact steeped in the deep magic of the abyss. It thrums with a quiet, ancient power from beneath the waves."
+    }
+    NebulousHeart: {
+        Lore: "A swirling galaxy of stardust contained within a single, delicate form. Holding it gives you a fleeting glimpse of the universe's creation."
+    }
+    NovaeSlugHeart: {
+        Lore: "A soft, radiant organ that once fueled a brilliant, star-forged creature. It pulses with a warm, comforting cosmic light."
+    }
+    OceanHeart: {
+        Lore: "A vibrant, watery core that smells of salt and summer breezes. It embodies the endless depths and bountiful life of the sea."
+    }
+    PerennialHeart: {
+        Lore: "A verdant, overgrown heart that sprouts fresh vines with every throb. It possesses the unstoppable, regenerative power of the jungle."
+    }
+    PlantyMushHeart: {
+        Lore: "A strange, symbiotic blend of jungle flora and fungal life. It pulsates softly, releasing an earthy, revitalizing aroma."
+    }
+    PolarizedHeart: {
+        Lore: "A magnetic core shifting constantly between opposing energies. It crackles with unpredictable and highly destructive power."
+    }
+    ProfanedHeart: {
+        Lore: "A sacred, burning core corrupted by unholy flames. It commands a terrible awe, radiating a holy yet unforgiving light."
+    }
+    RottenHeart: {
+        Lore: "A decaying, malodorous clump of flesh from the corruption. It beats feebly, sustained only by a vile, dark magic."
+    }

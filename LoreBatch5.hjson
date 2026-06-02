@@ -1,0 +1,153 @@
+    EnduranceHeart: {
+        Lore: "Forged from the unyielding stone of the caverns, this heart grants its bearer the resilience to withstand even the most crushing blows. It beats with a slow, steady, and unbreakable rhythm."
+    }
+    FeatherfallHeart: {
+        Lore: "Woven from the down of a Harpy's wings, this weightless heart catches the wind itself. It whispers of gentle descents and skies untamed."
+    }
+    FishingHeart: {
+        Lore: "A soggy, rhythmic organ said to belong to a legendary angler of the deep. It thrums with the tug of an unseen line, drawing the ocean's bounty to you."
+    }
+    FlipperHeart: {
+        Lore: "Sleek and perpetually moist, this aquatic heart propels you effortlessly through the darkest waters. It carries the swift grace of the ocean's predators."
+    }
+    GillsHeart: {
+        Lore: "Laced with delicate aquatic membranes, this heart draws breath where there is no air. It beats in harmony with the gentle currents of the deep sea."
+    }
+    GravitationHeart: {
+        Lore: "A chaotic core that occasionally beats in reverse, distorting the very fabric of space around it. To hold it is to feel the sky beckoning you upward."
+    }
+    HeartreachHeart: {
+        Lore: "Pulsating with an irresistible magnetic charm, this heart hungers for vitality. It pulls the life force of fallen foes directly into your grasp."
+    }
+    HunterHeart: {
+        Lore: "A primal organ that hums with the predatory instinct of the wild. It illuminates the unseen, making prey out of those who hide in the shadows."
+    }
+    InfernoHeart: {
+        Lore: "Blazing with the trapped heat of the Underworld, this heart scorches anything that dares approach. It is a terrifying testament to the power of pure, unbridled flame."
+    }
+    InvisibilityHeart: {
+        Lore: "An ethereal, translucent core that barely casts a shadow. It fades from sight, hiding its bearer from the cruel gaze of the world."
+    }
+    IronskinHeart: {
+        Lore: "Hardened in the molten depths and tempered in battle, this metallic heart offers absolute defense. It clinks like heavy armor with every single beat."
+    }
+    LifeforceHeart: {
+        Lore: "Overflowing with raw, untamed vitality, this vibrant heart expands your mortal limits. It pushes the boundaries of your being beyond what was thought possible."
+    }
+    LoveHeart: {
+        Lore: "Radiating a warm, comforting glow, this tender heart leaves a trail of affection in its wake. It is said to soothe even the most savage beasts of the Blood Moon."
+    }
+    LuckHeart: {
+        Lore: "Gleaming with an unpredictable sparkle, this golden core tilts the scales of fate in your favor. It turns mere chance into undeniable destiny."
+    }
+    MagicPowerHeart: {
+        Lore: "Crackling with arcane energy, this crystalline heart fuels the darkest and brightest of spells. It is a conduit for the pure essence of mana."
+    }
+    ManaRegenerationHeart: {
+        Lore: "A shimmering, starry heart that constantly replenishes its own arcane reserves. It weaves fallen stars into an endless cycle of magical restoration."
+    }
+    MiningHeart: {
+        Lore: "Dusted with glittering ores, this industrious heart accelerates your hands and tools. It resonates with the deepest, richest veins of the earth."
+    }
+    NightOwlHeart: {
+        Lore: "Bathed in nocturnal magic, this watchful heart pierces the thickest gloom of the underground. It grants the unparalleled vision of a predator in the dark."
+    }
+    ObsidianSkinHeart: {
+        Lore: "Coated in the hardened ash of Hellstone, this pitch-black heart scoffs at lava and flame. It provides safe passage through the searing lakes of the Underworld."
+    }
+    RageHeart: {
+        Lore: "Boiling with crimson fury, this heart demands blood and vengeance. It fills your strikes with a devastating, untamed power."
+    }
+    RegenerationHeart: {
+        Lore: "Beating with a soothing, mending rhythm, this heart knits flesh and bone back together. It embodies the persistent will to survive."
+    }
+    ShineHeart: {
+        Lore: "Radiating a brilliant, permanent aura, this luminous heart acts as a beacon in the abyss. It scatters the shadows of the deepest caverns."
+    }
+    SonarHeart: {
+        Lore: "Rippling with echolocative magic, this heart detects the secrets hiding beneath the water's surface. It knows the exact shape of what lingers on your line."
+    }
+    SpelunkerHeart: {
+        Lore: "Embedded with microscopic gemstones, this attuned heart reacts to the presence of hidden wealth. It illuminates the earth's buried treasures like stars in the night."
+    }
+    StinkHeart: {
+        Lore: "Reeking of decay and swamp gas, this foul heart repulses almost every living creature. It guarantees a solitary, undisturbed journey through the wilds."
+    }
+    SummoningHeart: {
+        Lore: "Echoing with the whispers of forgotten realms, this heart strengthens your bond with spectral minions. It commands the loyalty of otherworldly guardians."
+    }
+    SwiftnessHeart: {
+        Lore: "Vibrating with kinetic energy, this restless heart makes your feet as light as air. It races with the speed of a desert gale."
+    }
+    ThornsHeart: {
+        Lore: "Wrapped in wicked, jagged briars, this spiteful heart violently reflects any pain inflicted upon it. It promises swift retribution to all attackers."
+    }
+    TitanHeart: {
+        Lore: "A massive, heavy heart that grants unparalleled physical dominance over your foes. It hits with the immovable force of a falling meteor."
+    }
+    WarmthHeart: {
+        Lore: "Glowing like a hearth in a snowstorm, this heart shields its bearer from the biting frost. It melts the icy grip of the Snow biome's harshest blizzards."
+    }
+    WaterWalkingHeart: {
+        Lore: "Floating lightly upon the surface, this buoyant heart grants dominion over the waves. It allows you to tread upon water and molten lava alike."
+    }
+    WrathHeart: {
+        Lore: "Seething with corrupted spite, this dark heart infuses your attacks with cruel precision. It demands the total annihilation of your enemies."
+    }
+    AmberHeart: {
+        Lore: "Trapped within ancient fossilized resin, this prehistoric heart beats with the forgotten life of the desert. It holds the slow, steady endurance of a bygone age."
+    }
+    BrainHeart: {
+        Lore: "A grotesque, pulsing mass of gray matter and sinew torn from the Brain of Cthulhu. It throbs with a horrific, maddening intellect that seeks to consume all."
+    }
+    CobaltHeart: {
+        Lore: "Forged from the first tier of hardmode blessings, this vivid blue heart brings newfound speed and vitality. It shimmers with the energy of shattered altars."
+    }
+    CogHeart: {
+        Lore: "A rhythmic, ticking assembly of Steampunker gears and brass valves. It pumps a mechanized vitality, humming with the promise of industrial progress."
+    }
+    CrimtaneHeart: {
+        Lore: "A sickeningly sweet, crimson-stained core that hungers for fresh blood. It pulses with the terrifying, infectious vitality of the Crimson."
+    }
+    CursedFlameHeart: {
+        Lore: "Burning with a sickly green, inextinguishable fire, this agonizing heart never stops consuming. It is a terrible remnant of the Corruption's most vile magic."
+    }
+    DarkHeart: {
+        Lore: "A shadowy void that devours light and hope in equal measure. It beats only to the silent, suffocating rhythm of absolute darkness."
+    }
+    DemoniteHeart: {
+        Lore: "Carved from the corrupted stone of the Eater of Worlds, this shadowy heart radiates a sinister, purple glow. It whispers of abyssal power and ruined lands."
+    }
+    DiamondHeart: {
+        Lore: "Flawless and brilliantly clear, this prismatic heart refracts pure energy. It commands the highest tier of gemstone magic with unyielding brilliance."
+    }
+    DiscordHeart: {
+        Lore: "Unstable and wildly chaotic, this fractured core yearns to bend space. It beats with the terrifying thrill of teleportation and madness."
+    }
+    HellstoneHeart: {
+        Lore: "Forged in the searing depths of the Underworld, this molten core is perpetually ablaze. It holds the searing agony of tortured souls."
+    }
+    IchorHeart: {
+        Lore: "Dripping with the golden blood of gods, this vile heart shreds the defenses of your foes. It pulses with a sickening, corrosive divinity."
+    }
+    JungleSporeHeart: {
+        Lore: "Entangled in glowing, verdant vines, this ancient heart blooms with the toxic life of the deep jungle. It hums with the song of venomous flora."
+    }
+    MeteoriteHeart: {
+        Lore: "Still smoking from atmospheric reentry, this alien heart hums with extraterrestrial heat. It channels the destructive force of a fallen star."
+    }
+    MythrilHeart: {
+        Lore: "Light, durable, and humming with a strange arcane frequency, this verdant heart embodies hardmode resilience. It glows with the quiet majesty of a shattered altar."
+    }
+    OrichalcumHeart: {
+        Lore: "Beating with a vibrant, pink energy, this delicate yet powerful heart spawns petals of destruction. It blossoms with a fiercely beautiful magic."
+    }
+    PalladiumHeart: {
+        Lore: "A warm, orange core that fiercely attempts to heal any wounds it sustains. It thrums with the regenerative blessing of ancient earth."
+    }
+    SoulOfFlightHeart: {
+        Lore: "Defying gravity with a serene, upward pull, this radiant heart is infused with the essence of Wyverns. It promises dominion over the skies."
+    }
+    SoulOfLightHeart: {
+        Lore: "Blazing with the pure, untainted brilliance of the Hallow, this crystalline heart dispels all shadows. It beats to the rhythm of absolute, blinding order."
+    }

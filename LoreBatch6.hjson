@@ -1,0 +1,153 @@
+    SoulOfNightHeart: {
+        Lore: "A pulsating core forged in the deepest chasms of the underground. It echoes with the whispers of terrifying dark entities."
+    }
+    WormHeart: {
+        Lore: "A disgusting, segmented heart torn from the belly of a dirt-dwelling behemoth. It beats with an insatiable hunger for flesh."
+    }
+    AmethystHeart: {
+        Lore: "A beautiful crystalline heart with deep violet hues. It resonates with a faint, grounding magic from the geode caves."
+    }
+    AppleHeart: {
+        Lore: "A crisp, sweet-smelling heart grown from the canopy of ordinary forest trees. It fills its bearer with simple, robust vitality."
+    }
+    ApricotHeart: {
+        Lore: "A fuzzy, golden-orange heart that smells of warm summer days. Consuming it grants a fleeting burst of sunlit energy."
+    }
+    BananaHeart: {
+        Lore: "A surprisingly tropical heart that peels away to reveal soft, sweet vitality. It brings to mind distant, sun-drenched beaches."
+    }
+    BlackcurrantHeart: {
+        Lore: "A tart, dark-berried heart picked from wild bushes. Its sharp flavor awakens the senses and fortifies the spirit."
+    }
+    BlinkrootHeart: {
+        Lore: "A dusty, flickering heart that glows intermittently in the dark. It pulses with the erratic energy of the underground dirt layers."
+    }
+    BloodOrangeHeart: {
+        Lore: "A deep red, citrusy heart that stains the hands with its vibrant juice. It offers a slightly sinister but deeply refreshing surge of life."
+    }
+    BlueHeart: {
+        Lore: "A mysterious, azure-tinted heart that feels cool to the touch. It hums with an unknown, melancholic magic."
+    }
+    CherryHeart: {
+        Lore: "A small, crimson heart with a wonderfully sweet and tart essence. It bursts with a delightful, sugary vitality."
+    }
+    CoconutHeart: {
+        Lore: "A tough, hard-shelled heart that must be cracked open to reveal its refreshing core. It holds the resilient life force of coastal palms."
+    }
+    CopperHeart: {
+        Lore: "A heavy, metallic heart with a distinct reddish sheen. It thrums with the reliable, rudimentary strength of a beginner's journey."
+    }
+    DaybloomHeart: {
+        Lore: "A bright, sun-kissed heart that only reaches its full potential during the day. It radiates the pure, untainted energy of the surface world."
+    }
+    DeathweedHeart: {
+        Lore: "A sinister, thorny heart that thrives only under the light of a Blood Moon. It offers potent vitality tinged with dark magic."
+    }
+    DragonFruitHeart: {
+        Lore: "An exotic, scaly heart with a vibrant pink exterior and speckled core. It tastes of untamed wilds and mythical beasts."
+    }
+    ElderberryHeart: {
+        Lore: "A cluster-like heart with a deeply earthy and robust flavor. It embodies the ancient, quiet strength of old-growth forests."
+    }
+    EmeraldHeart: {
+        Lore: "A brilliant, green-gemstone heart reflecting the lush canopies of the jungle. It pulses with the vibrant, wild life force of nature."
+    }
+    EnchantedHeart: {
+        Lore: "A mystical heart shimmering with a pale, celestial light. It grants the elusive, magical vitality sought by many adventurers."
+    }
+    EncumberingHeart: {
+        Lore: "A bizarrely heavy heart that seems to weigh down the very soul. Its dense energy is a burden, yet undeniably powerful."
+    }
+    FireblossomHeart: {
+        Lore: "A scorching hot heart forged in the unforgiving ashes of the Underworld. It burns with the relentless fury of magma and ash."
+    }
+    GoldHeart: {
+        Lore: "A lustrous, valuable heart that sparkles with undeniable opulence. It grants a triumphant vitality worthy of a seasoned explorer."
+    }
+    GrapefruitHeart: {
+        Lore: "A large, bitter-sweet heart that shocks the system with its zesty tang. It revitalizes the weary with a sharp, refreshing jolt."
+    }
+    GrapeHeart: {
+        Lore: "A plump, juicy heart tasting of rich vineyards and forgotten orchards. It offers a smooth, comforting surge of health."
+    }
+    GreenHeart: {
+        Lore: "A simple, verdant heart bursting with raw, untamed chlorophyll. It connects its bearer directly to the lifeblood of the forest."
+    }
+    IronHeart: {
+        Lore: "A cold, unyielding heart forged from sturdy gray metal. It beats with the steady, dependable rhythm of industrial progress."
+    }
+    LeadHeart: {
+        Lore: "A dense, toxic-looking heart with a dull, heavy sheen. It grants a sluggish but incredibly resilient vitality."
+    }
+    LemonHeart: {
+        Lore: "A bright yellow, shockingly sour heart. Its acidic punch snaps the mind awake and invigorates the body."
+    }
+    LimeHeart: {
+        Lore: "A zesty, green citrus heart with a sharp and refreshing tang. It cuts through fatigue like a swift blade."
+    }
+    MangoHeart: {
+        Lore: "A soft, incredibly sweet heart that tastes of a tropical paradise. It floods the veins with warm, syrupy life force."
+    }
+    MoonglowHeart: {
+        Lore: "A serene, glowing heart that blossoms under the starry night sky. It provides a calm, mystical vitality drawn from moonlight."
+    }
+    MushroomHeart: {
+        Lore: "A spongy, pale heart smelling of damp soil and fungal spores. It offers a bizarre, earthy resilience born of the underground."
+    }
+    OrangeHeart: {
+        Lore: "A bright, cheerful heart bursting with sweet citrus juice. It delivers a sunny and uplifting surge of natural energy."
+    }
+    PeachHeart: {
+        Lore: "A soft, velvety heart with a sweet and fragrant core. It soothes the soul while mending the body."
+    }
+    PineappleHeart: {
+        Lore: "A spiky, tough heart that yields a powerfully tart and sweet vitality. It embodies the resilient spirit of tropical islands."
+    }
+    PlatinumHeart: {
+        Lore: "A brilliantly shining heart of pure, refined metal. It pulses with an elite, almost indestructible life force."
+    }
+    PlumHeart: {
+        Lore: "A smooth, dark purple heart with a deeply sweet and slightly tart flavor. It provides a rich, comforting burst of health."
+    }
+    PomegranateHeart: {
+        Lore: "A tough heart filled with jewel-like, crimson seeds. Each seed bursts with a fierce, concentrated vitality."
+    }
+    RambutanHeart: {
+        Lore: "A strange, hairy heart that hides a pale, sweet interior. It offers an exotic and surprisingly refreshing surge of life."
+    }
+    RubyHeart: {
+        Lore: "A deep red, crystalline heart glowing with an inner fire. It thrums with a passionate, royal vitality."
+    }
+    SapphireHeart: {
+        Lore: "A brilliant blue gemstone heart that feels like a calm ocean breeze. It channels the serene, deep magic of subterranean lakes."
+    }
+    ShiverthornHeart: {
+        Lore: "A freezing, frosty heart that chills the blood. It offers a crisp, biting vitality born of the unforgiving tundra."
+    }
+    SilverHeart: {
+        Lore: "A sleek, shining metallic heart that reflects the moonlight. It beats with a sharp, clean, and elegant rhythm."
+    }
+    StarFruitHeart: {
+        Lore: "A celestial, yellow heart that tastes of shooting stars. It fills the bearer with the boundless energy of the cosmos."
+    }
+    TealHeart: {
+        Lore: "A peculiarly colored heart that hums with an enigmatic frequency. It grants a steady, stabilizing flow of strange energy."
+    }
+    TinHeart: {
+        Lore: "A lightweight, dull metallic heart that dents easily. It provides a meager but welcome spark of endurance for the novice."
+    }
+    TopazHeart: {
+        Lore: "A warm, golden-yellow gemstone heart that glimmers like desert sand. It pulses with a dry, enduring resilience."
+    }
+    TreasureHeart: {
+        Lore: "A glittering, magnificent heart overflowing with unimaginable wealth. It bestows a glorious vitality matched only by its immense value."
+    }
+    TungstenHeart: {
+        Lore: "A robust, greenish-gray metallic heart of exceptional durability. It fortifies the body with unyielding, stubborn strength."
+    }
+    ViciousMushroomHeart: {
+        Lore: "A grotesque, blood-red heart reeking of the Crimson's rot. It fuels the body with an aggressive, flesh-warping vitality."
+    }
+    VileMushroomHeart: {
+        Lore: "A sickening, purple-tinged heart corrupted by the spores of the Corruption. It grants life through a dark, decaying resonance."
+    }

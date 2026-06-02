@@ -1,0 +1,153 @@
+    ScoriaHeart: {
+        Lore: "Forged in the fiery depths of the abyss, this heart pulses with intense geothermal heat. It radiates a scalding energy that sears the hands of the unworthy."
+    }
+    SeaPrismHeart: {
+        Lore: "A crystallized shard of the sunken sea's magic, glimmering with aquatic luminescence. It holds the gentle, rhythmic beating of ancient ocean tides."
+    }
+    SulphurousSandHeart: {
+        Lore: "Formed from the toxic dunes of the sulphurous sea, this heart steadily drips a corrosive brine. It beats with a sluggish, sickening rhythm."
+    }
+    SulphurousSandstoneHeart: {
+        Lore: "Hardened by acidic tides, this porous heart traps the bitter essence of the ruined coastline. It hums with the memory of a long-lost ecosystem."
+    }
+    TenebrisHeart: {
+        Lore: "Carved from the abyssal darkness, this heart absorbs light and emanates a chilling void. It whispers of the lightless depths where colossal leviathans slumber."
+    }
+    TwistingHeart: {
+        Lore: "A grotesque heart from the twisted nether, pulsing with a chaotic and unnatural vitality. Its unnatural shape seems to writhe and contort on its own."
+    }
+    UelibloomHeart: {
+        Lore: "Intertwined with the prolific flora of the jungle, this heart blooms with rampant life energy. It carries the stubborn resilience of nature reclaiming the land."
+    }
+    VoidstoneHeart: {
+        Lore: "A cold, dense heart formed from the compressed nothingness of the void. It beats with a gravity that threatens to pull the soul out of your body."
+    }
+    ConsolariaBossHeartItem: {
+        Lore: "A massive, imposing heart pulsating with the dominant aura of legendary titans. It beats with a terrifying power that commands respect from all who behold it."
+    }
+    ConsolariaHeartItem: {
+        Lore: "A nostalgic artifact, humming with the forgotten energies of a time long past. It contains a familiar warmth that resonates with seasoned adventurers."
+    }
+    CornucopiaHeart: {
+        Lore: "Overflowing with a bountiful, festive energy, this heart brings a sense of absolute plenty. Its warm thrum promises endless feasts and joyous celebrations."
+    }
+    CursedHeart: {
+        Lore: "Bound in mystical bindings, this heart beats with a sinister, malevolent curse. To hold it is to invite the wrath of forgotten, malicious spirits."
+    }
+    EasterHeart: {
+        Lore: "A pastel-colored heart radiating a vibrant, springtime joy and renewing vitality. It beats with the playful energy of a joyous spring morning."
+    }
+    SoulOfBlightHeart: {
+        Lore: "A fragmented heart of pure disease, pulsing with a virulent, sickening aura. It carries the devastating blight of an ancient, terrifying plague."
+    }
+    AbyssalHeart: {
+        Lore: "Dredged from the crushing depths, this heart beats to the slow rhythm of the abyssal currents. It holds the oppressive weight of the deep ocean."
+    }
+    AquaiteHeart: {
+        Lore: "A pristine, watery core that flows with a constant, soothing, liquid rhythm. It reflects the pure, uncorrupted essence of aquatic life."
+    }
+    BeholderHeart: {
+        Lore: "A grotesque, fleshy heart that seems to constantly watch you with an unseen gaze. It throbs with chaotic, otherworldly magic from beyond the stars."
+    }
+    BrackishClumpHeart: {
+        Lore: "A murky, algae-covered mass that slowly beats with the sluggish life of the stagnant waters. It smells of salt and decay, yet bursts with natural vitality."
+    }
+    ChampionHeart: {
+        Lore: "A radiant heart forged from the triumphant spirit of a grand tournament victor. It pulses with the pride and unyielding determination of a true hero."
+    }
+    DepthsRockHeart: {
+        Lore: "A jagged, stony core that beats with the enduring, unyielding strength of the subterranean depths. It holds the crushing weight and stoic silence of the deep caverns."
+    }
+    DormantHeart: {
+        Lore: "A cold, seemingly lifeless stone that hides a faint, barely perceptible heartbeat within. It waits patiently for the right catalyst to awaken its true power."
+    }
+    IceboundStriderHeart: {
+        Lore: "A frozen, crystalline heart that beats with the piercing chill of a brutal blizzard. It contains the untamed spirit of the apex predators of the tundra."
+    }
+    IllumiteHeart: {
+        Lore: "A glowing, radiant heart that casts a brilliant, soothing light into the darkness. It hums with a harmonious, illuminating energy that banishes shadows."
+    }
+    LichHeart: {
+        Lore: "A phylactery of flesh, this heart beats with a cold, necrotic rhythm of the undead. It holds the dark, forbidden secrets of eternal, deathless existence."
+    }
+    LifeQuartzHeart: {
+        Lore: "A shimmering, translucent crystal that amplifies the natural life force around it. Its rhythmic pulsing matches the heartbeat of the world itself."
+    }
+    LodestoneHeart: {
+        Lore: "A heavy, magnetic core that hums with a powerful, polarizing energy field. It draws in raw vitality and binds it tightly within its metallic form."
+    }
+    MagmaHeart: {
+        Lore: "A scorching, semi-liquid heart that bubbles and churns with liquid fire. It contains the chaotic, destructive fury of a restless volcano."
+    }
+    MossyMarineRockHeart: {
+        Lore: "Covered in deep-sea flora, this stony heart beats with the tranquil harmony of an underwater garden. It provides a soothing, natural resonance."
+    }
+    OmegaHeart: {
+        Lore: "A technologically advanced core that pulses with an intimidating, synthetic rhythm. It holds the devastating power of an apocalyptic mechanical terror."
+    }
+    OnyxHeart: {
+        Lore: "A pitch-black heart that absorbs light and exudes an aura of sophisticated, dark elegance. It beats with a cold, calculating, and ruthless precision."
+    }
+    OpalHeart: {
+        Lore: "A mesmerizing heart that flashes with a vibrant, shifting spectrum of colors. It pulses with a chaotic yet beautiful array of magical energies."
+    }
+    PearlHeart: {
+        Lore: "A smooth, lustrous core that radiates a calming, pure energy of the deep ocean. It holds the serene, unblemished beauty of a precious underwater treasure."
+    }
+    PermafrostHeart: {
+        Lore: "An eternally frozen heart that emanates a bone-chilling, absolute zero aura. It beats with the relentless, unyielding harshness of an endless winter."
+    }
+    SeaBreezeHeart: {
+        Lore: "A light, airy heart that carries the refreshing, invigorating scent of the ocean wind. It pulses with a carefree, liberating energy."
+    }
+    SmoothCoalHeart: {
+        Lore: "A dense, blackened heart that harbors a deep, smoldering heat within. It beats with the steady, reliable endurance of long-burning fuel."
+    }
+    StormHeart: {
+        Lore: "A crackling, tempestuous heart that roars with the fury of a raging thunderstorm. It surges with volatile, electric power and deafening thunder."
+    }
+    ThoriumBossHeartItem: {
+        Lore: "A colossal, pulsating artifact forged from the combined might of epic conquerors. It radiates a legendary aura of immense, undeniable strength."
+    }
+    ThoriumHeart: {
+        Lore: "A crystalline heart infused with the strange, radioactive properties of thorium. It beats with a slow, heavy, and uniquely transformative resonance."
+    }
+    ThoriumHeartItem: {
+        Lore: "A refined piece of thorium, shaped into a core of potent, steady vitality. It hums with an industrialized, yet deeply magical, energy."
+    }
+    ValadiumHeart: {
+        Lore: "A gravity-defying heart that beats with a strange, otherworldly lightness. It pulses with an unstable, cosmic energy that distorts the space around it."
+    }
+    VampireHeart: {
+        Lore: "A dark, blood-red heart that constantly thirsts for the life essence of others. It beats with a ravenous, predatory rhythm that demands sustenance."
+    }
+    YewWoodHeart: {
+        Lore: "A wooden heart carved from a poisonous tree, beating with a toxic, yet enduring life force. It contains the deceptive, deadly beauty of the ancient forests."
+    }
+    ZephyrHeart: {
+        Lore: "A nearly weightless heart that dances to the rhythm of the high-altitude winds. It carries the swift, unburdened freedom of the open sky."
+    }
+    BossHeartItem: {
+        Lore: "A formidable heart harvested from a fallen titan, still echoing with its terrifying roar. It grants a fraction of the immense power once wielded by a true monster."
+    }
+    ElementalHeartItem: {
+        Lore: "A chaotic coalescence of fire, water, earth, and air, beating in perfect, violent harmony. It pulses with the raw, untamed fury of the primal elements."
+    }
+    PotionHeartItem: {
+        Lore: "A fragile, glass-like heart brimming with volatile, alchemical liquids. It bubbles and froths with the strange, synthesized vitality of countless concoctions."
+    }
+    AcornHeart: {
+        Lore: "A small, sturdy wooden heart that beats with the latent potential of a towering oak. It carries the humble, grounding essence of the forest floor."
+    }
+    BorealWoodHeart: {
+        Lore: "A chilled, wooden core that smells of pine and fresh snow. It pulses with the resilient, hardy spirit of the unforgiving snow biome."
+    }
+    BubbleHeart: {
+        Lore: "A delicate, iridescent heart that feels incredibly light and buoyant. It beats with a soft, gentle rhythm, as if ready to float away at any moment."
+    }
+    CactusHeart: {
+        Lore: "A prickly, water-retaining heart that beats with the stubborn survivalism of the harsh desert. Its tough exterior hides a surprisingly vital core."
+    }
+    CandyCaneHeart: {
+        Lore: "A festively striped, sugary heart that smells of peppermint and pure joy. It pulses with an energetic, hyperactive sweetness that invigorates the soul."
+    }

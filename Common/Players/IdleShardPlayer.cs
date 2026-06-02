@@ -16,21 +16,6 @@ public class IdleShardPlayer : ModPlayer
 {
 	// No longer tracks LastClaimTimeTicks per player.
 
-	public static int GetShardYield(HeartTier tier)
-	{
-		return tier switch
-		{
-			HeartTier.Common => 1,
-			HeartTier.Uncommon => 2,
-			HeartTier.Rare => 3,
-			HeartTier.Epic => 4,
-			HeartTier.Legendary => 5,
-			HeartTier.Exotic => 2,
-			HeartTier.Mythic => 10,
-			_ => 1
-		};
-	}
-
 	public void GetShardRates(out int generation, out int consumption, out int profit)
 	{
 		generation = 0;
@@ -55,12 +40,12 @@ public class IdleShardPlayer : ModPlayer
 
 				if (isConsumed)
 				{
-					consumption += heart.ActiveAbilityDailyCost ?? GetShardYield(heart.Tier);
+					consumption += heart.ActiveAbilityDailyCost;
 				}
 			}
 			else
 			{
-				generation += GetShardYield(heart.Tier);
+				generation += heart.Tier.GetShardYield();
 			}
 		}
 

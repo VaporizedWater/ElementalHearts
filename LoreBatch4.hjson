@@ -1,0 +1,154 @@
+    SoulOfMightHeart: {
+        Lore: "Forged from the overwhelming strength of the Destroyer. It courses with a mechanical resilience that fortifies the body."
+    }
+    SoulOfSightHeart: {
+        Lore: "Imbued with the omniscient gaze of the Twins. Holding it grants a fleeting glimpse of the world's hidden truths."
+    }
+    TitaniumHeart: {
+        Lore: "Forged from the resilient metal of the underground. Its tough exterior grants an unshakable endurance."
+    }
+    BetsyHeart: {
+        Lore: "Pulsing with the fiery breath of the Etherian dragon. The fierce warmth inside bolsters the spirit of any warrior."
+    }
+    BrainOfCthulhuHeart: {
+        Lore: "A grotesquely pulsating mass that whispers maddening secrets. It strengthens the mind through sheer terror."
+    }
+    DeerclopsHeart: {
+        Lore: "Cold to the touch and echoing with the howling winds of the tundra. It instills the primal fury of a winter beast."
+    }
+    DukeFishronHeart: {
+        Lore: "Salty and damp, reeking of the deep ocean's wrath. It beats with the relentless energy of the mutant sea terror."
+    }
+    EaterOfWorldsHeart: {
+        Lore: "Corrupted and writhing with vile energies. It draws strength from the decay of the land."
+    }
+    ElfHeart: {
+        Lore: "Radiates with the mischievous magic of the Frost Legion. Its festive chill brings an uncanny vitality."
+    }
+    EmpressOfLightHeart: {
+        Lore: "Blindingly radiant and pure, born from the hallowed skies. It fills the soul with prismatic energy and soaring grace."
+    }
+    EyeOfCthulhuHeart: {
+        Lore: "A bloodshot core that twitches with a sinister awareness. It watches over your vitality with an unblinking gaze."
+    }
+    FlyingDutchmanHeart: {
+        Lore: "Weathered by spectral seas and phantom winds. It holds the restless spirit of a cursed pirate crew."
+    }
+    GolemHeart: {
+        Lore: "A sun-charged power cell from the depths of the Jungle Temple. It hums with ancient, unyielding earthen magic."
+    }
+    JackOLanternHeart: {
+        Lore: "Glowing with a haunting, spectral fire from the Pumpkin Moon. It fills its bearer with a mischievous, fiery vigor."
+    }
+    KingSlimeHeart: {
+        Lore: "A gelatinous core holding the dissolved remains of countless challengers. It wobbles with a surprisingly royal resilience."
+    }
+    LunaticCultistHeart: {
+        Lore: "Swirling with forbidden celestial magic and maddening prophecies. It bridges the gap between mortality and cosmic horror."
+    }
+    MagnificationHeart: {
+        Lore: "An unusual crystalline organ that bends light and perception. It sharpens the senses to an almost unnatural degree."
+    }
+    MartianSaucerHeart: {
+        Lore: "An extraterrestrial core buzzing with high-tech energy. It pulsates with the cold logic of an alien invasion."
+    }
+    MoonLordHeart: {
+        Lore: "An otherworldly relic infused with the terrifying power of the celestial tyrant. It binds the cosmos itself to your life force."
+    }
+    MourningWoodHeart: {
+        Lore: "Carved from the scorched bark of a cursed treant. It beats with the somber, fiery malice of the spooky woods."
+    }
+    PlanteraHeart: {
+        Lore: "A fiercely blooming core torn from the heart of the deepest jungle. It thrums with the wild, untamed life of nature itself."
+    }
+    PumpkingHeart: {
+        Lore: "Emanates the wicked aura of the harvest's darkest night. It grants the macabre vitality of the Halloween horrors."
+    }
+    QueenBeeHeart: {
+        Lore: "Sticky with sweet, golden nectar and buzzing with the fury of the hive. It commands the royal strength of the jungle's matriarch."
+    }
+    QueenSlimeHeart: {
+        Lore: "Shimmering with hallowed crystals and bouncy resilience. It sparkles with an energetic, regal majesty."
+    }
+    RazorpineHeart: {
+        Lore: "Bristling with icy needles and the festive malice of the Frost Moon. It fortifies the body with an evergreen sturdiness."
+    }
+    SkeletronHeart: {
+        Lore: "A hollow, cursed relic rattling with the moans of the dungeon's doomed. It grants the stubborn will of an ageless guardian."
+    }
+    SkeletronPrimeHeart: {
+        Lore: "A mechanical monstrosity of gears and dark magic. It pumps with the terrifying precision of a metal nightmare."
+    }
+    TheDestroyerHeart: {
+        Lore: "A massive, metallic core built to eradicate all life. It reinforces the flesh with cold, unyielding iron."
+    }
+    TheTwinsHeart: {
+        Lore: "A dual-chambered organ bound by optic nerves and lasers. It courses with a chaotic, divided energy."
+    }
+    WallOfFleshHeart: {
+        Lore: "A visceral, fleshy mass torn from the master and core of the world. It unleashes the raw, unbound power of the underworld."
+    }
+    AstraHeart: {
+        Lore: "Gleaming with the starlight of distant galaxies. It resonates with the quiet harmony of the cosmos."
+    }
+    CosmicEmberHeart: {
+        Lore: "A burning fragment of a dying star. It warms the soul with the eternal fire of the universe."
+    }
+    CryocoreHeart: {
+        Lore: "Frozen solid and radiating an absolute zero chill. It numbs pain and preserves life in a state of icy stasis."
+    }
+    DarkCelestialHeart: {
+        Lore: "Swirling with the gravity of a black hole. It draws in worldly energies to fuel an abyssal strength."
+    }
+    EctoplasmHeart: {
+        Lore: "A swirling mass of phantom energy from the dungeon's deepest spirits. It grants a ghostly, ethereal vitality."
+    }
+    HeavenforgeHeart: {
+        Lore: "Crafted in the celestial fires of the sky islands. It tempers the spirit with divine heat and purity."
+    }
+    LuminiteHeart: {
+        Lore: "Forged from the remains of the celestial pillars. It shines with the ultimate power of a world-shaper."
+    }
+    LunarRustHeart: {
+        Lore: "Corroded by the relentless passage of cosmic time. It holds the ancient endurance of forgotten celestial bodies."
+    }
+    MercuryHeart: {
+        Lore: "A toxic, liquid metallic core that flows with deadly grace. It hardens the body against all mundane weaknesses."
+    }
+    ShroomiteHeart: {
+        Lore: "Pulsing with a silent, fungal glow from the glowing mushroom biomes. It brings a stealthy, spore-filled vitality."
+    }
+    SpectreHeart: {
+        Lore: "Woven from spirit threads and spectral mist. It balances life and death with every phantom heartbeat."
+    }
+    StarRoyaleHeart: {
+        Lore: "A regal concentration of fallen stars. It blesses the bearer with the majestic light of the night sky."
+    }
+    ZenithHeart: {
+        Lore: "The ultimate culmination of all journeys and blades. It pulses with the absolute pinnacle of Terrarian mastery."
+    }
+    AmmoReservationHeart: {
+        Lore: "Infused with the hunter's conservation instinct. It makes every heartbeat, and every shot, count."
+    }
+    ArcheryHeart: {
+        Lore: "Taut with the tension of a drawn bowstring. It sharpens focus and enhances the archer's steady hand."
+    }
+    BattleHeart: {
+        Lore: "Beating with the frenzied drums of endless war. It draws enemies near and revels in the thrill of combat."
+    }
+    BiomeSightHeart: {
+        Lore: "Radiating a perceptive energy that highlights the corruption and purity of the land. It attunes the senses to the world's hidden ailments."
+    }
+    BuilderHeart: {
+        Lore: "Structured and precise, humming with the rhythm of creation. It grants the endless stamina needed to shape the world."
+    }
+    CalmingHeart: {
+        Lore: "Emanating a soothing aura that quiets the surrounding chaos. It brings peace to the mind and safety from wandering monsters."
+    }
+    CrateHeart: {
+        Lore: "Filled with the hopeful anticipation of a grand catch. It brings the lucky vitality of a master angler."
+    }
+    DangersenseHeart: {
+        Lore: "Twitching with a hyper-aware paranoia. It heightens the instincts to detect unseen traps and perils."
+    }
+

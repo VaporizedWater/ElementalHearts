@@ -2,25 +2,11 @@ using ElementalHearts.Content.Buffs;
 using ElementalHearts.Content.Projectiles.Minions;
 using Terraria;
 using Terraria.ModLoader;
-using Terraria.ModLoader.IO;
 
 namespace ElementalHearts.Common.Players;
 
-public class EyeOfCthulhuAbilityPlayer : ModPlayer
+public class EyeOfCthulhuAbilityPlayer : ToggleAbilityPlayer
 {
-	public bool Enabled { get; set; }
-
-	public override void SaveData(TagCompound tag)
-	{
-		if (Enabled)
-			tag["Enabled"] = true;
-	}
-
-	public override void LoadData(TagCompound tag)
-	{
-		Enabled = tag.ContainsKey("Enabled");
-	}
-
 	public override void PostUpdateEquips()
 	{
 		if (Enabled)

@@ -1,0 +1,153 @@
+    ClayHeart: {
+        Lore: "Molded from the damp earth, it beats with a sluggish but enduring resilience. A sturdy reminder of the world's ancient foundations."
+    }
+    CloudHeart: {
+        Lore: "Light as a feather and continually drifting, this heart carries the breath of the sky. It pulses with the gentle rhythm of high-altitude winds."
+    }
+    CoralstoneHeart: {
+        Lore: "Formed in the vibrant shallows of the ocean, it holds the lifeblood of the sea. It whispers with the crashing of distant waves."
+    }
+    CrimsandHeart: {
+        Lore: "Grains of blood-stained sand scrape together with every beat. It harbors a parasitic thirst born from the sprawling Crimson desert."
+    }
+    CrimstoneHeart: {
+        Lore: "A grotesque chunk of the Crimson's core, throbbing with a sickly, fleshy rhythm. It radiates an aura of pure, visceral malice."
+    }
+    DirtHeart: {
+        Lore: "The most humble of origins, it contains the quiet, foundational heartbeat of Terraria itself. A simple but profound source of earthen vitality."
+    }
+    DynastyHeart: {
+        Lore: "Crafted with the elegance of a bygone empire, it hums with refined, architectural grace. It carries the wisdom of ancient eastern travelers."
+    }
+    EbonsandHeart: {
+        Lore: "Filled with the dark, suffocating grit of the Corrupt desert. It whispers maddening secrets of decay with every grainy pulse."
+    }
+    EbonstoneHeart: {
+        Lore: "Carved from the unyielding rock of the Corruption, it beats with a cold, relentless malice. It longs to spread its vile shadows across the land."
+    }
+    EbonwoodHeart: {
+        Lore: "Twisted and gnarled from the corrupted trees, it harbors a dark and festering vitality. A grim reflection of nature gone horribly wrong."
+    }
+    FleshHeart: {
+        Lore: "A grotesque, pulsating mass of meat and sinew stripped from the Crimson's depths. It squelches with a disturbing, wet rhythm."
+    }
+    FossilHeart: {
+        Lore: "An ancient relic pulled from the deep desert, carrying the echoes of extinct leviathans. It beats with a slow, calcified thud."
+    }
+    GemcornHeart: {
+        Lore: "Glittering with subterranean wealth, it holds the crystalline life force of the cavern depths. It thrums with a sharp, resonant chime."
+    }
+    GlassHeart: {
+        Lore: "Fragile and transparent, yet it holds a surprisingly warm and steady light. It shimmers with the fiery breath of the furnace that forged it."
+    }
+    GlowingMushroomHeart: {
+        Lore: "Pulsing with a soft, bioluminescent blue light, it smells faintly of damp spores. It brings visions of strange, fungal landscapes."
+    }
+    GraniteHeart: {
+        Lore: "Hewn from the deep, crushing dark of the underground, it hums with raw elemental energy. A heavy, unyielding testament to the earth's pressure."
+    }
+    HayHeart: {
+        Lore: "Bound together from dried stalks, it feels light and pastoral. A comforting reminder of sunny days and simple harvests."
+    }
+    HoneyHeart: {
+        Lore: "Sticky, sweet, and slow-beating, it is a testament to the tireless labor of the jungle's bees. It radiates a warm, soothing vitality."
+    }
+    IceHeart: {
+        Lore: "Frozen solid, it beats with a slow, crystalline chime that chills the surrounding air. It holds the pristine, unforgiving silence of the tundra."
+    }
+    LesionHeart: {
+        Lore: "A putrid, infected mass born of the Corruption's decay. It twitches spasmodically, oozing a sickly purple fluid."
+    }
+    MarbleHeart: {
+        Lore: "Smooth and statuesque, it resonates with the faded glory of lost underground empires. It beats with a hollow, echoing elegance."
+    }
+    MudHeart: {
+        Lore: "Slick and heavy with moisture, it holds the dense, humid lifeblood of the jungle. It squelches with a primal, untamed rhythm."
+    }
+    ObsidianHeart: {
+        Lore: "Forged where water meets molten rock, it is incredibly dense and fiercely warm. A dark, jagged core of pure geothermal power."
+    }
+    PalmWoodHeart: {
+        Lore: "Infused with the salty breeze of the ocean, it brings a sense of tropical calm. It beats in time with the gentle swaying of beachside trees."
+    }
+    PearlsandHeart: {
+        Lore: "Glistening with hallowed light, the shifting sands within purify anything they touch. It sings a soft, crystalline melody of salvation."
+    }
+    PearlstoneHeart: {
+        Lore: "Radiating a blinding, holy aura, it beats with an overwhelming and aggressive purity. It seeks to cleanse the world with unyielding light."
+    }
+    PearlwoodHeart: {
+        Lore: "Grown in the ethereal light of the Hallow, it shimmers with a magical, rainbow hue. A beautiful but unnatural testament to light's absolute rule."
+    }
+    PinkIceHeart: {
+        Lore: "Frozen in the Hallow's light, it gleams with a vibrant, magical chill. It chimes like a frozen music box echoing through crystalline caves."
+    }
+    PumpkinHeart: {
+        Lore: "Carved with a sinister grin, it flickers with the eerie light of the harvest moon. A spooky token that smells faintly of autumn decay."
+    }
+    PurpleIceHeart: {
+        Lore: "A jagged block of corrupted frost that bites the hand with unnatural cold. It whispers chilling tales of darkness from the frozen wastes."
+    }
+    RainbowHeart: {
+        Lore: "Flashing with a spectacular array of colors, it embodies the playful joy of a post-rain sky. It beats with a lively, bouncy cadence."
+    }
+    RainCloudHeart: {
+        Lore: "Heavy and gray, it constantly weeps small droplets of pure water. It carries the melancholic but refreshing spirit of a gentle downpour."
+    }
+    RedIceHeart: {
+        Lore: "Stained with the Crimson's gore, this frozen core beats with a vicious, predatory chill. It radiates a bloodcurdling, icy malice."
+    }
+    RichMahoganyHeart: {
+        Lore: "Deep red and smelling of the ancient jungle, it bursts with wild, verdant energy. The heartbeat of the deepest, most untamed thickets."
+    }
+    SandHeart: {
+        Lore: "Constantly shifting and grinding, it holds the dry, relentless heat of the desert sun. A gritty core of survival in the harshest environments."
+    }
+    ShadewoodHeart: {
+        Lore: "Dark, bleeding, and twisted from the Crimson's touch. It groans with the tortured agony of corrupted wildlife."
+    }
+    SlimeHeart: {
+        Lore: "A gelatinous, bouncy mass that wiggles with a surprisingly lively rhythm. It jiggles constantly, longing to merge with its sticky brethren."
+    }
+    SnowCloudHeart: {
+        Lore: "Drifting softly, it scatters tiny snowflakes with every gentle pulse. It brings the serene, quiet peace of a winter's night."
+    }
+    SnowHeart: {
+        Lore: "Soft and packed tightly, it feels cool to the touch and sparkles in the light. A delicate, fleeting core of winter's embrace."
+    }
+    SpookyHeart: {
+        Lore: "Forged from cursed wood on the darkest of nights, it twitches with restless spirit energy. It echoes with the distant cackles of the Mourning Wood."
+    }
+    StoneHeart: {
+        Lore: "Cold, heavy, and completely unremarkable, yet enduring as the world itself. The steadfast pulse of the silent caverns."
+    }
+    SunplateHeart: {
+        Lore: "Forged in the heavens and gleaming with golden light, it feels warm and divine. It holds the majestic power of the floating islands."
+    }
+    WoodHeart: {
+        Lore: "A basic, sturdy knot of timber that thumps with a rustic simplicity. The foundational essence of a brand new adventure."
+    }
+    AdamantiteHeart: {
+        Lore: "Forged from the resilient red ore of the deep, it boasts a fiery and unbreakable spirit. A testament to hard-won strength and ultimate durability."
+    }
+    ChlorophyteHeart: {
+        Lore: "A living, growing core that rapidly beats with the aggressive growth of the deep jungle. It actively seeks out light to fuel its organic power."
+    }
+    CrystalHeart: {
+        Lore: "A dazzling, multifaceted gem that shatters light into a million colors. It hums with the pure, resonant frequency of the cavern's crystal shards."
+    }
+    HallowedHeart: {
+        Lore: "Pulsing with an overwhelming, holy majesty, it banishes shadows with a blinding glare. The ultimate embodiment of light's fierce dominion."
+    }
+    LifeFruitHeart: {
+        Lore: "Brimming with the golden, hyper-vitality of the deepest jungle. It beats so fiercely it threatens to burst from its own immense life force."
+    }
+    MechanicalHeart: {
+        Lore: "A complex array of gears, wires, and pistons ticking in perfect, cold synchronization. A soulless but powerful engine of industrial might."
+    }
+    ShardHeart: {
+        Lore: "Assembled from razor-sharp fragments of broken glass, it gleams with dangerous beauty. It reflects a fractured, multi-colored light with every jagged beat."
+    }
+    SoulOfFrightHeart: {
+        Lore: "A terrifying, ethereal core that screams with the mechanical terror of Skeletron Prime. It fills the holder with an overwhelming sense of dread."
+    }

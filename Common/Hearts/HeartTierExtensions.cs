@@ -86,4 +86,45 @@ public static class HeartTierExtensions
 		HeartTier.Mythic    => 0.71f,
 		_ => 1f,
 	};
+
+	/// <summary>
+	/// Life Shards a consumed heart of this tier generates (or an active-ability heart consumes)
+	/// per Terraria day in the idle economy. Climbs with rarity, except Exotic sits low (between
+	/// Uncommon and Rare) so its many boss hearts don't flood the economy — the same deliberate
+	/// out-of-order Exotic placement as <see cref="GetRarityScale"/>.
+	/// </summary>
+	public static int GetShardYield(this HeartTier tier)
+	{
+		var cfg = ElementalHeartsServerConfig.Instance.LifeShards;
+		return tier switch
+		{
+			HeartTier.Common    => cfg.CommonPassiveYield,
+			HeartTier.Uncommon  => cfg.UncommonPassiveYield,
+			HeartTier.Rare      => cfg.RarePassiveYield,
+			HeartTier.Epic      => cfg.EpicPassiveYield,
+			HeartTier.Legendary => cfg.LegendaryPassiveYield,
+			HeartTier.Exotic    => cfg.ExoticPassiveYield,
+			HeartTier.Mythic    => cfg.MythicPassiveYield,
+			_ => 1,
+		};
+	}
+
+	/// <summary>
+	/// Life Shards consumed per Terraria day by an active-ability heart.
+	/// </summary>
+	public static int GetActiveAbilityDailyCost(this HeartTier tier)
+	{
+		var cfg = ElementalHeartsServerConfig.Instance.LifeShards;
+		return tier switch
+		{
+			HeartTier.Common    => cfg.CommonAbilityCost,
+			HeartTier.Uncommon  => cfg.UncommonAbilityCost,
+			HeartTier.Rare      => cfg.RareAbilityCost,
+			HeartTier.Epic      => cfg.EpicAbilityCost,
+			HeartTier.Legendary => cfg.LegendaryAbilityCost,
+			HeartTier.Exotic    => cfg.ExoticAbilityCost,
+			HeartTier.Mythic    => cfg.MythicAbilityCost,
+			_ => 1,
+		};
+	}
 }

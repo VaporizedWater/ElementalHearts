@@ -1,9 +1,11 @@
 using System;
 using ElementalHearts.Content.Buffs;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
+using ElementalHearts.Common.Players;
 
 namespace ElementalHearts.Content.Projectiles.Minions;
 
@@ -46,7 +48,7 @@ public class ServantOfCthulhuMinion : ModProjectile
 		Projectile.spriteDirection = 1; // The Servant of Cthulhu sprite is symmetrical and natively points DOWN, so no flipping is needed!
 		Player player = Main.player[Projectile.owner];
 
-		if (player.dead || !player.active)
+		if (player.dead || !player.active || !player.GetModPlayer<EyeOfCthulhuAbilityPlayer>().Enabled)
 		{
 			player.ClearBuff(ModContent.BuffType<ServantOfCthulhuBuff>());
 		}
@@ -55,9 +57,11 @@ public class ServantOfCthulhuMinion : ModProjectile
 			Projectile.timeLeft = 2;
 		}
 
+		bool isUpgraded = player.GetModPlayer<TwinsAbilityPlayer>().Enabled && player.GetModPlayer<EyeOfCthulhuAbilityPlayer>().Enabled;
+
 		// Custom animation
 		Projectile.frameCounter++;
-		if (Projectile.frameCounter >= 6)
+		if (Projectile.frameCounter >= 5)
 		{
 			Projectile.frameCounter = 0;
 			Projectile.frame++;
@@ -73,21 +77,100 @@ public class ServantOfCthulhuMinion : ModProjectile
 		
 		float targetRotation = Projectile.rotation;
 
-		if (state == 0) // Idle / Orbit
+		// UPGRADED ATTACK: Shoot cursed flames independently of dash state
+		if (isUpgraded)
 		{
-			// Find closest target
-			NPC target = null;
-			float closestDist = 350f; // Targeting range
+			NPC shootTarget = null;
+			float closestShootDist = 600f; // Shooting range
 			for (int i = 0; i < Main.maxNPCs; i++)
 			{
 				NPC npc = Main.npc[i];
 				if (npc.CanBeChasedBy() && Collision.CanHit(Projectile.Center, 1, 1, npc.Center, 1, 1))
 				{
-					float dist = Vector2.Distance(player.Center, npc.Center);
-					if (dist < closestDist)
+					float dist = Vector2.Distance(Projectile.Center, npc.Center);
+					if (dist < closestShootDist)
 					{
-						closestDist = dist;
-						target = npc;
+						closestShootDist = dist;
+						shootTarget = npc;
+					}
+				}
+			}
+
+			ref float cycleTimer = ref Projectile.localAI[0];
+
+			if (shootTarget != null)
+			{
+				// 1,0,1,0,0,0,0,0 pattern over 8 seconds.
+				// 1st second (0) and 3rd second (120)
+				if (cycleTimer == 0 || cycleTimer == 120)
+				{
+					// Calculate direction based on visual rotation, adding PiOver2 to undo the sprite downward offset
+					Vector2 velocity = (Projectile.rotation + MathHelper.PiOver2).ToRotationVector2() * 10f;
+					if (player.whoAmI == Main.myPlayer)
+					{
+						Projectile.NewProjectile(Projectile.GetSource_FromThis(), Projectile.Center, velocity, ModContent.ProjectileType<SpazmatismCursedFlame>(), Projectile.damage, 0f, player.whoAmI);
+					}
+				}
+				
+				cycleTimer++;
+				if (cycleTimer >= 480) // 8 seconds total cycle
+				{
+					cycleTimer = 0;
+				}
+			}
+			else
+			{
+				// Always advance the cycle timer so he can return to dashing if no target is found
+				cycleTimer++;
+				if (cycleTimer >= 480)
+				{
+					cycleTimer = 0;
+				}
+			}
+		}
+
+		if (state == 0) // Idle / Orbit
+		{
+			// Find closest target, prioritizing debuffed enemies
+			NPC target = null;
+			float closestDist = 350f; // Targeting range
+			bool foundDebuffedTarget = false;
+
+			for (int i = 0; i < Main.maxNPCs; i++)
+			{
+				NPC npc = Main.npc[i];
+				if (npc.CanBeChasedBy() && Collision.CanHit(Projectile.Center, 1, 1, npc.Center, 1, 1))
+				{
+					bool hasDebuff = npc.HasBuff(ModContent.BuffType<DestroyerTargetDebuff>());
+					float dist = Vector2.Distance(player.Center, npc.Center);
+					
+					if (hasDebuff && !foundDebuffedTarget)
+					{
+						// Prioritize the first debuffed enemy in an extended range
+						if (dist < 1200f)
+						{
+							target = npc;
+							closestDist = dist;
+							foundDebuffedTarget = true;
+						}
+					}
+					else if (hasDebuff && foundDebuffedTarget)
+					{
+						// If multiple debuffed targets, find the closest one of them
+						if (dist < closestDist)
+						{
+							closestDist = dist;
+							target = npc;
+						}
+					}
+					else if (!foundDebuffedTarget)
+					{
+						// Normal targeting if no debuffed target found yet
+						if (dist < closestDist)
+						{
+							closestDist = dist;
+							target = npc;
+						}
 					}
 				}
 			}
@@ -277,5 +360,33 @@ public class ServantOfCthulhuMinion : ModProjectile
 				Projectile.velocity = Vector2.Normalize(Projectile.velocity) * 12f;
 			}
 		}
+	}
+
+	public override bool PreDraw(ref Color lightColor)
+	{
+		Player player = Main.player[Projectile.owner];
+		bool isUpgraded = player.GetModPlayer<TwinsAbilityPlayer>().Enabled && player.GetModPlayer<EyeOfCthulhuAbilityPlayer>().Enabled;
+
+		Texture2D texture = Terraria.GameContent.TextureAssets.Projectile[Projectile.type].Value;
+		float drawRotation = Projectile.rotation;
+		
+		if (isUpgraded && ModContent.HasAsset("ElementalHearts/Assets/NPCs/SpazmatismServant"))
+		{
+			texture = ModContent.Request<Texture2D>("ElementalHearts/Assets/NPCs/SpazmatismServant").Value;
+			// The new sprite points right natively, while the vanilla one points down.
+			// The AI assumes a down-pointing sprite (subtracting Pi/2), so we add Pi/2 back for this sprite.
+			drawRotation += MathHelper.PiOver2;
+		}
+
+		int frameHeight = texture.Height / Main.projFrames[Projectile.type];
+		int startY = frameHeight * Projectile.frame;
+		Rectangle sourceRectangle = new Rectangle(0, startY, texture.Width, frameHeight);
+		Vector2 origin = sourceRectangle.Size() / 2f;
+
+		Main.EntitySpriteDraw(texture,
+			Projectile.Center - Main.screenPosition + new Vector2(0f, Projectile.gfxOffY),
+			sourceRectangle, lightColor, drawRotation, origin, Projectile.scale, SpriteEffects.None, 0);
+
+		return false;
 	}
 }

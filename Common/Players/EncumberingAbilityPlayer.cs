@@ -4,15 +4,13 @@ using Terraria;
 using Terraria.DataStructures;
 using Terraria.ID;
 using Terraria.ModLoader;
-using Terraria.ModLoader.IO;
 using Terraria.GameInput;
 using Terraria.Audio;
 
 namespace ElementalHearts.Common.Players;
 
-public class EncumberingAbilityPlayer : ModPlayer
+public class EncumberingAbilityPlayer : ToggleAbilityPlayer
 {
-	public bool Enabled { get; set; }
 	public bool isGroundPounding;
 	public int groundPoundDelay;
 	public int airTime;
@@ -31,22 +29,6 @@ public class EncumberingAbilityPlayer : ModPlayer
 		Volume = 0.8f,
 		PitchVariance = 0.1f
 	};
-
-	public override void ResetEffects()
-	{
-		if (!Enabled) return;
-	}
-
-	public override void SaveData(TagCompound tag)
-	{
-		if (Enabled)
-			tag["Enabled"] = true;
-	}
-
-	public override void LoadData(TagCompound tag)
-	{
-		Enabled = tag.ContainsKey("Enabled");
-	}
 
 	public override void PreUpdateMovement()
 	{
