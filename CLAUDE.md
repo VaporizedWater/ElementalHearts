@@ -71,3 +71,11 @@ public sealed class AstralHeart : CalamityHeartItem
 - `Mod.PostSetupContent` builds the runtime registries in order — `HeartRegistry.Build()`, `PotionHeartRegistry.Build()`, `BossHeartDropRegistry.Build()` — then registers the cross-mod integrations. `HeartContentValidator.Validate` runs last (DEBUG-only, compiled out of release). `HeartEffectRegistry` / `ElementalPowerRegistry` are static lookup tables, not built. (Boss drops are centralized in `BossHeartDropRegistry`.)
 - `notes/` — dev scratch (design docs, material/sprite lists, a reference copy of Munchies' `CenteredUIImage`). Excluded from the packaged mod via `build.txt` (`notes\*`) and from compilation via the csproj (`<Compile Remove="notes\**\*.cs" />`). Never put compiled source here, and keep non-mod files out of the project root.
 - `tools/` — dev-only PowerShell helpers (e.g. `Get-HeartPalette.ps1`, the sprite→hex palette extractor for the color-palette rule). No compiled source here; `*.ps1` is buildIgnored.
+
+## Shader Compilation (Important for this environment)
+
+If you modify or create an HLSL `.fx` shader file, tModLoader's automatic asset compiler may fail on the user's setup. To ensure a seamless experience:
+1. Compile the `.fx` file manually into a raw `.fxc` bytecode file using the user's `fxc.exe` path via PowerShell:
+   `& "C:\Program Files (x86)\Windows Kits\10\bin\10.0.22621.0\x64\fxc.exe" /T fx_2_0 /O3 /Zpr "Assets\Effects\ShaderName.fx" /Fo "Assets\Effects\ShaderName.fxc"`
+2. Update the C# code to load the raw `.fxc` bytes using `ModContent.GetInstance<ElementalHearts>().GetFileBytes("Assets/Effects/ShaderName.fxc")` and construct an `Effect` from it manually.
+3. Cache the resulting `Effect` object so it isn't recreated every frame!

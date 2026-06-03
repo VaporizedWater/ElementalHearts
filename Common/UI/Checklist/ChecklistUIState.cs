@@ -36,7 +36,7 @@ public class ChecklistUIState : UIState
 	private string _searchQuery = "";
 	private bool _searchBarHasInitializedText = false;
 
-	private UIPanel _mainPanel;
+	private AuroraPanel _mainPanel;
 	private UITabControl _tabControl;
 	private UIList _activeHeartList;
 	private UIList _passiveHeartList;
@@ -72,13 +72,14 @@ public class ChecklistUIState : UIState
 	{
 		Instance = this;
 
-		_mainPanel = new UIPanel();
+		_mainPanel = new AuroraPanel();
 		_mainPanel.Width.Set(1300, 0f); // Restore correct width
 		_mainPanel.Height.Set(860, 0f); // Increased by 10%
 		_mainPanel.HAlign = 0.5f;
 		_mainPanel.VAlign = 0.5f;
-		_mainPanel.BackgroundColor = new Color(20, 26, 48) * 0.95f;
-		_mainPanel.BorderColor = new Color(89, 116, 213);
+		_mainPanel.AuroraColor1 = new Color(20, 26, 48);
+		_mainPanel.AuroraColor2 = new Color(30, 40, 80);
+		_mainPanel.AuroraColor3 = new Color(10, 15, 30);
 		Append(_mainPanel);
 
 		UIText title = new UIText("Heart Checklist", 1.2f);
@@ -688,8 +689,10 @@ public class ChecklistUIState : UIState
 						
 						if (isUnlocked)
 						{
-							heartRow.BackgroundColor = heart.Tier.GetEffectColor() * (isConsumed ? 0.4f : 0.2f);
-							heartRow.BorderColor = heart.Tier.GetEffectColor() * (isConsumed ? 1f : 0.5f);
+							Color baseColor = heart.Tier.GetEffectColor() * (isConsumed ? 0.8f : 0.4f);
+							heartRow.AuroraColor1 = baseColor;
+							heartRow.AuroraColor2 = baseColor * 0.5f;
+							heartRow.AuroraColor3 = baseColor * 1.2f;
 
 							if (heart is PotionHeartItem potionHeart)
 							{
@@ -772,8 +775,9 @@ public class ChecklistUIState : UIState
 						}
 						else
 						{
-							heartRow.BackgroundColor = new Color(10, 10, 10) * 0.6f;
-							heartRow.BorderColor = new Color(40, 40, 40);
+							heartRow.AuroraColor1 = new Color(15, 15, 15);
+							heartRow.AuroraColor2 = new Color(10, 10, 10);
+							heartRow.AuroraColor3 = new Color(20, 20, 20);
 
 							if (ElementalHeartsServerConfig.Instance.WorldGen.AdminMode)
 							{
@@ -785,8 +789,16 @@ public class ChecklistUIState : UIState
 										player.TryConsumeLocally(heart);
 									Rebuild();
 								};
-								heartRow.OnMouseOver += (evt, element) => heartRow.BackgroundColor = new Color(50, 50, 50) * 0.8f;
-								heartRow.OnMouseOut += (evt, element) => heartRow.BackgroundColor = new Color(10, 10, 10) * 0.6f;
+								heartRow.OnMouseOver += (evt, element) => {
+									heartRow.AuroraColor1 = new Color(50, 50, 50);
+									heartRow.AuroraColor2 = new Color(40, 40, 40);
+									heartRow.AuroraColor3 = new Color(60, 60, 60);
+								};
+								heartRow.OnMouseOut += (evt, element) => {
+									heartRow.AuroraColor1 = new Color(15, 15, 15);
+									heartRow.AuroraColor2 = new Color(10, 10, 10);
+									heartRow.AuroraColor3 = new Color(20, 20, 20);
+								};
 							}
 						}
 
@@ -943,7 +955,7 @@ public class ChecklistUIState : UIState
 		}
 	}
 
-	private class HoverablePanel : UIPanel
+	private class HoverablePanel : AuroraPanel
 	{
 		public Item HoverItem;
 		public string FallbackName;

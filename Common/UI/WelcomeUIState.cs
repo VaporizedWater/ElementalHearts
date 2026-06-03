@@ -6,12 +6,13 @@ using Terraria.ID;
 using Terraria.Localization;
 using Terraria.UI;
 using ElementalHearts.Common.Players;
+using ElementalHearts.Common.UI.Elements;
 
 namespace ElementalHearts.Common.UI;
 
 public class WelcomeUIState : UIState
 {
-	private UIPanel _mainPanel;
+	private AuroraPanel _mainPanel;
 	private UIText _discordText;
 	private UIText _closeButton;
 	private UIText _checkboxText;
@@ -46,14 +47,17 @@ public class WelcomeUIState : UIState
 
 	public override void OnInitialize()
 	{
-		_mainPanel = new UIPanel();
+		_mainPanel = new AuroraPanel();
 		_mainPanel.Width.Set(350, 0f);
 		_mainPanel.Height.Set(200, 0f);
 		// Lower left quadrant, aligned with chat
 		_mainPanel.Left.Set(88, 0f);
 		_mainPanel.Top.Set(-330, 1f); 
-		_mainPanel.BackgroundColor = new Color(33, 43, 79) * 0.8f;
 		_mainPanel.SetPadding(12f); 
+		_mainPanel.AuroraColor1 = new Color(60, 20, 100);
+		_mainPanel.AuroraColor2 = new Color(20, 60, 150);
+		_mainPanel.AuroraColor3 = new Color(100, 20, 100);
+		_mainPanel.BorderRadius = 12f;
 		Append(_mainPanel);
 
 		// Welcome Title
