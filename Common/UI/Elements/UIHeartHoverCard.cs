@@ -120,8 +120,12 @@ public class UIHeartHoverCard : UIPanel
 				stats = heart.IsActiveAbility ? "Grants an active ability" : "Grants a passive ability";
 			}
 		}
-			
 		_statsText.SetText(stats);
+
+		// Dynamically adjust width to fit long ability descriptions
+		float textWidth = Terraria.GameContent.FontAssets.MouseText.Value.MeasureString(stats).X * 0.9f;
+		float newWidth = System.Math.Max(350f, textWidth + 40f); // 40f provides breathing room for the 15f padding
+		Width.Set(newWidth, 0f);
 
 		float extraSpace = stats.Contains('\n') ? 22f : 0f;
 		_generationText.Top.Set(82f + extraSpace, 0f);

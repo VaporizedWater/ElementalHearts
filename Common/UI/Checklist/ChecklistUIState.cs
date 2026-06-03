@@ -74,7 +74,7 @@ public class ChecklistUIState : UIState
 
 		_mainPanel = new UIPanel();
 		_mainPanel.Width.Set(1300, 0f); // Restore correct width
-		_mainPanel.Height.Set(780, 0f); // Increased by 30%
+		_mainPanel.Height.Set(860, 0f); // Increased by 10%
 		_mainPanel.HAlign = 0.5f;
 		_mainPanel.VAlign = 0.5f;
 		_mainPanel.BackgroundColor = new Color(20, 26, 48) * 0.95f;
