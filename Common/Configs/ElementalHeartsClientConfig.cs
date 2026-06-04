@@ -70,22 +70,22 @@ public class CameraSettings
 	[Slider]
 	[DrawTicks]
 	[SliderColor(120, 200, 255, 255)]
-	[DefaultValue(160)]
-	public int MaxPanDistance = 160;
+	[DefaultValue(300)]
+	public int MaxPanDistance = 300;
 
 	[Range(0, 200)]
 	[Increment(5)]
 	[Slider]
 	[SliderColor(120, 200, 255, 255)]
-	[DefaultValue(100)]
-	public int HorizontalStrength = 100;
+	[DefaultValue(50)]
+	public int HorizontalStrength = 50;
 
 	[Range(0, 200)]
 	[Increment(5)]
 	[Slider]
 	[SliderColor(120, 200, 255, 255)]
-	[DefaultValue(100)]
-	public int VerticalStrength = 100;
+	[DefaultValue(50)]
+	public int VerticalStrength = 50;
 
 	[Header("Feel")]
 	[Range(0, 100)]
@@ -93,15 +93,15 @@ public class CameraSettings
 	[Slider]
 	[DrawTicks]
 	[SliderColor(170, 150, 255, 255)]
-	[DefaultValue(35)]
-	public int Smoothing = 35;
+	[DefaultValue(100)]
+	public int Smoothing = 100;
 
 	[Range(0, 90)]
 	[Increment(5)]
 	[Slider]
 	[SliderColor(170, 150, 255, 255)]
-	[DefaultValue(10)]
-	public int Deadzone = 10;
+	[DefaultValue(30)]
+	public int Deadzone = 30;
 
 	[Range(1f, 3f)]
 	[Increment(0.1f)]
