@@ -1,4 +1,5 @@
 using ElementalHearts.Common.Configs;
+using ElementalHearts.Content.Items.LifeShards;
 using ElementalHearts.Content.Tiles.Vital;
 using Terraria;
 using Terraria.ID;
@@ -26,5 +27,14 @@ public sealed class VitalChestItem : ModItem
 		Item.height = 22;
 		Item.value = Item.sellPrice(silver: 1);
 		Item.rare = ItemRarityID.Blue;
+	}
+
+	public override void AddRecipes()
+	{
+		CreateRecipe()
+			.AddIngredient(ItemID.Chest, 1)
+			.AddIngredient(ModContent.ItemType<CommonLifeShard>(), 10)
+			.AddTile(TileID.WorkBenches)
+			.Register();
 	}
 }

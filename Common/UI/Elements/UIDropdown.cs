@@ -10,7 +10,7 @@ namespace ElementalHearts.Common.UI.Elements;
 public class UIDropdown : UIElement
 {
 	private UIAnimatedButton _mainButton;
-	private UIPanel _dropdownPanel;
+	private AuroraPanel _dropdownPanel;
 	private UIList _optionsList;
 	private UIScrollbar _scrollbar;
 	
@@ -35,9 +35,10 @@ public class UIDropdown : UIElement
 		Append(_mainButton);
 		UpdateSize();
 
-		_dropdownPanel = new UIPanel();
-		_dropdownPanel.BackgroundColor = new Color(20, 26, 48) * 0.95f;
-		_dropdownPanel.BorderColor = new Color(89, 116, 213);
+		_dropdownPanel = new AuroraPanel();
+		_dropdownPanel.AuroraColor1 = new Color(15, 20, 35);
+		_dropdownPanel.AuroraColor2 = new Color(20, 26, 48);
+		_dropdownPanel.AuroraColor3 = new Color(10, 15, 25);
 		_dropdownPanel.SetPadding(5f);
 
 		_optionsList = new UIList();
@@ -135,10 +136,16 @@ public class UIDropdown : UIElement
 		}
 	}
 
+	public override void Recalculate()
+	{
+		UpdateSize();
+		base.Recalculate();
+	}
+
 	private void UpdateSize()
 	{
 		_mainButton.Recalculate();
-		Width.Set(_mainButton.GetOuterDimensions().Width, 0f);
-		Height.Set(_mainButton.GetOuterDimensions().Height, 0f);
+		Width.Set(_mainButton.Width.Pixels, 0f);
+		Height.Set(_mainButton.Height.Pixels, 0f);
 	}
 }

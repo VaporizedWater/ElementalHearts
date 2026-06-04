@@ -2895,6 +2895,12 @@ Items: {
 		Lore: Molded from the damp earth, it beats with a sluggish but enduring resilience. A sturdy reminder of the world's ancient foundations.
 	}
 
+	ChestHeart: {
+		Tooltip: Permanently unlocks 10 extra inventory slots
+		DisplayName: Chest Heart
+		Lore: A heavy, brass-bound heart that hums with the spacious energy of a storage chest.
+	}
+
 	MenacingHeartItem.Lore: A pulsating core radiating an intimidating aura, forged in the depths of adversity. It beats with the unyielding strength of a true warrior.
 	CrossModHeartItem.Lore: An anomalous crystal formed where different realities intersect. It thrums with the combined energies of foreign realms.
 	CalamityBossHeartItem.Lore: A triumphant trophy claimed from a supreme entity of destruction. Its immense power threatens to overwhelm the weak of mind.

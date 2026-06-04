@@ -1,47 +1,19 @@
-Elemental Hearts adds permanent stat-boosters. Find your materials, find your bench, get more HP. (Or fight a boss and harvest their organs.)
+Elemental Hearts adds permanent stat-boosters. Find your materials, find your bench, get more power! (Or fight a boss and harvest their organs!)
+
 
 Also includes 5 polished boss fights, a new mini-structure, fully integrated checklist, an economy, and many other new features.
 
+
 Designed to fit naturally into every modpack, and make your experience more fun and rewarding!
 
-If you are scared it might be too OP, try it out. I promise you it's the best thing since sliced bread.
+
+If you're worried it might be too OP, try it out! From unlocking ground pounds to expanding your inventory slots, I promise it's the best thing since sliced bread and won't change the game's intended difficulty!
+
+
+Have fun completing your collection!
+
 
 -
 
-After 6 years of slumber, Lite has risen from the dead to resurrect his begotten son. Today, we can experience Elemental Hearts as it was originally intended.
 
-Please listen to the Interstellar Theme while reading a brief history of Elemental Hearts:
-
-
-
-The first version of Elemental Hearts shipped in 2019. From a single spark of inspiration, it grew into something extraordinary. Nearly 550 items, a custom boss, a biome carved from imagination itself, and a tangled web of cross-mod compatibility that no one had dared attempt before. It was ambitious. It was beautiful. And by the time tModLoader 1.4 arrived, it had become impossible to maintain.
-
-The code had grown into a labyrinth of its own making. Duplicated logic. Recipes scattered like leaves in the wind. Fragile cross-mod hooks held together by little more than hope. Bugs lurked in every corner, waiting - bugs that could not be fixed without the whole structure collapsing in on itself. And beneath the technical decay, something far more human was unraveling: a quiet war between the creator and one of his artists, a feud that would echo louder than any boss fight ever coded.
-s
-In 2020, Fox - who shall forever remain in high regard - made the painful decision to withdraw his consent for his sprites to remain in the mod. This, along with the many storms gathering at the time, ignited a firestorm across the Discord. In the chaos that followed, a moderator took matters into his own hands and deleted the server entirely. Years of conversation, lore, and friendship - gone in a single moment. One Discord member, refusing to let the world forget, spent an entire month rewriting the Elemental Hearts lore from the ground up. He poured thirty pages of mythology into existence, chronicling how the Hearts first entered the world of Terraria. And then, the moment his work was finished, he vanished from the internet without a trace.
-
-In 2021, Elemental Hearts was officially deprecated.
-
-And yet... The story did not end there.
-
-From the ashes rose a revived version, lovingly maintained by Goob (everyone, please give thanks to Goob). His compatibility mod saved Elemental Hearts from oblivion, allowing children around the world to experience it in its former glory.
-
-Then came 2026.
-
-Lite spent every last dollar of his rent money to build a PC. He used it to make game jams, run his business, basic things.
-
-But on May 8th, a user named Madog24 experienced an issue while trying to enter their escape from this brtual world. The mod was conflicting with Calamity, and their precious world was locked behind an error message. They brought this up to Lite in the Elemental Hearts Discord. The rest of this story is not unlike something you would find in an epic sci-fi novel.
-
-Lite, sitting before the machine that had cost him his roof, in the quiet hum of a system newly born, he remembered. He remembered what it meant to be a developer. He remembered the lives he had touched. He remembered the countless children he had rescued from eternal boredom through the raw power-fantasy of crafting Elemental Hearts. And he knew, with a certainty as bright as a collapsing star, that the time had come to do what he was put on this earth to do. With his daughter begging for him to go on a walk with her. To spend time with his wife on Mothers Day, he had to make a choice: Sacrifice himself for his family, or sacrifice himself for the whole of the Terraria Community...
-
-He made the decision that any sane Terrarian would make:
-
-I created Elemental Hearts.
-
-And I will continue building it until its perfect. New bosses, new hearts, new features, more polish. Elemental Hearts is now my never-ending labor of love.
-
-It will last this time.
-
--
-
-Thanks to Seth for sprite work!
+Thanks to Seth, Fox, Chackalito, and WhaTTaZ for their sprite work!

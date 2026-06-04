@@ -20,11 +20,7 @@ public class MilestonesUI
 	{
 		list.Clear();
 
-		UIText header = new UIText("Progression Milestones", 1.2f, true);
-		header.HAlign = 0.5f;
-		header.MarginBottom = 15f;
-		header.TextColor = Color.Gold;
-		list.Add(header);
+
 
 		var player = Main.LocalPlayer.GetModPlayer<HeartConsumptionPlayer>();
 		bool shared = ElementalHeartsServerConfig.Instance.WorldGen.SharedProgression;
@@ -68,11 +64,25 @@ public class MilestonesUI
 
 	private static void AddMilestone(UIList list, string id, string name, string description, bool isComplete, string progressText, int rewardGoldCoins, HeartConsumptionPlayer player, System.Action rebuildAction)
 	{
-		UIPanel panel = new UIPanel();
+		Common.UI.Elements.AuroraPanel panel = new Common.UI.Elements.AuroraPanel();
 		panel.Width.Set(0, 1f);
 		panel.Height.Set(60, 0f);
-		panel.BackgroundColor = (isComplete ? new Color(40, 70, 40) : new Color(30, 38, 70)) * 0.8f;
-		panel.BorderColor = isComplete ? new Color(100, 200, 100) : new Color(89, 116, 213);
+		panel.IsInteractive = false;
+		
+		if (isComplete)
+		{
+			panel.AuroraColor1 = new Color(20, 50, 20);
+			panel.AuroraColor2 = new Color(15, 35, 15);
+			panel.AuroraColor3 = new Color(25, 60, 25);
+			panel.BorderColor = new Color(40, 90, 40); // Softened green border
+		}
+		else
+		{
+			panel.AuroraColor1 = new Color(15, 20, 35);
+			panel.AuroraColor2 = new Color(20, 26, 48);
+			panel.AuroraColor3 = new Color(10, 15, 25);
+			panel.BorderColor = new Color(89, 116, 213);
+		}
 
 		UIText nameText = new UIText(name, 1.1f);
 		nameText.Top.Set(2, 0f);
@@ -90,16 +100,14 @@ public class MilestonesUI
 
 		if (isComplete && !isClaimed)
 		{
-			UITextPanel<string> claimBtn = new UITextPanel<string>($"Claim {rewardGoldCoins} Gold", 0.85f);
-			claimBtn.Width.Set(120, 0f);
-			claimBtn.Height.Set(30, 0f);
+			Common.UI.Elements.UIAnimatedButton claimBtn = new Common.UI.Elements.UIAnimatedButton($"Claim {rewardGoldCoins} Gold", 0.85f);
 			claimBtn.HAlign = 1f;
 			claimBtn.VAlign = 0.5f;
 			claimBtn.Left.Set(-15, 0f);
-			claimBtn.BackgroundColor = new Color(218, 165, 32);
+			claimBtn.BaseColor = new Color(150, 110, 20);
+			claimBtn.HoverColor = new Color(255, 215, 0);
 			claimBtn.BorderColor = Color.White;
-			claimBtn.OnMouseOver += (evt, element) => claimBtn.BackgroundColor = new Color(255, 215, 0);
-			claimBtn.OnMouseOut += (evt, element) => claimBtn.BackgroundColor = new Color(218, 165, 32);
+			
 			claimBtn.OnLeftClick += (evt, element) => {
 				Terraria.Audio.SoundEngine.PlaySound(Terraria.ID.SoundID.CoinPickup, Main.LocalPlayer.Center);
 				player.ClaimMilestoneLocally(id);

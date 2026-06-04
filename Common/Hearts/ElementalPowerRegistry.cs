@@ -181,6 +181,7 @@ internal static class ElementalPowerRegistry
 		["EaterOfWorldsHeart"] = "worm food",
 		["ElfHeart"] = "on the shelf",
 		["ClayHeart"] = "clay pigeon",
+		["ChestHeart"] = "pack rat",
 		["SkeletronPrimeHeart"] = "prime time",
 		["TheTwinsHeart"] = "seeing double",
 		["EmpressOfLightHeart"] = "blinding",

@@ -72,7 +72,7 @@ public class UISmoothScrollbar : UIScrollbar
 	protected override void DrawSelf(SpriteBatch spriteBatch)
 	{
 		float visualPos = ViewPosition;
-		base.DrawSelf(spriteBatch);
+		// base.DrawSelf(spriteBatch); // Make the scrollbar 100% invisible
 		
 		// Terraria handles scrollbar dragging in DrawSelf in some versions
 		if (ViewPosition != visualPos)

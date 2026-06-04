@@ -12,8 +12,9 @@ using Terraria.ModLoader;
 
 namespace ElementalHearts.Common.UI.Elements;
 
-public class UIHeartHoverCard : UIPanel
+public class UIHeartHoverCard : AuroraPanel
 {
+	private UIList _list;
 	private ElementalHeartItem _heart;
 	private UIText _titleText;
 	private UIText _tierText;
@@ -25,50 +26,98 @@ public class UIHeartHoverCard : UIPanel
 
 	public UIHeartHoverCard()
 	{
-		Width.Set(350, 0f);
+		Width.Set(380, 0f);
 		Height.Set(250, 0f); // Will dynamically size
-		BackgroundColor = new Color(15, 20, 38) * 0.95f;
+		AuroraColor1 = new Color(15, 20, 38) * 0.95f;
+		AuroraColor2 = new Color(10, 15, 30) * 0.95f;
+		AuroraColor3 = new Color(20, 25, 45) * 0.95f;
 		BorderColor = new Color(89, 116, 213);
-		SetPadding(15f);
+		PaddingLeft = 20f;
+		PaddingRight = 20f;
+		PaddingTop = 10f;
+		PaddingBottom = 10f;
+		IsInteractive = false;
+
+		_list = new UIList();
+		_list.Width.Set(0, 1f);
+		_list.Height.Set(0, 1f);
+		_list.ListPadding = 4f; // Reduced padding
+		Append(_list);
 
 		_titleText = new UIText("Heart Name", 1.1f, false);
 		_titleText.HAlign = 0.5f;
-		_titleText.Top.Set(0, 0f);
-		Append(_titleText);
+		_list.Add(_titleText);
 
 		_tierText = new UIText("Rarity", 0.85f);
 		_tierText.HAlign = 0.5f;
-		_tierText.Top.Set(24, 0f);
-		Append(_tierText);
+		_list.Add(_tierText);
 
 		_sep1 = new UIHorizontalSeparator();
 		_sep1.Width.Set(0, 1f);
-		_sep1.Top.Set(45, 0f);
 		_sep1.Color = new Color(89, 116, 213) * 0.7f;
-		Append(_sep1);
+		_list.Add(_sep1);
 
 		_statsText = new UIText("Stats go here", 0.9f);
 		_statsText.HAlign = 0.5f;
-		_statsText.Top.Set(58, 0f);
-		Append(_statsText);
+		_statsText.Width.Set(0, 1f);
+		_statsText.IsWrapped = false; // Set to false to prevent tModLoader's layout/wrap height bugs
+		_list.Add(_statsText);
 
-		_generationText = new UIText("", 0.9f);
+		_generationText = new UIText("", 1f);
 		_generationText.HAlign = 0.5f;
-		_generationText.Top.Set(82, 0f);
-		Append(_generationText);
+		_generationText.MarginTop = -4f; // Cancel out ListPadding of 4f for no spacing
+		_list.Add(_generationText);
 
 		_sep2 = new UIHorizontalSeparator();
 		_sep2.Width.Set(0, 1f);
-		_sep2.Top.Set(110, 0f);
 		_sep2.Color = new Color(89, 116, 213) * 0.7f;
-		Append(_sep2);
+		_list.Add(_sep2);
 
 		_loreText = new UIText("Lore goes here", 0.85f);
 		_loreText.Width.Set(0, 1f);
-		_loreText.Top.Set(125, 0f);
-		_loreText.IsWrapped = true;
+		_loreText.IsWrapped = false; // Set to false to prevent layout bugs
 		_loreText.TextColor = new Color(180, 180, 180);
-		Append(_loreText);
+		_loreText.MarginBottom = 0f; // Removed bottom margin
+		_list.Add(_loreText);
+	}
+
+	private string WrapText(string text, float scale, float maxWidth)
+	{
+		if (string.IsNullOrWhiteSpace(text)) return "";
+		
+		var font = Terraria.GameContent.FontAssets.MouseText.Value;
+		string[] paragraphs = text.Split('\n');
+		System.Collections.Generic.List<string> wrappedLines = new System.Collections.Generic.List<string>();
+		
+		foreach (string paragraph in paragraphs)
+		{
+			string[] words = paragraph.Split(' ');
+			string currentLine = "";
+			
+			for (int i = 0; i < words.Length; i++)
+			{
+				string word = words[i];
+				string testLine = string.IsNullOrEmpty(currentLine) ? word : currentLine + " " + word;
+				float width = font.MeasureString(testLine).X * scale;
+				
+				if (width > maxWidth && !string.IsNullOrEmpty(currentLine))
+				{
+					wrappedLines.Add(currentLine);
+					currentLine = word;
+				}
+				else
+				{
+					currentLine = testLine;
+				}
+			}
+			
+			if (!string.IsNullOrEmpty(currentLine))
+			{
+				wrappedLines.Add(currentLine);
+			}
+		}
+		
+		return string.Join("\n", wrappedLines);
 	}
 
 	public void SetHeart(ElementalHeartItem heart)
@@ -79,9 +128,14 @@ public class UIHeartHoverCard : UIPanel
 		_titleText.SetText(heart.Item.Name);
 		_titleText.TextColor = heart.Tier.GetEffectColor();
 		
-		_tierText.SetText($"{heart.Tier} Tier");
+		_tierText.SetText($"{heart.Tier}");
 		_tierText.TextColor = heart.Tier.GetEffectColor() * 0.8f;
 		BorderColor = heart.Tier.GetEffectColor();
+
+		HeartEffect consumptionEffect = HeartEffectRegistry.Get(heart.ConsumptionId);
+		AuroraColors = consumptionEffect.Colors;
+		IsPrismatic = consumptionEffect.Rainbow;
+		AuroraBrightness = 0.5f; // Keep it dark enough so the white text remains legible
 
 		string stats;
 		if (heart.HpGain > 0)
@@ -90,7 +144,6 @@ public class UIHeartHoverCard : UIPanel
 		}
 		else
 		{
-			string prefix = heart.IsActiveAbility ? "Grants an active ability:\n" : "Grants a passive ability:\n";
 			string effect = "";
 			
 			if (heart is PotionHeartItem potionHeart)
@@ -108,55 +161,63 @@ public class UIHeartHoverCard : UIPanel
 
 			if (!string.IsNullOrWhiteSpace(effect))
 			{
-				// Strip "Permanently " so it reads cleanly like: "Grants an active ability:\nbounce on enemies."
+				// Strip "Permanently " so it reads cleanly
 				effect = effect.Replace("Permanently ", "");
 				if (effect.Length > 0 && char.IsLower(effect[0]))
 					effect = char.ToUpper(effect[0]) + effect.Substring(1);
 
-				stats = prefix + effect;
+				stats = effect;
 			}
 			else
 			{
-				stats = heart.IsActiveAbility ? "Grants an active ability" : "Grants a passive ability";
+				stats = "";
 			}
 		}
-		_statsText.SetText(stats);
 
-		// Dynamically adjust width to fit long ability descriptions
-		float textWidth = Terraria.GameContent.FontAssets.MouseText.Value.MeasureString(stats).X * 0.9f;
-		float newWidth = System.Math.Max(350f, textWidth + 40f); // 40f provides breathing room for the 15f padding
-		Width.Set(newWidth, 0f);
+		// Wrap stats text and set it
+		string wrappedStats = WrapText(stats, 0.9f, 380f - 40f);
+		_statsText.SetText(wrappedStats);
 
-		float extraSpace = stats.Contains('\n') ? 22f : 0f;
-		_generationText.Top.Set(82f + extraSpace, 0f);
-		_sep2.Top.Set(110f + extraSpace, 0f);
-		_loreText.Top.Set(125f + extraSpace, 0f);
+		// Measure text heights based on actual lines in the wrapped string
+		float CalculateWrappedHeight(string wrappedText, float scale)
+		{
+			if (string.IsNullOrWhiteSpace(wrappedText)) return 0f;
+			int lineCount = wrappedText.Split('\n').Length;
+			return lineCount * (Terraria.GameContent.FontAssets.MouseText.Value.LineSpacing * scale);
+		}
+		
+		_statsText.Height.Set(CalculateWrappedHeight(wrappedStats, 0.9f), 0f);
 
 		if (heart is PotionHeartItem || heart.IsActiveAbility)
 		{
 			int cost = heart.ActiveAbilityDailyCost > 0 ? heart.ActiveAbilityDailyCost : heart.Tier.GetShardYield();
-			_generationText.SetText($"-{cost} [i:{ModContent.ItemType<CommonLifeShard>()}] / day");
+			_generationText.SetText($"-{cost}  [i:{ModContent.ItemType<CommonLifeShard>()}]  / day");
 			_generationText.TextColor = new Color(255, 150, 150);
 		}
 		else
 		{
 			int yield = heart.Tier.GetShardYield();
-			_generationText.SetText($"+{yield} [i:{ModContent.ItemType<CommonLifeShard>()}] / day");
+			_generationText.SetText($"+{yield}  [i:{ModContent.ItemType<CommonLifeShard>()}]  / day");
 			_generationText.TextColor = new Color(150, 255, 150);
 		}
 
 		string loreKey = $"Mods.ElementalHearts.Items.{heart.Name}.Lore";
 		string lore = Language.Exists(loreKey) ? Language.GetTextValue(loreKey) : "A mysterious heart radiating strange elemental energy...";
-		_loreText.SetText(lore);
 		
-		// Wait one frame to calculate height based on wrapped lore text
+		// Wrap lore text and set it
+		string wrappedLore = WrapText(lore, 0.85f, 380f - 40f);
+		_loreText.SetText(wrappedLore);
+		_loreText.Height.Set(CalculateWrappedHeight(wrappedLore, 0.85f), 0f);
+		
+		// Force recalculation so UIList correctly measures all dynamic texts and stacks them without overlapping
+		_list.Recalculate();
 	}
 
 	public override void Update(GameTime gameTime)
 	{
 		base.Update(gameTime);
 		
-		float neededHeight = _loreText.Top.Pixels + _loreText.MinHeight.Pixels + 20f;
+		float neededHeight = _list.GetTotalHeight() + PaddingTop + PaddingBottom;
 		if (Height.Pixels != neededHeight)
 		{
 			Height.Set(neededHeight, 0f);

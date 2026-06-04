@@ -229,6 +229,7 @@ public static class HeartEffectRegistry
 		["EaterOfWorldsHeart"]  = Eff(48, 32, 16, 48, 32, 32, 64, 48, 48),
 		["ElfHeart"]            = Eff(216, 40, 40, 60, 170, 80, 224, 224, 224),  // santa red + green + white
 		["ClayHeart"]           = Eff(192, 112, 80, 160, 80, 48, 128, 64, 32),
+		["ChestHeart"]          = Eff(208, 128, 160, 160, 32, 64, 128, 16, 48),
 		["SkeletronPrimeHeart"] = Eff(160, 160, 168, 224, 48, 48, 80, 80, 80),
 		["TheTwinsHeart"]       = Eff(160, 160, 168, 255, 32, 32, 64, 255, 64),
 		["EmpressOfLightHeart"] = HeartEffect.Prismatic,

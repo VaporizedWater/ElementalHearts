@@ -18,11 +18,17 @@ float4 PixelShaderFunction(float2 coords : TEXCOORD0, float4 color : COLOR0) : C
     float wave3 = sin((st.x + st.y) * 5.0 + uTime * 1.5) * 0.5 + 0.5;
     
     // Blend the three colors based on the waves
-    float4 baseColor = lerp(uColor1, uColor2, wave1);
-    baseColor = lerp(baseColor, uColor3, wave2);
+    float4 auroraColor = lerp(uColor1, uColor2, wave1);
+    auroraColor = lerp(auroraColor, uColor3, wave2);
     
-    // Add some brightness variation
-    baseColor.rgb *= (wave3 * 0.4 + 0.6);
+    // Add some brightness variation to the waves
+    auroraColor.rgb *= (wave3 * 0.4 + 0.6);
+    
+    // Start with a dark backing base color (e.g., highly opaque dark slate blue/grey)
+    float4 baseColor = float4(0.06, 0.08, 0.15, 0.85); // 85% opacity dark backing
+    
+    // Overlay the aurora waves using additive blending (avoids double-dimming due to pre-multiplied alphas)
+    baseColor.rgb += auroraColor.rgb;
     
     // Calculate rounded corners distance
     float2 pixelPos = st * uResolution;
@@ -31,7 +37,6 @@ float4 PixelShaderFunction(float2 coords : TEXCOORD0, float4 color : COLOR0) : C
     float dist = length(max(q, 0.0)) + min(max(q.x, q.y), 0.0);
     
     // Discard pixels outside the border radius for smooth rounded corners
-    // We use a small smoothstep or hard cutoff
     if (dist > uBorderRadius) {
         return float4(0, 0, 0, 0);
     }

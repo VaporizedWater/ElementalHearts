@@ -7,6 +7,7 @@ using Terraria.GameContent;
 using Terraria.ModLoader;
 using Terraria.UI.Chat;
 using ReLogic.Graphics;
+using ElementalHearts.Common.Players;
 
 namespace ElementalHearts.Content.Projectiles;
 
@@ -56,13 +57,23 @@ public class KingSlimeComboTextProjectile : ModProjectile
 			_ => "ElementalHearts/Assets/Sounds/PlayerBounceExcellent"
 		};
 
+		Player player = Main.player[Projectile.owner];
+		bool hasEncumbering = player.active && player.GetModPlayer<EncumberingAbilityPlayer>().Enabled;
+
 		if (wasGroundPounding)
 		{
-			comboSoundPath = "ElementalHearts/Assets/Sounds/PlayerGroundPoundLandClean";
+			SoundEngine.PlaySound(new SoundStyle("ElementalHearts/Assets/Sounds/PlayerGroundPoundLandClean"), Projectile.Center);
+			if (hasEncumbering)
+			{
+				SoundStyle comboSound = new SoundStyle(comboSoundPath);
+				SoundEngine.PlaySound(comboSound, Projectile.Center);
+			}
 		}
-
-		SoundStyle comboSound = new SoundStyle(comboSoundPath);
-		SoundEngine.PlaySound(comboSound, Projectile.Center);
+		else
+		{
+			SoundStyle comboSound = new SoundStyle(comboSoundPath);
+			SoundEngine.PlaySound(comboSound, Projectile.Center);
+		}
 	}
 
 	public override void AI()

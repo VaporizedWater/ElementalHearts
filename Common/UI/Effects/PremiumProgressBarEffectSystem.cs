@@ -8,99 +8,82 @@ namespace ElementalHearts.Common.UI.Effects
 {
     public class PremiumProgressBarEffectSystem : ModSystem
     {
-        private static Texture2D _texture;
-        private static Color[] _colorData;
-        private static int _lastWidth = -1;
-        private static int _lastHeight = -1;
+        private static Effect _progressBarEffect;
+        private static bool _effectLoaded = false;
 
         public override void Unload()
         {
-            if (_texture != null && !_texture.IsDisposed)
+            _progressBarEffect = null;
+            _effectLoaded = false;
+        }
+
+        private static void LoadEffect()
+        {
+            if (Main.netMode == Terraria.ID.NetmodeID.Server) return;
+            if (_progressBarEffect != null)
             {
-                var tex = _texture;
-                Main.QueueMainThreadAction(() =>
-                {
-                    if (!tex.IsDisposed)
-                    {
-                        tex.Dispose();
-                    }
-                });
+                _effectLoaded = true;
+                return;
             }
-            _texture = null;
-            _colorData = null;
+
+            try
+            {
+                byte[] shaderBytes = ModContent.GetInstance<ElementalHearts>().GetFileBytes("Assets/Effects/ProgressBar.fxc");
+                if (shaderBytes != null && shaderBytes.Length > 0)
+                {
+                    _progressBarEffect = new Effect(Main.graphics.GraphicsDevice, shaderBytes);
+                    _effectLoaded = true;
+                }
+            }
+            catch
+            {
+                _effectLoaded = false;
+            }
         }
 
         public static void Draw(SpriteBatch spriteBatch, Rectangle bounds, float fillPercent, float borderThickness, Color backgroundColor, Color borderColor, Color fillColor1, Color fillColor2, Color pulseColor, bool isCapped)
         {
-            int w = bounds.Width;
-            int h = bounds.Height;
+            if (bounds.Width <= 0 || bounds.Height <= 0) return;
 
-            if (w <= 0 || h <= 0) return;
-
-            if (_texture == null || _lastWidth != w || _lastHeight != h || _texture.IsDisposed)
+            if (!_effectLoaded && _progressBarEffect == null)
             {
-                if (_texture != null && !_texture.IsDisposed) _texture.Dispose();
-                _texture = new Texture2D(Main.graphics.GraphicsDevice, w, h);
-                _colorData = new Color[w * h];
-                _lastWidth = w;
-                _lastHeight = h;
+                LoadEffect();
             }
 
-            float cornerRadius = h / 2f;
-            float bX = (w / 2f) - cornerRadius;
-            float fillX = w * fillPercent;
-            
-            float glowWidth = 30f;
-            float time = Main.GlobalTimeWrappedHourly;
-            float glowPos = (float)((time * 150f) % (w + glowWidth)) - glowWidth;
-            float pulse = (float)(Math.Sin(time * 4f) + 1f) / 2f;
-
-            for (int y = 0; y < h; y++)
+            if (!_effectLoaded || _progressBarEffect == null)
             {
-                float pY = y - h / 2f;
-                float dY = Math.Max(Math.Abs(pY), 0f);
-                float dY2 = dY * dY;
-
-                for (int x = 0; x < w; x++)
-                {
-                    float pX = x - w / 2f;
-                    float dX = Math.Max(Math.Abs(pX) - bX, 0f);
-                    
-                    float length = (float)Math.Sqrt(dX * dX + dY2);
-                    float distOuter = length + Math.Min(Math.Max(Math.Abs(pX) - bX, Math.Abs(pY)), 0f) - cornerRadius;
-                    float alphaOuter = 1f - MathHelper.Clamp(distOuter + 0.5f, 0f, 1f);
-
-                    if (alphaOuter <= 0f)
-                    {
-                        _colorData[y * w + x] = Color.Transparent;
-                        continue;
-                    }
-
-                    float distInner = distOuter + borderThickness;
-                    float alphaInner = 1f - MathHelper.Clamp(distInner + 0.5f, 0f, 1f);
-
-                    float alphaFill = 1f - MathHelper.Clamp(x - fillX + 0.5f, 0f, 1f);
-
-                    Color currentFill = Color.Lerp(fillColor1, fillColor2, (float)x / w);
-                    if (!isCapped)
-                    {
-                        float glowFactor = 1f - MathHelper.Clamp(Math.Abs(x - glowPos) / glowWidth, 0f, 1f);
-                        currentFill = Color.Lerp(currentFill, Color.White, glowFactor * 0.5f);
-                    }
-                    else
-                    {
-                        currentFill = Color.Lerp(pulseColor, Color.White, pulse * 0.5f);
-                    }
-
-                    Color innerColor = Color.Lerp(backgroundColor, currentFill, alphaFill);
-                    Color rgb = Color.Lerp(borderColor, innerColor, alphaInner);
-
-                    _colorData[y * w + x] = rgb * alphaOuter;
-                }
+                // Fallback: draw a basic flat rectangle
+                spriteBatch.Draw(Terraria.GameContent.TextureAssets.MagicPixel.Value, bounds, fillColor1 * fillPercent);
+                return;
             }
 
-            _texture.SetData(_colorData);
-            spriteBatch.Draw(_texture, bounds.Location.ToVector2(), Color.White);
+            float cornerRadius = bounds.Height / 2f;
+
+            // Set shader parameters
+            _progressBarEffect.Parameters["uTime"]?.SetValue(Main.GlobalTimeWrappedHourly);
+            _progressBarEffect.Parameters["uResolution"]?.SetValue(new Vector2(bounds.Width, bounds.Height));
+            _progressBarEffect.Parameters["uBorderThickness"]?.SetValue(borderThickness);
+            _progressBarEffect.Parameters["uBorderRadius"]?.SetValue(cornerRadius);
+            _progressBarEffect.Parameters["uFillPercent"]?.SetValue(fillPercent);
+            _progressBarEffect.Parameters["uBackgroundColor"]?.SetValue(backgroundColor.ToVector4());
+            _progressBarEffect.Parameters["uBorderColor"]?.SetValue(borderColor.ToVector4());
+            _progressBarEffect.Parameters["uFillColor1"]?.SetValue(fillColor1.ToVector4());
+            _progressBarEffect.Parameters["uFillColor2"]?.SetValue(fillColor2.ToVector4());
+            _progressBarEffect.Parameters["uPulseColor"]?.SetValue(pulseColor.ToVector4());
+            _progressBarEffect.Parameters["uIsCapped"]?.SetValue(isCapped ? 1f : 0f);
+
+            RasterizerState rasterizer = spriteBatch.GraphicsDevice.RasterizerState;
+
+            // Start immediate mode for custom shader
+            spriteBatch.End();
+            spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend, SamplerState.LinearClamp, DepthStencilState.None, rasterizer, _progressBarEffect, Main.UIScaleMatrix);
+
+            // Draw a completely opaque blank texture, letting the shader determine the pixels natively
+            spriteBatch.Draw(Terraria.GameContent.TextureAssets.MagicPixel.Value, bounds, Color.White * 1.0f);
+
+            // Restore default spritebatch mode
+            spriteBatch.End();
+            spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.AnisotropicClamp, DepthStencilState.None, rasterizer, null, Main.UIScaleMatrix);
         }
     }
 }

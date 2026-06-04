@@ -53,6 +53,8 @@ public sealed class VitalChestTile : ModTile
 		TileObjectData.newTile.LavaDeath = false;
 		TileObjectData.addTile(Type);
 
+		RegisterItemDrop(ModContent.ItemType<VitalChestItem>());
+
 		AddMapEntry(new Color(180, 80, 110), Language.GetText("Mods.ElementalHearts.Tiles.VitalChestTile.MapEntry"), MapChestName);
 	}
 
@@ -94,7 +96,6 @@ public sealed class VitalChestTile : ModTile
 		// Spills any contained loot via vanilla logic, then drops the placeable chest item
 		// so the player can pick the chest back up like a wooden chest.
 		Chest.DestroyChest(i, j);
-		Item.NewItem(new EntitySource_TileBreak(i, j), i * 16, j * 16, 32, 32, ModContent.ItemType<VitalChestItem>());
 	}
 
 	public override bool RightClick(int i, int j)
