@@ -24,7 +24,7 @@ public class MilestonesUI
 
 		var player = Main.LocalPlayer.GetModPlayer<HeartConsumptionPlayer>();
 		bool shared = ElementalHeartsServerConfig.Instance.WorldGen.SharedProgression;
-		int totalConsumed = shared ? HeartConsumptionWorld.Consumed.Count : player.WorldHpApplied.Count;
+		int totalConsumed = shared ? HeartConsumptionWorld.Consumed.Count : player.CurrentWorldConsumedCount;
 		int elementalHp = player.ActiveHpBonus;
 
 		int totalBossHearts = 0;

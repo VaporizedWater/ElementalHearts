@@ -37,6 +37,26 @@ public sealed class HeartConsumptionPlayer : ModPlayer
 	/// </summary>
 	public HashSet<string> ClaimedMilestones { get; private set; } = new();
 
+	/// <summary>
+	/// Current-world views of the persisted ledgers. Tooltips, active abilities, and checklist
+	/// screens ask "does this world have this heart?" every frame; keeping the unprefixed ids
+	/// here avoids rebuilding <c>worldGuid|id</c> strings for those hot checks.
+	/// </summary>
+	private readonly HashSet<string> _currentWorldHpApplied = new();
+	private readonly HashSet<string> _currentWorldUnlocked = new();
+	private readonly HashSet<string> _currentWorldMilestones = new();
+	private string? _currentWorldCachePrefix;
+
+	/// <summary>Number of heart HP grants currently applied in this world.</summary>
+	public int CurrentWorldConsumedCount
+	{
+		get
+		{
+			EnsureCurrentWorldCaches();
+			return _currentWorldHpApplied.Count;
+		}
+	}
+
 	/// <summary>Cached sum of HP bonuses applicable in the current world.</summary>
 	private int _bonus;
 	public int ActiveHpBonus => _bonus;
@@ -80,11 +100,62 @@ public sealed class HeartConsumptionPlayer : ModPlayer
 
 	private static string WorldKey(string heartId) => WorldPrefix + heartId;
 
-	public bool IsConsumedLocally(string heartId) => WorldHpApplied.Contains(WorldKey(heartId));
-	public bool IsUnlockedLocally(string heartId) => WorldUnlocked.Contains(WorldKey(heartId));
+	private void EnsureCurrentWorldCaches()
+	{
+		string prefix = WorldPrefix;
+		if (_currentWorldCachePrefix == prefix)
+			return;
+
+		RebuildCurrentWorldCaches(prefix);
+	}
+
+	private void RebuildCurrentWorldCaches() => RebuildCurrentWorldCaches(WorldPrefix);
+
+	private void RebuildCurrentWorldCaches(string prefix)
+	{
+		_currentWorldHpApplied.Clear();
+		_currentWorldUnlocked.Clear();
+		_currentWorldMilestones.Clear();
+
+		CopyCurrentWorldIds(WorldHpApplied, _currentWorldHpApplied, prefix);
+		CopyCurrentWorldIds(WorldUnlocked, _currentWorldUnlocked, prefix);
+		CopyCurrentWorldIds(ClaimedMilestones, _currentWorldMilestones, prefix);
+		_currentWorldCachePrefix = prefix;
+	}
+
+	private static void CopyCurrentWorldIds(HashSet<string> stored, HashSet<string> current, string prefix)
+	{
+		foreach (string key in stored)
+		{
+			if (key.StartsWith(prefix, System.StringComparison.Ordinal))
+				current.Add(key[prefix.Length..]);
+		}
+	}
+
+	public bool IsConsumedLocally(string heartId)
+	{
+		EnsureCurrentWorldCaches();
+		return _currentWorldHpApplied.Contains(heartId);
+	}
+
+	public bool IsUnlockedLocally(string heartId)
+	{
+		EnsureCurrentWorldCaches();
+		return _currentWorldUnlocked.Contains(heartId);
+	}
 	
-	public bool IsMilestoneClaimedLocally(string milestoneId) => ClaimedMilestones.Contains(WorldKey(milestoneId));
-	public void ClaimMilestoneLocally(string milestoneId) => ClaimedMilestones.Add(WorldKey(milestoneId));
+	public bool IsMilestoneClaimedLocally(string milestoneId)
+	{
+		EnsureCurrentWorldCaches();
+		return _currentWorldMilestones.Contains(milestoneId);
+	}
+
+	public void ClaimMilestoneLocally(string milestoneId)
+	{
+		EnsureCurrentWorldCaches();
+		ClaimedMilestones.Add(WorldKey(milestoneId));
+		_currentWorldMilestones.Add(milestoneId);
+	}
 
 	/// <summary>
 	/// Apply any hearts consumed in the current world that this character hasn't yet
@@ -99,17 +170,20 @@ public sealed class HeartConsumptionPlayer : ModPlayer
 		if (!ElementalHeartsServerConfig.Instance.WorldGen.SharedProgression)
 			return;
 
+		EnsureCurrentWorldCaches();
 		int currentApplied = System.Math.Min(_bonus, HeartCapacitySystem.GetMaxCapacity() ?? int.MaxValue);
 		int oldBonus = _bonus;
 		foreach (string id in HeartConsumptionWorld.Unlocked)
 		{
 			WorldUnlocked.Add(WorldKey(id));
+			_currentWorldUnlocked.Add(id);
 		}
 
 		foreach (string id in HeartConsumptionWorld.Consumed)
 		{
 			if (WorldHpApplied.Add(WorldKey(id)))
 			{
+				_currentWorldHpApplied.Add(id);
 				int hp = HeartRegistry.GetHp(id);
 				_bonus += hp;
 				BumpHighestTier(id);
@@ -145,9 +219,13 @@ public sealed class HeartConsumptionPlayer : ModPlayer
 			return;
 
 		string prefix = WorldPrefix;
-		WorldHpApplied.RemoveWhere(key => key.StartsWith(prefix));
-		WorldUnlocked.RemoveWhere(key => key.StartsWith(prefix));
-		ClaimedMilestones.RemoveWhere(key => key.StartsWith(prefix));
+		WorldHpApplied.RemoveWhere(key => key.StartsWith(prefix, System.StringComparison.Ordinal));
+		WorldUnlocked.RemoveWhere(key => key.StartsWith(prefix, System.StringComparison.Ordinal));
+		ClaimedMilestones.RemoveWhere(key => key.StartsWith(prefix, System.StringComparison.Ordinal));
+		_currentWorldHpApplied.Clear();
+		_currentWorldUnlocked.Clear();
+		_currentWorldMilestones.Clear();
+		_currentWorldCachePrefix = prefix;
 		_bonus = 0;
 		HighestTier = null;
 	}
@@ -163,10 +241,12 @@ public sealed class HeartConsumptionPlayer : ModPlayer
 		if (Player.whoAmI != Main.myPlayer)
 			return;
 
+		EnsureCurrentWorldCaches();
 		string key = WorldKey(heartId);
 		if (!WorldHpApplied.Remove(key))
 			return;
 
+		_currentWorldHpApplied.Remove(heartId);
 		// Removing a grant can lower both the HP bonus and the highest tier, and HP is live
 		// (config-dependent), so re-derive both from the remaining current-world grants
 		// rather than trying to back out a single value.
@@ -179,9 +259,12 @@ public sealed class HeartConsumptionPlayer : ModPlayer
 			return false;
 
 		string id = heart.ConsumptionId;
+		EnsureCurrentWorldCaches();
 		WorldUnlocked.Add(WorldKey(id));
+		_currentWorldUnlocked.Add(id);
 		if (WorldHpApplied.Add(WorldKey(id)))
 		{
+			_currentWorldHpApplied.Add(id);
 			int currentApplied = System.Math.Min(_bonus, HeartCapacitySystem.GetMaxCapacity() ?? int.MaxValue);
 			int oldBonus = _bonus;
 			int hp = HeartRegistry.GetHp(id);
@@ -235,6 +318,8 @@ public sealed class HeartConsumptionPlayer : ModPlayer
 		if (!WorldHpApplied.Remove(key))
 			return false;
 
+		EnsureCurrentWorldCaches();
+		_currentWorldHpApplied.Remove(heart.ConsumptionId);
 		RecomputeBonus();
 		return true;
 	}
@@ -251,13 +336,9 @@ public sealed class HeartConsumptionPlayer : ModPlayer
 
 		_bonus = 0;
 		HighestTier = null;
-		string prefix = WorldPrefix;
-		foreach (string key in WorldHpApplied)
+		EnsureCurrentWorldCaches();
+		foreach (string heartId in _currentWorldHpApplied)
 		{
-			if (!key.StartsWith(prefix))
-				continue;
-
-			string heartId = key[prefix.Length..];
 			if (ElementalHeartsServerConfig.Instance.WorldGen.SharedProgression && !HeartConsumptionWorld.IsConsumed(heartId))
 				continue;
 
@@ -317,6 +398,7 @@ public sealed class HeartConsumptionPlayer : ModPlayer
 
 	public override void OnEnterWorld()
 	{
+		RebuildCurrentWorldCaches();
 		RecomputeBonus();
 		ReconcileWorldHp();
 	}
@@ -336,6 +418,10 @@ public sealed class HeartConsumptionPlayer : ModPlayer
 		WorldHpApplied.Clear();
 		WorldUnlocked.Clear();
 		ClaimedMilestones.Clear();
+		_currentWorldHpApplied.Clear();
+		_currentWorldUnlocked.Clear();
+		_currentWorldMilestones.Clear();
+		_currentWorldCachePrefix = null;
 		if (tag.ContainsKey("worldApplied"))
 		{
 			foreach (string id in tag.GetList<string>("worldApplied"))

@@ -25,6 +25,13 @@ namespace ElementalHearts.Content.Items.Hearts;
 /// </summary>
 public abstract class ElementalHeartItem : ModItem
 {
+	private const int MaxCachedGlowCopies = 64;
+	private static readonly Vector2[]?[] _glowUnitCircles = new Vector2[MaxCachedGlowCopies + 1][];
+	private static int _commonLifeShardType;
+
+	private string? _elementalPowerKey;
+	private string? _baseTooltipKey;
+
 	public abstract HeartTier Tier { get; }
 
 	/// <summary>
@@ -58,7 +65,7 @@ public abstract class ElementalHeartItem : ModItem
 	{
 		get
 		{
-			string key = $"Mods.{Mod.Name}.Items.{Name}.ElementalPower";
+			string key = _elementalPowerKey ??= $"Mods.{Mod.Name}.Items.{Name}.ElementalPower";
 			return Language.Exists(key)
 				? Language.GetTextValue(key)
 				: ElementalPowerRegistry.Get(Name);
@@ -134,6 +141,9 @@ public abstract class ElementalHeartItem : ModItem
 	/// <c>1</c> means a static single-frame sprite (the common case) and registers nothing.
 	/// </summary>
 	protected virtual int AnimationFrameCount => 1;
+
+	private static int CommonLifeShardType =>
+		_commonLifeShardType != 0 ? _commonLifeShardType : _commonLifeShardType = ModContent.ItemType<CommonLifeShard>();
 
 	protected int RecipeCost(int baseAmount)
 	{
@@ -447,12 +457,48 @@ public abstract class ElementalHeartItem : ModItem
 		glow *= baseAlpha * alphaMult * alphaPulse;
 
 		// A slow drift instead of a full spin — keeps the ring of copies from strobing.
+		Vector2[] unitCircle = GetGlowUnitCircle(copies);
 		float spin = Main.GlobalTimeWrappedHourly * 0.25f;
+		float spinSin = (float)Math.Sin(spin);
+		float spinCos = (float)Math.Cos(spin);
 		for (int i = 0; i < copies; i++)
 		{
-			Vector2 offset = ((MathHelper.TwoPi * i / copies) + spin).ToRotationVector2() * radius;
+			Vector2 unit = unitCircle[i];
+			Vector2 offset = new(
+				(unit.X * spinCos) - (unit.Y * spinSin),
+				(unit.X * spinSin) + (unit.Y * spinCos));
+			offset *= radius;
 			spriteBatch.Draw(texture, drawCenter + offset, sourceRect, glow, rotation, origin, scale, SpriteEffects.None, 0f);
 		}
+	}
+
+	/// <summary>
+	/// Unit offsets for the glow's copy ring. The copy count only changes by tier, so caching
+	/// the base circle avoids per-heart trigonometry in world and inventory draw passes.
+	/// </summary>
+	private static Vector2[] GetGlowUnitCircle(int copies)
+	{
+		if ((uint)copies <= MaxCachedGlowCopies)
+		{
+			Vector2[]? cached = _glowUnitCircles[copies];
+			if (cached != null)
+				return cached;
+
+			Vector2[] built = BuildGlowUnitCircle(copies);
+			_glowUnitCircles[copies] = built;
+			return built;
+		}
+
+		return BuildGlowUnitCircle(copies);
+	}
+
+	private static Vector2[] BuildGlowUnitCircle(int copies)
+	{
+		Vector2[] circle = new Vector2[copies];
+		for (int i = 0; i < copies; i++)
+			circle[i] = (MathHelper.TwoPi * i / copies).ToRotationVector2();
+
+		return circle;
 	}
 
 	public override void Update(ref float gravity, ref float maxFallSpeed)
@@ -525,10 +571,11 @@ public abstract class ElementalHeartItem : ModItem
 		// Hearts that opt out of HP entirely (buff-granting potion hearts while the
 		// world-wide effect is enabled) skip the HP line — printing "Permanently
 		// increases maximum life by 0" would be wrong and ugly.
-		if (HpGain > 0)
+		int hpGain = HpGain;
+		if (hpGain > 0)
 		{
 			tooltips.Add(new TooltipLine(Mod, "ElementalHeartHp",
-				Language.GetTextValue("Mods.ElementalHearts.Common.HpGain", HpGain)));
+				Language.GetTextValue("Mods.ElementalHearts.Common.HpGain", hpGain)));
 		}
 
 		bool isConsumed = ElementalHeartsServerConfig.Instance.WorldGen.SharedProgression
@@ -546,7 +593,7 @@ public abstract class ElementalHeartItem : ModItem
 
 		if (HideConsumedTooltip)
 		{
-			string tooltipKey = $"Mods.ElementalHearts.Items.{Name}.Tooltip";
+			string tooltipKey = _baseTooltipKey ??= $"Mods.ElementalHearts.Items.{Name}.Tooltip";
 			if (Language.Exists(tooltipKey))
 			{
 				string baseTooltip = Language.GetTextValue(tooltipKey);
@@ -574,7 +621,7 @@ public abstract class ElementalHeartItem : ModItem
 		{
 			int rate = Tier.GetShardYield();
 			tooltips.Add(new TooltipLine(Mod, "ElementalHeartGeneration",
-				$"Generates {rate} [i:{ModContent.ItemType<CommonLifeShard>()}] / day")
+				$"Generates {rate} [i:{CommonLifeShardType}] / day")
 			{
 				OverrideColor = new Color(150, 255, 150),
 			});
