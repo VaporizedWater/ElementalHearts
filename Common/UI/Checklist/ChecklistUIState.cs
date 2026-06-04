@@ -66,6 +66,8 @@ public class ChecklistUIState : UIState
 	private UIText _abilitiesActiveText;
 	private UIText _heartsActivatedText;
 	private UIAnimatedButton _claimBtn;
+	private UIAnimatedButton _sellBtn;
+	private UIElement _idleRightSection;
 	private BankBar _bankBar;
 
 	private UIFlexVertical _bodyFlex;
@@ -394,12 +396,33 @@ public class ChecklistUIState : UIState
 		};
 		rightSection.Append(_claimBtn);
 
+		// Unlocked only by the Piggy Bank Heart: cashes the banked shards out as coins (1 gold each)
+		// instead of claiming them as items. Tucked directly under "Claim" and attached/detached on
+		// demand in Update so it simply isn't there for characters without the heart.
+		_idleRightSection = rightSection;
+		_sellBtn = new UIAnimatedButton("Sell", 0.9f);
+		_sellBtn.FixedWidth = 90f;
+		_sellBtn.FixedHeight = 22f;
+		_sellBtn.Top.Set(63f, 0f);
+		_sellBtn.HAlign = 1f;
+		_sellBtn.Left.Set(0f, 0f);
+		_sellBtn.BaseColor = new Color(48, 38, 12);   // muted piggy-bank gold
+		_sellBtn.HoverColor = new Color(120, 95, 30);
+		_sellBtn.OnLeftClick += (evt, element) => {
+			var idlePlayer = Main.LocalPlayer.GetModPlayer<IdleShardPlayer>();
+			if (idlePlayer.GetPendingShards() > 0) {
+				Terraria.Audio.SoundEngine.PlaySound(Terraria.ID.SoundID.Coins);
+				idlePlayer.SellShards();
+				UpdateIdleText();
+			}
+		};
+
 		var btnActivateAll = CreateAdminButton("Unlock All");
 		btnActivateAll.OnLeftClick += (evt, element) => {
 			Terraria.Audio.SoundEngine.PlaySound(Terraria.ID.SoundID.MenuTick);
 			var player = Main.LocalPlayer.GetModPlayer<HeartConsumptionPlayer>();
 			bool shared = ElementalHeartsServerConfig.Instance.WorldGen.SharedProgression;
-			foreach (var heart in ModContent.GetContent<ElementalHeartItem>()) {
+			foreach (ElementalHeartItem heart in HeartRegistry.All) {
 				if (shared) HeartConsumptionWorld.TryConsume(heart);
 				else player.TryConsumeLocally(heart);
 			}
@@ -538,7 +561,7 @@ public class ChecklistUIState : UIState
 
 		UIList currentList = _tabMode == TabMode.Active ? _activeHeartList : _passiveHeartList;
 
-		var allHearts = ModContent.GetContent<ElementalHeartItem>().ToList();
+		IReadOnlyList<ElementalHeartItem> allHearts = HeartRegistry.All;
 		bool shared = ElementalHeartsServerConfig.Instance.WorldGen.SharedProgression;
 		var player = Main.LocalPlayer.GetModPlayer<HeartConsumptionPlayer>();
 
@@ -1144,6 +1167,34 @@ public class ChecklistUIState : UIState
 				_claimBtn.BaseColor = new Color(20, 26, 48);
 				_claimBtn.HoverColor = new Color(50, 65, 120);
 			}
+
+			// The "Sell" button exists only while the Piggy Bank ability is equipped. Attach/detach on
+			// the transition rather than every frame so we never churn the layout for nothing.
+			if (_sellBtn != null && _idleRightSection != null)
+			{
+				bool active = PiggyBankPlayer.IsActive(Main.LocalPlayer);
+				bool attached = _sellBtn.Parent == _idleRightSection;
+				if (active && !attached)
+				{
+					_idleRightSection.Append(_sellBtn);
+					_bankBar.Top.Set(42f, 0f);
+					_bankBar.Height.Set(28f, 0f);
+					_claimBtn.Top.Set(30f, 0f);
+					_claimBtn.FixedHeight = 24f;
+					_sellBtn.Top.Set(58f, 0f);
+					_sellBtn.FixedHeight = 24f;
+					_idleRightSection.Recalculate();
+				}
+				else if (!active && attached)
+				{
+					_sellBtn.Remove();
+					_bankBar.Top.Set(35f, 0f);
+					_bankBar.Height.Set(26f, 0f);
+					_claimBtn.Top.Set(35f, 0f);
+					_claimBtn.FixedHeight = 26f;
+					_idleRightSection.Recalculate();
+				}
+			}
 		}
 
 		if (Main.GameUpdateCount % 60 == 0)
@@ -1165,7 +1216,7 @@ public class ChecklistUIState : UIState
 		int abilitiesActive = 0;
 		int elementalHP = player.ActiveHpBonus;
 
-		var allHearts = ModContent.GetContent<ElementalHeartItem>().ToList();
+		IReadOnlyList<ElementalHeartItem> allHearts = HeartRegistry.All;
 		foreach(var heart in allHearts) {
 			bool isUnlocked = shared ? HeartConsumptionWorld.IsUnlocked(heart.ConsumptionId) : player.IsUnlockedLocally(heart.ConsumptionId);
 			if (isUnlocked) activatedHearts++;

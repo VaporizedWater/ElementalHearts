@@ -12,8 +12,9 @@
 # Before compiling it also runs the *texture half* of the heart validator (Ensure-HeartTextures):
 # every concrete heart MUST have a <ClassName>.png beside its .cs (RULE — see CLAUDE.md). A missing
 # one would hard-fail tML's content load, so this creates a blank placeholder and names it loudly,
-# keeping the build green until real art lands. (The content half — effect/power/HP — is checked at
-# runtime by the DEBUG-only HeartContentValidator.)
+# keeping the build green until real art lands. The content half (effect/power/HP/tier/namespace)
+# runs immediately after texture creation through tools\Audit-Hearts.ps1, so broken declarations
+# fail before tML starts compiling.
 #
 #   ./build.ps1            # filtered output, non-zero exit on a real error
 #   ./build.ps1 -Full      # unfiltered output (see the CS1705 noise too)
@@ -59,95 +60,13 @@ function Ensure-HeartTextures {
     }
 }
 
-function Ensure-ContentValidation {
-    $roots = @(
-        (Join-Path $PSScriptRoot 'Content\Items\Vanilla'),
-        (Join-Path $PSScriptRoot 'Content\Items\CrossModHearts')
-    )
-    $effectFile = Get-Content -LiteralPath (Join-Path $PSScriptRoot 'Common\Hearts\HeartEffectRegistry.cs') -Raw
-    $powerFile = Get-Content -LiteralPath (Join-Path $PSScriptRoot 'Common\Hearts\ElementalPowerRegistry.cs') -Raw
-
-    $missingEffect = @()
-    $thinPalette = @()
-    $missingPower = @()
-    $hpOnActiveAbility = @()
-    $errors = 0
-
-    foreach ($root in $roots) {
-        if (-not (Test-Path $root)) { continue }
-        foreach ($cs in Get-ChildItem -Path $root -Recurse -Filter *.cs) {
-            $text = Get-Content -LiteralPath $cs.FullName -Raw
-            if (-not $text) { continue }
-            
-            foreach ($m in [regex]::Matches($text, 'sealed\s+class\s+(\w+Heart)\b')) {
-                $heartName = $m.Groups[1].Value
-                
-                # Check Power Registry
-                if ($powerFile -notmatch "\[`"$heartName`"\]\s*=") {
-                    $missingPower += $heartName
-                }
-                
-                # Check Effect Registry (also color palette >= 3)
-                if ($effectFile -match "\[`"$heartName`"\]\s*=\s*HeartEffect\.Prismatic") {
-                    # passed
-                } elseif ($effectFile -match "\[`"$heartName`"\]\s*=\s*new\s+HeartEffect") {
-                    # passed
-                } elseif ($effectFile -match "\[`"$heartName`"\]\s*=\s*Eff\(([^)]+)\)") {
-                    $args = $matches[1]
-                    $commas = ([regex]::Matches($args, ',')).Count
-                    if ($commas -lt 8) {
-                        $thinPalette += $heartName
-                    }
-                } else {
-                    $missingEffect += $heartName
-                }
-
-                # Check active-ability HpGain
-                if ($text -match "public\s+override\s+bool\s+IsActiveAbility\s*=>\s*true;") {
-                    if ($text -notmatch "public\s+override\s+int\s+HpGain\s*=>\s*0;") {
-                        $hpOnActiveAbility += $heartName
-                    }
-                }
-            }
-        }
-    }
-
-    if ($missingEffect.Count -gt 0) {
-        Write-Host "ERROR: Missing from HeartEffectRegistry:" -ForegroundColor Red
-        $missingEffect | ForEach-Object { Write-Host "  $_" -ForegroundColor Red }
-        $errors++
-    }
-    if ($thinPalette.Count -gt 0) {
-        Write-Host "ERROR: Color-palette rule violation (fewer than 3 curated colors):" -ForegroundColor Red
-        $thinPalette | ForEach-Object { Write-Host "  $_" -ForegroundColor Red }
-        $errors++
-    }
-    if ($missingPower.Count -gt 0) {
-        Write-Host "ERROR: Missing from ElementalPowerRegistry:" -ForegroundColor Red
-        $missingPower | ForEach-Object { Write-Host "  $_" -ForegroundColor Red }
-        $errors++
-    }
-    if ($hpOnActiveAbility.Count -gt 0) {
-        Write-Host "ERROR: Active-ability hearts must override HpGain => 0:" -ForegroundColor Red
-        $hpOnActiveAbility | ForEach-Object { Write-Host "  $_" -ForegroundColor Red }
-        $errors++
-    }
-
-    if ($errors -gt 0) {
-        Write-Host "Content validation failed! Fix these errors to build." -ForegroundColor Red
-        exit 1
-    } else {
-        Write-Host 'Heart content: all rules validated cleanly.' -ForegroundColor DarkGray
-    }
-}
-
 $ErrorActionPreference = 'Stop'
 Push-Location $PSScriptRoot
 try {
     Ensure-HeartTextures
-    Ensure-ContentValidation
+    powershell -NoProfile -ExecutionPolicy Bypass -File (Join-Path $PSScriptRoot 'tools\Audit-Hearts.ps1')
 
-    $output = dotnet build ElementalHearts.csproj -nologo --verbosity quiet 2>&1 | Out-String -Stream
+    $output = dotnet build ElementalHearts.csproj -p:SkipHeartAudit=true -nologo --verbosity quiet 2>&1 | Out-String -Stream
 
     if ($output -match 'TML003') {
         Write-Host 'tModLoader is running - close it (or disable Elemental Hearts in-game) to build from the CLI.' -ForegroundColor Yellow

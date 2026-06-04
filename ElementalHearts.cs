@@ -11,6 +11,7 @@ using ElementalHearts.Common.Systems;
 using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.Audio;
+using Terraria.ID;
 using Terraria.ModLoader;
 
 namespace ElementalHearts;
@@ -69,9 +70,31 @@ public sealed class ElementalHearts : Mod
 				Main.player[whoAmI].GetModPlayer<IdleShardPlayer>().ClaimShards();
 				break;
 
+			case MessageType.SellIdleShards:
+				Main.player[whoAmI].GetModPlayer<IdleShardPlayer>().SellShards();
+				break;
+
 			case MessageType.SyncIdleShardTime:
 				IdleShardWorld.LastClaimTimeTicks = reader.ReadInt64();
 				break;
+
+			case MessageType.ParryStarted:
+			{
+				int parryingPlayer = reader.ReadByte();
+
+				// Light the pink glow + start puff on this client for the parrying player.
+				Main.player[parryingPlayer].GetModPlayer<ParryAbilityPlayer>().BeginGlow();
+
+				// Server relays to everyone else (skipping the player who sent it).
+				if (Main.netMode == NetmodeID.Server)
+				{
+					ModPacket packet = GetPacket();
+					packet.Write((byte)MessageType.ParryStarted);
+					packet.Write((byte)parryingPlayer);
+					packet.Send(-1, parryingPlayer);
+				}
+				break;
+			}
 		}
 	}
 

@@ -240,6 +240,7 @@ public static class HeartEffectRegistry
 		["KingSlimeHeart"]      = Eff(0, 160, 208, 96, 192, 224, 0, 80, 128),
 		["LunaticCultistHeart"] = Eff(255, 208, 64, 255, 255, 80, 144, 96, 80),
 		["MagnificationHeart"]  = Eff(192, 240, 255, 64, 128, 144, 80, 48, 160),  // looking-glass cyan + lens chroma
+		["PiggyBankHeart"]      = Eff(255, 150, 180, 255, 200, 60, 160, 60, 90),  // porcelain piggy pink + coin gold + rose shadow
 		["MartianSaucerHeart"]  = Eff(160, 160, 160, 32, 144, 160, 0, 64, 144),
 		["MoonLordHeart"]       = Eff(176, 144, 128, 32, 224, 144, 96, 64, 64),
 		["MourningWoodHeart"]   = Eff(240, 128, 0, 255, 160, 48, 48, 32, 80),

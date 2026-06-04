@@ -10,4 +10,7 @@
   <ItemGroup>
     <PackageReference Include="tModLoader.CodeAssist" Version="0.1.5" />
   </ItemGroup>
+  <Target Name="AuditHearts" BeforeTargets="BeforeBuild" Condition="'$(SkipHeartAudit)' != 'true'">
+    <Exec Command="powershell -NoProfile -ExecutionPolicy Bypass -File &quot;$(MSBuildProjectDirectory)\tools\Audit-Hearts.ps1&quot;" />
+  </Target>
 </Project>

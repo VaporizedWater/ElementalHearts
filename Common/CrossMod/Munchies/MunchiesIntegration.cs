@@ -70,7 +70,7 @@ internal static class MunchiesIntegration
 
 		try
 		{
-			foreach (ElementalHeartItem heart in ModContent.GetContent<ElementalHeartItem>())
+			foreach (ElementalHeartItem heart in HeartRegistry.All)
 			{
 				if (Terraria.Main.itemAnimations[heart.Type] != null)
 					_animatedHeartTypes[heart.Texture] = heart.Type;

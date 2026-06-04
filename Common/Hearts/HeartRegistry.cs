@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using ElementalHearts.Content.Items.Hearts;
 using Terraria.ModLoader;
 
@@ -13,11 +14,24 @@ namespace ElementalHearts.Common.Hearts;
 public static class HeartRegistry
 {
 	private static readonly Dictionary<string, ElementalHeartItem> _byId = new();
+	private static IReadOnlyList<ElementalHeartItem> _all = [];
+
+	/// <summary>
+	/// All loaded heart definitions, cached in a stable name order after <see cref="Build"/>.
+	/// Runtime UI and economy systems read this instead of repeatedly allocating from
+	/// <see cref="ModContent.GetContent{T}"/>; recipe registration still queries tML directly
+	/// because it runs before this registry is built.
+	/// </summary>
+	public static IReadOnlyList<ElementalHeartItem> All => _all;
 
 	public static void Build()
 	{
 		_byId.Clear();
-		foreach (ElementalHeartItem heart in ModContent.GetContent<ElementalHeartItem>())
+		_all = ModContent.GetContent<ElementalHeartItem>()
+			.OrderBy(heart => heart.Name)
+			.ToArray();
+
+		foreach (ElementalHeartItem heart in _all)
 			_byId[heart.ConsumptionId] = heart;
 	}
 

@@ -30,7 +30,7 @@ public class MilestonesUI
 		int totalBossHearts = 0;
 		bool hasMythic = false;
 
-		var allHearts = ModContent.GetContent<ElementalHeartItem>().ToList();
+		IReadOnlyList<ElementalHeartItem> allHearts = HeartRegistry.All;
 		foreach (var heart in allHearts)
 		{
 			bool isConsumed = shared ? HeartConsumptionWorld.IsConsumed(heart.ConsumptionId) : player.IsConsumedLocally(heart.ConsumptionId);

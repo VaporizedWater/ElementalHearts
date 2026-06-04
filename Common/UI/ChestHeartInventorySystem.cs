@@ -28,7 +28,7 @@ public sealed class ChestHeartInventorySystem : ModSystem
 		IL_ChestUI.DrawName += ChestUI_DrawName_IL;
 		IL_ChestUI.DrawButtons += ChestUI_DrawButtons_IL;
 		IL_ChestUI.DrawSlots += ChestUI_DrawSlots_IL;
-		IL_Player.ItemSpace += PlayerItemSpace_IL;
+		On_Player.ItemSpace += PlayerItemSpace_On;
 	}
 
 	public override void Unload()
@@ -39,7 +39,7 @@ public sealed class ChestHeartInventorySystem : ModSystem
 		IL_ChestUI.DrawName -= ChestUI_DrawName_IL;
 		IL_ChestUI.DrawButtons -= ChestUI_DrawButtons_IL;
 		IL_ChestUI.DrawSlots -= ChestUI_DrawSlots_IL;
-		IL_Player.ItemSpace -= PlayerItemSpace_IL;
+		On_Player.ItemSpace -= PlayerItemSpace_On;
 	}
 
 	public static float GetMainInventoryScale()
@@ -172,41 +172,25 @@ public sealed class ChestHeartInventorySystem : ModSystem
 	}
 
 	/// <summary>
-	/// IL-patches <c>Player.ItemSpace(Item)</c> so that the returned bool is OR-combined
-	/// with our extra-slot space check. When this returns <see langword="true"/>, the engine
-	/// attracts the item toward the player and eventually calls <c>OnPickup</c>, where
+	/// Detours <c>Player.ItemSpace(Item)</c> to OR-combine the vanilla result with our
+	/// extra-slot space check. When this returns <see langword="true"/>, the engine attracts
+	/// the item toward the player and eventually calls <c>OnPickup</c>, where
 	/// <see cref="ChestHeartPickupGlobalItem"/> absorbs it into the extra slots.
-	///
-	/// We patch at every <c>ret</c> instruction: if vanilla returned false we check whether
-	/// our extra slots have room and return true instead.
 	/// </summary>
-	private static void PlayerItemSpace_IL(ILContext il)
+	private static Player.ItemSpaceStatus PlayerItemSpace_On(On_Player.orig_ItemSpace orig, Player self, Item item)
 	{
-		var c = new ILCursor(il);
+		Player.ItemSpaceStatus vanillaResult = orig(self, item);
+		if (vanillaResult.CanTakeItem) return vanillaResult; // vanilla already has space — nothing to do
+		if (self.whoAmI != Main.myPlayer) return vanillaResult;
 
-		// Player.ItemSpace(Item item) — `this` is arg 0, `item` is arg 1.
-		// Strategy: after every ret, intercept the bool on the stack.
-		// Simpler: find the single return point and emit our OR before it.
-		// We'll wrap the whole body: at every point that would return false,
-		// also check our extra slots.
-		while (c.TryGotoNext(MoveType.Before, i => i.MatchRet()))
-		{
-			// Stack at this point has the bool return value on top.
-			// We want:  result = result || ExtraHasSpace(this, item)
-			// Emit:  ldarg.0 (this / Player), ldarg.1 (item), call helper, or
-			c.Emit(OpCodes.Ldarg_0);   // Player (this)
-			c.Emit(OpCodes.Ldarg_1);   // Item
-			c.EmitDelegate<Func<bool, Player, Item, bool>>((vanillaResult, player, item) =>
-			{
-				if (vanillaResult) return true; // vanilla already has space — nothing to do
-				if (player.whoAmI != Main.myPlayer) return false;
+		var cp = self.GetModPlayer<ChestHeartPlayer>();
+		if (!cp.Enabled) return vanillaResult;
 
-				var cp = player.GetModPlayer<ChestHeartPlayer>();
-				if (!cp.Enabled) return false;
+		// Signal extra-slot space so the item is attracted toward the player.
+		if (ChestHeartPickupGlobalItem.ExtraInventoryHasSpaceStatic(cp, item))
+			return new Player.ItemSpaceStatus(true, vanillaResult.ItemIsGoingToVoidVault);
 
-				return ChestHeartPickupGlobalItem.ExtraInventoryHasSpaceStatic(cp, item);
-			});
-		}
+		return vanillaResult;
 	}
 
 	private void DrawTrashItemSlot_IL(ILContext il)
@@ -270,9 +254,11 @@ public sealed class ChestHeartInventorySystem : ModSystem
 
 		if (_cachedAuroraEffect != null)
 		{
-			c1 *= 0.6f;
-			c2 *= 0.6f;
-			c3 *= 0.6f;
+			// Kept dim so the aurora reads as a faint glassy tint behind the slot,
+			// never competing with the item sprite sitting on top of it.
+			c1 *= 0.38f;
+			c2 *= 0.38f;
+			c3 *= 0.38f;
 
 			_cachedAuroraEffect.Parameters["uTime"]?.SetValue(Main.GlobalTimeWrappedHourly);
 			_cachedAuroraEffect.Parameters["uResolution"]?.SetValue(new Vector2(drawRect.Width, drawRect.Height));

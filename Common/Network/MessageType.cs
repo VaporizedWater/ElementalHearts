@@ -27,4 +27,17 @@ public enum MessageType : byte
 	/// Sent by the server to sync the LastClaimTimeTicks to all clients.
 	/// </summary>
 	SyncIdleShardTime = 5,
+
+	/// <summary>
+	/// Sent by a client to request cashing out pending idle shards as coins (the Piggy Bank
+	/// Heart's "Sell" action). Server-authoritative, mirroring <see cref="ClaimIdleShards"/>.
+	/// </summary>
+	SellIdleShards = 6,
+
+	/// <summary>
+	/// A player began a Deerclops-Heart parry. Carries the parrying player's whoAmI so every other
+	/// client can light up the same pink glow (see <see cref="Players.ParryAbilityPlayer"/>). Relayed
+	/// by the server to all clients except the originator.
+	/// </summary>
+	ParryStarted = 7,
 }

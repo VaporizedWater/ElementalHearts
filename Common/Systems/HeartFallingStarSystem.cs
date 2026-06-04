@@ -70,7 +70,7 @@ public class HeartFallingStarSystem : ModSystem
 		HeartTier currentTier = (HeartTier)AnimateProgressionSystem.UnlockedTier;
 		List<ElementalHeartItem> validHearts = new List<ElementalHeartItem>();
 
-		foreach (ElementalHeartItem heart in ModContent.GetContent<ElementalHeartItem>())
+		foreach (ElementalHeartItem heart in HeartRegistry.All)
 		{
 			if (heart.Tier == currentTier)
 			{

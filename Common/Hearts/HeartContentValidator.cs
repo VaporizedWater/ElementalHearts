@@ -1,5 +1,7 @@
 #if DEBUG
+using System;
 using System.Collections.Generic;
+using System.Linq;
 using ElementalHearts.Content.Items.Hearts;
 using Terraria.ModLoader;
 
@@ -26,9 +28,10 @@ internal static class HeartContentValidator
 		var thinPalette = new List<string>();
 		var missingPower = new List<string>();
 		var hpOnActiveAbility = new List<string>();
+		var tierFolderMismatch = new List<string>();
 		int total = 0;
 
-		foreach (ElementalHeartItem heart in ModContent.GetContent<ElementalHeartItem>())
+		foreach (ElementalHeartItem heart in HeartRegistry.All)
 		{
 			total++;
 
@@ -55,15 +58,38 @@ internal static class HeartContentValidator
 			// ability — a real balance bug, caught here.
 			if (heart.IsActiveAbility && heart.HpGain != 0)
 				hpOnActiveAbility.Add(heart.Name);
+
+			if (HasTierFolderMismatch(heart))
+				tierFolderMismatch.Add($"{heart.Name} ({heart.Tier}, namespace {heart.GetType().Namespace})");
 		}
 
 		Report(mod, "no HeartEffectRegistry entry (using hash-derived fallback colour)", missingEffect);
 		Report(mod, "fewer than 3 curated palette colours (color-palette rule)", thinPalette);
 		Report(mod, "no ElementalPowerRegistry entry (power tooltip will show its class name)", missingPower);
 		Report(mod, "is an active-ability heart but grants HP (must override HpGain => 0)", hpOnActiveAbility);
+		Report(mod, "has a tier/folder namespace mismatch", tierFolderMismatch);
 
-		if (missingEffect.Count == 0 && thinPalette.Count == 0 && missingPower.Count == 0 && hpOnActiveAbility.Count == 0)
+		if (missingEffect.Count == 0 && thinPalette.Count == 0 && missingPower.Count == 0 && hpOnActiveAbility.Count == 0 && tierFolderMismatch.Count == 0)
 			mod.Logger.Info($"HeartContentValidator: all {total} hearts validated cleanly.");
+	}
+
+	private static bool HasTierFolderMismatch(ElementalHeartItem heart)
+	{
+		string[] namespaceParts = (heart.GetType().Namespace ?? string.Empty).Split('.');
+		string declaredTier = heart.Tier.ToString();
+		string[] tierNames = Enum.GetNames(typeof(HeartTier));
+
+		foreach (string part in namespaceParts)
+		{
+			if (tierNames.Contains(part) && part != declaredTier)
+				return true;
+		}
+
+		int vanillaIndex = Array.IndexOf(namespaceParts, "Vanilla");
+		if (vanillaIndex >= 0 && vanillaIndex + 1 < namespaceParts.Length && tierNames.Contains(namespaceParts[vanillaIndex + 1]))
+			return namespaceParts[vanillaIndex + 1] != declaredTier;
+
+		return false;
 	}
 
 	private static void Report(Mod mod, string problem, List<string> hearts)

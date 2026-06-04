@@ -192,6 +192,7 @@ internal static class ElementalPowerRegistry
 		["KingSlimeHeart"] = "long live the king",
 		["LunaticCultistHeart"] = "cult classic",
 		["MagnificationHeart"] = "enhance",      // the CSI "zoom… enhance" — it literally magnifies
+		["PiggyBankHeart"] = "bringing home the bacon",  // pig + payday — it pays you to do nothing
 		["MartianSaucerHeart"] = "phone home",
 		["MoonLordHeart"] = "over the moon",
 		["MourningWoodHeart"] = "good mourning",

@@ -3,7 +3,7 @@
 #
 # Heart display names that aren't listed here are auto-generated from the class name
 # on first build (CamelCase splits into spaced words). Only override an entry when
-# the auto-generated form would be wrong — missing apostrophe, lowercase "of"/"the"/
+# the auto-generated form would be wrong: missing apostrophe, lowercase "of"/"the"/
 # "and", or a vanilla-name correction.
 #
 # ElementalPower (optional per heart) overrides the curated name from ElementalPowerRegistry.
@@ -136,7 +136,7 @@ Configs: {
 			Tooltip:
 				'''
 				Load hearts themed around Calamity Mod content.
-				Disabling removes them entirely — they can't be crafted, dropped, or found.
+				Disabling removes them entirely. They can't be crafted, dropped, or found.
 				Requires a reload.
 				'''
 		}
@@ -146,7 +146,7 @@ Configs: {
 			Tooltip:
 				'''
 				Load hearts themed around Thorium Mod content.
-				Disabling removes them entirely — they can't be crafted, dropped, or found.
+				Disabling removes them entirely. They can't be crafted, dropped, or found.
 				Requires a reload.
 				'''
 		}
@@ -156,7 +156,7 @@ Configs: {
 			Tooltip:
 				'''
 				Load hearts themed around Consolaria content.
-				Disabling removes them entirely — they can't be crafted, dropped, or found.
+				Disabling removes them entirely. They can't be crafted, dropped, or found.
 				Requires a reload.
 				'''
 		}
@@ -343,7 +343,7 @@ Configs: {
 			Label: Shared Progression
 			Tooltip:
 				'''
-				When on, consuming a heart marks it used for the whole world — every player draws
+				When on, consuming a heart marks it used for the whole world, every player draws
 				from one shared collection and each heart can only ever be consumed once.
 				When off, every character keeps their own independent progress.
 				'''
@@ -381,7 +381,7 @@ Configs: {
 
 		SystemEnabled: {
 			Label: Enable Life Shard System
-			Tooltip: Master switch for the entire Life Shard system — both damage-based drops and all shard crafting. Turn this off to disable it completely.
+			Tooltip: Master switch for the entire Life Shard system: both damage-based drops and all shard crafting. Turn this off to disable it completely.
 		}
 
 		CommonDropChance: {
@@ -664,7 +664,7 @@ Configs: {
 
 		LifeFruitSeedChance: {
 			Label: Life Fruit Seed Chance (%)
-			Tooltip: Chance an extractinated Life Fruit yields a Life Fruit Seed. Life Fruit extractination only produces seeds — a missed roll consumes the fruit for nothing.
+			Tooltip: Chance an extractinated Life Fruit yields a Life Fruit Seed. Life Fruit extractination only produces seeds. A missed roll consumes the fruit for nothing.
 		}
 
 		Tooltip: ""
@@ -845,52 +845,52 @@ Configs: {
 		}
 
 		PreBossCapacity: {
-			Label: Cap — Pre-Boss
+			Label: Cap: Pre-Boss
 			Tooltip: Maximum heart HP bonus allowed before any boss is defeated.
 		}
 
 		PostSkeletronCapacity: {
-			Label: Cap — After Skeletron
+			Label: Cap: After Skeletron
 			Tooltip: Maximum heart HP bonus allowed after Skeletron is defeated.
 		}
 
 		PostWoFCapacity: {
-			Label: Cap — After Wall of Flesh
+			Label: Cap: After Wall of Flesh
 			Tooltip: Maximum heart HP bonus allowed after the Wall of Flesh (entering Hardmode).
 		}
 
 		Post1MechCapacity: {
-			Label: Cap — After 1 Mech Boss
+			Label: Cap: After 1 Mech Boss
 			Tooltip: Maximum heart HP bonus allowed after defeating one Mechanical Boss.
 		}
 
 		Post2MechsCapacity: {
-			Label: Cap — After 2 Mech Bosses
+			Label: Cap: After 2 Mech Bosses
 			Tooltip: Maximum heart HP bonus allowed after defeating two Mechanical Bosses.
 		}
 
 		Post3MechsCapacity: {
-			Label: Cap — After 3 Mech Bosses
+			Label: Cap: After 3 Mech Bosses
 			Tooltip: Maximum heart HP bonus allowed after defeating all three Mechanical Bosses.
 		}
 
 		PostPlanteraCapacity: {
-			Label: Cap — After Plantera
+			Label: Cap: After Plantera
 			Tooltip: Maximum heart HP bonus allowed after Plantera is defeated.
 		}
 
 		PostGolemCapacity: {
-			Label: Cap — After Golem
+			Label: Cap: After Golem
 			Tooltip: Maximum heart HP bonus allowed after Golem is defeated.
 		}
 
 		PostCultistCapacity: {
-			Label: Cap — After Lunatic Cultist
+			Label: Cap: After Lunatic Cultist
 			Tooltip: Maximum heart HP bonus allowed after the Lunatic Cultist is defeated.
 		}
 
 		PostMoonLordCapacity: {
-			Label: Cap — After Moon Lord
+			Label: Cap: After Moon Lord
 			Tooltip: Maximum heart HP bonus allowed after Moon Lord is defeated.
 		}
 
@@ -950,19 +950,19 @@ Items: {
 	EaterOfWorldsHeart: {
 		DisplayName: Eater of World's Heart
 		Tooltip: ""
-		Lore: Corrupted and writhing with vile energies. It draws strength from the decay of the land.
+		Lore: Pulled segment by reluctant segment from the longest, hungriest worm the corruption ever grew. It beats with a slow, decaying rhythm that feeds on rot and somehow calls it a meal plan. One of many hearts you will swallow without once asking where it has been.
 	}
 
 	AcornHeart: {
 		DisplayName: Acorn Heart
 		Tooltip: Permanently increases tree loot by 25%
-		Lore: A small, sturdy wooden heart that beats with the latent potential of a towering oak. It carries the humble, grounding essence of the forest floor.
+		Lore: Every towering oak begins as something small enough to lose in a pocket, and this seed never forgot it. It beats with quiet, patient ambition, already dreaming of the forest it fully intends to become. Tiny, humble, and carrying more potential than most hearts twice its size.
 	}
 
 	GemcornHeart: {
 		DisplayName: Gemcorn Heart
 		Tooltip: Permanently allows you to harvest gems from trees
-		Lore: Glittering with subterranean wealth, it holds the crystalline life force of the cavern depths. It thrums with a sharp, resonant chime.
+		Lore: Plant the right seed in the right gem and the caverns grow you a tree that drips treasure, which this heart finds perfectly reasonable. It beats with a sharp crystalline chime, smug about being the only seed that pays dividends. Greedy, glittering, and proud of every single carat.
 	}
 
 	CommonMenacingHeart: {
@@ -1093,355 +1093,355 @@ Items: {
 	TungstenHeart: {
 		Tooltip: ""
 		DisplayName: Tungsten Heart
-		Lore: A robust, greenish-gray metallic heart of exceptional durability. It fortifies the body with unyielding, stubborn strength.
+		Lore: Heavier than it has any right to be and quietly tougher than the silver it politely stands in for. This heart beats with a dense, stubborn rhythm that refuses to be impressed by anything. Unflashy, hard to break, and entirely at peace with being underestimated.
 	}
 
 	TopazHeart: {
 		Tooltip: ""
 		DisplayName: Topaz Heart
-		Lore: A warm, golden-yellow gemstone heart that glimmers like desert sand. It pulses with a dry, enduring resilience.
+		Lore: The humble amber gem the caverns hand out early, warm as desert light and twice as patient. It beats with a dry, golden glow that asks for nothing and quietly outlasts everything. A modest treasure that earned its place long before the fancier stones showed up.
 	}
 
 	TinHeart: {
 		Tooltip: ""
 		DisplayName: Tin Heart
-		Lore: A lightweight, dull metallic heart that dents easily. It provides a meager but welcome spark of endurance for the novice.
+		Lore: Copper's slightly sturdier cousin, here to prove that first ore wasn't a one-time fluke. It beats with a light, eager rhythm, thrilled simply to have been picked at all. Modest, willing, and far prouder than its weight has any right to be.
 	}
 
 	SilverHeart: {
 		Tooltip: ""
 		DisplayName: Silver Heart
-		Lore: A sleek, shining metallic heart that reflects the moonlight. It beats with a sharp, clean, and elegant rhythm.
+		Lore: Cool, bright, and elegant in the understated way only silver ever manages. This heart beats with a clean, polished rhythm that catches the moonlight and decides to keep it. Refined enough to feel expensive, honest enough never to pretend it's gold.
 	}
 
 	SapphireHeart: {
 		Tooltip: ""
 		DisplayName: Sapphire Heart
-		Lore: A brilliant blue gemstone heart that feels like a calm ocean breeze. It channels the serene, deep magic of subterranean lakes.
+		Lore: A deep blue gem dredged from the quiet places where the underground keeps its calm. It beats with a cool, serene rhythm, entirely untroubled by the chaos happening directly above it. Precious, composed, and far too dignified to ever panic.
 	}
 
 	RubyHeart: {
 		Tooltip: ""
 		DisplayName: Ruby Heart
-		Lore: A deep red, crystalline heart glowing with an inner fire. It thrums with a passionate, royal vitality.
+		Lore: A red gem that glows like it is cradling a small, very well-mannered fire. This heart beats with passionate, royal warmth, certain it is the most important stone in any room. Bold, radiant, and almost entirely correct about that.
 	}
 
 	PlatinumHeart: {
 		Tooltip: ""
 		DisplayName: Platinum Heart
-		Lore: A brilliantly shining heart of pure, refined metal. It pulses with an elite, almost indestructible life force.
+		Lore: Gold's wealthier alternate, doing the exact same job while looking faintly superior about it. This heart beats with refined, nearly indestructible confidence, the kind you get from winning a lottery you never entered. Elite, gleaming, and far too polished to apologize for either.
 	}
 
 	LeadHeart: {
 		Tooltip: ""
 		DisplayName: Lead Heart
-		Lore: A dense, toxic-looking heart with a dull, heavy sheen. It grants a sluggish but incredibly resilient vitality.
+		Lore: Iron's denser, heavier twin, the one that turns up when the world hands you the moody version. It beats with a slow, weighty thud that picks resilience over speed every single time. Sluggish, sturdy, and completely unbothered by your opinion of it.
 	}
 
 	IronHeart: {
 		Tooltip: ""
 		DisplayName: Iron Heart
-		Lore: A cold, unyielding heart forged from sturdy gray metal. It beats with the steady, dependable rhythm of industrial progress.
+		Lore: The first metal that ever made you feel like you owned a real anvil instead of a hopeful rock. This heart beats with the steady, dependable rhythm of actual progress finally arriving. The honest workhorse your whole collection quietly owes its early survival to.
 	}
 
 	GoldHeart: {
 		Tooltip: ""
 		DisplayName: Gold Heart
-		Lore: A lustrous, valuable heart that sparkles with undeniable opulence. It grants a triumphant vitality worthy of a seasoned explorer.
+		Lore: By now you've banked enough hearts to fill a vault, and gold is the one that finally looks the part. It pumps with the smug, unhurried confidence of something worth more than the meal it is about to become. Down it goes, richer than anything else you own, and far too dignified to complain.
 	}
 
 	EnchantedHeart: {
 		Tooltip: ""
 		DisplayName: Enchanted Heart
-		Lore: A mystical heart shimmering with a pale, celestial light. It grants the elusive, magical vitality sought by many adventurers.
+		Lore: Shimmering with the pale, mysterious light usually reserved for swords buried dramatically in stone. This heart beats with a quiet, magical rhythm that hints it knows a secret or two. Elusive, glowing, and convinced it was always destined for greater things.
 	}
 
 	EmeraldHeart: {
 		Tooltip: ""
 		DisplayName: Emerald Heart
-		Lore: A brilliant, green-gemstone heart reflecting the lush canopies of the jungle. It pulses with the vibrant, wild life force of nature.
+		Lore: A brilliant green gem carrying the wild, overgrown spirit of the jungle in crystal form. It beats with a vibrant, living rhythm, greener than anything that has business being a mineral. Lush, precious, and bursting with far more life than its tier lets on.
 	}
 
 	CopperHeart: {
 		Tooltip: ""
 		DisplayName: Copper Heart
-		Lore: A heavy, metallic heart with a distinct reddish sheen. It thrums with the reliable, rudimentary strength of a beginner's journey.
+		Lore: Somewhere along the line you decided that eating hearts made of metal was normal, and copper is where that proud tradition began. It beats with the scrappy nerve of a first step nobody photographs but everybody takes. Swallow it and pretend, like the rest of us, that this is a perfectly reasonable thing to do.
 	}
 
 	AmethystHeart: {
 		Tooltip: ""
 		DisplayName: Amethyst Heart
-		Lore: A beautiful crystalline heart with deep violet hues. It resonates with a faint, grounding magic from the geode caves.
+		Lore: The first gem the caverns ever pressed into your hand, violet and quietly grounding. It beats with a faint, steadying hum drawn straight from the geode-studded dark. Humble among gems, yet the one that quietly started your entire glittering habit.
 	}
 
 	WormHeart: {
 		Tooltip: ""
 		DisplayName: Worm Heart
-		Lore: A disgusting, segmented heart torn from the belly of a dirt-dwelling behemoth. It beats with an insatiable hunger for flesh.
+		Lore: Wrenched from something long, segmented, and far too hungry for its own good. This heart beats with an insatiable, squirming rhythm that wants flesh and isn't shy about saying so. Repulsive, relentless, and weirdly admirable in its single-minded appetite.
 	}
 
 	SoulOfNightHeart: {
 		Tooltip: ""
 		DisplayName: Soul Of Night Heart
-		Lore: A pulsating core forged in the deepest chasms of the underground. It echoes with the whispers of terrifying dark entities.
+		Lore: Distilled from the whispering dark of the deepest hardmode caverns, where braver explorers than you have turned back. It beats with a low, ominous pulse, humming secrets nobody actually asked to hear. Sinister, valuable, and quietly thrilled to be feared.
 	}
 
 	SoulOfLightHeart: {
 		Tooltip: ""
 		DisplayName: Soul Of Light Heart
-		Lore: Blazing with the pure, untainted brilliance of the Hallow, this crystalline heart dispels all shadows. It beats to the rhythm of absolute, blinding order.
+		Lore: Wrung from the blinding brilliance of the Hallow, where everything is a touch too cheerful to fully trust. It beats with a pure, radiant rhythm that scatters shadow whether the shadow agreed to it or not. Holy, dazzling, and utterly certain it is on the correct side of history.
 	}
 
 	SoulOfFlightHeart: {
 		Tooltip: ""
 		DisplayName: Soul Of Flight Heart
-		Lore: Defying gravity with a serene, upward pull, this radiant heart is infused with the essence of Wyverns. It promises dominion over the skies.
+		Lore: Harvested from the wyverns that patrol the clouds and deeply resent anyone joining them up there. This heart beats with a light upward tug, forever convinced it belongs in the sky rather than your hand. Weightless, restless, and quietly plotting its next takeoff.
 	}
 
 	PalladiumHeart: {
 		Tooltip: ""
 		DisplayName: Palladium Heart
-		Lore: A warm, orange core that fiercely attempts to heal any wounds it sustains. It thrums with the regenerative blessing of ancient earth.
+		Lore: The cheerful orange option from the first batch of hardmode ore, eager to patch you up whether you asked or not. It beats with a warm, regenerating pulse that simply refuses to stay injured. Bright, stubbornly helpful, and proud to be the friendliest metal you'll swallow all run.
 	}
 
 	OrichalcumHeart: {
 		Tooltip: ""
 		DisplayName: Orichalcum Heart
-		Lore: Beating with a vibrant, pink energy, this delicate yet powerful heart spawns petals of destruction. It blossoms with a fiercely beautiful magic.
+		Lore: Pink, pretty, and far deadlier than its color lets anyone assume. This heart beats with a blossoming rhythm that drops flower petals on everything it dislikes. Delicate to look at, ruthless in practice, and thrilled by the contrast.
 	}
 
 	MythrilHeart: {
 		Tooltip: ""
 		DisplayName: Mythril Heart
-		Lore: Light, durable, and humming with a strange arcane frequency, this verdant heart embodies hardmode resilience. It glows with the quiet majesty of a shattered altar.
+		Lore: The mid-journey metal you finally smelt once a Demon Altar has been dramatically shattered. It beats with a light, arcane hum, quietly confident that it's the upgrade which actually mattered. Verdant, capable, and a little smug about being the turning point.
 	}
 
 	MeteoriteHeart: {
 		Tooltip: ""
 		DisplayName: Meteorite Heart
-		Lore: Still smoking from atmospheric reentry, this alien heart hums with extraterrestrial heat. It channels the destructive force of a fallen star.
+		Lore: A piece of the sky fell an unfathomable distance purely so that you could one day eat it in heart form. It beats with the warm ember glow of a very long journey finally ended. Treat it with reverence; it came further than anything else in the collection just to become a snack.
 	}
 
 	IchorHeart: {
 		Tooltip: ""
 		DisplayName: Ichor Heart
-		Lore: Dripping with the golden blood of gods, this vile heart shreds the defenses of your foes. It pulses with a sickening, corrosive divinity.
+		Lore: Golden ichor wept from the Crimson's nastier residents, sticky and faintly divine. This heart beats while dribbling a corrosive shine that strips the armor off anything standing too close. Holy, revolting, and weirdly proud of being both at once.
 	}
 
 	HellstoneHeart: {
 		Tooltip: ""
 		DisplayName: Hellstone Heart
-		Lore: Forged in the searing depths of the Underworld, this molten core is perpetually ablaze. It holds the searing agony of tortured souls.
+		Lore: You went to the lowest, most flammable place imaginable and returned with a heart that is, somehow, still on fire. It beats with molten resolve, warm enough to remind your hand that this was a choice you made freely. It demands courage, honors the bold, and will not be apologizing for the burns.
 	}
 
 	DiscordHeart: {
 		Tooltip: Grants a hotkey to teleport to the cursor position at the cost of life
 		DisplayName: Discord Heart
-		Lore: Unstable and wildly chaotic, this fractured core yearns to bend space. It beats with the terrifying thrill of teleportation and madness.
+		Lore: Cracked loose from the same chaotic magic that lets you blink across the map and pay for it in pure confusion. This heart beats out of sync with space itself, here one instant and a regrettable distance away the next. Unstable, dizzying, and entirely worth the headache.
 	}
 
 	EncumberingHeart: {
 		Tooltip: Permanently unlocks ground pounding. Press down in midair to perform a ground pound.
 		DisplayName: Encumbering Heart
-		Lore: A bizarrely heavy heart that seems to weigh down the very soul. Its dense energy is a burden, yet undeniably powerful.
+		Lore: So absurdly heavy it taught its owner to fall with purpose instead of merely falling. This heart beats with a slow, weighted thud that would rather crash down than stand still. A burden, technically, but the kind you eventually learn to aim.
 	}
 
 	TreasureHeart: {
 		Tooltip: Permanently increases item pickup range.
 		DisplayName: Treasure Heart
-		Lore: A glittering, magnificent heart overflowing with unimaginable wealth. It bestows a glorious vitality matched only by its immense value.
+		Lore: Crammed with so much loose treasure it drags coins toward you out of sheer greed. This heart beats with a jingling, magnetic rhythm that hates leaving anything on the ground. Glorious, grabby, and absolutely certain that counts as a virtue.
 	}
 
 	DiamondHeart: {
 		Tooltip: ""
 		DisplayName: Diamond Heart
-		Lore: Flawless and brilliantly clear, this prismatic heart refracts pure energy. It commands the highest tier of gemstone magic with unyielding brilliance.
+		Lore: Naturally the prettiest gem also makes the most insufferably perfect heart, flawless under any pressure you apply. It beats with cool, faceted poise, refracting light like it is posing for a portrait nobody asked it to sit for. Rare, radiant, and fully aware it is the finest thing you will swallow today.
 	}
 
 	DemoniteHeart: {
 		Tooltip: ""
 		DisplayName: Demonite Heart
-		Lore: Carved from the corrupted stone of the Eater of Worlds, this shadowy heart radiates a sinister, purple glow. It whispers of abyssal power and ruined lands.
+		Lore: Mined from the Corruption, meaning your world rolled the evil purple worm option instead of the evil red brain. The eternal debate rages on, and this heart very much picked a side. It beats with a shadowy, abyssal pulse that whispers of ruined land and genuinely excellent loot.
 	}
 
 	DarkHeart: {
 		Tooltip: ""
 		DisplayName: Dark Heart
-		Lore: A shadowy void that devours light and hope in equal measure. It beats only to the silent, suffocating rhythm of absolute darkness.
+		Lore: A heart so thoroughly committed to darkness that light politely excuses itself from the area. It beats in total silence, swallowing every stray glimmer that drifts too close. Bleak, theatrical, and quietly having the time of its life about it.
 	}
 
 	CursedFlameHeart: {
 		Tooltip: ""
 		DisplayName: Cursed Flame Heart
-		Lore: Burning with a sickly green, inextinguishable fire, this agonizing heart never stops consuming. It is a terrible remnant of the Corruption's most vile magic.
+		Lore: Lit with the sickly green fire the Corruption invented specifically so it would never go out. This heart beats while quietly burning, immune to water, reason, and second thoughts. Eternal, spiteful, and weirdly dependable as a light source.
 	}
 
 	CrimtaneHeart: {
 		Tooltip: ""
 		DisplayName: Crimtane Heart
-		Lore: A sickeningly sweet, crimson-stained core that hungers for fresh blood. It pulses with the terrifying, infectious vitality of the Crimson.
+		Lore: The Crimson's answer to demonite, for worlds that rolled the evil red brain instead of the worm. This heart beats with a sweet, infectious, faintly predatory rhythm that's hungrier than it looks. Sinister, vital, and proud of exactly which team it landed on.
 	}
 
 	CogHeart: {
 		Tooltip: ""
 		DisplayName: Cog Heart
-		Lore: A rhythmic, ticking assembly of Steampunker gears and brass valves. It pumps a mechanized vitality, humming with the promise of industrial progress.
+		Lore: An assembly of brass gears and valves that ticks where lesser hearts merely beat. It runs with the precise, mechanized rhythm of a Steampunker's finest afternoon. Industrious, overengineered, and faintly offended by anything organic.
 	}
 
 	CobaltHeart: {
 		Tooltip: ""
 		DisplayName: Cobalt Heart
-		Lore: Forged from the first tier of hardmode blessings, this vivid blue heart brings newfound speed and vitality. It shimmers with the energy of shattered altars.
+		Lore: The first metal you mine the instant the altars start shattering, blue and brimming with new speed. This heart beats quick and eager, thrilled to finally be playing in the big leagues. Vivid, energetic, and proud to mark the start of the second half.
 	}
 
 	BrainHeart: {
 		Tooltip: ""
 		DisplayName: Brain Heart
-		Lore: A grotesque, pulsing mass of gray matter and sinew torn from the Brain of Cthulhu. It throbs with a horrific, maddening intellect that seeks to consume all.
+		Lore: A wad of gray matter and sinew yanked from the Crimson's floating overlord, still convinced it can outthink you. This heart beats with a maddening, scheming pulse that wants to consume and can't quite say why. Grotesque, clever, and the closest a heart ever gets to plotting.
 	}
 
 	AmberHeart: {
 		Tooltip: ""
 		DisplayName: Amber Heart
-		Lore: Trapped within ancient fossilized resin, this prehistoric heart beats with the forgotten life of the desert. It holds the slow, steady endurance of a bygone age.
+		Lore: An ancient gem of fossilized resin, holding a prehistoric calm older than anything still walking around. It beats with a slow, sun-warmed patience that has outlasted entire eras out of pure stubbornness. Golden, timeless, and in absolutely no hurry.
 	}
 
 	ZenithHeart: {
 		Tooltip: ""
 		DisplayName: Zenith Heart
-		Lore: The ultimate culmination of all journeys and blades. It pulses with the absolute pinnacle of Terrarian mastery.
+		Lore: The reward for outlasting every trial and then gathering nearly every blade you ever owned into one absurd, sky-splitting whole. This heart beats with the combined pride of a thousand victories stacked into a single pulse. If it sits in your collection, you have nothing left to prove to anyone.
 	}
 
 	SpectreHeart: {
 		Tooltip: ""
 		DisplayName: Spectre Heart
-		Lore: Woven from spirit threads and spectral mist. It balances life and death with every phantom heartbeat.
+		Lore: Woven from dungeon spirits and the ectoplasm they leave lying around, caught forever between living and not. This heart beats with a soft phantom rhythm, equally comfortable healing you or haunting you. Ghostly, balanced, and politely unsure which side of death it's on.
 	}
 
 	ShroomiteHeart: {
 		Tooltip: ""
 		DisplayName: Shroomite Heart
-		Lore: Pulsing with a silent, fungal glow from the glowing mushroom biomes. It brings a stealthy, spore-filled vitality.
+		Lore: Grown deep in the glowing mushroom biome, where the light runs blue and the stealth runs real. This heart beats with a quiet, spore-laced pulse that would honestly rather you didn't notice it. Luminous, sneaky, and proud of doing its best work unseen.
 	}
 
 	LuminiteHeart: {
 		Tooltip: ""
 		DisplayName: Luminite Heart
-		Lore: Forged from the remains of the celestial pillars. It shines with the ultimate power of a world-shaper.
+		Lore: Pried from the rubble of the celestial pillars by someone who clearly won the hardest fight on offer. This heart beats with the final, world-shaping glow of the very last ore there is. Radiant, ultimate, and well aware there's nothing left to mine after it.
 	}
 
 	EctoplasmHeart: {
 		Tooltip: ""
 		DisplayName: Ectoplasm Heart
-		Lore: A swirling mass of phantom energy from the dungeon's deepest spirits. It grants a ghostly, ethereal vitality.
+		Lore: Skimmed from the restless spirits haunting the dungeon's deepest, least advisable rooms. This heart beats with a cold, ghostly flicker that drifts more than it pumps. Ethereal, eerie, and faintly amused to still be beating at all.
 	}
 
 	WallOfFleshHeart: {
 		Tooltip: ""
 		DisplayName: Wall Of Flesh Heart
-		Lore: A visceral, fleshy mass torn from the master and core of the world. It unleashes the raw, unbound power of the underworld.
+		Lore: Finally, a boss that came with organs, so the "why is this a heart" question answers itself for once. You threw a man into lava, summoned the gatekeeper of the world's second age, and tore this still-twitching slab from the literal core of the world. It beats because it never got the memo that it's dead, and neither did your world.
 	}
 
 	SkeletronHeart: {
 		Tooltip: ""
 		DisplayName: Skeletron Heart
-		Lore: A hollow, cursed relic rattling with the moans of the dungeon's doomed. It grants the stubborn will of an ageless guardian.
+		Lore: Talk to the Old Man at night, pry the skull off the dungeon's bouncer, and walk away with the keys. This heart rattles more than it beats, cursed and hollow and somehow still on the clock. Ancient, stubborn, and the entire reason you're finally allowed inside.
 	}
 
 	RazorpineHeart: {
 		Tooltip: ""
 		DisplayName: Razorpine Heart
-		Lore: Bristling with icy needles and the festive malice of the Frost Moon. It fortifies the body with an evergreen sturdiness.
+		Lore: Bristling with the icy needles of a razor-thorned tree that only turns up when the Frost Moon does. This heart beats with an evergreen chill, festive and faintly homicidal in equal measure. Sharp, seasonal, and far merrier than it has any right to be.
 	}
 
 	QueenSlimeHeart: {
 		Tooltip: ""
 		DisplayName: Queen Slime Heart
-		Lore: Shimmering with hallowed crystals and bouncy resilience. It sparkles with an energetic, regal majesty.
+		Lore: The Hallow's crowned blob of crystal and bounce, regal in the way only a giant slime can manage. This heart beats with a glittering, springy rhythm that takes itself very seriously between bounces. Sparkling, bouncy, and absolutely convinced of its own majesty.
 	}
 
 	QueenBeeHeart: {
 		Tooltip: ""
 		DisplayName: Queen Bee Heart
-		Lore: Sticky with sweet, golden nectar and buzzing with the fury of the hive. It commands the royal strength of the jungle's matriarch.
+		Lore: Torn from the matriarch of the jungle hive, still sticky with nectar and simmering fury. This heart beats with a furious buzz, royal and sweet and ready to summon the swarm at the slightest insult. Golden, regal, and not a creature you ever want to disappoint.
 	}
 
 	PumpkingHeart: {
 		Tooltip: ""
 		DisplayName: Pumpking Heart
-		Lore: Emanates the wicked aura of the harvest's darkest night. It grants the macabre vitality of the Halloween horrors.
+		Lore: Harvested on the darkest night of the Pumpkin Moon, grinning the way only a flaming gourd can. This heart beats with a wicked, candlelit flicker that finds your fear absolutely delightful. Macabre, festive, and the proud king of everything spooky.
 	}
 
 	PlanteraHeart: {
 		Tooltip: ""
 		DisplayName: Plantera Heart
-		Lore: A fiercely blooming core torn from the heart of the deepest jungle. It thrums with the wild, untamed life of nature itself.
+		Lore: Ripped from the bloom that waits in the jungle's depths to punish anyone who breaks a bulb. This heart beats with a wild, thrashing, overgrown rhythm that does not forgive trespassers. Fierce, untamed, and the gatekeeper of nearly everything that comes after.
 	}
 
 	MourningWoodHeart: {
 		Tooltip: ""
 		DisplayName: Mourning Wood Heart
-		Lore: Carved from the scorched bark of a cursed treant. It beats with the somber, fiery malice of the spooky woods.
+		Lore: Carved from a scorched, cursed treant that wanders in on the spookiest nights of the year. This heart beats with a somber, smoldering pulse, equal parts grief and quiet arson. Gloomy, fiery, and weirdly poetic about the whole situation.
 	}
 
 	MoonLordHeart: {
 		Tooltip: ""
 		DisplayName: Moon Lord Heart
-		Lore: An otherworldly relic infused with the terrifying power of the celestial tyrant. It binds the cosmos itself to your life force.
+		Lore: You climbed past every lesser trophy in your hoard to reach the one the sky itself was hiding. Its heart beats with the cold gravity of a final act, pumping borrowed starlight with theatrical menace. Claim it and own the summit, because nothing left will ever beat quite this dramatically.
 	}
 
 	MartianSaucerHeart: {
 		Tooltip: ""
 		DisplayName: Martian Saucer Heart
-		Lore: An extraterrestrial core buzzing with high-tech energy. It pulsates with the cold logic of an alien invasion.
+		Lore: Salvaged from the high-tech invaders who beamed down uninvited and immediately came to regret it. This heart beats with a cold electronic hum, far more circuit board than muscle. Alien, blinking, and faintly disappointed in your primitive biology.
 	}
 
 	LunaticCultistHeart: {
 		Tooltip: ""
 		DisplayName: Lunatic Cultist Heart
-		Lore: Swirling with forbidden celestial magic and maddening prophecies. It bridges the gap between mortality and cosmic horror.
+		Lore: The robed fanatic who kneels outside the dungeon until you ruin his ritual by simply showing up. This heart beats with swirling forbidden starlight and the faint smugness of someone who scheduled the apocalypse. Ominous, prophetic, and the last polite warning before the moon falls.
 	}
 
 	KingSlimeHeart: {
 		Tooltip: Permanently bounce on enemies.
 		DisplayName: King Slime Heart
-		Lore: A gelatinous core holding the dissolved remains of countless challengers. It wobbles with a surprisingly royal resilience.
+		Lore: He is a king, he is made of jelly, his heart wobbles instead of beats, and we have all politely agreed not to bring it up. It jiggles with the regal certainty of a monarch who arrives uninvited and leaves a legend behind. Optional, absurd, and far too proud to be skipped quietly.
 	}
 
 	GolemHeart: {
 		Tooltip: ""
 		DisplayName: Golem Heart
-		Lore: A sun-charged power cell from the depths of the Jungle Temple. It hums with ancient, unyielding earthen magic.
+		Lore: A sun-charged power cell hauled out of the Jungle Temple by anyone bold enough to spend a Lihzahrd Power Cell. This heart beats with a slow, ancient, earthen thrum older than the traps that guarded it. Heavy, glowing, and quietly resentful of being moved.
 	}
 
 	FlyingDutchmanHeart: {
 		Tooltip: ""
 		DisplayName: Flying Dutchman Heart
-		Lore: Weathered by spectral seas and phantom winds. It holds the restless spirit of a cursed pirate crew.
+		Lore: Salvaged from the ghost ship that sails in during the Pirate Invasion to ruin a perfectly nice afternoon. This heart beats with the creak of phantom rigging and a crew that never quite clocked out. Weathered, restless, and still technically at sea.
 	}
 
 	EyeOfCthulhuHeart: {
 		Tooltip: Summons a Servant of Cthulhu minion that scales with game progression
 		DisplayName: Eye Of Cthulhu Heart
-		Lore: A bloodshot core that twitches with a sinister awareness. It watches over your vitality with an unblinking gaze.
+		Lore: It is an eye, it now has a heart, and you have wisely stopped asking how either of those works. This one beats with the giddy terror of a first true victory, the night you learned you were the dangerous one. Add it to the pile and let it keep watching; it has earned the view.
 	}
 
 	EmpressOfLightHeart: {
 		Tooltip: ""
 		DisplayName: Empress Of Light Heart
-		Lore: Blindingly radiant and pure, born from the hallowed skies. It fills the soul with prismatic energy and soaring grace.
+		Lore: Wrung from the dazzling fairy who turns the night sky into a light show and you into confetti if you fight her by day. This heart beats in blinding prismatic color, graceful right up until the instant it isn't. Radiant, regal, and one wrong move from being the last thing you ever see.
 	}
 
 	ElfHeart: {
 		Tooltip: ""
 		DisplayName: Elf Heart
-		Lore: Radiates with the mischievous magic of the Frost Legion. Its festive chill brings an uncanny vitality.
+		Lore: Mischief bottled straight from the Frost Legion, all festive chill and questionable intentions. This heart beats with a cold, twinkling rhythm that's about sixty percent holiday cheer and forty percent prank. Frosty, playful, and never entirely trustworthy.
 	}
 
 	DukeFishronHeart: {
 		Tooltip: ""
 		DisplayName: Duke Fishron Heart
-		Lore: Salty and damp, reeking of the deep ocean's wrath. It beats with the relentless energy of the mutant sea terror.
+		Lore: Pried from the mutant pig-dragon-fish that lurks where the ocean meets the genuinely cursed. This heart beats with salt spray and barely contained oceanic rage, all summoned by something as silly as a Truffle Worm. Damp, furious, and far stronger than anything that goofy has a right to be.
 	}
 
 	DestroyerHeart: {
@@ -1450,1035 +1450,1040 @@ Items: {
 	}
 
 	DeerclopsHeart: {
-		Tooltip: ""
+		Tooltip:
+			'''
+			Press the Parry keybind to flare pink for a moment
+			Touch an enemy while flaring to body-check it for 10x its contact damage, taking none yourself
+			A clean parry grants brief invincibility; usable once every 15 seconds
+			'''
 		DisplayName: Deerclops Heart
-		Lore: Cold to the touch and echoing with the howling winds of the tundra. It instills the primal fury of a winter beast.
+		Lore: Cold to the touch and echoing with the blizzard that birthed the one-eyed giant of the tundra. This heart beats with a slow, primal chill, the kind that watches from the treeline before it charges. Ancient, frostbitten, and deeply unimpressed by your campfire.
 	}
 
 	BrainOfCthulhuHeart: {
 		Tooltip: ""
 		DisplayName: Brain Of Cthulhu Heart
-		Lore: A grotesquely pulsating mass that whispers maddening secrets. It strengthens the mind through sheer terror.
+		Lore: The Crimson's floating overlord, reduced to a heart that still thinks it is in charge of something. It beats with a maddening whisper, leaking secrets nobody requested and several they regret hearing. Grotesque, paranoid, and absolutely certain you are being followed.
 	}
 
 	BetsyHeart: {
 		Tooltip: ""
 		DisplayName: Betsy Heart
-		Lore: Pulsing with the fiery breath of the Etherian dragon. The fierce warmth inside bolsters the spirit of any warrior.
+		Lore: Wrenched from the Etherian dragon that closes out the Old One's Army with a faceful of fire. This heart beats with a warm, smoky pulse, proud and ancient and faintly singed. Fierce, radiant, and the kind of warmth that doubles as a threat.
 	}
 
 	TitaniumHeart: {
 		Tooltip: ""
 		DisplayName: Titanium Heart
-		Lore: Forged from the resilient metal of the underground. Its tough exterior grants an unshakable endurance.
+		Lore: The tougher of the late ore twins, the one that bolts together a genuinely intimidating set of armor. This heart beats with a hard, shielded rhythm that shrugs off hits the way it shrugs off compliments. Resilient, sleek, and quietly the better pick.
 	}
 
 	SoulOfSightHeart: {
 		Tooltip: ""
 		DisplayName: Soul Of Sight Heart
-		Lore: Imbued with the omniscient gaze of the Twins. Holding it grants a fleeting glimpse of the world's hidden truths.
+		Lore: Distilled from the Twins, the floating eyeballs that watch you fail and then report back to each other. This heart beats with an all-seeing flicker, certain it noticed something you definitely missed. Watchful, mechanical, and a little too pleased with the view.
 	}
 
 	SoulOfMightHeart: {
 		Tooltip: ""
 		DisplayName: Soul Of Might Heart
-		Lore: Forged from the overwhelming strength of the Destroyer. It courses with a mechanical resilience that fortifies the body.
+		Lore: Wrung from the Destroyer, a colossal mechanical worm that made spawning probes its entire personality. This heart beats with raw, riveted strength, all torque and no doubt. Heavy, relentless, and proud of every single bolt.
 	}
 
 	SoulOfFrightHeart: {
 		Tooltip: ""
 		DisplayName: Soul Of Fright Heart
-		Lore: A terrifying, ethereal core that screams with the mechanical terror of Skeletron Prime. It fills the holder with an overwhelming sense of dread.
+		Lore: Screamed loose from Skeletron Prime, the mechanical skull with four arms and zero chill. This heart beats with a shrieking, dread-soaked rhythm that runs on pure intimidation. Terrifying, metallic, and thrilled that you flinched.
 	}
 
 	MechanicalHeart: {
 		Tooltip: ""
 		DisplayName: Mechanical Heart
-		Lore: A complex array of gears, wires, and pistons ticking in perfect, cold synchronization. A soulless but powerful engine of industrial might.
+		Lore: Gears and pistons ticking in cold, flawless sync, the souls of all three mechanical bosses bottled together. This heart runs instead of beats, precise enough to make a real one feel embarrassingly sloppy. Industrial, tireless, and faintly contemptuous of muscle.
 	}
 
 	HallowedHeart: {
 		Tooltip: ""
 		DisplayName: Hallowed Heart
-		Lore: Pulsing with an overwhelming, holy majesty, it banishes shadows with a blinding glare. The ultimate embodiment of light's fierce dominion.
+		Lore: Forged from the blessed bars the mechanical bosses cough up once you finally beat all three. This heart beats with an overwhelming holy glare that banishes shadow on principle alone. Radiant, righteous, and the well-earned reward for surviving the gauntlet.
 	}
 
 	ShardHeart: {
 		Tooltip: ""
 		DisplayName: Shard Heart
-		Lore: Assembled from razor-sharp fragments of broken glass, it gleams with dangerous beauty. It reflects a fractured, multi-colored light with every jagged beat.
+		Lore: Assembled from razor fragments of glass that gleam far prettier than they are safe to hold. This heart beats in sharp, jagged flashes, scattering broken light with every cut. Dangerous, dazzling, and best admired from a respectful distance.
 	}
 
 	CrystalHeart: {
 		Tooltip: ""
 		DisplayName: Crystal Heart
-		Lore: A dazzling, multifaceted gem that shatters light into a million colors. It hums with the pure, resonant frequency of the cavern's crystal shards.
+		Lore: A many-faceted gem that splits a single torch beam into a small private light show. This heart beats with a clear, resonant chime, the favorite frequency of the crystal-studded caverns. Dazzling, musical, and quietly proud of its angles.
 	}
 
 	LifeFruitHeart: {
 		Tooltip: ""
 		DisplayName: Fruit Heart
-		Lore: Brimming with the golden, hyper-vitality of the deepest jungle. It beats so fiercely it threatens to burst from its own immense life force.
+		Lore: Bursting with the golden hyper-vitality the jungle only hands out once Plantera has been dealt with. This heart beats so hard it nearly bursts, packed with more life than is strictly polite. Plump, glowing, and one good thump from going off like a balloon.
 	}
 
 	ChlorophyteHeart: {
 		Tooltip: ""
 		DisplayName: Chlorophyte Heart
-		Lore: A living, growing core that rapidly beats with the aggressive growth of the deep jungle. It actively seeks out light to fuel its organic power.
+		Lore: A living ore that spreads through the jungle like it pays rent there, hungry for light at all hours. This heart beats and grows at the same time, restless and faintly photosynthetic. Verdant, ambitious, and convinced it could take over given one free afternoon.
 	}
 
 	AdamantiteHeart: {
 		Tooltip: ""
 		DisplayName: Adamantite Heart
-		Lore: Forged from the resilient red ore of the deep, it boasts a fiery and unbreakable spirit. A testament to hard-won strength and ultimate durability.
+		Lore: The fierier of the second-tier hardmode ores, red-hot and proud of surviving the forge. This heart beats with a stubborn, near-unbreakable rhythm earned the hard way. Tough, glowing, and the reward for not giving up back at the altars.
 	}
 
 	WoodHeart: {
 		Tooltip: ""
 		DisplayName: Wood Heart
-		Lore: A basic, sturdy knot of timber that thumps with a rustic simplicity. The foundational essence of a brand new adventure.
+		Lore: Where it all begins, a sturdy knot of timber chopped before you owned anything sharper than ambition. This heart thumps with a rustic, honest simplicity, blissfully unaware of what's coming. Humble, foundational, and quietly proud to be your very first.
 	}
 
 	SunplateHeart: {
 		Tooltip: ""
 		DisplayName: Sunplate Heart
-		Lore: Forged in the heavens and gleaming with golden light, it feels warm and divine. It holds the majestic power of the floating islands.
+		Lore: Salvaged from a floating island, gleaming gold and warm with high-altitude smugness. This heart beats with a bright, divine glow, certain it is better than the ground-dwellers below. Radiant, lofty, and a little too pleased with the view.
 	}
 
 	StoneHeart: {
 		Tooltip: ""
 		DisplayName: Stone Heart
-		Lore: Cold, heavy, and completely unremarkable, yet enduring as the world itself. The steadfast pulse of the silent caverns.
+		Lore: Yes, it is a heart made of solid rock, and yes, you are about to consume it like that is a thing people do. It beats with the slow, unbothered patience of the caverns, completely at peace with the strange life it was handed. Few hearts are this dependable, and none this content with their fate.
 	}
 
 	SpookyHeart: {
 		Tooltip: ""
 		DisplayName: Spooky Heart
-		Lore: Forged from cursed wood on the darkest of nights, it twitches with restless spirit energy. It echoes with the distant cackles of the Mourning Wood.
+		Lore: Carved from spooky wood on exactly the kind of night the Pumpkin Moon shows up for. This heart twitches more than it beats, restless with leftover spirit energy and distant cackling. Creepy, festive, and absolutely loving the atmosphere.
 	}
 
 	SnowHeart: {
 		Tooltip: ""
 		DisplayName: Snow Heart
-		Lore: Soft and packed tightly, it feels cool to the touch and sparkles in the light. A delicate, fleeting core of winter's embrace.
+		Lore: Packed tight from fresh snow, cool in the hand and glittering like it already knows it won't last. This heart beats with a soft, fleeting chill, here for a good time rather than a long one. Delicate, sparkling, and quietly making the most of it.
 	}
 
 	SnowCloudHeart: {
 		Tooltip: ""
 		DisplayName: Snow Cloud Heart
-		Lore: Drifting softly, it scatters tiny snowflakes with every gentle pulse. It brings the serene, quiet peace of a winter's night.
+		Lore: A low gray cloud that decided to snow instead of rain and then committed fully to the bit. This heart beats with a gentle drift, shaking a few flakes loose each time it does. Soft, serene, and the calmest weather you'll ever swallow.
 	}
 
 	SlimeHeart: {
 		Tooltip: ""
 		DisplayName: Slime Heart
-		Lore: A gelatinous, bouncy mass that wiggles with a surprisingly lively rhythm. It jiggles constantly, longing to merge with its sticky brethren.
+		Lore: A gooey little heart forever scooting toward other slimes, the most basic foe in the world given a pulse. It jiggles its beat with a cheerful, lonely wobble, desperate to merge with its sticky brethren. Bouncy, harmless, and bursting with more personality than substance.
 	}
 
 	ShadewoodHeart: {
 		Tooltip: ""
 		DisplayName: Shadewood Heart
-		Lore: Dark, bleeding, and twisted from the Crimson's touch. It groans with the tortured agony of corrupted wildlife.
+		Lore: The Crimson's idea of a tree, dark and faintly bleeding in a way no honest plant should. This heart beats with a low, tortured groan, twisted out of timber that used to be perfectly ordinary. Grim, gnarled, and quietly resentful about the whole arrangement.
 	}
 
 	SandHeart: {
 		Tooltip: ""
 		DisplayName: Sand Heart
-		Lore: Constantly shifting and grinding, it holds the dry, relentless heat of the desert sun. A gritty core of survival in the harshest environments.
+		Lore: Shifting, grinding grains that hold the dry heat of the desert and absolutely none of its water. This heart beats with a gritty, restless hiss, surviving cheerfully where softer things give up. Coarse, sun-baked, and tougher than a pile of loose sand has any right to be.
 	}
 
 	RichMahoganyHeart: {
 		Tooltip: ""
 		DisplayName: Rich Mahogany Heart
-		Lore: Deep red and smelling of the ancient jungle, it bursts with wild, verdant energy. The heartbeat of the deepest, most untamed thickets.
+		Lore: Deep red timber from the underground jungle, where even the trees somehow smell expensive. This heart beats with a wild, verdant thump hauled out of the most untamed thickets around. Lush, exotic, and faintly showing off about its grain.
 	}
 
 	RedIceHeart: {
 		Tooltip: ""
 		DisplayName: Red Ice Heart
-		Lore: Stained with the Crimson's gore, this frozen core beats with a vicious, predatory chill. It radiates a bloodcurdling, icy malice.
+		Lore: Ice that soaked up the Crimson and came out looking like a crime scene. This heart beats with a vicious, predatory chill, frozen and bloodthirsty at the very same time. Frosty, menacing, and weirdly festive about it all.
 	}
 
 	RainCloudHeart: {
 		Tooltip: ""
 		DisplayName: Rain Cloud Heart
-		Lore: Heavy and gray, it constantly weeps small droplets of pure water. It carries the melancholic but refreshing spirit of a gentle downpour.
+		Lore: A heavy gray cloud that never stops drizzling and never once apologizes for it. This heart beats with a slow, weepy patter, gloomy in a strangely refreshing way. Damp, melancholic, and the heart most likely to ruin a picnic.
 	}
 
 	RainbowHeart: {
 		Tooltip: ""
 		DisplayName: Rainbow Heart
-		Lore: Flashing with a spectacular array of colors, it embodies the playful joy of a post-rain sky. It beats with a lively, bouncy cadence.
+		Lore: A spray of every color at once, the cheerful reward for surviving a good rainstorm. This heart beats with a lively, bouncing flicker that flatly refuses to be in a bad mood. Vivid, playful, and proud to be the happiest heart in the box.
 	}
 
 	PurpleIceHeart: {
 		Tooltip: ""
 		DisplayName: Purple Ice Heart
-		Lore: A jagged block of corrupted frost that bites the hand with unnatural cold. It whispers chilling tales of darkness from the frozen wastes.
+		Lore: Corrupted frost so cold it bites back, jagged and faintly menacing in the hand. This heart beats with a chilling whisper, more haunted cave than winter wonderland. Frozen, sinister, and telling you ghost stories you never asked for.
 	}
 
 	PumpkinHeart: {
 		Tooltip: ""
 		DisplayName: Pumpkin Heart
-		Lore: Carved with a sinister grin, it flickers with the eerie light of the harvest moon. A spooky token that smells faintly of autumn decay.
+		Lore: Carved into a grinning heart on a crisp autumn night, flickering like a jack-o'-lantern with opinions. This heart beats with a warm candlelit glow and the faint smell of pie left out a little too long. Spooky, cozy, and grinning at a joke it refuses to share.
 	}
 
 	PinkIceHeart: {
 		Tooltip: ""
 		DisplayName: Pink Ice Heart
-		Lore: Frozen in the Hallow's light, it gleams with a vibrant, magical chill. It chimes like a frozen music box echoing through crystalline caves.
+		Lore: Frozen under the Hallow's glow until it turned an aggressively cheerful shade of pink. This heart beats with a tinkling music-box chime that echoes through crystal caves. Frosty, magical, and far too pretty to take entirely seriously.
 	}
 
 	PearlwoodHeart: {
 		Tooltip: ""
 		DisplayName: Pearlwood Heart
-		Lore: Grown in the ethereal light of the Hallow, it shimmers with a magical, rainbow hue. A beautiful but unnatural testament to light's absolute rule.
+		Lore: What happens when the Hallow gets ahold of an honest tree and repaints it in rainbow. This heart beats with a shimmering, faintly unnatural glow that's a touch too cheerful to fully trust. Beautiful, gleaming, and clearly up to something wholesome.
 	}
 
 	PearlstoneHeart: {
 		Tooltip: ""
 		DisplayName: Pearlstone Heart
-		Lore: Radiating a blinding, holy aura, it beats with an overwhelming and aggressive purity. It seeks to cleanse the world with unyielding light.
+		Lore: Hallowed stone that takes cleansing the world extremely personally. This heart beats with an aggressive, blinding purity, the zealot of the entire rock family. Radiant, righteous, and genuinely not interested in your shadows.
 	}
 
 	PearlsandHeart: {
 		Tooltip: ""
 		DisplayName: Pearlsand Heart
-		Lore: Glistening with hallowed light, the shifting sands within purify anything they touch. It sings a soft, crystalline melody of salvation.
+		Lore: Hallowed sand that purifies whatever it drifts across, humming a tiny crystalline tune the entire time. This heart beats with a soft, shimmering glow, sweetly insistent on everyone's salvation. Bright, melodic, and gently bossy about purity.
 	}
 
 	PalmWoodHeart: {
 		Tooltip: ""
 		DisplayName: Palm Wood Heart
-		Lore: Infused with the salty breeze of the ocean, it brings a sense of tropical calm. It beats in time with the gentle swaying of beachside trees.
+		Lore: Timber from the beachside palms, carrying salt air and a permanent vacation mindset. This heart beats in slow, swaying time with the tide, in absolutely no rush. Breezy, tropical, and the single most relaxed heart in the collection.
 	}
 
 	ObsidianHeart: {
 		Tooltip: ""
 		DisplayName: Obsidian Heart
-		Lore: Forged where water meets molten rock, it is incredibly dense and fiercely warm. A dark, jagged core of pure geothermal power.
+		Lore: Born the instant water hits lava, jagged and glassy and faintly proud of the dramatic origin story. This heart beats with a dense, smoldering warmth, dark on the outside and hot underneath. Sharp, volcanic, and considerably cooler than it acts.
 	}
 
 	MushroomHeart: {
 		Tooltip: ""
 		DisplayName: Mushroom Heart
-		Lore: A spongy, pale heart smelling of damp soil and fungal spores. It offers a bizarre, earthy resilience born of the underground.
+		Lore: A spongy pale cap from the underground, smelling strongly of damp soil and questionable decisions. This heart beats with a soft, earthy squish, weirdly resilient for something this squishy. Fungal, humble, and thriving exactly where the sun gave up.
 	}
 
 	MudHeart: {
 		Tooltip: ""
 		DisplayName: Mud Heart
-		Lore: Slick and heavy with moisture, it holds the dense, humid lifeblood of the jungle. It squelches with a primal, untamed rhythm.
+		Lore: Slick, heavy, and dripping with the humid lifeblood of the jungle floor. This heart beats with a primal squelch, the least glamorous and most honest sound a heart can make. Muddy, untamed, and entirely unbothered by the mess.
 	}
 
 	MarbleHeart: {
 		Tooltip: ""
 		DisplayName: Marble Heart
-		Lore: Smooth and statuesque, it resonates with the faded glory of lost underground empires. It beats with a hollow, echoing elegance.
+		Lore: Smooth white stone echoing with the faded grandeur of underground ruins nobody remembers building. This heart beats with a hollow, elegant ring, statuesque to the point of showing off. Polished, ancient, and forever posing for a bust it'll never get.
 	}
 
 	LesionHeart: {
 		Tooltip: ""
 		DisplayName: Lesion Heart
-		Lore: A putrid, infected mass born of the Corruption's decay. It twitches spasmodically, oozing a sickly purple fluid.
+		Lore: An infected lump of the Corruption's leftovers, oozing a purple it would be wise never to touch. This heart twitches more than it beats, gross in a deeply committed way. Putrid, spasming, and somehow content with its lot in life.
 	}
 
 	IceHeart: {
 		Tooltip: ""
 		DisplayName: Ice Heart
-		Lore: Frozen solid, it beats with a slow, crystalline chime that chills the surrounding air. It holds the pristine, unforgiving silence of the tundra.
+		Lore: Frozen solid clear through, chilling the air just by sitting quietly in your hand. This heart beats with a slow crystalline chime and the pristine silence of the deep tundra. Cold, quiet, and entirely unbothered by your shivering.
 	}
 
 	HoneyHeart: {
 		Tooltip: ""
 		DisplayName: Honey Heart
-		Lore: Sticky, sweet, and slow-beating, it is a testament to the tireless labor of the jungle's bees. It radiates a warm, soothing vitality.
+		Lore: Pure jungle nectar slow-cooked into a heart by the relentless overtime of the local bees. This heart beats slow and sweet, sticky enough to make swallowing a genuine commitment. Golden, soothing, and absolutely worth thanking the hive for.
 	}
 
 	HayHeart: {
 		Tooltip: ""
 		DisplayName: Hay Heart
-		Lore: Bound together from dried stalks, it feels light and pastoral. A comforting reminder of sunny days and simple harvests.
+		Lore: Bundled dried stalks tied into a heart, light as a lazy afternoon and twice as rustic. This heart beats with a soft, pastoral rustle, dreaming of barns and sunny harvests. Humble, cozy, and the most flammable thing you'll ever cherish.
 	}
 
 	GraniteHeart: {
 		Tooltip: ""
 		DisplayName: Granite Heart
-		Lore: Hewn from the deep, crushing dark of the underground, it hums with raw elemental energy. A heavy, unyielding testament to the earth's pressure.
+		Lore: Hewn from the strange geometric depths where the caverns suddenly get tasteful. This heart beats with a heavy, polished thrum, humming under the weight of a mile of stone overhead. Dark, angular, and quietly the classiest rock down there.
 	}
 
 	GlassHeart: {
 		Tooltip: ""
 		DisplayName: Glass Heart
-		Lore: Fragile and transparent, yet it holds a surprisingly warm and steady light. It shimmers with the fiery breath of the furnace that forged it.
+		Lore: Spun from desert sand and furnace fire, fragile and transparent and somehow still glowing warm. This heart beats with a clear, delicate shimmer, one bad bump from a very poetic end. See-through, surprising, and braver than it looks.
 	}
 
 	FossilHeart: {
 		Tooltip: ""
 		DisplayName: Fossil Heart
-		Lore: An ancient relic pulled from the deep desert, carrying the echoes of extinct leviathans. It beats with a slow, calcified thud.
+		Lore: Ancient bones pulled from the desert, holding the echo of leviathans extinct long before you swung a pickaxe. This heart beats with a slow, calcified thud, patient the way only the truly old ever are. Prehistoric, dusty, and quietly the most experienced heart here.
 	}
 
 	FleshHeart: {
 		Tooltip: ""
 		DisplayName: Flesh Heart
-		Lore: A grotesque, pulsating mass of meat and sinew stripped from the Crimson's depths. It squelches with a disturbing, wet rhythm.
+		Lore: A grotesque slab of meat and sinew peeled from the Crimson's depths, exactly as charming as it sounds. This heart beats with a disturbing wet squelch, refreshingly literal about being an actual heart. Visceral, dripping, and oddly proud of the honesty.
 	}
 
 	EbonwoodHeart: {
 		Tooltip: ""
 		DisplayName: Ebonwood Heart
-		Lore: Twisted and gnarled from the corrupted trees, it harbors a dark and festering vitality. A grim reflection of nature gone horribly wrong.
+		Lore: The Corruption's take on trees, twisted and gnarled and faintly upset about existing. This heart beats with a dark, festering pulse, nature's own cautionary tale. Grim, warped, and quietly sure it used to be something nicer.
 	}
 
 	EbonstoneHeart: {
 		Tooltip: ""
 		DisplayName: Ebonstone Heart
-		Lore: Carved from the unyielding rock of the Corruption, it beats with a cold, relentless malice. It longs to spread its vile shadows across the land.
+		Lore: Cold purple rock from the Corruption, the kind that spreads the instant you glance away. This heart beats with a relentless, creeping malice, eager to paint the whole map its color. Stubborn, sinister, and never once satisfied with the territory it has.
 	}
 
 	EbonsandHeart: {
 		Tooltip: ""
 		DisplayName: Ebonsand Heart
-		Lore: Filled with the dark, suffocating grit of the Corrupt desert. It whispers maddening secrets of decay with every grainy pulse.
+		Lore: Dark grit from the corrupt desert, whispering decay one suffocating grain at a time. This heart beats with a low, gritty hiss, plotting something it won't fully explain. Bleak, parched, and far too chatty about the end of things.
 	}
 
 	DynastyHeart: {
 		Tooltip: ""
 		DisplayName: Dynasty Heart
-		Lore: Crafted with the elegance of a bygone empire, it hums with refined, architectural grace. It carries the wisdom of ancient eastern travelers.
+		Lore: Built with the refined elegance of a long-lost eastern empire, all clean lines and quiet wisdom. This heart beats with a poised, architectural calm, classier than most of its neighbors. Graceful, ornate, and certain that good taste never goes out of style.
 	}
 
 	DirtHeart: {
 		Tooltip: ""
 		DisplayName: Dirt Heart
-		Lore: The most humble of origins, it contains the quiet, foundational heartbeat of Terraria itself. A simple but profound source of earthen vitality.
+		Lore: Of all the hearts you will solemnly devour, none is humbler or more honest than a clump of dirt that learned to beat. It pulses with the patient rhythm of the ground that props up everyone too important to notice it. You will eat it anyway, and somehow that feels exactly right.
 	}
 
 	CrimstoneHeart: {
 		Tooltip: ""
 		DisplayName: Crimstone Heart
-		Lore: A grotesque chunk of the Crimson's core, throbbing with a sickly, fleshy rhythm. It radiates an aura of pure, visceral malice.
+		Lore: A fleshy chunk of the Crimson's core, throbbing in a way stone really should not. This heart beats with a sickly, meaty rhythm, more open wound than honest mineral. Visceral, ominous, and far too warm for a rock.
 	}
 
 	CrimsandHeart: {
 		Tooltip: ""
 		DisplayName: Crimsand Heart
-		Lore: Grains of blood-stained sand scrape together with every beat. It harbors a parasitic thirst born from the sprawling Crimson desert.
+		Lore: Blood-stained grains from the Crimson desert, scraping together with a thirst they can't shake. This heart beats with a parasitic, gritty hiss, hungry the way only sand somehow manages. Crimson, coarse, and unsettlingly eager.
 	}
 
 	CoralstoneHeart: {
 		Tooltip: ""
 		DisplayName: Coralstone Heart
-		Lore: Formed in the vibrant shallows of the ocean, it holds the lifeblood of the sea. It whispers with the crashing of distant waves.
+		Lore: Grown in the bright shallows where the ocean keeps its prettiest rocks. This heart beats with the soft crash of distant waves, holding the sea's lifeblood inside a stone. Vibrant, salty, and humming with a faraway tide.
 	}
 
 	CloudHeart: {
 		Tooltip: ""
 		DisplayName: Cloud Heart
-		Lore: Light as a feather and continually drifting, this heart carries the breath of the sky. It pulses with the gentle rhythm of high-altitude winds.
+		Lore: Light as a feather and forever drifting, basically a piece of sky that decided to grow a pulse. This heart beats with a gentle high-altitude breeze, threatening to float off the moment you blink. Airy, weightless, and barely tethered to the conversation.
 	}
 
 	CandyCaneHeart: {
 		Tooltip: ""
 		DisplayName: Candy Cane Heart
-		Lore: A festively striped, sugary heart that smells of peppermint and pure joy. It pulses with an energetic, hyperactive sweetness that invigorates the soul.
+		Lore: Festively striped and reeking of peppermint, sugary enough to worry a dentist from across the room. This heart beats with a hyperactive sugar-rush rhythm, all holiday cheer and zero chill. Sweet, jittery, and absolutely vibrating with joy.
 	}
 
 	CactusHeart: {
 		Tooltip: ""
 		DisplayName: Cactus Heart
-		Lore: A prickly, water-retaining heart that beats with the stubborn survivalism of the harsh desert. Its tough exterior hides a surprisingly vital core.
+		Lore: Prickly outside, surprisingly juicy inside, and stubborn enough to thrive where nothing else bothers. This heart beats with a tough, water-hoarding rhythm honed by the harsh desert. Spiky, resilient, and proud of surviving on pure spite.
 	}
 
 	BubbleHeart: {
 		Tooltip: ""
 		DisplayName: Bubble Heart
-		Lore: A delicate, iridescent heart that feels incredibly light and buoyant. It beats with a soft, gentle rhythm, as if ready to float away at any moment.
+		Lore: A delicate, iridescent heart so buoyant it seems faintly embarrassed to be held down. This heart beats with a soft, weightless shimmer, ready to drift off the instant you exhale. Fragile, shiny, and living entirely in the moment.
 	}
 
 	BorealWoodHeart: {
 		Tooltip: ""
 		DisplayName: Boreal Wood Heart
-		Lore: A chilled, wooden core that smells of pine and fresh snow. It pulses with the resilient, hardy spirit of the unforgiving snow biome.
+		Lore: Pine timber from the snow biome, smelling of fresh frost and quiet resilience. This heart beats with a cool, hardy thump, used to weather that would flatten softer wood. Chilly, sturdy, and completely unbothered by the cold.
 	}
 
 	ZephyrHeart: {
 		Tooltip: ""
 		DisplayName: Zephyr Heart
-		Lore: A nearly weightless heart that dances to the rhythm of the high-altitude winds. It carries the swift, unburdened freedom of the open sky.
+		Lore: Practically weightless, dancing on the high winds like gravity is somebody else's problem. This heart beats with a swift, unburdened flutter, all open sky and no baggage. Light, free, and quietly daring you to keep up.
 	}
 
 	YewWoodHeart: {
 		Tooltip: ""
 		DisplayName: Yew Wood Heart
-		Lore: A wooden heart carved from a poisonous tree, beating with a toxic, yet enduring life force. It contains the deceptive, deadly beauty of the ancient forests.
+		Lore: Carved from a poisonous tree that stays beautiful right up until it absolutely isn't. This heart beats with a toxic but enduring rhythm, the deadly elegance of an old forest. Lovely, lethal, and entirely aware of the contrast.
 	}
 
 	VampireHeart: {
 		Tooltip: ""
 		DisplayName: Vampire Heart
-		Lore: A dark, blood-red heart that constantly thirsts for the life essence of others. It beats with a ravenous, predatory rhythm that demands sustenance.
+		Lore: A heart that craves other hearts, which is ironic enough to sit with for a moment. Cold, thirsty, and fully on theme, it only beats when there's blood nearby and sulks when there isn't. The Crimson would be proud; your cardiologist would not.
 	}
 
 	ValadiumHeart: {
 		Tooltip: ""
 		DisplayName: Valadium Heart
-		Lore: A gravity-defying heart that beats with a strange, otherworldly lightness. It pulses with an unstable, cosmic energy that distorts the space around it.
+		Lore: A gravity-optional stone that beats with an unsettling lightness, never fully committed to this dimension. This heart pulses with unstable starlit energy, bending the space around it just to show off. Otherworldly, weightless, and a little smug about physics.
 	}
 
 	ThoriumHeart: {
 		Tooltip: ""
 		DisplayName: Thorium Heart
-		Lore: A crystalline heart infused with the strange, radioactive properties of thorium. It beats with a slow, heavy, and uniquely transformative resonance.
+		Lore: A crystalline ore humming with strange, faintly radioactive ambition. This heart beats with a slow, heavy, transformative resonance, quietly rewriting whatever it touches. Glowing, peculiar, and proud to be the element everything else got named after.
 	}
 
 	StormHeart: {
 		Tooltip: ""
 		DisplayName: Storm Heart
-		Lore: A crackling, tempestuous heart that roars with the fury of a raging thunderstorm. It surges with volatile, electric power and deafening thunder.
+		Lore: Crackling with a thunderhead's worst mood, bottled into a heart that flatly refuses to settle. This heart beats in jagged bursts of lightning, loud enough to make the others nervous. Electric, volatile, and showing off at every chance it gets.
 	}
 
 	SmoothCoalHeart: {
 		Tooltip: ""
 		DisplayName: Smooth Coal Heart
-		Lore: A dense, blackened heart that harbors a deep, smoldering heat within. It beats with the steady, reliable endurance of long-burning fuel.
+		Lore: A dense black lump hiding a slow, patient heat that simply won't quit. This heart beats with the steady endurance of fuel built to burn all night. Humble, warm, and quietly the most reliable thing in the furnace.
 	}
 
 	SeaBreezeHeart: {
 		Tooltip: ""
 		DisplayName: Sea Breeze Heart
-		Lore: A light, airy heart that carries the refreshing, invigorating scent of the ocean wind. It pulses with a carefree, liberating energy.
+		Lore: A light, airy heart carrying salt spray and the smell of a flawless beach day. This heart beats with a carefree, liberating flutter, allergic to stress of any kind. Breezy, refreshing, and on permanent holiday.
 	}
 
 	PermafrostHeart: {
 		Tooltip: ""
 		DisplayName: Permafrost Heart
-		Lore: An eternally frozen heart that emanates a bone-chilling, absolute zero aura. It beats with the relentless, unyielding harshness of an endless winter.
+		Lore: Ice so old it forgot how to melt, radiating a flat absolute-zero attitude. This heart beats with the relentless harshness of an endless winter, charming as a glacier. Frozen, severe, and proud of never once thawing.
 	}
 
 	PearlHeart: {
 		Tooltip: ""
 		DisplayName: Pearl Heart
-		Lore: A smooth, lustrous core that radiates a calming, pure energy of the deep ocean. It holds the serene, unblemished beauty of a precious underwater treasure.
+		Lore: A smooth, lustrous treasure plucked from the deep ocean, calm and faintly self-satisfied. This heart beats with a serene, pure rhythm, the unblemished beauty of something that took years to form. Precious, tranquil, and well worth the dive.
 	}
 
 	OpalHeart: {
 		Tooltip: ""
 		DisplayName: Opal Heart
-		Lore: A mesmerizing heart that flashes with a vibrant, shifting spectrum of colors. It pulses with a chaotic yet beautiful array of magical energies.
+		Lore: A gem that can't pick a color, flashing through the whole spectrum like it's indecisive on purpose. This heart beats with a chaotic, beautiful shimmer, magic with the volume left way up. Mesmerizing, restless, and impossible to look away from.
 	}
 
 	OnyxHeart: {
 		Tooltip: ""
 		DisplayName: Onyx Heart
-		Lore: A pitch-black heart that absorbs light and exudes an aura of sophisticated, dark elegance. It beats with a cold, calculating, and ruthless precision.
+		Lore: Pitch-black and light-devouring, dressed for a funeral it is clearly enjoying. This heart beats with cold, calculating precision, the most sophisticated stone in the dark. Sleek, ruthless, and effortlessly the room's villain.
 	}
 
 	OmegaHeart: {
 		Tooltip: ""
 		DisplayName: Omega Heart
-		Lore: A technologically advanced core that pulses with an intimidating, synthetic rhythm. It holds the devastating power of an apocalyptic mechanical terror.
+		Lore: A high-tech core humming with the menace of something built to end things efficiently. This heart beats with a synthetic, intimidating rhythm, more apocalypse than anatomy. Mechanical, ominous, and disturbingly well-engineered.
 	}
 
 	MossyMarineRockHeart: {
 		Tooltip: ""
 		DisplayName: Mossy Marine Rock Heart
-		Lore: Covered in deep-sea flora, this stony heart beats with the tranquil harmony of an underwater garden. It provides a soothing, natural resonance.
+		Lore: A seabed stone wearing a thick coat of deep-ocean greenery, calm as an underwater garden. This heart beats with a tranquil, mossy hum, soothing in a way rocks rarely manage. Quiet, verdant, and at total peace down there.
 	}
 
 	MagmaHeart: {
 		Tooltip: ""
 		DisplayName: Magma Heart
-		Lore: A scorching, semi-liquid heart that bubbles and churns with liquid fire. It contains the chaotic, destructive fury of a restless volcano.
+		Lore: Half-melted and churning, basically lava that hasn't decided whether to be solid yet. This heart beats with a bubbling, volcanic roar, furious and gloriously unstable. Molten, chaotic, and a serious hazard to upholstery.
 	}
 
 	LodestoneHeart: {
 		Tooltip: ""
 		DisplayName: Lodestone Heart
-		Lore: A heavy, magnetic core that hums with a powerful, polarizing energy field. It draws in raw vitality and binds it tightly within its metallic form.
+		Lore: A heavy magnetic core humming with a field strong enough to ruin your compass. This heart beats with a polarizing pull, dragging stray vitality in and refusing to share. Dense, magnetic, and quietly clingy.
 	}
 
 	LifeQuartzHeart: {
 		Tooltip: ""
 		DisplayName: Life Quartz Heart
-		Lore: A shimmering, translucent crystal that amplifies the natural life force around it. Its rhythmic pulsing matches the heartbeat of the world itself.
+		Lore: A translucent crystal that amplifies whatever life force happens to wander too near. This heart beats in perfect time with the world itself, pure and faintly humming. Luminous, vital, and quietly plugged into something much bigger.
 	}
 
 	LichHeart: {
 		Tooltip: ""
 		DisplayName: Lich Heart
-		Lore: A phylactery of flesh, this heart beats with a cold, necrotic rhythm of the undead. It holds the dark, forbidden secrets of eternal, deathless existence.
+		Lore: A phylactery of flesh beating with the cold necrotic rhythm of something that refuses to stay dead. This heart hums with forbidden secrets about cheating the grave, and it's a little smug about knowing them. Undead, calculating, and in no danger of expiring.
 	}
 
 	IllumiteHeart: {
 		Tooltip: ""
 		DisplayName: Illumite Heart
-		Lore: A glowing, radiant heart that casts a brilliant, soothing light into the darkness. It hums with a harmonious, illuminating energy that banishes shadows.
+		Lore: A radiant ore that throws warm, soothing light into the darkest corners around. This heart beats with a harmonious glow, the kind that makes shadows quietly excuse themselves. Bright, gentle, and the most welcome thing in a black cave.
 	}
 
 	IceboundStriderHeart: {
 		Tooltip: ""
 		DisplayName: Icebound Strider Heart
-		Lore: A frozen, crystalline heart that beats with the piercing chill of a brutal blizzard. It contains the untamed spirit of the apex predators of the tundra.
+		Lore: Frozen straight from the tundra's apex predator, all blizzard and bad intentions. This heart beats with a piercing, untamed chill, wild the way only a winter hunter ever is. Crystalline, fierce, and faintly snarling.
 	}
 
 	DormantHeart: {
 		Tooltip: ""
 		DisplayName: Dormant Heart
-		Lore: A cold, seemingly lifeless stone that hides a faint, barely perceptible heartbeat within. It waits patiently for the right catalyst to awaken its true power.
+		Lore: A cold, lifeless-looking stone hiding the faintest heartbeat, just waiting for an excuse. This heart beats so quietly you'd miss it, patient for the catalyst that finally wakes it. Sleepy, secretive, and saving its best for later.
 	}
 
 	DepthsRockHeart: {
 		Tooltip: ""
 		DisplayName: Depths Rock Heart
-		Lore: A jagged, stony core that beats with the enduring, unyielding strength of the subterranean depths. It holds the crushing weight and stoic silence of the deep caverns.
+		Lore: Jagged stone from the crushing deep, where the silence is heavy and the pressure is honest. This heart beats with an enduring, stoic strength, calm under a mountain of weight. Sturdy, solemn, and entirely unimpressed by your problems.
 	}
 
 	ChampionHeart: {
 		Tooltip: ""
 		DisplayName: Champion Heart
-		Lore: A radiant heart forged from the triumphant spirit of a grand tournament victor. It pulses with the pride and unyielding determination of a true hero.
+		Lore: Forged from the triumphant spirit of a grand tournament's last one standing. This heart beats with pure pride and determination, the glow of someone who flatly refused to lose. Radiant, victorious, and absolutely here to gloat.
 	}
 
 	BrackishClumpHeart: {
 		Tooltip: ""
 		DisplayName: Brackish Clump Heart
-		Lore: A murky, algae-covered mass that slowly beats with the sluggish life of the stagnant waters. It smells of salt and decay, yet bursts with natural vitality.
+		Lore: A murky algae-caked lump from waters that haven't moved in years and smell like it. This heart beats slow and swampy, somehow bursting with life despite the salt and the decay. Gross, stagnant, and thriving anyway out of pure stubbornness.
 	}
 
 	BeholderHeart: {
 		Tooltip: ""
 		DisplayName: Beholder Heart
-		Lore: A grotesque, fleshy heart that seems to constantly watch you with an unseen gaze. It throbs with chaotic, otherworldly magic from beyond the stars.
+		Lore: A fleshy heart with the distinct sense that it is quietly watching you back. It throbs with chaotic magic from somewhere past the stars, eyeless yet deeply nosy. Grotesque, alert, and absolutely judging your build.
 	}
 
 	AquaiteHeart: {
 		Tooltip: ""
 		DisplayName: Aquaite Heart
-		Lore: A pristine, watery core that flows with a constant, soothing, liquid rhythm. It reflects the pure, uncorrupted essence of aquatic life.
+		Lore: A pristine watery core that flows in a constant, soothing, liquid rhythm. This heart beats clean and clear, the uncorrupted essence of everything that swims. Refreshing, calm, and the most hydrated heart around.
 	}
 
 	AbyssalHeart: {
 		Tooltip: ""
 		DisplayName: Abyssal Heart
-		Lore: Dredged from the crushing depths, this heart beats to the slow rhythm of the abyssal currents. It holds the oppressive weight of the deep ocean.
+		Lore: Dredged from the crushing deep, where sunlight gives up and the pressure absolutely does not. This heart beats slow to the rhythm of abyssal currents, carrying the whole ocean's weight. Heavy, dark, and quietly enormous.
 	}
 
 	SoulOfBlightHeart: {
 		Tooltip: ""
 		DisplayName: Soul Of Blight Heart
-		Lore: A fragmented heart of pure disease, pulsing with a virulent, sickening aura. It carries the devastating blight of an ancient, terrifying plague.
+		Lore: A fractured shard of pure disease, pulsing with an aura that ruins the air around it. This heart beats with a virulent, sickening rhythm, an ancient plague packed into one bad idea. Toxic, ominous, and best handled with gloves.
 	}
 
 	EasterHeart: {
 		Tooltip: ""
 		DisplayName: Easter Heart
-		Lore: A pastel-colored heart radiating a vibrant, springtime joy and renewing vitality. It beats with the playful energy of a joyous spring morning.
+		Lore: A pastel heart radiating springtime cheer and the suspicious energy of a holiday rabbit. This heart beats with playful, renewing warmth, bright as a sunny April morning. Cheerful, colorful, and hiding eggs somewhere on principle.
 	}
 
 	CursedHeart: {
 		Tooltip: ""
 		DisplayName: Cursed Heart
-		Lore: Bound in mystical bindings, this heart beats with a sinister, malevolent curse. To hold it is to invite the wrath of forgotten, malicious spirits.
+		Lore: Wrapped in mystical bindings that exist mostly to keep something contained. This heart beats with a sinister, malevolent rhythm, eager to introduce you to a few forgotten spirits. Ominous, bound, and frankly not a great houseguest.
 	}
 
 	CornucopiaHeart: {
 		Tooltip: ""
 		DisplayName: Cornucopia Heart
-		Lore: Overflowing with a bountiful, festive energy, this heart brings a sense of absolute plenty. Its warm thrum promises endless feasts and joyous celebrations.
+		Lore: Overflowing with festive plenty, the heart equivalent of a table that simply won't stop refilling. This heart beats with a warm, generous thrum, promising endless feasts to anyone nearby. Abundant, cozy, and impossible to leave hungry.
 	}
 
 	VoidstoneHeart: {
 		Tooltip: ""
 		DisplayName: Voidstone Heart
-		Lore: A cold, dense heart formed from the compressed nothingness of the void. It beats with a gravity that threatens to pull the soul out of your body.
+		Lore: Compressed nothingness given a pulse, dense enough to make gravity itself nervous. This heart beats with a pull that tugs at the soul, quietly insisting on the void. Cold, heavy, and politely trying to swallow you.
 	}
 
 	UelibloomHeart: {
 		Tooltip: ""
 		DisplayName: Uelibloom Heart
-		Lore: Intertwined with the prolific flora of the jungle, this heart blooms with rampant life energy. It carries the stubborn resilience of nature reclaiming the land.
+		Lore: Tangled in prolific jungle flora, blooming so hard it borders on aggressive. This heart beats with rampant life energy, nature briskly reclaiming whatever you weren't using. Verdant, relentless, and overgrowing as we speak.
 	}
 
 	TwistingHeart: {
 		Tooltip: ""
 		DisplayName: Twisting Heart
-		Lore: A grotesque heart from the twisted nether, pulsing with a chaotic and unnatural vitality. Its unnatural shape seems to writhe and contort on its own.
+		Lore: A heart from somewhere deeply wrong, writhing and contorting like it can't agree on a shape. It beats with a chaotic, unnatural rhythm, twisting on its own the moment you look away. Grotesque, restless, and faintly nauseating to watch.
 	}
 
 	TenebrisHeart: {
 		Tooltip: ""
 		DisplayName: Tenebris Heart
-		Lore: Carved from the abyssal darkness, this heart absorbs light and emanates a chilling void. It whispers of the lightless depths where colossal leviathans slumber.
+		Lore: Carved from abyssal dark so deep it eats light for fun. This heart beats with a chilling void, whispering about the lightless trenches where leviathans sleep. Black, cold, and dropping ominous hints.
 	}
 
 	SulphurousSandstoneHeart: {
 		Tooltip: ""
 		DisplayName: Sulphurous Sandstone Heart
-		Lore: Hardened by acidic tides, this porous heart traps the bitter essence of the ruined coastline. It hums with the memory of a long-lost ecosystem.
+		Lore: Porous rock hardened by acidic tides, holding the bitter memory of a ruined coastline. This heart beats with a low hum, mourning an ecosystem that didn't survive the chemistry. Crumbling, sour, and stubbornly nostalgic.
 	}
 
 	SulphurousSandHeart: {
 		Tooltip: ""
 		DisplayName: Sulphurous Sand Heart
-		Lore: Formed from the toxic dunes of the sulphurous sea, this heart steadily drips a corrosive brine. It beats with a sluggish, sickening rhythm.
+		Lore: Toxic dunes from the sulphurous sea, steadily weeping a brine you really should not touch. This heart beats with a sluggish, sickening rhythm, corrosive and quietly proud of it. Acidic, grim, and an active workplace hazard.
 	}
 
 	SeaPrismHeart: {
 		Tooltip: ""
 		DisplayName: Sea Prism Heart
-		Lore: A crystallized shard of the sunken sea's magic, glimmering with aquatic luminescence. It holds the gentle, rhythmic beating of ancient ocean tides.
+		Lore: A crystallized shard of the sunken sea, glimmering with soft aquatic light. This heart beats in time with ancient ocean tides, gentle and faintly glowing. Luminous, serene, and quietly humming an old sea shanty.
 	}
 
 	ScoriaHeart: {
 		Tooltip: ""
 		DisplayName: Scoria Heart
-		Lore: Forged in the fiery depths of the abyss, this heart pulses with intense geothermal heat. It radiates a scalding energy that sears the hands of the unworthy.
+		Lore: Forged in the abyss's fiery floor, where the ocean somehow learned to catch fire. This heart beats with intense geothermal heat, scalding enough to test whether you're worthy. Molten, oceanic, and a contradiction it fully enjoys.
 	}
 
 	RottenHeart: {
 		Tooltip: ""
 		DisplayName: Rotten Heart
-		Lore: A decaying, malodorous clump of flesh from the corruption. It beats feebly, sustained only by a vile, dark magic.
+		Lore: A decaying, foul-smelling clump of corrupt flesh held together by spite and dark magic. This heart beats feebly, running entirely on fumes and bad intentions. Putrid, fragile, and refusing to quit on principle.
 	}
 
 	ProfanedHeart: {
 		Tooltip: ""
 		DisplayName: Profaned Heart
-		Lore: A sacred, burning core corrupted by unholy flames. It commands a terrible awe, radiating a holy yet unforgiving light.
+		Lore: A sacred core that unholy flames got to first, holy and damned in one uncomfortable package. This heart beats with a burning, awful awe, radiating light that forgives absolutely nothing. Radiant, corrupted, and intimidating from every angle.
 	}
 
 	PolarizedHeart: {
 		Tooltip: ""
 		DisplayName: Polarized Heart
-		Lore: A magnetic core shifting constantly between opposing energies. It crackles with unpredictable and highly destructive power.
+		Lore: A magnetic core that can't stop flip-flopping between two opposite energies. This heart beats in unpredictable, crackling bursts, charged and faintly dangerous. Volatile, indecisive, and one polarity swap from chaos.
 	}
 
 	PlantyMushHeart: {
 		Tooltip: ""
 		DisplayName: Planty Mush Heart
-		Lore: A strange, symbiotic blend of jungle flora and fungal life. It pulsates softly, releasing an earthy, revitalizing aroma.
+		Lore: A cozy symbiosis of jungle plant and underground fungus that simply decided to team up. This heart pulses softly, breathing out an earthy, revitalizing smell. Green, mushy, and the most wholesome roommate situation around.
 	}
 
 	PerennialHeart: {
 		Tooltip: ""
 		DisplayName: Perennial Heart
-		Lore: A verdant, overgrown heart that sprouts fresh vines with every throb. It possesses the unstoppable, regenerative power of the jungle.
+		Lore: An overgrown heart that sprouts fresh vines every time it beats, never quite knowing when to stop. It pulses with the jungle's unstoppable regenerative streak, greener by the second. Lush, relentless, and quietly redecorating your inventory.
 	}
 
 	OceanHeart: {
 		Tooltip: ""
 		DisplayName: Ocean Heart
-		Lore: A vibrant, watery core that smells of salt and summer breezes. It embodies the endless depths and bountiful life of the sea.
+		Lore: A vibrant watery core smelling of salt, sunscreen, and one excellent summer. This heart beats with the bountiful life of the open sea, deep and endless and cheerful. Refreshing, vast, and basically a vacation in heart form.
 	}
 
 	NovaeSlugHeart: {
 		Tooltip: ""
 		DisplayName: Novae Slug Heart
-		Lore: A soft, radiant organ that once fueled a brilliant, star-forged creature. It pulses with a warm, comforting cosmic light.
+		Lore: A soft, radiant organ that once powered a little star-forged creature minding its own business. This heart beats with a warm, comforting cosmic glow, gentle as a nightlight. Squishy, luminous, and weirdly soothing for something from space.
 	}
 
 	NebulousHeart: {
 		Tooltip: ""
 		DisplayName: Nebulous Heart
-		Lore: A swirling galaxy of stardust contained within a single, delicate form. Holding it gives you a fleeting glimpse of the universe's creation.
+		Lore: A whole galaxy crammed into heart shape, because the universe can never resist a heart-shaped thing. This heart beats with swirling stardust, offering a quick peek at how everything began. Cosmic, delicate, and far too big for its container.
 	}
 
 	NavystoneHeart: {
 		Tooltip: ""
 		DisplayName: Navystone Heart
-		Lore: A smooth, oceanic artifact steeped in the deep magic of the abyss. It thrums with a quiet, ancient power from beneath the waves.
+		Lore: A smooth oceanic stone steeped in the quiet magic of the deep abyss. This heart beats with an ancient, patient power dredged from far beneath the waves. Dark, weighty, and old enough to remember the first tide.
 	}
 
 	MutatedHeart: {
 		Tooltip: ""
 		DisplayName: Mutated Heart
-		Lore: A grotesque, irregularly beating organ warped by unnatural forces. It constantly shifts and changes form, resisting all natural laws.
+		Lore: A grotesque organ warped by forces that clearly never read the manual. This heart beats irregularly, shifting shape and breaking natural laws as a hobby. Unstable, uncanny, and never quite the same twice.
 	}
 
 	HardenedAstralSandHeart: {
 		Tooltip: ""
 		DisplayName: Hardened Astral Sand Heart
-		Lore: A petrified, cosmic relic forged in the intense heat of an astral impact. It feels heavy with the secrets of the universe.
+		Lore: Petrified sand fused solid in the heat of an astral impact, heavy with cosmic baggage. This heart beats with a slow, weighty thrum, secretive about whatever it watched fall. Dense, alien, and keeping the universe's secrets to itself.
 	}
 
 	GravistarHeart: {
 		Tooltip: ""
 		DisplayName: Gravistar Heart
-		Lore: A dense, gravity-warping core that pulls everything towards it. It beats to the relentless rhythm of a dying star.
+		Lore: A dense little core warping gravity hard enough to drag everything nearby toward it. This heart beats to the relentless rhythm of a dying star, pulling and pulling and pulling. Heavy, magnetic, and the center of attention by force.
 	}
 
 	GehennaHeart: {
 		Tooltip: ""
 		DisplayName: Gehenna Heart
-		Lore: A sinister, burning relic dredged from the darkest pits of the underworld. It screams silently with the agony of damned souls.
+		Lore: A burning relic dredged from the underworld's least pleasant basement. This heart beats with a silent scream, smoldering with the agony of the damned. Hellish, ominous, and not remotely in a sharing mood.
 	}
 
 	FungalHeart: {
 		Tooltip: ""
 		DisplayName: Fungal Heart
-		Lore: A spongy, glowing mass heavily infected by the glowing mushroom biome. It scatters a cloud of luminescent spores with every beat.
+		Lore: A glowing spongy mass thoroughly colonized by the mushroom biome, and clearly thriving for it. This heart puffs out a cloud of luminescent spores each time it beats, lighting up the dark. Luminous, infectious, and proud of its bloom.
 	}
 
 	ExodiumClusterHeart: {
 		Tooltip: ""
 		DisplayName: Exodium Cluster Heart
-		Lore: A jagged clump of space-faring ores that miraculously pulses with life. It draws in ambient energy like a dying black hole.
+		Lore: A jagged clump of space ores that somehow grew a heartbeat against everyone's advice. This heart pulses while drinking in ambient energy like a small, hungry black hole. Cosmic, greedy, and running entirely on audacity.
 	}
 
 	EutrophicSandHeart: {
 		Tooltip: ""
 		DisplayName: Eutrophic Sand Heart
-		Lore: A bright, crystal-infused heart found hidden in the depths of the Sunken Sea. It beats with a soothing, aquatic tranquility.
+		Lore: Bright crystal-veined sand hidden in the depths of the Sunken Sea. This heart beats with a soothing aquatic calm, glowing softly in the dark water. Luminous, tranquil, and quietly the prettiest thing down there.
 	}
 
 	DynamoStemHeart: {
 		Tooltip: ""
 		DisplayName: Dynamo Stem Heart
-		Lore: A mechanized, botanical core humming with electrical life. It bridges the gap between nature's resilience and technological progress.
+		Lore: Part plant, part machine, humming with electricity it grows entirely by itself. This heart beats where nature and engineering shook hands and agreed to collaborate. Botanical, electric, and weirdly ahead of its time.
 	}
 
 	DraconicHeart: {
 		Tooltip: ""
 		DisplayName: Draconic Heart
-		Lore: A massive, scaly heart taken from the remains of a mythical wyrm. It surges with the ancient, unyielding might of dragons.
+		Lore: A massive scaly heart pried from the remains of a mythical wyrm, still smoldering with ego. This heart beats with the ancient might of dragons, certain it could roast you on principle. Huge, fierce, and a legend in its own mind.
 	}
 
 	DarkPlasmicHeart: {
 		Tooltip: ""
 		DisplayName: Dark Plasmic Heart
-		Lore: A volatile orb of dark energy that bends the light around it. It writhes with chaotic, shadowy forces eager to be unleashed.
+		Lore: A volatile orb of dark energy that bends light away from itself just to be dramatic. This heart writhes more than it beats, packed with shadowy forces itching to get out. Unstable, ominous, and one bad day from a tantrum.
 	}
 
 	CrystallizedToxicHeart: {
 		Tooltip: ""
 		DisplayName: Crystallized Toxic Heart
-		Lore: A brittle, radioactive organ glowing with a sickening green light. It throbs with the concentrated malice of a corrosive wasteland.
+		Lore: A brittle radioactive organ glowing the exact shade of green that means run. This heart throbs with the concentrated malice of a corrosive wasteland, proud of every last rad. Toxic, glowing, and in no way food-safe.
 	}
 
 	CryonicHeart: {
 		Tooltip: ""
 		DisplayName: Cryonic Heart
-		Lore: Encased in unmelting, magical ice harvested from the tundra's depths. It possesses a freezing serenity that calms the soul.
+		Lore: Magical ice from the tundra's depths that flatly refuses to melt, no matter how nicely you ask. This heart beats with a freezing serenity, calm and cold and oddly meditative. Frosty, peaceful, and the chillest heart in every sense.
 	}
 
 	CryogenHeart: {
 		Tooltip: ""
 		DisplayName: Cryogen Heart
-		Lore: A jagged, biting crystal of absolute frost that once imprisoned a great power. Its icy beats send shivers down your spine.
+		Lore: A jagged frost crystal that once kept a great power locked up nice and cold. This heart beats in biting icy pulses that send a shiver clean down your spine. Sharp, frozen, and clearly used to holding things down.
 	}
 
 	CosmiliteHeart: {
 		Tooltip: ""
 		DisplayName: Cosmilite Heart
-		Lore: A sleek, indestructible core forged from a god-devouring alloy. It hums with an intimidating, high-frequency resonance.
+		Lore: A sleek, indestructible core forged from an alloy that ate a god and didn't blink. This heart beats with an intimidating high-frequency hum, smug about being unbreakable. Cosmic, flawless, and quietly the toughest thing in the box.
 	}
 
 	CorpusHeart: {
 		Tooltip: ""
 		DisplayName: Corpus Heart
-		Lore: A horrifying amalgamation of bloody tissue and sinew, pulsing with morbid vitality. It serves as a grim reminder of the crimson's unstoppable growth.
+		Lore: A horrifying mash of bloody tissue and sinew, pulsing with cheerfully morbid vitality. This heart beats as a grim reminder that the Crimson never, ever stops growing. Visceral, ominous, and far too lively for comfort.
 	}
 
 	CinderplateHeart: {
 		Tooltip: ""
 		DisplayName: Cinderplate Heart
-		Lore: A jagged, metallic heart seared by volcanic heat and ash. It crunches like hot coals with every slow beat.
+		Lore: A jagged metal heart seared black by volcanic heat and ash. This heart crunches like hot coals with every slow beat, smelling faintly of campfire. Charred, dense, and still slowly cooling off.
 	}
 
 	CelestialRemainsHeart: {
 		Tooltip: ""
 		DisplayName: Celestial Remains Heart
-		Lore: A solemn relic left behind by the pillars of the lunar apocalypse. It echoes with the eerie silence of the cosmos.
+		Lore: A solemn relic left behind once the lunar apocalypse packed up and went home. This heart beats into an eerie silence, echoing the quiet that comes after the cosmos. Hushed, ancient, and heavy with the end of something.
 	}
 
 	CalamitousHeart: {
 		Tooltip: ""
 		DisplayName: Calamitous Heart
-		Lore: A volatile, terrifying artifact born of pure destruction and catastrophic energy. Merely holding it brings visions of the world's end.
+		Lore: A volatile artifact born of pure destruction, radiating the specific dread of a very bad omen. This heart beats with catastrophic energy, handing out visions of the world's end at no charge. Terrifying, unstable, and best respected from a distance.
 	}
 
 	BrimstoneSlagHeart: {
 		Tooltip: ""
 		DisplayName: Brimstone Slag Heart
-		Lore: Forged in the ruined, fiery crags of the Brimstone Crags. It radiates a hellish heat and smells of sulfur and ash.
+		Lore: Forged in the ruined fiery crags where the air itself seems to hold a grudge. This heart beats with a hellish heat, smelling permanently of sulfur and ash. Scorching, grim, and not the least bit interested in cooling down.
 	}
 
 	BloodyWormHeart: {
 		Tooltip: ""
 		DisplayName: Bloody Worm Heart
-		Lore: A grotesque, fleshy lump torn from a massive sanguine annelid. It squirms slightly in your hand, desperate to consume.
+		Lore: A fleshy lump torn from an enormous blood-red worm, still squirming for one more bite. This heart beats with a wet, desperate hunger, eager to consume anything within reach. Gross, restless, and refreshingly honest about its appetite.
 	}
 
 	BlazingHeart: {
 		Tooltip: ""
 		DisplayName: Blazing Heart
-		Lore: A searing core of pure, concentrated fire that threatens to melt anything it touches. It roars with the eternal fury of the underworld.
+		Lore: A searing core of concentrated fire that threatens to melt whatever it leans against. This heart beats with the eternal roaring fury of the underworld, subtlety not included. Molten, loud, and a guaranteed fire hazard.
 	}
 
 	AuricHeart: {
 		Tooltip: ""
 		DisplayName: Auric Heart
-		Lore: A divine core shimmering with unimaginable golden power. It embodies the very essence of a god's boundless lifeforce.
+		Lore: A divine core shimmering with so much golden power it borders on showing off. This heart beats with a god's boundless lifeforce, radiant enough to make the sun a little jealous. Holy, dazzling, and absolutely top of the food chain.
 	}
 
 	AstralStoneHeart: {
 		Tooltip: ""
 		DisplayName: Astral Stone Heart
-		Lore: Hewn from the bedrock of the cosmos itself, unyielding and eternal. Its heavy beats reverberate through the ground beneath you.
+		Lore: Hewn from cosmic bedrock that is older than the ground you happen to be standing on. This heart beats heavy enough to rumble the floor, eternal and entirely unbothered. Ancient, weighty, and quietly immovable.
 	}
 
 	AstralSnowHeart: {
 		Tooltip: ""
 		DisplayName: Astral Snow Heart
-		Lore: A delicate, frozen core formed from the chilling fallout of an astral collision. It hums a silent melody of the frozen void.
+		Lore: Delicate frozen fallout from an astral collision, cold in a way snow really shouldn't be. This heart beats with a silent melody of the frozen void, soft and faintly alien. Icy, gentle, and humming a tune from nowhere.
 	}
 
 	AstralSandstoneHeart: {
 		Tooltip: ""
 		DisplayName: Astral Sandstone Heart
-		Lore: Hardened by cosmic radiation and the passage of eons, it contains the compressed fury of a shooting star. It shines with a blinding, starry luster.
+		Lore: Compressed by cosmic radiation and a great many eons into a blindingly starry stone. This heart beats with the contained fury of a shooting star, shining like it never actually landed. Lustrous, dense, and dramatically overqualified.
 	}
 
 	AstralSandHeart: {
 		Tooltip: ""
 		DisplayName: Astral Sand Heart
-		Lore: Composed of shifting, crystalline grains from a star-blasted desert. It flows endlessly yet somehow maintains its vital form.
+		Lore: Shifting crystalline grains from a star-blasted desert that flow forever yet never fall apart. This heart beats while constantly pouring, somehow keeping its shape out of pure stubbornness. Restless, cosmic, and quietly impossible.
 	}
 
 	AstralMonolithHeart: {
 		Tooltip: ""
 		DisplayName: Astral Monolith Heart
-		Lore: A heavy, monolithic stone heart that acts as a beacon for the astral infection. It throbs with a slow, terrifying, and ancient rhythm.
+		Lore: A heavy slab of stone doubling as a beacon for the astral infection, which is rarely good news. This heart throbs with a slow, ancient, faintly terrifying rhythm. Monolithic, ominous, and signaling something you'd rather not meet.
 	}
 
 	AstralIceHeart: {
 		Tooltip: ""
 		DisplayName: Astral Ice Heart
-		Lore: Frozen solid by the absolute zero temperatures of deep space. It emanates a chilling aura that slows the blood of those who draw near.
+		Lore: Frozen solid by the absolute-zero temperatures of deep space, where warmth is just a rumor. This heart beats with a chilling aura that slows the blood of anyone who drifts near. Glacial, eerie, and colder than the void itself.
 	}
 
 	AstralHeart: {
 		Tooltip: ""
 		DisplayName: Astral Heart
-		Lore: A crystallized fragment of cosmic power, pulsing with the eerie purple glow of the astral blight. It carries the weight of a thousand dying stars.
+		Lore: A purple shard that caught a ride on a meteor and still hums a tune from a galaxy you'll never see. This heart beats with the eerie glow of the astral blight, carrying the weight of a thousand dying stars. Cosmic, radiant, and a little homesick for space.
 	}
 
 	AstralDirtHeart: {
 		Tooltip: ""
 		DisplayName: Astral Dirt Heart
-		Lore: Infused with the extraterrestrial energy of a localized meteor strike. Stardust constantly falls from its steadily beating surface.
+		Lore: Ordinary dirt that had a meteor land on it and never recovered, in the best possible way. This heart beats steadily while shedding little flecks of stardust everywhere it goes. Humble, cosmic, and the most upgraded soil you'll ever meet.
 	}
 
 	AstralClayHeart: {
 		Tooltip: ""
 		DisplayName: Astral Clay Heart
-		Lore: Molded from the alien soil of a fallen star, this heart feels strangely pliable yet eternally durable. It echoes with the silent whispers of the cosmos.
+		Lore: Alien soil from a fallen star, pliable as fresh clay yet stubbornly impossible to wear out. This heart beats with the silent whispers of the cosmos, soft to the touch and built to last. Moldable, durable, and quietly otherworldly.
 	}
 
 	AstralBossHeart: {
 		Tooltip: ""
 		DisplayName: Astral Boss Heart
-		Lore: A majestic core salvaged from a fallen starborn entity. It burns with the unfathomable, cold fire of the astral infection.
+		Lore: A majestic core salvaged from a fallen starborn entity that did not come quietly. This heart burns with the cold, unfathomable fire of the astral infection, regal even in defeat. Radiant, alien, and used to being the biggest thing around.
 	}
 
 	ArmoredHeart: {
 		Tooltip: ""
 		DisplayName: Armored Heart
-		Lore: Encased in an impenetrable, metallic shell, it survived crushing blows that would shatter normal cores. Its rhythmic thud is like a hammer striking an anvil.
+		Lore: Sealed in a metal shell tough enough to survive blows that would crack any normal core. This heart thuds like a hammer on an anvil, perfectly safe behind its own plating. Sturdy, clanging, and quietly the best-defended heart here.
 	}
 
 	AquaticHeart: {
 		Tooltip: ""
 		DisplayName: Aquatic Heart
-		Lore: A crystalline organ that constantly weeps fresh, pure water. Holding it makes one feel an undeniable connection to the vast seas.
+		Lore: A crystalline organ that quietly weeps fresh, pure water without ever running dry. This heart beats with the calm pull of the open sea, leaving you oddly homesick for the waves. Clear, soothing, and the most refreshing thing in the box.
 	}
 
 	AmbergrisHeart: {
 		Tooltip: ""
 		DisplayName: Ambergris Heart
-		Lore: A strange, aromatic clump harvested from a colossal deep-sea leviathan. It holds the enduring vitality of the ocean's greatest predators.
+		Lore: An aromatic clump harvested from a colossal deep-sea leviathan, surprisingly pleasant for its origin. This heart beats with the enduring vitality of the ocean's biggest predators. Strange, fragrant, and far classier than it has any right to be.
 	}
 
 	AfflictedHeart: {
 		Tooltip: ""
 		DisplayName: Afflicted Heart
-		Lore: Tainted by a dreadful curse, this sorrowful remnant beats with agonizing irregularity. Its sickly glow warns of the toxic mutation within.
+		Lore: A sorrowful remnant carrying a dreadful curse and a glow that plainly means trouble. This heart beats with an agonizing, irregular rhythm, warning of the mutation simmering inside. Cursed, glowing, and bravely beating anyway.
 	}
 
 	AerialiteHeart: {
 		Tooltip: ""
 		DisplayName: Aerialite Heart
-		Lore: Light as a feather and crackling with static electricity. It contains the boundless freedom of the high skies.
+		Lore: Light as a feather and crackling with static, basically a stray piece of the open sky. This heart beats with a crisp, electric flutter, allergic to ever staying grounded. Airy, charged, and quietly itching to take off.
 	}
 
 	AbyssGravelHeart: {
 		Tooltip: ""
 		DisplayName: Abyss Gravel Heart
-		Lore: Compressed beneath crushing oceanic pressure, this heart whispers of unseen horrors in the deep Abyss. It is cold to the touch and seemingly devoid of light.
+		Lore: Crushed flat under the weight of the entire ocean, cold and lightless and faintly haunted. This heart beats with a low whisper of the deep Abyss and whatever lurks in it. Dark, dense, and dropping deeply unsettling hints.
 	}
 
 	GlowingMushroomHeart: {
 		DisplayName: Glowing Mushroom Heart
 		Tooltip: ""
-		Lore: Pulsing with a soft, bioluminescent blue light, it smells faintly of damp spores. It brings visions of strange, fungal landscapes.
+		Lore: A soft blue glowing cap smelling pleasantly of damp spores and strange dreams. This heart beats with a gentle bioluminescent pulse, lighting up its own little fungal world. Luminous, cozy, and quietly a bit trippy.
 	}
 
 	AstraHeart: {
 		DisplayName: Astra Heart
 		Tooltip: ""
-		Lore: Gleaming with the starlight of distant galaxies. It resonates with the quiet harmony of the cosmos.
+		Lore: Gleaming with starlight borrowed from galaxies that are very, very far from here. This heart beats in quiet cosmic harmony, calm as a clear night sky. Radiant, serene, and humming along with the universe.
 	}
 
 	CosmicEmberHeart: {
 		DisplayName: Cosmic Ember Heart
 		Tooltip: ""
-		Lore: A burning fragment of a dying star. It warms the soul with the eternal fire of the universe.
+		Lore: A still-burning fragment of a dying star, warm enough to thaw the gloomiest mood. This heart beats with the eternal fire of the universe, glowing softly in your hand. Warm, radiant, and the coziest thing space ever produced.
 	}
 
 	CryocoreHeart: {
 		DisplayName: Cryocore Heart
 		Tooltip: ""
-		Lore: Frozen solid and radiating an absolute zero chill. It numbs pain and preserves life in a state of icy stasis.
+		Lore: Frozen solid and radiating an absolute-zero chill that numbs whatever it touches. This heart beats slowly, preserving life in a quiet icy stasis like a tiny cryo-pod. Cold, calm, and pressing pause on everything.
 	}
 
 	DarkCelestialHeart: {
 		DisplayName: Dark Celestial Heart
 		Tooltip: ""
-		Lore: Swirling with the gravity of a black hole. It draws in worldly energies to fuel an abyssal strength.
+		Lore: Swirling with the gravity of a black hole, dressed head to toe in cosmic dread. This heart beats while pulling worldly energy inward, fueling a quietly abyssal strength. Dark, dense, and far hungrier than it lets on.
 	}
 
 	HeavenforgeHeart: {
 		DisplayName: Heavenforge Heart
 		Tooltip: ""
-		Lore: Crafted in the celestial fires of the sky islands. It tempers the spirit with divine heat and purity.
+		Lore: Forged in the celestial fires of the sky islands, where the metal comes out a little holy. This heart beats with divine heat and purity, tempered high above the clouds. Radiant, refined, and faintly looking down on the ground crew.
 	}
 
 	LunarRustHeart: {
 		DisplayName: Lunar Rust Heart
 		Tooltip: ""
-		Lore: Corroded by the relentless passage of cosmic time. It holds the ancient endurance of forgotten celestial bodies.
+		Lore: Corroded by the slow grind of cosmic time, weathered the way only truly ancient things get. This heart beats with the patient endurance of forgotten celestial bodies. Rusty, timeless, and proud of every scar.
 	}
 
 	MercuryHeart: {
 		DisplayName: Mercury Heart
 		Tooltip: ""
-		Lore: A toxic, liquid metallic core that flows with deadly grace. It hardens the body against all mundane weaknesses.
+		Lore: A toxic liquid-metal core flowing with deadly, mesmerizing grace. This heart beats in shifting silver ripples, hardening the body against everything ordinary. Slick, poisonous, and far prettier than it is safe.
 	}
 
 	StarRoyaleHeart: {
 		DisplayName: Star Royale Heart
 		Tooltip: ""
-		Lore: A regal concentration of fallen stars. It blesses the bearer with the majestic light of the night sky.
+		Lore: A regal concentration of fallen stars that carries itself like the night sky's chosen heir. This heart beats with majestic stellar light, certain it outranks every other heart in the room. Radiant, proud, and clearly dressed for the throne.
 	}
 
 	JungleSporeHeart: {
 		DisplayName: Jungle Spore Heart
 		Tooltip: ""
-		Lore: Entangled in glowing, verdant vines, this ancient heart blooms with the toxic life of the deep jungle. It hums with the song of venomous flora.
+		Lore: Tangled in glowing vines and blooming with the toxic life of the deep jungle. This heart beats while humming the song of venomous flora, pretty and quietly poisonous. Verdant, ancient, and ironically not to be put in your mouth.
 	}
 
 	AppleHeart: {
 		DisplayName: Apple Heart
 		Tooltip: ""
-		Lore: A crisp, sweet-smelling heart grown from the canopy of ordinary forest trees. It fills its bearer with simple, robust vitality.
+		Lore: A heart that grew on an ordinary tree, which is somehow stranger than the magic ones. It beats with crisp, simple vitality and the faint smell of an orchard afternoon. Honest, sweet, and proof the classics still hold up.
 	}
 
 	ApricotHeart: {
 		DisplayName: Apricot Heart
 		Tooltip: ""
-		Lore: A fuzzy, golden-orange heart that smells of warm summer days. Consuming it grants a fleeting burst of sunlit energy.
+		Lore: A fuzzy golden heart that smells like the single best afternoon of summer. It beats with a quick burst of sunlit energy, warm and just a little sleepy. Soft, cheerful, and the heart most likely to nap.
 	}
 
 	BananaHeart: {
 		DisplayName: Banana Heart
 		Tooltip: ""
-		Lore: A surprisingly tropical heart that peels away to reveal soft, sweet vitality. It brings to mind distant, sun-drenched beaches.
+		Lore: A heart you actually peel, which is both delightful and a fair amount to process. It beats soft and sweet, instantly conjuring a beach you have never once visited. Tropical, silly, and fully committed to the bit.
 	}
 
 	BlackcurrantHeart: {
 		DisplayName: Blackcurrant Heart
 		Tooltip: ""
-		Lore: A tart, dark-berried heart picked from wild bushes. Its sharp flavor awakens the senses and fortifies the spirit.
+		Lore: A tart dark-berried heart picked off a wild bush nobody bothered to plant. It beats with a sharp, bracing snap that wakes up the senses on contact. Sour, bold, and genuinely proud of the pucker.
 	}
 
 	BlinkrootHeart: {
 		DisplayName: Blinkroot Heart
 		Tooltip: ""
-		Lore: A dusty, flickering heart that glows intermittently in the dark. It pulses with the erratic energy of the underground dirt layers.
+		Lore: A dusty little heart that flickers on and off like it's trying to save electricity. It beats in erratic glowing pulses, perfectly at home down in the underground dirt. Flickery, humble, and quietly cagey about the timing.
 	}
 
 	BloodOrangeHeart: {
 		DisplayName: Blood Orange Heart
 		Tooltip: ""
-		Lore: A deep red, citrusy heart that stains the hands with its vibrant juice. It offers a slightly sinister but deeply refreshing surge of life.
+		Lore: A deep red citrus heart that stains your hands like fresh evidence. It beats with a sinister yet deeply refreshing surge, juice with a slight attitude problem. Vivid, tangy, and faintly dramatic about it.
 	}
 
 	BlueHeart: {
 		DisplayName: Blue Heart
 		Tooltip: ""
-		Lore: A mysterious, azure-tinted heart that feels cool to the touch. It hums with an unknown, melancholic magic.
+		Lore: A mysterious azure heart, cool to the touch and reluctant to explain itself. It beats with an unknown, faintly melancholic magic, keeping its origins entirely to itself. Calm, enigmatic, and clearly going through something.
 	}
 
 	CherryHeart: {
 		DisplayName: Cherry Heart
 		Tooltip: ""
-		Lore: A small, crimson heart with a wonderfully sweet and tart essence. It bursts with a delightful, sugary vitality.
+		Lore: A small crimson heart packing a startling amount of sweet-and-tart into one bite. It beats with a delightful sugary burst, the friendliest little jolt in the whole box. Tiny, bright, and punching well above its size.
 	}
 
 	CoconutHeart: {
 		DisplayName: Coconut Heart
 		Tooltip: ""
-		Lore: A tough, hard-shelled heart that must be cracked open to reveal its refreshing core. It holds the resilient life force of coastal palms.
+		Lore: A tough heart you have to crack open before it gives up anything at all. It beats with the stubborn, refreshing life of a coastal palm, rewarding only the persistent. Hard-headed, hydrating, and well worth the effort.
 	}
 
 	DaybloomHeart: {
 		DisplayName: Daybloom Heart
 		Tooltip: ""
-		Lore: A bright, sun-kissed heart that only reaches its full potential during the day. It radiates the pure, untainted energy of the surface world.
+		Lore: A sun-loving heart that only really shines while the sun is actually up. It beats with the pure, untainted energy of the surface world, drooping the moment it gets dark. Bright, cheerful, and emphatically a morning person.
 	}
 
 	DeathweedHeart: {
 		DisplayName: Deathweed Heart
 		Tooltip: ""
-		Lore: A sinister, thorny heart that thrives only under the light of a Blood Moon. It offers potent vitality tinged with dark magic.
+		Lore: A thorny heart that only thrives under a Blood Moon, which honestly tells you plenty. It beats with potent vitality laced with dark magic, lovely and faintly cursed. Sinister, spiky, and best harvested with real caution.
 	}
 
 	DragonFruitHeart: {
 		DisplayName: Dragon Fruit Heart
 		Tooltip: ""
-		Lore: An exotic, scaly heart with a vibrant pink exterior and speckled core. It tastes of untamed wilds and mythical beasts.
+		Lore: An exotic scaly heart with a hot pink shell and a speckled middle, dressed for attention. It beats with the taste of untamed wilds and mythical beasts, mostly the mild kind. Flashy, tropical, and named far braver than it acts.
 	}
 
 	ElderberryHeart: {
 		DisplayName: Elderberry Heart
 		Tooltip: ""
-		Lore: A cluster-like heart with a deeply earthy and robust flavor. It embodies the ancient, quiet strength of old-growth forests.
+		Lore: A clustered heart with a deep, earthy flavor pulled straight from old-growth shade. It beats with the quiet ancient strength of forests that stood here long before you did. Robust, humble, and wiser than your average berry.
 	}
 
 	FireblossomHeart: {
 		DisplayName: Fireblossom Heart
 		Tooltip: ""
-		Lore: A scorching hot heart forged in the unforgiving ashes of the Underworld. It burns with the relentless fury of magma and ash.
+		Lore: A scorching flower forged in the ashes of the Underworld, blooming where nothing sensibly should. This heart beats with the relentless fury of magma, hot enough to demand respect. Fiery, stubborn, and the toughest petal in the realm.
 	}
 
 	GrapefruitHeart: {
 		DisplayName: Grapefruit Heart
 		Tooltip: ""
-		Lore: A large, bitter-sweet heart that shocks the system with its zesty tang. It revitalizes the weary with a sharp, refreshing jolt.
+		Lore: A big bitter-sweet citrus heart that jolts the entire system awake on contact. It beats with a zesty, sharp tang, the wake-up call nobody asked for but everyone needed. Bracing, bold, and unapologetically loud.
 	}
 
 	GrapeHeart: {
 		DisplayName: Grape Heart
 		Tooltip: ""
-		Lore: A plump, juicy heart tasting of rich vineyards and forgotten orchards. It offers a smooth, comforting surge of health.
+		Lore: A plump juicy heart tasting of rich vineyards and orchards long forgotten. It beats with a smooth, comforting sweetness, the easygoing one of the whole bunch. Round, mellow, and perfectly content to just be a snack.
 	}
 
 	GreenHeart: {
 		DisplayName: Green Heart
 		Tooltip: ""
-		Lore: A simple, verdant heart bursting with raw, untamed chlorophyll. It connects its bearer directly to the lifeblood of the forest.
+		Lore: A simple verdant heart bursting with raw, slightly feral chlorophyll. It beats in time with the forest's lifeblood, plugged directly into the woods. Fresh, vivid, and greener than it strictly needs to be.
 	}
 
 	LemonHeart: {
@@ -2859,6 +2864,12 @@ Items: {
 		Lore: Glowing with a haunting, spectral fire from the Pumpkin Moon. It fills its bearer with a mischievous, fiery vigor.
 	}
 
+	PiggyBankHeart: {
+		DisplayName: Piggy Bank Heart
+		Tooltip: Unlocks passive income: cash your banked Life Shards out as coins
+		Lore: A plump porcelain heart that never stops jingling. It whispers of compound interest and the quiet joy of money made while you sleep.
+	}
+
 	LuckHeart: {
 		Tooltip: ""
 		DisplayName: Luck Heart
@@ -2965,6 +2976,11 @@ Buffs: {
 		Description: Cannot consume another Life Shard until this wears off.
 	}
 
+	ParryCooldown: {
+		DisplayName: Winded
+		Description: Cannot parry again until this wears off.
+	}
+
 	VitalSoilRegen: {
 		DisplayName: Elemental Growth
 		Description: Nearby Vital Soil increases your life regeneration
@@ -3044,7 +3060,7 @@ TrackNames: {
 	}
 }
 
-# BossChecklist integration — spawn / despawn strings shown on each Animate
+# BossChecklist integration: spawn / despawn strings shown on each Animate
 # boss's entry page. The [i:ItemInternalName] chat tag renders the spawn item's
 # icon inline; "{0}" in despawn messages is replaced with the NPC's full name.
 BossChecklist: {
@@ -3084,4 +3100,5 @@ Biomes: {
 Keybinds: {
 	"Toggle Heart Checklist.DisplayName": Toggle  Heart  Checklist
 	"Use Discord Ability.DisplayName": Use  Discord  Ability
+	Parry.DisplayName: Parry
 }
