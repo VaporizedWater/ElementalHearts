@@ -1198,6 +1198,12 @@ Items: {
 		Lore: Harvested from the wyverns that patrol the clouds and deeply resent anyone joining them up there. This heart beats with a light upward tug, forever convinced it belongs in the sky rather than your hand. Weightless, restless, and quietly plotting its next takeoff.
 	}
 
+	CoralHeart: {
+		Tooltip: Permanently increases movement speed in water by 10%.
+		DisplayName: Coral Heart
+		Lore: A bright little reef engine that only remembers how to hurry once everything is underwater. This heart beats with a warm, saltwater pulse, tugging you along like the ocean just decided to be helpful. Porous, pink, and suspiciously smug about making swimming look easy.
+	}
+
 	PalladiumHeart: {
 		Tooltip: ""
 		DisplayName: Palladium Heart
@@ -1524,6 +1530,12 @@ Items: {
 		Tooltip: ""
 		DisplayName: Fruit Heart
 		Lore: Bursting with the golden hyper-vitality the jungle only hands out once Plantera has been dealt with. This heart beats so hard it nearly bursts, packed with more life than is strictly polite. Plump, glowing, and one good thump from going off like a balloon.
+	}
+
+	LightningBugHeart: {
+		Tooltip: 8% increased movement speed
+		DisplayName: Lightning Bug Heart
+		Lore: The ambient glow of a tiny insect trapped in crystal. This heart beats with a quick, hyperactive jitter that can't stay still. Glowing, zippy, and absolutely determined to get somewhere fast.
 	}
 
 	ChlorophyteHeart: {

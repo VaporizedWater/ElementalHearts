@@ -126,6 +126,7 @@ internal static class ElementalPowerRegistry
 		["BrainHeart"] = "brainiac",
 		["CobaltHeart"] = "cobalt blues",
 		["CogHeart"] = "cog in the machine",
+		["CoralHeart"] = "seas the day",
 		["CrimtaneHeart"] = "blood rush",
 		["CrystalHeart"] = "crystal clear",
 		["LifeFruitHeart"] = "forbidden fruit",
@@ -156,6 +157,7 @@ internal static class ElementalPowerRegistry
 		["HallowedHeart"] = "holy moly",
 		["MechanicalHeart"] = "well-oiled",
 		["TitaniumHeart"] = "unsinkable",        // …like a certain ship
+		["LightningBugHeart"] = "in a flash",
 
 		// ── Legendary ─────────────────────────────────────────────────────────────
 		["EctoplasmHeart"] = "who you gonna call",

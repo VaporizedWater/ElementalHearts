@@ -171,6 +171,7 @@ public static class HeartEffectRegistry
 		["BrainHeart"]       = Eff(224, 160, 160, 192, 112, 128, 112, 32, 48),
 		["CobaltHeart"]      = Eff(16, 80, 144, 48, 160, 208, 0, 48, 112),
 		["CogHeart"]         = Eff(176, 144, 80, 224, 176, 96, 96, 80, 48),
+		["CoralHeart"]       = Eff(248, 168, 128, 232, 112, 80, 136, 40, 48),
 		["CrimtaneHeart"]    = Eff(224, 64, 64, 224, 80, 96, 128, 32, 48),
 		["CursedFlameHeart"] = Eff(96, 255, 0, 48, 192, 32, 176, 255, 0),
 		["DarkHeart"]        = Eff(240, 128, 240, 255, 192, 240, 200, 96, 224),  // sprite reads vivid magenta
@@ -195,6 +196,7 @@ public static class HeartEffectRegistry
 		["CrystalHeart"]     = Eff(255, 50, 50, 255, 100, 200, 192, 64, 112),
 		["HallowedHeart"]    = Eff(200, 196, 176, 246, 240, 172, 128, 112, 128),
 		["LifeFruitHeart"]   = Eff(224, 160, 64, 208, 112, 64, 48, 128, 16),
+		["LightningBugHeart"]= Eff(64, 144, 160, 112, 64, 160, 240, 224, 240),
 		["MechanicalHeart"]  = Eff(160, 160, 168, 224, 48, 48, 80, 80, 80),
 		["ShardHeart"]       = Eff(180, 50, 220, 50, 100, 255, 255, 100, 200),
 		["SoulOfFrightHeart"]= Eff(208, 48, 16, 255, 96, 64, 160, 0, 0),
