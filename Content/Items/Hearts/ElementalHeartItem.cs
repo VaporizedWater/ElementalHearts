@@ -261,7 +261,7 @@ public abstract class ElementalHeartItem : ModItem
 		ReLogic.Utilities.SlotId boomSlot = default;
 		// The very top of the ladder earns a real "moment": shockwave + sub-bass on top of the
 		// shared wash/burst above.
-		if ((int)Tier >= (int)HeartTier.Epic)
+		if (Tier.GreaterThanOrEqualTo(HeartTier.Epic))
 			boomSlot = EmitTopTierPayoff(center, effect, tierColor, strength);
 
 		// A faint, fast, rarity-coloured wash over the screen — barely there on a Common heart,
@@ -438,7 +438,7 @@ public abstract class ElementalHeartItem : ModItem
 		float alphaMult = 0.7f + (rarityScale * 0.6f); // ~0.7× up to ~1.3×
 		int copies = 12 + (int)((rarityScale * 12f) + 0.5f); // 12 → 24 copies
 
-		if (Tier == HeartTier.Exotic)
+		if (Tier.EqualTo(HeartTier.Exotic))
 		{
 			// Smoother, softer, and more diffused glow for Exotic hearts
 			copies = 36;

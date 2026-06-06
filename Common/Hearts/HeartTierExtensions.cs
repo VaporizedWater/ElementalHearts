@@ -74,6 +74,33 @@ public static class HeartTierExtensions
 		_ => 0f,
 	};
 
+	public static int GetCostMultiplier(this HeartTier tier) => tier switch
+	{
+		HeartTier.Common => 1,
+		HeartTier.Uncommon => 3,
+		HeartTier.Rare => 5,
+		HeartTier.Epic => 7,
+		HeartTier.Legendary => 10,
+		HeartTier.Exotic => 15,
+		HeartTier.Mythic => 30,
+		_ => 0,
+	};
+
+	public static int GetCostMultiplier(this HeartTier _, HeartTier tier) => tier switch
+	{
+		HeartTier.Common => 1,
+		HeartTier.Uncommon => 3,
+		HeartTier.Rare => 5,
+		HeartTier.Epic => 7,
+		HeartTier.Legendary => 10,
+		HeartTier.Exotic => 15,
+		HeartTier.Mythic => 30,
+		_ => 0,
+	};
+
+	public static bool GreaterThanOrEqualTo(this HeartTier A, HeartTier B) => (int)A >= (int)B;
+	public static bool EqualTo(this HeartTier A, HeartTier B) => (int)A == (int)B;
+
 	/// <summary>
 	/// Multiplier reining in the on-ground bloom for the showy top tiers so the pulsing glow
 	/// doesn't balloon over a dropped heart; 1 (no damping) for everything below Legendary.

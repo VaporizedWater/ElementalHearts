@@ -37,7 +37,7 @@ public class MilestonesUI
 			if (isConsumed)
 			{
 				if (heart is BossHeartItem) totalBossHearts++;
-				if (heart.Tier == HeartTier.Mythic) hasMythic = true;
+				if (heart.Tier.EqualTo(HeartTier.Mythic)) hasMythic = true;
 			}
 		}
 		

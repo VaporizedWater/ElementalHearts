@@ -49,7 +49,7 @@ public sealed class PlayerHeartOverlay : ModResourceOverlay
 		if (!IsHeartFill(context.texture))
 			return true;
 
-		Asset<Texture2D> sprite = ResolveSprite();
+		Asset<Texture2D>? sprite = ResolveSprite();
 		if (sprite == null)
 			return true; // Regular or Life Fruit rung — let vanilla draw its own heart.
 
@@ -95,7 +95,7 @@ public sealed class PlayerHeartOverlay : ModResourceOverlay
 	/// The replacement sprite for the local player's current rung, or null when that rung is
 	/// one of the two vanilla states (Regular / Life Fruit) that need no override.
 	/// </summary>
-	private Asset<Texture2D> ResolveSprite()
+	private Asset<Texture2D>? ResolveSprite()
 	{
 		Player player = Main.LocalPlayer;
 		if (player == null)
